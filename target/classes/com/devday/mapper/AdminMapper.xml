@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 마이바티스 중 시작하기 ─ 매핑된 SQL 구문 살펴보기에서 확인 가능 -->
+  
+<mapper namespace="com.devday.mapper.AdminMapper">
+
+<select id="admin_ok" resultType="com.devday.domain.AdminVO" parameterType="String">
+	SELECT
+		adm_id, adm_pw, adm_con
+	FROM
+		admin_tbl
+	WHERE
+		adm_id = #{adm_id}
+</select>
+
+<update id="loginTime" parameterType="String">
+	UPDATE
+		admin_tbl
+	SET
+		adm_con = sysdate
+	WHERE
+		adm_id = #{adm_id}
+</update>
+
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 마이바티스 중 시작하기 ─ 매핑된 SQL 구문 살펴보기에서 확인 가능 -->
+  
+<mapper namespace="com.devday.mapper.AdCategoryMapper">
+	
+<select id="getFirstCategoryList" resultType="com.devday.domain.CategoryVO">
+		SELECT
+			cg_code, cg_prt_code, cg_name
+		FROM
+			category_tbl
+		WHERE
+			cg_prt_code IS NULL
+	</select>
+	
+<!-- <select id="getSecondCategoryList" parameterType="int">로도 사용 가능 -->
+<select id="getSecondCategoryList" parameterType="Integer" resultType="com.devday.domain.CategoryVO">
+	SELECT
+		cg_code, cg_prt_code, cg_name
+	FROM
+		category_tbl
+	WHERE
+		cg_prt_code = #{cg_prt_code}
+</select>
+
+<!-- 상품 수정: 상품 테이블의 2차 카테고리 코드의 1차 카테고리 정보 -->
+<select id="get" resultType="com.devday.domain.CategoryVO" parameterType="Integer">
+	SELECT
+		cg_code, cg_prt_code, cg_name
+	FROM
+		category_tbl
+	WHERE
+		cg_code = #{cg_code}
+</select>
+
+</mapper>	

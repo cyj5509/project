@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 마이바티스 중 시작하기 ─ 매핑된 SQL 구문 살펴보기에서 확인 가능 -->
+  
+<mapper namespace="com.devday.mapper.AdProductMapper">
+
+<!-- 상품 등록 -->
+<!-- cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy -->
+<insert id="prd_insert" parameterType="com.devday.domain.ProductVO">
+	INSERT INTO
+		product_tbl (prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy)
+	VALUES (seq_prd_tbl.NEXTVAL, #{cg_code}, #{prd_name}, #{prd_price}, #{prd_discount}, #{prd_publisher}, #{prd_content}, #{prd_up_folder}, #{prd_img}, #{prd_amount}, #{prd_buy}) 
+</insert>
+
+<sql id="criteria">
+	<trim prefix="(" suffix=") AND" prefixOverrides="OR">	 <!--  prefixOverrides="AND"는 오류 발생 -->
+    		<foreach collection="typeArr" item="type">
+			<trim prefix="OR">
+			    <choose>
+			        <when test="type == 'N'.toString()">
+			            PRD_NAME like '%' || #{keyword} || '%' 
+			        </when>
+			        <when test="type == 'C'.toString()">
+			            PRD_NUM like '%' || #{keyword} || '%' 
+			        </when>
+			        <when test="type == 'P'.toString()">
+			            PRD_PUBLISHER like '%' || #{keyword} || '%' 
+			        </when>
+			    </choose>
+			</trim>
+    		</foreach>
+	</trim>
+</sql>
+
+<select id="prd_list" resultType="com.devday.domain.ProductVO" parameterType="com.devday.dto.Criteria">
+	<![CDATA[
+	SELECT
+		prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy, prd_date, prd_updatedate
+	FROM 
+	    (
+	    SELECT /*+ INDEX_DESC(product_tbl pk_prd_num) */
+	    		ROWNUM rn, prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy, prd_date, prd_updatedate
+	    FROM
+	    		product_tbl
+	    WHERE]]>
+	    <include refid="criteria"></include> 
+	    <![CDATA[
+	     ROWNUM <= #{pageNum} * #{amount}
+	    )
+	WHERE
+		rn > (#{pageNum} -1) * #{amount}]]>
+</select>
+
+<select id="getTotalCount" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		product_tbl
+	WHERE 
+		<include refid="criteria"></include>
+		prd_num > 0
+</select>
+
+<!-- 체크상품 수정 작업 1 -->
+<update id="prd_checked_modify1" parameterType="map">
+	UPDATE
+		product_tbl
+	SET
+		PRD_PRICE = #{prd_price}, 
+		PRD_BUY = #{prd_buy} 
+	WHERE 
+		PRD_NUM = #{prd_num}
+</update>
+
+<!-- 체크상품 수정 작업 2 -->
+<!-- PL/SQL 익명블록: open과 close는 한 번씩 진행. 즉, declare begin UPDATE ~~~; UPDATE ~~~; UPDATE ~~~ ; end; -->
+<update id="prd_checked_modify2">
+	<foreach collection="list" item="item" open="declare begin" separator=";" close="; end;">
+		UPDATE
+			product_tbl
+		SET
+			PRD_PRICE = #{item.prd_price}, 
+			PRD_BUY = #{item.prd_buy} 
+		WHERE 
+			PRD_NUM = #{item.prd_num}
+	</foreach>
+</update>
+
+<!-- 같은 형태(생략 가능): <select id="prd_edit" resultType="com.devday.domain.ProductVO"> -->
+<select id="prd_edit" resultType="com.devday.domain.ProductVO" parameterType="Integer">
+	SELECT
+		prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy, prd_date, prd_updatedate
+	FROM 
+		product_tbl 
+	WHERE prd_num = #{prd_num}
+</select>
+
+<!-- 상품 수정 -->
+<update id="prd_edit_ok" parameterType="com.devday.domain.ProductVO">
+	UPDATE
+		product_tbl
+	SET 
+		cg_code = #{cg_code}, 
+		prd_name = #{prd_name}, 
+		prd_price = #{prd_price}, 
+		prd_discount = #{prd_discount}, 
+		prd_publisher = #{prd_publisher}, 
+		prd_content = #{prd_content},
+		prd_up_folder = #{prd_up_folder}, 
+		prd_img = #{prd_img},
+		prd_amount = #{prd_amount}, 
+		prd_buy = #{prd_buy}, 
+		prd_updatedate = sysdate
+	WHERE 
+		prd_num = #{prd_num}
+</update>
+
+<delete id="prd_delete" parameterType="Integer">
+	
+	DELETE FROM
+		product_tbl
+	WHERE
+		prd_num = #{prd_num}
+</delete>
+
+</mapper>

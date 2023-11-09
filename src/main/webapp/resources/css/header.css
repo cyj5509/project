@@ -1,0 +1,81 @@
+@charset "UTF-8";
+
+.bd-placeholder-img {
+	font-size: 1.125rem;
+	text-anchor: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+@media (min-width : 768px) {
+	.bd-placeholder-img-lg {
+		font-size: 3.5rem;
+	}
+}
+
+/* 헤더 전체 컨테이너에 대한 스타일 */
+.header-container {
+    background-color: #343a40;
+    border-bottom: 1px solid #222;
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding: 0;
+}
+
+/* 상단 로고 및 정보 행에 대한 스타일 */
+.header-top-row {
+    display: flex;
+    justify-content: space-between; /* 좌우 컨텐츠 정렬 */
+    align-items: center; /* 세로 중심 정렬 */
+    padding: 5px 15px;
+}
+
+/* 로고와 상호명 컨테이너 */
+.header-logo {
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    height: 50px; /* 높이를 60px에서 50px로 조정 */
+    width: auto; /* 너비는 자동으로 조정 */
+}
+
+.header-logo img.img-fluid {
+    height: 50px; /* 로고 이미지 높이 설정 */
+    width: auto; /* 너비는 자동으로 조정 */
+}
+
+/* 환영합니다 및 최근 접속시간 컨테이너 */
+.header-info-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 요소들을 오른쪽으로 정렬 */
+    font-size: 0.9em; /* 또는 다른 적절한 크기로 조정 */
+    margin: 4px 0; /* 위아래 마진 감소 */
+}
+
+.header-info-section b {
+    display: block;
+    margin: 0.5rem 0;
+}
+
+/* 메뉴바 컨테이너 */
+.nav-links {
+    display: flex;
+    justify-content: flex-end; /* 요소들을 오른쪽으로 정렬 */
+    padding: 5px 15px; /* 상단과 하단 패딩 감소 */
+	background-color: rgba(240, 240, 240, 1);
+}
+
+.nav-item {
+    padding: 0.3rem 0.8rem;
+    color: black; /* 메뉴 아이템 텍스트 색상 설정 */
+    text-decoration: none; /* 밑줄 제거 */
+    margin-left: 5px; /* 아이템 사이 간격 */
+    font-size: 0.9em;
+}
