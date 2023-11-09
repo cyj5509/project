@@ -19,11 +19,19 @@ CREATE TABLE member_tbl (
     mem_joindate    DATE    DEFAULT   sysdate   NOT NULL,
     mem_updatedate  DATE    DEFAULT   sysdate   NOT NULL,
     mem_lastlogin   DATE    DEFAULT   sysdate   NOT NULL,
+    adm_check       NUMBER  DEFAULT   0         NOT NULL,
     CONSTRAINT pk_mem_tbl PRIMARY KEY(mem_id) 
 );
+
 -- 다른 PK 설정 방법
 ALTER TABLE member_tbl
 ADD CONSTRAINT pk_mem_tbl PRIMARY KEY (mem_id);
+
+-- 회원가입 쿼리(Oracle)
+INSERT INTO member_tbl (mem_id, mem_pw, mem_name, mem_email, mem_phone, mem_postcode, mem_addr, mem_deaddr, mem_point, mem_joindate, mem_updatedate, mem_lastlogin, adm_check) 
+VALUES ('admin', '1234', 'admin', 'admin', 'admin', 'admin', 'admin', 'admin', 9999999, sysdate, sysdate, sysdate, 1);
+
+UPDATE member_tbl SET adm_check = 1 where mem_id = 'admin';
 
 -- 데이터 조회 및 삭제
 SELECT * FROM member_tbl;
@@ -197,9 +205,9 @@ CREATE TABLE product_tbl(
         prd_publisher           VARCHAR2(50)            NOT NULL,
         prd_content             VARCHAR2(4000)          NOT NULL,   
         prd_up_folder           VARCHAR2(50)            NOT NULL,
-        prd_img                 VARCHAR2(100)           NOT NULL,  -- 크기 변경으로 새로 작업해야 함
+        prd_img                 VARCHAR2(50)            NOT NULL,  -- 날짜폴더경로가 포함하여 파일이름저장
         prd_amount              NUMBER                  NOT NULL,
-        prd_buy                 CHAR(1)		              NOT NULL, -- 판매 여부 타입 변경으로 새로 작업해야 함
+        prd_buy                 VARCHAR2(10)            NOT NULL,
         prd_date                DATE DEFAULT sysdate    NOT NULL,
         prd_updatedate          DATE DEFAULT sysdate    NOT NULL,
         FOREIGN KEY(cg_code)    REFERENCES category_tbl(cg_code)

@@ -16,6 +16,14 @@
 			<!-- CSS 파일 링크 -->
 			<link rel="stylesheet" href="/css/header.css">
 			<link rel="stylesheet" href="/css/member/join.css">
+
+			<script>
+				// 회원가입 환영 인사(@PostMapping("/join") 참고)
+				let msg = '${msg}';
+				if (msg != "") {
+					alert(msg);
+				}
+			</script>
 	</head>
 
 	<body>
@@ -35,11 +43,15 @@
 										<h3>로그인 정보</h3><br>
 										<div class="form-group row">
 											<label for="mem_id" class="col-2">아이디</label>
-											<div class="col-8">
+											<div class="col-4">
 												<input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="아이디를 입력해주세요">
 											</div>
 											<div class="col-2">
-												<button type="button" class="btn btn-outline-info" id="idCheck">중복 검사</button>
+												<button type="button" class="btn btn-outline-info" id="idCheck">ID 중복검사</button>
+											</div>
+											<div>	
+												<span class="mem_id_yes col-4">사용 가능한 아이디입니다.</span>
+												<span class="mem_id_no col-4">아이디가 이미 존재합니다.</span>
 											</div>
 										</div>
 
@@ -133,40 +145,37 @@
 
 			<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
 
-				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+				<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 					<script>
-						// 회원가입 환영 인사(@PostMapping("/join") 참고)
-						let msg = '${msg}';
-						if (msg != "") {
-							alert(msg);
-						}
 
 						$(document).ready(function () {
 
-							let useIDCheck = false; // 아이디 중복 체크 사용 유무 확인
+							let useIDCheck = false; // 아이디 중복 사용 유무 확인
 
 							// JS 문법: document.getElementById("idCheck");
 							$("#idCheck").click(function () {
-								//	alert("아이디 중복 체크");
+								// alert("아이디 중복 확인");
 								if ($("#mem_id").val() == "") {
-									alert("아이디를 입력하세요.");
+									alert("아이디가 입력되지 않았습니다.");
 									$("#mem_id").focus();
 									return;
 								}
 
-								// 아이디 중복 체크 기능 구현
+								// 아이디 중복 검사 기능 구현
 								$.ajax({
 									url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
 									type: 'get', // get or post
 									dataType: 'text', // <String>
-									data: { mem_id: $("#mem_id").val() }, // data: {파라미터명: 데이터 값}
+									data: { mem_id: $("#mem_id").val() }, // data: { 파라미터명: 데이터 값 }
 									success: function (result) { // success: function (매개변수명) { 
 										if (result == "yes") {
-											alert("아이디 사용 가능");
+											$('.mem_id_yes').css("display", "inline-block");
+											$('.mem_id_no').css("display", "none");
 											useIDCheck = true;
 										} else {
-											alert("아이디 사용 불가능");
+											$('.mem_id_no').css("display", "inline-block");
+											$('.mem_id_yes').css("display", "none");
 											useIDCheck = false;
 											// $("#mem_id").val()는 GETTER, $("#mem_id").val("")는 SETTER
 											$("#mem_id").val(""); // 아이디 텍스트 박스의 값을 지움
@@ -175,6 +184,7 @@
 									}
 								});
 							});
+
 							// 메일 인증 요청
 							$("#mailAuth").click(function () {
 								if ($("#mem_email").val() == "") {
@@ -250,7 +260,6 @@
 								// 폼 전송 작업(스프링 작업 이후)
 								joinForm.submit();
 							})
-
 
 						});
 					</script>

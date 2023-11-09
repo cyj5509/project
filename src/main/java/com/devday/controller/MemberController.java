@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.MemberVO;
@@ -49,7 +48,7 @@ public class MemberController {
 		// 회원가입 서비스 실행
 		memberService.join(vo);
 		
-		String msg = "환영합니다. " + vo.getMem_id() + "님 회원가입이 완료되었습니다.";
+		String msg = "환영합니다. " + vo.getMem_id() + "님, 회원가입이 완료되었습니다.";
 		rttr.addFlashAttribute("msg", msg);
 		
 		return "redirect:/member/login";
@@ -82,11 +81,10 @@ public class MemberController {
 		log.info("로그인 페이지 진입");
 	}
 
-
 	@PostMapping("/login")
 	public String login(LoginDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
 
-		log.info("로그인 정보: " + dto);
+		log.info("로그인: " + dto); // 로그인: LoginDTO(mem_id=, mem_pw=)
 
 		MemberVO db_vo = memberService.login(dto.getMem_id());
 
@@ -94,19 +92,34 @@ public class MemberController {
 		String msg = "";
 
 		if (db_vo != null) {
+			// 아이디가 일치하는 경우 실행
+			// 사용자가 입력한 비밀번호(평문 텍스트)와 DB에서 가져온 암호화된 비밀번호 일치 여부 검사
+			// passwordEncoder.matches(rawPassword, encodedPassword)
 			if (passwordEncoder.matches(dto.getMem_pw(), db_vo.getMem_pw())) {
-				url = "/";
-				session.setAttribute("loginStatus", db_vo);				
-				memberService.loginTimeUpdate(dto.getMem_id());
+				 // 로그인 성공 시, 일반 사용자와 관리자의 로그인 상태를 모두 세션에 저장
+			    session.setAttribute("loginStatus", db_vo);
+
+			    // db_vo.getAdm_check() == 1: 관리자를 의미함
+			    if (db_vo.getAdm_check() == 1) {
+			        session.setAttribute("isAdmin", true); // 세션에 관리자 상태 설정
+			        log.info("관리자 상태");
+			    } else {
+			        session.setAttribute("isAdmin", false); // 세션에 비관리자 상태 설정
+			        log.info("비관리자 상태");
+			    }
+
+			    memberService.loginTimeUpdate(dto.getMem_id());
+			    url = "/";
 			} else {
-				url = "/member/login"; 
+				url = "/member/login"; // 로그인 폼 주소
 				msg = "비밀번호가 일치하지 않습니다.";
-				rttr.addFlashAttribute("msg", msg);
+				rttr.addFlashAttribute("msg", msg); // 로그인 폼인 login.jsp 파일에서 사용 목적
 			}
 		} else {
-			url = "/member/login"; 
+			// 아이디가 일치하지 않는 경우
+			url = "/member/login"; // 로그인 폼 주소
 			msg = "아이디가 일치하지 않습니다.";
-			rttr.addFlashAttribute("msg", msg); 
+			rttr.addFlashAttribute("msg", msg); // // 로그인 폼인 login.jsp 파일에서 사용 목적
 		}
 
 		return "redirect:" + url;

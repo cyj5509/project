@@ -14,7 +14,7 @@
 		mem_id = #{mem_id}
 </select>
 
-<!-- 회원가입 쿼리 -->
+<!-- 회원가입: 나머지 컬럼들은 Default로 설정한 값들이 있어 따로 기입하지 않아도 됨 -->
 <insert id="join" parameterType="com.devday.domain.MemberVO">
 	INSERT INTO 
 		member_tbl (
@@ -25,10 +25,7 @@
 			mem_email, 
 			mem_postcode, 
 			mem_addr, 
-			mem_deaddr,
-			mem_point,
-			mem_joindate,
-			adm_check
+			mem_deaddr
 		)
 		VALUES (
 			#{mem_id}, 
@@ -38,13 +35,11 @@
 			#{mem_email}, 
 			#{mem_postcode}, 
 			#{mem_addr}, 
-			#{mem_deaddr},
-			#{mem_point},
-			sysdate,
-			0
+			#{mem_deaddr}
 		)
 </insert>
 
+<!-- 로그인: 관리자/비관리자를 구분 짓기 위해  select문에 adm_check 컬럼 추가 -->
 <select id="login" parameterType="String" resultType="com.devday.domain.MemberVO">
 	select 
 		mem_id, 
@@ -58,7 +53,8 @@
 		mem_point, 
 		mem_joindate, 
 		mem_updatedate,
-		mem_lastlogin
+		mem_lastlogin,
+		adm_check
 	from 
 		member_tbl 
 	where 

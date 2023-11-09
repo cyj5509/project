@@ -47,5 +47,5 @@ public class MemberVO {
 	private Date mem_updatedate; // 수정일자(DEFAULT sysdate)
 	private Date mem_lastlogin; // 마지막 접속일자(DEFAULT sysdate)
 
-	private int adm_check; // 관리자 구분(0:일반사용자, 1:관리자)
+	private int adm_check; // 관리자 구분(DEFAULT 0: 일반사용자 / 1: 관리자)
 }

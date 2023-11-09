@@ -31,3 +31,14 @@
 	text-align: left;
 	color: #333;
 }
+
+/* 아이디 사용 가능 */
+.mem_id_yes{
+	color : blue;
+	display : none;
+}
+/* 아이디 사용 불가 */
+.mem_id_no{
+	color : red;
+	display : none;
+}
