@@ -42,13 +42,21 @@
 									<div class="form-group">
 										<input type="password" class="form-control" name="mem_pw" id="mem_pw" placeholder="비밀번호">
 									</div>
+									<div>
+									</div>
 								</div>
 								<div class="box-footer">
+									<div class="form-group row">
+										<div class="col-2">
+											<input type="checkbox" class="form-control" name="" id="keep_login">
+										</div>
+										<label for="keep_login" class="col-7">로그인 상태 유지</label>
+									</div>	
 									<button type="submit" class="btn btn-primary login-btn" id="btnJoin">로그인</button>
 								</div>
 							</form>
 							<div class="login-footer">
-								<a href="/member/findId">아이디 찾기</a> | <a href="/member/findPw">비밀번호 찾기</a>
+								<a href="/member/findId">아이디 찾기</a> | <a href="/member/confirmId">비밀번호 찾기</a> | <a href="/member/join">회원가입</a>
 							</div>
 						</div>
 					</div>

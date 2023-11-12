@@ -11,17 +11,12 @@
                         <a href="/member/join" class="nav-item">회원가입</a>
                     </c:if>
                     <c:if test="${sessionScope.loginStatus != null}">
-	                    <c:if test="${sessionScope.isAdmin}">
-	                    	<a href="/admin/intro" class="nav-item">[Admin]</a>
-	                    </c:if>
                         <a href="/member/logout" class="nav-item">로그아웃(${sessionScope.loginStatus.mem_id} 님)</a>
                     </c:if>
                         <a href="/member/myPage" class="nav-item">마이페이지</a>
                         <a href="#" class="nav-item">주문조회</a>
                         <a href="#" class="nav-item">장바구니</a>
                     	<a href="/user/community" class="nav-item">커뮤니티</a>
-					
-                    
                 </div>
 
                 <!-- 상단 로고 및 정보 행 -->
@@ -36,6 +31,9 @@
                     <!-- 환영인사 및 최근 접속시간 -->
                     <div class="header-info-section">
                         <c:if test="${sessionScope.loginStatus != null}">
+	                         <c:if test="${sessionScope.isAdmin}">
+		                    		<a href="/admin/intro" class="admin-section">[Admin]</a>
+		                    </c:if>
                             <b>최근 접속일자:
                                 <fmt:formatDate value="${sessionScope.loginStatus.mem_lastlogin}"
                                     pattern="yyyy-MM-dd HH:mm:ss" />

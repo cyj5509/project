@@ -49,9 +49,9 @@
 											<div class="col-2">
 												<button type="button" class="btn btn-outline-info" id="idCheck">ID 중복검사</button>
 											</div>
-											<div class="col-4">	
+											<div class="col-4">
 												<span class="mem_id_yes">사용 가능한 아이디입니다.</span>
-												<span class="mem_id_no">아이디가 이미 존재합니다.</span>
+												<span class="mem_id_no">이미 존재하는 아이디입니다.</span>
 											</div>
 										</div>
 
@@ -144,7 +144,6 @@
 			</div>
 
 			<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
-
 				<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 					<script>
@@ -172,11 +171,11 @@
 										if (result == "yes") {
 											$('.mem_id_yes').css("display", "inline-block");
 											$('.mem_id_no').css("display", "none");
-											useIDCheck = true;
+											useIDCheck = true; // let useIDCheck = false;
 										} else {
 											$('.mem_id_no').css("display", "inline-block");
 											$('.mem_id_yes').css("display", "none");
-											useIDCheck = false;
+											useIDCheck = false; 
 											// $("#mem_id").val()는 GETTER, $("#mem_id").val("")는 SETTER
 											$("#mem_id").val(""); // 아이디 텍스트 박스의 값을 지움
 											$("#mem_id").focus(); // 포커스 기능
@@ -240,14 +239,11 @@
 								});
 							});
 
-							// form 태그 참조: <form role="form" id="joinForm" method="post" action="/member/join">
-							let joinForm = $("#joinForm");
-
+							let joinForm = $("#joinForm"); // form 태그 참조: <form role="form" id="joinForm" method="post" action="/member/join">
 							// 회원가입 버튼 클릭 시 동작
 							$("#btnJoin").click(function () {
 
 								// 회원가입 유효성 검사(JS 이용)
-
 								if (!useIDCheck) {
 									alert("아이디 중복 체크바랍니다.");
 									return;
@@ -258,7 +254,7 @@
 								}
 
 								// 폼 전송 작업(스프링 작업 이후)
-								joinForm.submit();
+								joinForm.submit(); // let joinForm = $("#joinForm");
 							})
 
 						});

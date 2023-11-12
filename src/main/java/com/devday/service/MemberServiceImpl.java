@@ -33,37 +33,47 @@ public class MemberServiceImpl implements MemberService {
 
 		return memberMapper.login(mem_id);
 	}
+	
+	// 접속일자 업데이트 관련 메서드
+	@Override
+	public void loginTimeUpdate(String mem_id) {
 
+		memberMapper.loginTimeUpdate(mem_id);
+	}
+	
+	// 아이디 찾기 관련 메서드
+	@Override
+	public String findIdByNE(String mem_name, String mem_email) {
+	
+		return memberMapper.findIdByNE(mem_name, mem_email);
+		
+	}
+
+	// 비밀번호 찾기 관련 메서드
+	@Override
+	public int findPwByINE(String mem_id, String mem_name, String mem_email) {
+		
+		return memberMapper.findPwByINE(mem_id, mem_name, mem_email);
+	}
+	
+	// 비밀번호 업데이트 관련 메서드
+	@Override
+	public void updatePw(String mem_id, String mem_pw) {
+	
+		memberMapper.updatePw(mem_id, mem_pw);
+	}
+	
+	// 회원수정 관련 메서드
 	@Override
 	public void modify(MemberVO vo) {
 		
 		memberMapper.modify(vo);
 	}
 
+	// 회원탈퇴 관련 메서드
 	@Override
 	public void delete(String mem_id) {
 		
 		memberMapper.delete(mem_id);
 	}
-	
-	@Override
-	public void loginTimeUpdate(String mem_id) {
-
-		memberMapper.loginTimeUpdate(mem_id);
-	}
-
-	@Override
-	public String findIdByEmail(String mem_email) {
-	
-		return memberMapper.findIdByEmail(mem_email);
-		
-	}
-
-	@Override
-	public String findPwByIdAndEmail(String mem_id, String mem_email) {
-		
-		return memberMapper.findPwByIdAndEmail(mem_id, mem_email);
-	}
-
-
 }

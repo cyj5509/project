@@ -28,6 +28,22 @@
     padding: 0;
 }
 
+/* 메뉴바 컨테이너 */
+.nav-links {
+    display: flex;
+    justify-content: flex-end; /* 요소들을 오른쪽으로 정렬 */
+    padding: 5px 15px; /* 상단과 하단 패딩 감소 */
+	background-color: rgba(240, 240, 240, 1);
+}
+
+.nav-item {
+    padding: 0.3rem 0.8rem;
+    color: black; /* 메뉴 아이템 텍스트 색상 설정 */
+    text-decoration: none; /* 밑줄 제거 */
+    margin-left: 5px; /* 아이템 사이 간격 */
+    font-size: 0.9em;
+}
+
 /* 상단 로고 및 정보 행에 대한 스타일 */
 .header-top-row {
     display: flex;
@@ -53,29 +69,18 @@
 /* 환영합니다 및 최근 접속시간 컨테이너 */
 .header-info-section {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* 요소들을 오른쪽으로 정렬 */
+    flex-direction: row;
+    align-items: center; /* 요소들을 오른쪽으로 정렬 */
     font-size: 0.9em; /* 또는 다른 적절한 크기로 조정 */
     margin: 4px 0; /* 위아래 마진 감소 */
 }
 
-.header-info-section b {
-    display: block;
-    margin: 0.5rem 0;
+.header-info-section a, .header-info-section b {
+    display: inline-block; /* 요소들을 가로 방향으로 나란히 배치 */
+    margin-right: 10px; /* 요소 사이의 간격 조정 */
 }
 
-/* 메뉴바 컨테이너 */
-.nav-links {
-    display: flex;
-    justify-content: flex-end; /* 요소들을 오른쪽으로 정렬 */
-    padding: 5px 15px; /* 상단과 하단 패딩 감소 */
-	background-color: rgba(240, 240, 240, 1);
-}
-
-.nav-item {
-    padding: 0.3rem 0.8rem;
-    color: black; /* 메뉴 아이템 텍스트 색상 설정 */
+.admin-section {
+	color: white; /* 메뉴 아이템 텍스트 색상 설정 */
     text-decoration: none; /* 밑줄 제거 */
-    margin-left: 5px; /* 아이템 사이 간격 */
-    font-size: 0.9em;
 }

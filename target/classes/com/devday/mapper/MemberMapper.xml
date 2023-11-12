@@ -30,7 +30,8 @@
 		)
 </insert>
 
-<!-- 아이디 중복검사: String mem_id를 이용해서 parameterType을  String으로 설정함 -->
+<!-- 아이디 중복검사: String mem_id -> parameterType="String" -->
+<!-- resultType="int" 또는 "Integer"일 경우, SELECT COUNT(*) FROM member_tbl WHERE mem_id = #{mem_id} -->
 <select id="idCheck" parameterType="String" resultType="String">
 	SELECT
 		mem_id
@@ -40,7 +41,7 @@
 		mem_id = #{mem_id}
 </select>
 
-<!-- 로그인: 관리자/비관리자를 구분 짓기 위해  select문에 adm_check 컬럼 추가 -->
+<!-- 로그인: 관리자/사용자를 구분 짓기 위해 select문에 adm_check(회원 상태) 컬럼 추가 -->
 <select id="login" parameterType="String" resultType="com.devday.domain.MemberVO">
 	select 
 		mem_id, 
@@ -62,6 +63,8 @@
 		mem_id = #{mem_id}
 </select>
 
+<!-- 접속일자 업데이트: 로그인 관련 메서드 내에서 사용 -->
+<!-- sysdate로 갱신 필요(mem_lastlogin DATE DEFAULT sysdate NOT NULL) -->
 <update id="loginTimeUpdate" parameterType="String">
 	UPDATE
 		member_tbl
@@ -71,12 +74,43 @@
 		mem_id = #{mem_id}
 </update>
 
+<!-- 아이디 찾기: 이름과 이메일을 이용한 찾기 -->
+<select id="findIdByNE" parameterType="map" resultType="String">
+	SELECT
+		mem_id
+	FROM
+		member_tbl
+	WHERE
+		mem_name = #{mem_name} AND mem_email = #{mem_email}
+</select>
+
+<!-- 비밀번호 찾기: 아이디 및 이름과 이메일을 이용한 찾기 -->
+<select id="findPwByINE" parameterType="map" resultType="int">
+	 SELECT
+	 	COUNT(*)
+	 FROM
+	 	member_tbl
+	 WHERE
+	 	mem_id = #{mem_id} AND mem_name = #{mem_name} AND mem_email = #{mem_email}
+</select>
+
+<!-- 비밀번호 업데이트 -->
+<update id="updatePw" parameterType="String">
+	UPDATE 
+		member_tbl
+	SET
+		mem_pw = #{mem_pw}
+	WHERE
+		mem_id = #{mem_id}
+</update>
+
+<!-- 회원수정: sysdate로 갱신 필요(mem_updatedate DATE DEFAULT sysdate NOT NULL) -->
 <update id="modify" parameterType="com.devday.domain.MemberVO">
 	UPDATE
 		member_tbl
 	SET
-		mem_email = #{mem_email}, 
 		mem_phone = #{mem_phone},
+		mem_email = #{mem_email}, 
 		mem_postcode = #{mem_postcode}, 
 		mem_addr = #{mem_addr}, 
 		mem_deaddr = #{mem_deaddr},
@@ -85,31 +119,12 @@
 		mem_id = #{mem_id}
 </update>
 
+<!-- 회원탈퇴 -->
 <delete id="delete" parameterType="String">
 	DELETE FROM
 		member_tbl
 	WHERE 
 		mem_id = #{mem_id}
 </delete>
-
-
-
-<select id="findIdByEmail" parameterType="String" resultType="String">
-	SELECT
-		mem_id
-	FROM
-		member_tbl
-	WHERE
-		mem_email = #{mem_email}
-</select>
-
-<select id="findPwByIdAndEmail" parameterType="map" resultType="String">
-	 SELECT
-	 	mem_pw
-	 FROM
-	 	member_tbl
-	 WHERE
-	 	mem_id = #{mem_id} AND mem_email = #{mem_email}
-</select>
 
 </mapper>  

@@ -12,13 +12,13 @@
 		<title>데브데이</title>
 
 		<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
-	
-	<!-- CSS 파일 링크 -->
-				<link rel="stylesheet" href="/css/header.css">
+
+			<!-- CSS 파일 링크 -->
+			<link rel="stylesheet" href="/css/header.css">
 
 			<script>
-				let msg = '${msg}'; // ${msg}: MemberController의 rttr.addFlashAttribute("msg", msg);에서 앞의 "msg"
-				if (msg != "") {
+				let msg = '${msg}';
+				if (msg != '') {
 					alert(msg);
 				}
 			</script>
@@ -38,22 +38,21 @@
 							<form role="form" id="confirmInfoForm" method="post" action="/member/delete">
 								<div class="box-body">
 									<div class="form-group row">
-										<label for="mbsp_id" class="col-2">아이디</label>
+										<label for="mem_id" class="col-2">아이디</label>
 										<div class="col-10">
-											<input type="text" class="form-control" name="mbsp_id" id="mbsp_id" placeholder="아이디 입력...">
+											<input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="아이디 입력...">
 										</div>
 									</div>
 									<div class="form-group row">
-										<label for="mbsp_password" class="col-2">비밀번호</label>
+										<label for="mem_pw" class="col-2">비밀번호</label>
 										<div class="col-10">
-											<input type="password" class="form-control" name="mbsp_password" id="mbsp_password"
-												placeholder="비밀번호 입력...">
+											<input type="password" class="form-control" name="mem_pw" id="mem_pw" placeholder="비밀번호 입력...">
 										</div>
 									</div>
 								</div>
 
 								<div class="box-footer">
-									<button type="submit" class="btn btn-primary" id="btnDelete">탈퇴하기</button>
+									<button type="button" class="btn btn-primary" id="btnDelete">탈퇴하기</button>
 								</div>
 							</form>
 						</div>
@@ -65,26 +64,19 @@
 			<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 				<script>
+
 					// jquery.slim.min.js 파일에 jQuery 명령어가 정의되어 있음
 					// $(): JQuery() 함수 사용 별칭
 					// ready(): 브라우저가 html 태그를 모두 읽고난 후에 동작하는 이벤트 메서드
 					// JS 이벤트 등록: https://www.w3schools.com/js/js_htmldom_eventlistener.asp 
 					$(document).ready(function () {
+
+						let confirmInfoForm = $("#confirmInfoForm");
+
 						$("#btnDelete").click(function () {
+							// e.preventDefault(); // button type="submit"인 경우 필요 
 							if (confirm("정말 탈퇴하시겠습니까?")) {
-								$.ajax({
-									url: "/member/delete",
-									type: "post",
-									data: { mem_id: $("#mem_id").val() }, // 로그인한 사용자의 ID를 전송
-									success: function (response) {
-										alert(response);
-										location.href = "/";
-									}
-									// ,
-									// error: function (xhr, status, error) {
-									// 	alert("탈퇴 처리 중 오류가 발생했습니다.");
-									// }
-								});
+								confirmInfoForm.submit();
 							}
 						});
 					});

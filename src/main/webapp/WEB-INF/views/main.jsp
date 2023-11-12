@@ -20,8 +20,10 @@
 
 				<script>
 					let msg = '${msg}';
-					if (msg == 'success') {
-						alert("회원정보가 수정되었습니다.");
+					if (msg == 'modify') {
+						alert("회원정보가 정상적으로 수정되었습니다."); 
+					} else if(msg == "delete") {
+						alert("회원탈퇴가 정상적으로 처리되었습니다.");
 					}
 				</script>
 		</head>
