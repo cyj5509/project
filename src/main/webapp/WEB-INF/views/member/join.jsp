@@ -18,7 +18,7 @@
 			<link rel="stylesheet" href="/css/member/join.css">
 
 			<script>
-				// 회원가입 환영 인사(@PostMapping("/join") 참고)
+				// 회원가입 후 환영 인사(@PostMapping("/join") 참고)
 				let msg = '${msg}';
 				if (msg != "") {
 					alert(msg);
@@ -49,9 +49,9 @@
 											<div class="col-2">
 												<button type="button" class="btn btn-outline-info" id="idCheck">ID 중복검사</button>
 											</div>
-											<div>	
-												<span class="mem_id_yes col-4">사용 가능한 아이디입니다.</span>
-												<span class="mem_id_no col-4">아이디가 이미 존재합니다.</span>
+											<div class="col-4">	
+												<span class="mem_id_yes">사용 가능한 아이디입니다.</span>
+												<span class="mem_id_no">아이디가 이미 존재합니다.</span>
 											</div>
 										</div>
 
@@ -167,7 +167,7 @@
 									url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
 									type: 'get', // get or post
 									dataType: 'text', // <String>
-									data: { mem_id: $("#mem_id").val() }, // data: { 파라미터명: 데이터 값 }
+									data: { mem_id: $("#mem_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
 									success: function (result) { // success: function (매개변수명) { 
 										if (result == "yes") {
 											$('.mem_id_yes').css("display", "inline-block");

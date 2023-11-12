@@ -4,12 +4,11 @@ import com.devday.domain.MemberVO;
 
 public interface MemberService {
 
-	String idCheck(String mem_id);
+	void join(MemberVO vo); // 회원가입 관련 메서드
+
+	String idCheck(String mem_id); // 아이디 중복검사 관련 메서드
 	
-	// 회원가입
-	void join(MemberVO vo);	
-	
-	MemberVO login(String mem_id);
+	MemberVO login(String mem_id); // 로그인 관련 메서드
 	
 	void modify(MemberVO vo);
 	

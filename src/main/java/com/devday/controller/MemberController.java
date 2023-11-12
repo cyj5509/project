@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.MemberVO;
@@ -20,213 +21,200 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
 @Controller
-@RequestMapping("/member/*")
 @RequiredArgsConstructor
+@RequestMapping("/member/*")
 @Log4j
 public class MemberController {
 
+	// interface MemberService -> class MemberServiceImpl implements MemberService
 	private final MemberService memberService;
-	private final PasswordEncoder passwordEncoder; 
-
-	// 회원가입 페이지 이동
+	// interface PasswordEncoder -> class BCryptPasswordEncoder implements PasswordEncoder
+	private final PasswordEncoder passwordEncoder;
+	
+	// 회원가입 페이지 이동(회원가입 폼)
 	@GetMapping("/join")
 	public void join() {
 
 		log.info("회원가입 페이지 진입"); 
 	}
 
-	// 회원가입
+	// 회원가입 기능 구현
 	@PostMapping("/join")
 	public String join(MemberVO vo, RedirectAttributes rttr) throws Exception { 
 		
-		log.info("회원정보: " + vo);
-		
+		log.info("회원 정보: " + vo); // MemberVO의 @ToString 메서드 호출
 		log.info("암호화 전 비밀번호: " + vo.getMem_pw());
-		vo.setMem_pw(passwordEncoder.encode(vo.getMem_pw()));
+		
+		// 비밀번호 암호화 처리
+		vo.setMem_pw(passwordEncoder.encode(vo.getMem_pw())); // passwordEncoder.encode(rawPassword)
 		log.info("암호화 후 비밀번호: " + vo.getMem_pw());
 
-		// 회원가입 서비스 실행
-		memberService.join(vo);
+		memberService.join(vo); // 회원가입 관련  메서드 호출
 		
-		String msg = "환영합니다. " + vo.getMem_id() + "님, 회원가입이 완료되었습니다.";
+		// 회원가입 후 환영인사
+		String msg = "환영합니다! " + vo.getMem_id() + " 님, 회원가입이 완료되었습니다.";
 		rttr.addFlashAttribute("msg", msg);
 		
-		return "redirect:/member/login";
+		return "redirect:/member/login"; // 로그인 페이지로 이동
 	}
 
+	// 아이디 중복검사 기능 구현
 	@GetMapping("/idCheck")
-	public ResponseEntity<String> idCheck(String mem_id) throws Exception {
+	// class HttpEntity<T> -> class ResponseEntity<T> extends HttpEntity<T>
+	// @RequestParam("mem_id") String mem_id: join.jsp의 name="mem_id" & data: { mem_id: }
+	public ResponseEntity<String> idCheck(@RequestParam("mem_id") String mem_id) throws Exception {
 
-		log.info("아이디: " + mem_id);
+		log.info("ID 중복검사: " + mem_id);
 		
-		ResponseEntity<String> entity = null;
 		
+		// memberService.idCheck(mem_id): 아이디 중복검사 관련 메서드 호출
+		// idCheck(mem_id) != null ? "no" : "yes" -> 아이디가 이미 존재하면 no, 존재하지 않으면 yes 
+		String idUse = memberService.idCheck(mem_id) != null ? "no" : "yes";
+		/*
+		// 조건문을 사용할 경우(기존 방식)
+	
 		String idUse = "";
 		if (memberService.idCheck(mem_id) != null) {
-			idUse = "no";
-		} else {
+			idUse = "no"; 
+		} else { 
 			idUse = "yes";
 		}
+		*/
+		log.info("ID 사용가능: " + idUse);
+
+		// ResponseEntity<String> entity = new ResponseEntity<>(idUse, HttpStatus.OK);
+
+		ResponseEntity<String> entity = null; 
+		// new ResponseEntity<>(body, [headers], status): 해당 클래스의 인스턴스 생성 및 생성자 호출(초기화)
+		entity = new ResponseEntity<>(idUse, HttpStatus.OK); // HTTP 상태 코드(200)
 		
-		entity = new ResponseEntity<String>(idUse, HttpStatus.OK);
-		return entity;
+		return entity; // AJAX에서 idUse는 result로 사용(서버 -> 클라이언트)
 	}
 
-
-
-	// 로그인 페이지 이동
+	// 로그인 페이지 이동(로그인 폼)
 	@GetMapping("/login")
 	public void login() {
 
 		log.info("로그인 페이지 진입");
 	}
 
+	// 로그인 기능 구현
 	@PostMapping("/login")
 	public String login(LoginDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
 
-		log.info("로그인: " + dto); // 로그인: LoginDTO(mem_id=, mem_pw=)
+		log.info("로그인 정보: " + dto); // LoginDTO의 @ToString 메서드 호출
 
+		// memberService.login(dto.getMem_id()): 로그인 관련 메서드 호출
+		// DB에서 LoginDTO에 제공된 아이디로 사용자 정보 조회(암호화된 비밀번호 포함)
 		MemberVO db_vo = memberService.login(dto.getMem_id());
 
 		String url = "";
 		String msg = "";
-
+		
 		if (db_vo != null) {
-			// 아이디가 일치하는 경우 실행
-			// 사용자가 입력한 비밀번호(평문 텍스트)와 DB에서 가져온 암호화된 비밀번호 일치 여부 검사
 			// passwordEncoder.matches(rawPassword, encodedPassword)
+			// dto.getMem_pw()는 로그인 폼에 입력한 평문 비밀번호, db_vo.getMem_pw()는 DB에 저장된 암호화된 비밀번호
 			if (passwordEncoder.matches(dto.getMem_pw(), db_vo.getMem_pw())) {
-				 // 로그인 성공 시, 일반 사용자와 관리자의 로그인 상태를 모두 세션에 저장
-			    session.setAttribute("loginStatus", db_vo);
-
-			    // db_vo.getAdm_check() == 1: 관리자를 의미함
+				// 사용자와 관리자의 로그인 상태, 즉 db_vo를 "loginStatus"라는 이름으로 저장
+			    session.setAttribute("loginStatus", db_vo); // session.setAttribute(name, value)
 			    if (db_vo.getAdm_check() == 1) {
-			        session.setAttribute("isAdmin", true); // 세션에 관리자 상태 설정
-			        log.info("관리자 상태");
+			        session.setAttribute("isAdmin", true); // 세션에 관리자 상태 설정(adm_check = 1)
+			        log.info("관리자로 접속했습니다.");
 			    } else {
-			        session.setAttribute("isAdmin", false); // 세션에 비관리자 상태 설정
-			        log.info("비관리자 상태");
+			        session.setAttribute("isAdmin", false); // 세션에 사용자 상태 설정(adm_check = 0)
+			        log.info("사용자로 접속했습니다.");
 			    }
-
-			    memberService.loginTimeUpdate(dto.getMem_id());
-			    url = "/";
+			    memberService.loginTimeUpdate(dto.getMem_id()); // 접속일자 업데이트 관련 메서드 호출
+			    url = "/"; // 메인 페이지 이동
 			} else {
-				url = "/member/login"; // 로그인 폼 주소
-				msg = "비밀번호가 일치하지 않습니다.";
-				rttr.addFlashAttribute("msg", msg); // 로그인 폼인 login.jsp 파일에서 사용 목적
-			}
-		} else {
-			// 아이디가 일치하지 않는 경우
-			url = "/member/login"; // 로그인 폼 주소
-			msg = "아이디가 일치하지 않습니다.";
-			rttr.addFlashAttribute("msg", msg); // // 로그인 폼인 login.jsp 파일에서 사용 목적
-		}
-
-		return "redirect:" + url;
-	}
-
-	@GetMapping("/logout")
-	public String logout(HttpSession session) {
-		
-		log.info("로그아웃 요청");
-		session.invalidate();
-
-		return "redirect:/";
-	}
-
-	@GetMapping("/confirmPw")
-	public void confirmPw() {
-
-		log.info("회원수정 전 비밀번호 확인");
-	}
-
-	@PostMapping("/confirmPw")
-	public String confirmPw(LoginDTO dto, RedirectAttributes rttr) throws Exception {
-		
-		log.info("회원수정 전 인증 재확인: " + dto);
-
-		MemberVO db_vo = memberService.login(dto.getMem_id());
-
-		String url = "";
-		String msg = "";
-
-		if (db_vo != null) {
-			if (passwordEncoder.matches(dto.getMem_pw(), db_vo.getMem_pw())) {
-				url = "/member/myPage"; 
-			} else {
-				url = "/member/confirmPw";
+				url = "/member/login"; // 로그인 페이지 이동
 				msg = "비밀번호가 일치하지 않습니다.";
 				rttr.addFlashAttribute("msg", msg); 
 			}
 		} else {
-			url = "/member/confirmPw";
-			msg = "아이디가 일치하지 않습니다.";
-			rttr.addFlashAttribute("msg", msg); 
+			// 아이디가 존재하지 않거나 빈 칸으로 둔 경우
+			url = "/member/login"; // 로그인 페이지 이동
+			msg = "아이디를 다시 입력해주세요.";
+			rttr.addFlashAttribute("msg", msg);
 		}
 
-		return "redirect:" + url;
+		return "redirect:" + url; // 메인 페이지 또는 로그인 페이지(login.jsp) 이동
 	}
 
-	// 수정하기
-	@GetMapping("/modify")
-	public void modify(HttpSession session, Model model) throws Exception {
+	// 로그아웃 기능 구현(페이지 불필요)
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
 		
-		log.info("회원수정 페이지 요청");
+		log.info("로그아웃 요청");
+		session.invalidate(); // 사용자 세션 무효화
 
-		String mem_id = ((MemberVO) session.getAttribute("loginStatus")).getMem_id();
-		MemberVO db_vo = memberService.login(mem_id);
-
-		model.addAttribute("memberVO", db_vo);
+		return "redirect:/member/login"; // 로그아웃 시 다시 로그인 페이지 이동
 	}
 
-	@PostMapping("/modify")
-	public String modify(MemberVO vo, HttpSession session, RedirectAttributes rttr) throws Exception {
-
-		log.info("회원정보 수정: " + vo);
-
-		MemberVO db_vo = (MemberVO) session.getAttribute("loginStatus");
-		String mem_id = db_vo.getMem_id();
-		
-		vo.setMem_id(mem_id);
-		memberService.modify(vo);
-		
-		db_vo.setMem_email(vo.getMem_email());
-		session.setAttribute("loginStatus", db_vo);
-
-		rttr.addFlashAttribute("msg", "success");
-
-		return "redirect:/";
-	}
-
-	// 마이페이지
 	@GetMapping("/myPage")
-	public void myPage(HttpSession session, Model model) throws Exception {
+	public String myPage(HttpSession session, Model model) {
 		
-		log.info("마이페이지로의 이동 요청");
+		log.info("마이 페이지 진입");
 		
-//		// 로그인 상태 확인
-//	    if (session.getAttribute("loginStatus") != null) {
-//	        // 로그인 상태라면 마이페이지로 리다이렉트
-//	        return "redirect:/member/myPage";
-//	    } else {
-//	        // 로그인 상태가 아니라면 로그인 페이지로 리다이렉트
-//	        return "redirect:/member/login";
-//	    }
+		// 로그인 상태 확인: session.getAttribute(name)
+	    if (session.getAttribute("loginStatus") == null) {
+	        // 사용자가 로그인 상태가 아니라면 로그인 페이지로 이동(login.jsp)
+	        return "redirect:/member/login";
+	    }
+	   
+	    //???
+	    String mem_id = ((MemberVO) session.getAttribute("loginStatus")).getMem_id();
+		MemberVO db_vo = memberService.login(mem_id);
+		model.addAttribute("memberVO", db_vo);
+		
+	    // 로그인 상태 -> 마이 페이지로 이동(myPager.jsp)
+	    return "member/myPage";
+	}
+	
+	// 회원수정 페이지 이동(회원수정 폼)
+		@GetMapping("/modify")
+		public void modify(HttpSession session, Model model) throws Exception {
+			
+			log.info("회원수정 페이지 진입");
+
+			String mem_id = ((MemberVO) session.getAttribute("loginStatus")).getMem_id();
+			MemberVO db_vo = memberService.login(mem_id);
+			model.addAttribute("memberVO", db_vo);
+		}
+
+		@PostMapping("/modify")
+		public String modify(MemberVO vo, HttpSession session, RedirectAttributes rttr) throws Exception {
+
+			log.info("수정할 회원정보: " + vo);
+
+			MemberVO db_vo = (MemberVO) session.getAttribute("loginStatus");
+			String mem_id = db_vo.getMem_id();
+			
+			vo.setMem_id(mem_id);
+			memberService.modify(vo);
+			
+			db_vo.setMem_email(vo.getMem_email());
+			session.setAttribute("loginStatus", db_vo);
+
+			rttr.addFlashAttribute("msg", "success");
+
+			return "redirect:/";
+		}
+		
+	// 회원탈퇴 전 확인 페이지 이동
+	@GetMapping("/confirmInfo")
+	public void confirmInfo() {
+
+		log.info("회원탈퇴 전 정보 확인");
 	}
 
-	// 회원탈퇴 폼
-	@GetMapping("/delConfirmPw")
-	public void delConfirmPw() {
-
-		log.info("회원탈퇴 전 비밀번호 확인");
-	}
-
-	// 회원탈퇴
+	// 회원탈퇴 기능 구현
 	@PostMapping("/delete")
 	public String delete(LoginDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
 
 		log.info("회원탈퇴 요청");
 		
+		// 로그인한 사용자의 ID로 DB에서 비밀번호 조회	
 		MemberVO db_vo = memberService.login(dto.getMem_id());
 
 		String url = "";
@@ -234,17 +222,19 @@ public class MemberController {
 
 		if (db_vo != null) {
 			if (passwordEncoder.matches(dto.getMem_pw(), db_vo.getMem_pw())) {
+				memberService.delete(dto.getMem_id()); // 회원탈퇴 관련 메서드 호출
+				session.invalidate(); // 세션 무효화
 				url = "/"; 
-				session.invalidate();
-				memberService.delete(dto.getMem_id());
+				msg = "회원탈퇴가 정상적으로 처리되었습니다.";
+				rttr.addFlashAttribute("msg", msg);
 			} else {
-				url = "/member/delConfirmPw"; 
+				url = "/member/confirmInfo"; 
 				msg = "비밀번호가 일치하지 않습니다.";
 				rttr.addFlashAttribute("msg", msg); 
 			}
 		} else {
-			url = "/member/delConfirmPw";
-			msg = "아이디가 일치하지 않습니다.";
+			url = "/member/confirmInfo";
+			msg = "아이디를 다시 입력해주세요.";
 			rttr.addFlashAttribute("msg", msg); 
 		}
 

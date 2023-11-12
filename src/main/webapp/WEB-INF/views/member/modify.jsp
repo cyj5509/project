@@ -106,7 +106,7 @@
 										
 									</div>
 									<div class="box-footer">
-										<button type="button" class="btn btn-primary" id="btnModify">회원수정</button>
+										<button type="button" class="btn btn-primary" id="btnModify">수정하기</button>
 									</div>
 								</form>
 							</div>

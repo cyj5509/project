@@ -5,15 +5,6 @@
 
 <mapper namespace="com.devday.mapper.MemberMapper">
 
-<select id="idCheck" parameterType="String" resultType="String">
-	SELECT
-		mem_id
-	FROM
-		member_tbl
-	WHERE
-		mem_id = #{mem_id}
-</select>
-
 <!-- 회원가입: 나머지 컬럼들은 Default로 설정한 값들이 있어 따로 기입하지 않아도 됨 -->
 <insert id="join" parameterType="com.devday.domain.MemberVO">
 	INSERT INTO 
@@ -39,6 +30,16 @@
 		)
 </insert>
 
+<!-- 아이디 중복검사: String mem_id를 이용해서 parameterType을  String으로 설정함 -->
+<select id="idCheck" parameterType="String" resultType="String">
+	SELECT
+		mem_id
+	FROM
+		member_tbl
+	WHERE
+		mem_id = #{mem_id}
+</select>
+
 <!-- 로그인: 관리자/비관리자를 구분 짓기 위해  select문에 adm_check 컬럼 추가 -->
 <select id="login" parameterType="String" resultType="com.devday.domain.MemberVO">
 	select 
@@ -61,6 +62,15 @@
 		mem_id = #{mem_id}
 </select>
 
+<update id="loginTimeUpdate" parameterType="String">
+	UPDATE
+		member_tbl
+	SET
+		mem_lastlogin = sysdate
+	WHERE
+		mem_id = #{mem_id}
+</update>
+
 <update id="modify" parameterType="com.devday.domain.MemberVO">
 	UPDATE
 		member_tbl
@@ -82,14 +92,7 @@
 		mem_id = #{mem_id}
 </delete>
 
-<update id="loginTimeUpdate" parameterType="String">
-	UPDATE
-		member_tbl
-	SET
-		mem_lastlogin = sysdate
-	WHERE
-		mem_id = #{mem_id}
-</update>
+
 
 <select id="findIdByEmail" parameterType="String" resultType="String">
 	SELECT

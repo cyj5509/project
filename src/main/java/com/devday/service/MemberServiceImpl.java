@@ -13,20 +13,21 @@ public class MemberServiceImpl implements MemberService {
 
 	private final MemberMapper memberMapper;
 	
-	@Override
-	public String idCheck(String mem_id) {
-		
-		return memberMapper.idCheck(mem_id);
-	}
-	
-	// 회원가입
+	// 회원가입 관련 메서드
 	@Override
 	public void join(MemberVO vo) {
 		
 		memberMapper.join(vo);
 	}
 	
-
+	// 아이디 중복검사 관련 메서드
+	@Override
+	public String idCheck(String mem_id) {
+		
+		return memberMapper.idCheck(mem_id);
+	}
+	
+	// 로그인 관련 메서드
 	@Override
 	public MemberVO login(String mem_id) {
 

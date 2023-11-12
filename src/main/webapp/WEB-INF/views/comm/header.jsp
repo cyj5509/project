@@ -15,7 +15,6 @@
 	                    	<a href="/admin/intro" class="nav-item">[Admin]</a>
 	                    </c:if>
                         <a href="/member/logout" class="nav-item">로그아웃(${sessionScope.loginStatus.mem_id} 님)</a>
-                        <a href="/member/confirmPw" class="nav-item">회원수정</a>
                     </c:if>
                         <a href="/member/myPage" class="nav-item">마이페이지</a>
                         <a href="#" class="nav-item">주문조회</a>
