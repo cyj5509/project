@@ -15,7 +15,7 @@ public class EmailDTO {
 	private String senderMail; // 발신자 메일주소
 	private String receiverMail; // 수신자 메일주소 즉, 회원메일 주소로 클라이언트 측에서 제공(join.jsp)
 	private String subject; // 메일 제목
-	private String message; // 메일 내용(본문)
+	private String content; // 메일 내용(본문)
 
 	// @AllArgsConstructor
 	public EmailDTO() {
@@ -23,6 +23,6 @@ public class EmailDTO {
 		this.senderName = "DevDay";
 		this.senderMail = "www.devday.com";
 		this.subject = "DevDay 회원가입을 위한 메일 인증코드입니다.";
-		this.message = "하단의 인증코드를 알맞게 인증코드 입력란에 입력바랍니다.";
+		this.content = "하단의 인증코드를 알맞게 인증코드 입력란에 입력바랍니다.";
 	}
 }

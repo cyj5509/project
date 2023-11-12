@@ -280,12 +280,16 @@ public class MemberController {
 	// @GetMapping("/idCheck")와 유사하지만 일부 생략 등 다소 다르게 작성함
 	@PostMapping("/confirmId")
 	// @RequestParam("mem_id") String mem_id: confirmId.jsp의 name="mem_id" & data: { mem_id: }
-	public ResponseEntity<String> confirmId(@RequestParam("mem_id") String mem_id) throws Exception {
+	public ResponseEntity<String> confirmId(@RequestParam("mem_id") String mem_id, HttpSession session) throws Exception {
 		
 		log.info("비밀번호 찾기 전 아이디 확인: " + mem_id);
 			
 		String idUse = memberService.idCheck(mem_id) != null ? "yes" : "no";
 		log.info("아이디 존재 유무: " + idUse);
+		
+		if("yes".equals(idUse)) {
+			session.setAttribute("mem_id", mem_id); // 세션에 아이디 저장	
+		}
 		
 		ResponseEntity<String> entity = new ResponseEntity<>(idUse, HttpStatus.OK);
 		
@@ -297,6 +301,11 @@ public class MemberController {
 	@PostMapping("/findPw")
 	public String findPw(MemberVO vo, EmailDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
 
+		// 세션에서 아이디 가져오기
+		// Object javax.servlet.http.HttpSession.getAttribute(String name)
+		String mem_id = (String) session.getAttribute("mem_id");
+		vo.setMem_id(mem_id); // 세션에서 가져온 아이디를 'vo' 객체에 설정
+		
 		// 비밀번호 찾기 전 사용자 존재 유무 확인
 		int user_check = memberService.findPwByINE(vo.getMem_id(), vo.getMem_name(), vo.getMem_email());
 		
@@ -312,13 +321,18 @@ public class MemberController {
 			memberService.updatePw(vo.getMem_id(), encoPassword);
 			
 			// 발신자 이름, 발신자 메일, 수신자 메일, 메일 제목, 메일 내용 순으로 생성자 인자 전달
+			String subject = "임시 비밀번호 발급";
+			String content = "임시 비밀번호는 아래와 같습니다.";
+			
 			dto = new EmailDTO (
 				dto.getSenderName(), // EmailDTO
 				dto.getSenderMail(), // EmailDTO
 			    vo.getMem_email(), // MemberVO
-			    "임시 비밀번호 발급", // EmailDTO
-			    "임시 비밀번호는 아래와 같습니다." // EmailDTO
+			    subject, content // EmailDTO
 			);
+			
+			log.info("이메일 서비스 정보: " + dto);
+			
 			// emailService.sendMail(dto, message)
 			emailService.sendMail(dto, tempPassword);
 				url = "/member/login"; // 로그인 페이지 이동

@@ -12,10 +12,10 @@
 		<title>데브데이</title>
 
 		<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
-		
-		<!-- CSS 파일 링크 -->
-				<link rel="stylesheet" href="/css/header.css">
-				<link rel="stylesheet" href="/css/member/login.css">
+
+			<!-- CSS 파일 링크 -->
+			<link rel="stylesheet" href="/css/header.css">
+			<link rel="stylesheet" href="/css/member/login.css">
 
 	</head>
 
@@ -27,20 +27,68 @@
 				<div class="text-center">
 					<div class="box box-primary login-box">
 						<div class="box-header with-border">
-							<h3 class="box-title login-title">비밀번호를 찾고자 하는 아이디를 입력하세요</h3>
+							<h3 class="box-title login-title">비밀번호 찾기</h3>
 							<form role="form" id="confirmIdForm" method="post" action="/member/confirmId">
-								<div class="box-body">
-								<div class="form-group">
-										<div >
-											<input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="아이디를 입력해주세요">
+								<div class="box-body confirmIdSection">
+									<div class="form-group row">
+										<label for="mem_id" class="col-4">아이디</label>
+										<div class="col-8">
+											<input type="text" class="form-control" name="mem_id" id="mem_id"
+												placeholder="비밀번호를 찾고자 하는 아이디를 입력하세요">
 										</div>
 									</div>
-				
-								</div>
-								<div class="box-footer">
-									<button type="button" class="btn btn-primary login-btn" id="btnConfirmId">다음</button>
 								</div>
 							</form>
+							<!-- 아이디 확인 후 표시될 추가 섹션들 -->
+							<div id="additionalSections" style="display:none;">
+								<div id="nameEmailSection">
+									<input type="hidden" name="mem_id" value="${sessionScope.mem_id}">
+									<div class="form-group row">
+										<label for="mem_name" class="col-2">이름</label>
+										<div class="col-10">
+											<input type="text" class="form-control" name="mem_name" id="mem_name" placeholder="이름을 입력해주세요">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="mem_email" class="col-2">이메일</label>
+										<div class="col-7">
+											<input type="email" class="form-control" name="mem_email" id="mem_email"
+												placeholder="이메일을 입력해주세요">
+										</div>
+										<div class="col-3">
+											<button type="button" class="btn btn-outline-info" id="btnMailAuth">인증번호 발송</button>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="authCode" class="col-2">이메일 인증</label>
+										<div class="col-7">
+											<input type="text" class="form-control" name="authCode" id="authCode" placeholder="인증번호를 입력해주세요">
+										</div>
+										<div class="col-3">
+											<button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증번호 확인</button>
+										</div>
+									</div>
+								</div>
+
+								<div id="pwResetSection">
+									<div class="form-group row">
+										<label for="mem_pw1" class="col-2">비밀번호</label>
+										<div class="col-10">
+											<input type="password" class="form-control" name="mem_pw" id="mem_pw1" placeholder="비밀번호를 입력해주세요">
+										</div>
+										<label for="mem_pw2" class="col-2">비밀번호 확인</label>
+										<div class="col-10">
+											<input type="password" class="form-control" id="mem_pw2" placeholder="한 번 더 입력해주세요">
+										</div>
+									</div>
+									<div class="form-group>
+											<button type="button" class="btn btn-primary login-btn" id="btnResetPw">비밀번호 재설정</button>
+									</div>
+								</div>
+							</div>
+							<div class="box-footer">
+								<button type="button" class="btn btn-primary login-btn" id="btnConfirmId">다음</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -51,39 +99,132 @@
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 
-		<script>
-		$(document).ready(function () {
+						<script>
+							$(document).ready(function () {
 
-			let msg = '${msg}'; // ${msg}: MemberController의 rttr.addFlashAttribute("msg", msg);에서 앞의 "msg"
-			
-			let mem_id = $("#mem_id");
-			let confirmIdForm = $("#confirmIdForm");
 
-			$("#btnConfirmId").click(function () {
-				if (mem_id.val() == "") {
-					alert("아이디가 입력되지 않았습니다.");
-					mem_id.focus();
-					return;
-				} 
-				$.ajax({
-					url: '/member/confirmId',
-					type: 'post', 
-					dataType: 'text',
-					data: {mem_id: mem_id.val()}, 
-					success: function (response) { 
-						// 서버: 해당 아이디의 존재 여부만 확인 <-> 클라이언트: 다음 단계로의 페이지 이동을 처리
-						// submit()은 서버에서 데이터 처리가 필요할 때. window.location.href는 단순 페이지 이동
-						if (response == "yes") {
-							location.href = "/member/findPw"; // 아이디가 존재하면, 비밀번호 찾기 페이지로 이동
-							// confirmIdForm.submit();
-						} else if (response == "no"){
-							alert("존재하지 않는 아이디입니다.");
-						}
-					}
-				});
-			});
-		});
-		</script>
+								$("#btnConfirmId").click(function () {
+									let mem_id = $("#mem_id").val();
+									// let confirmIdForm = $("#confirmIdForm");
+									if (mem_id == "") {
+										alert("아이디가 입력되지 않았습니다.");
+										$("#mem_id").focus();
+										return;
+									}
+									$.ajax({
+										url: '/member/confirmId',
+										type: 'post',
+										dataType: 'text',
+										data: { mem_id: mem_id },
+										success: function (response) {
+											// 서버: 해당 아이디의 존재 여부만 확인 <-> 클라이언트: 다음 단계로의 페이지 이동을 처리
+											// submit()은 서버에서 데이터 처리가 필요할 때. window.location.href는 단순 페이지 이동
+											if (response == "yes") {
+												// location.href = "/member/findPw"; // 아이디가 존재하는 경우 바로 비밀번호 찾기 페이지로 이동
+												$("#confirmIdSection").hide();
+												$("#pwResetSection").hide();
+												$("#additionalSections").show();
+												// confirmIdForm.submit(); // 세션에 아이디를 저장하고 비밀번호 찾기 페이지로 이동
+											} else if (response == "no") {
+												alert("존재하지 않는 아이디입니다.");
+											}
+										}
+									});
+								});
+
+								// 메일 인증 요청
+								$("#btnMailAuth").click(function () {
+									let mem_email = $("#mem_email").val();
+									if (mem_email == "") {
+										alert("이메일이 입력되지 않았습니다.");
+										$("#mem_email").focus();
+										return;
+									}
+
+									$.ajax({
+										url: '/email/authCode', // @GetMapping("/authCode")
+										type: 'get',
+										dataType: 'text', // 스프링에서 보내는 데이터의 타입 ─ <String> -> "success" -> text
+										data: { receiverMail: mem_email }, // EmailDTO ─ private String receiverMail;
+										success: function (result) {
+											if (result == "success") {
+												alert("인증 메일이 발송되었습니다. 메일을 확인해 주세요.")
+											} else {
+												// 에러 처리
+												alert("메일 발송에 실패했습니다. 다시 시도해 주세요.");
+											}
+										}
+									});
+								});
+
+								let isConfirmAuth = false; // 메일 인증을 하지 않은 상태
+
+								// 인증 확인
+								// <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증 확인</button>
+								$("#btnConfirmAuth").click(function () {
+									let authCode = $("#authCode").val();
+									if (authCode == "") {
+										alert("인증번호를 입력하세요.");
+										$("#authCode").focus();
+										return;
+									}
+
+									// 인증확인 요청
+									$.ajax({
+										url: '/email/confirmAuthcode',
+										type: 'get',
+										dataType: 'text', // / 스프링에서 보내는 데이터의 타입 ─ <String>
+										data: { authCode: authCode },
+										success: function (result) {
+											if (result == "success") {
+												alert("인증에 성공하였습니다.");
+												isConfirmAuth = true;
+												$("#confirmIdSection").hide();
+												$("#additionalSections").hide();
+												$("#pwResetSection").show(); // 비밀번호 재설정 섹션
+
+											} else if (result == "fail") {
+												alert("인증에 실패하였습니다. 다시 확인해 주세요.");
+												$("#authCode").val("");
+												isConfirmAuth = false;
+											} else if (result == "request") { // 세션 종료 시(기본 30분)
+												alert("메일 인증 요청을 다시 해주세요.");
+												$("#authCode").val("");
+												isConfirmAuth = false;
+											}
+										}
+									});
+								});
+
+								// 비밀번호 재설정 처리
+								$("#btnResetPw").click(function () {
+									let newPassword = $("#mem_pw1").val();
+									let confirmPw = $("#mem_pw2").val();
+									if (newPassword !== confirmPw) {
+										alert("비밀번호가 일치하지 않습니다.");
+										$("#mem_pw1").focus();
+										return; // 여기서 return을 사용해 함수를 종료해야 합니다.
+									}
+									// AJAX 요청으로 비밀번호 재설정...
+									$.ajax({
+										url: '/member/findPw', // 서버의 비밀번호 재설정 경로를 입력하세요.
+										type: 'POST',
+										data: {
+											// 요청과 함께 보낼 데이터
+											mem_id: $("#mem_id").val(),
+											new_pw: newPassword
+										},
+										success: function (response) {
+											// 비밀번호 재설정에 성공했을 때의 처리
+											alert("비밀번호가 재설정되었습니다.");
+											location.href = "/member/login";
+										}
+									}); // 여기서 AJAX 요청의 중괄호가 끝납니다.
+								}); // btnResetPw click 이벤트 핸들러의 중괄호가 끝납니다.
+								
+							}); // document ready 함수의 중괄호가 끝납니다.
+
+						</script>
 	</body>
 
 	</html>
