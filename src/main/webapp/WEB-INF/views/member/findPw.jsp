@@ -68,7 +68,7 @@
 								</div>
 							</form>
 							<div class="login-footer">
-								<a href="/member/findId">아이디 찾기</a> | <a href="/member/confirmId">비밀번호 찾기</a> | <a
+								<a href="/member/findId">아이디 찾기</a> | <a href="/member/confirmInfo">비밀번호 찾기</a> | <a
 									href="/member/join">회원가입</a>
 							</div>
 						</div>

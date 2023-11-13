@@ -216,8 +216,8 @@ public class MemberController {
 	}
 		
 	// 회원탈퇴 전 정보 확인 페이지 이동
-	@GetMapping("/confirmInfo")
-	public void confirmInfo() {
+	@GetMapping("/delConfirmInfo")
+	public void delConfirmInfo() {
 
 		log.info("회원탈퇴 전 정보 확인");
 	}
@@ -244,22 +244,22 @@ public class MemberController {
 				session.invalidate(); // 세션 무효화
 				rttr.addFlashAttribute("msg", "delete");
 			} else {
-				url = "/member/confirmInfo"; // 회원인증 페이지 이동
+				url = "/member/delConfirmInfo"; // 회원인증 페이지 이동
 				msg = "비밀번호가 일치하지 않습니다.";
 				rttr.addFlashAttribute("msg", msg); 
 			}
 		} else {
 			// 아이디가 존재하지 않거나 빈 칸으로 둔 경우
-			url = "/member/confirmInfo"; // 회원인증 페이지 이동
+			url = "/member/delConfirmInfo"; // 회원인증 페이지 이동
 			msg = "아이디를 다시 입력해주세요.";
 			rttr.addFlashAttribute("msg", msg); 
 		}
 
-		return "redirect:" + url; // 메인 페이지 또는 회원인증 페이지(confirmInfo.jsp) 이동
+		return "redirect:" + url; // 메인 페이지 또는 회원인증 페이지(delConfirmInfo.jsp) 이동
 	}
 	
 	// 아이디 및 비밀번호 찾기 페이지 이동
-	@GetMapping({"/findId", "/confirmId", "/findPw"})
+	@GetMapping({"/findId", "/confirmInfo", "/findPw"})
 	public void findIdAndPw() {
 		
 		log.info("아이디 찾기 페이지 진입");
@@ -278,9 +278,9 @@ public class MemberController {
 	
 	// 비밀번호 찾기 전 아이디 확인
 	// @GetMapping("/idCheck")와 유사하지만 일부 생략 등 다소 다르게 작성함
-	@PostMapping("/confirmId")
-	// @RequestParam("mem_id") String mem_id: confirmId.jsp의 name="mem_id" & data: { mem_id: }
-	public ResponseEntity<String> confirmId(@RequestParam("mem_id") String mem_id, HttpSession session) throws Exception {
+	@PostMapping("/confirmInfo")
+	// @RequestParam("mem_id") String mem_id: confirmInfo.jsp의 name="mem_id" & data: { mem_id: }
+	public ResponseEntity<String> confirmInfo(@RequestParam("mem_id") String mem_id, HttpSession session) throws Exception {
 		
 		log.info("비밀번호 찾기 전 아이디 확인: " + mem_id);
 			
@@ -314,8 +314,12 @@ public class MemberController {
 		
 		if (user_check > 0) {
 			// 임시 비밀번호 생성 및 암호화
-			String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10); 
-			String encoPassword = passwordEncoder.encode(tempPassword);
+			// String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
+			// UUID.randomUUID().toString().replaceAll("-", ""): 랜덤 UUID를 문자열로 반환하며, 중간에 들어가는 "-"를 제거
+			// uuid.substring(beginIndex, endIndex): 마지막 Index 제외(0부터 시작)
+			String uuid = UUID.randomUUID().toString().replaceAll("-", ""); 
+			String tempPassword = uuid.substring(0, 10); 
+			String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호
 			
 			// DB에 암호화된 비밀번호 업데이트
 			memberService.updatePw(vo.getMem_id(), encoPassword);
@@ -333,7 +337,7 @@ public class MemberController {
 			
 			log.info("이메일 서비스 정보: " + dto);
 			
-			// emailService.sendMail(dto, message)
+			// emailService.sendMail(dto, message): 
 			emailService.sendMail(dto, tempPassword);
 				url = "/member/login"; // 로그인 페이지 이동
 				msg = "임시 비밀번호가 이메일로 전송되었습니다.";
@@ -343,6 +347,6 @@ public class MemberController {
 		}
 		rttr.addFlashAttribute("msg", msg);
 		
-	    return "redirect:" + url; // 비밀번호 찾기(findPw.jsp) 또는 아이디 확인 페이지(confirmId.jsp) 이동
+	    return "redirect:" + url; // 비밀번호 찾기(findPw.jsp) 또는 아이디 확인 페이지(confirmInfo.jsp) 이동
 	}
 }
