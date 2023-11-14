@@ -315,25 +315,23 @@ public class MemberController {
 		if (user_check > 0) {
 			// 임시 비밀번호 생성 및 암호화
 			// String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
-			// UUID.randomUUID().toString().replaceAll("-", ""): 랜덤 UUID를 문자열로 반환하며, 중간에 들어가는 "-"를 제거
-			// uuid.substring(beginIndex, endIndex): 마지막 Index 제외(0부터 시작)
-			String uuid = UUID.randomUUID().toString().replaceAll("-", ""); 
-			String tempPassword = uuid.substring(0, 10); 
+			String uuid = UUID.randomUUID().toString().replaceAll("-", ""); // 랜덤 UUID를 문자열로 반환하며, 중간에 들어가는 "-"를 제거
+			String tempPassword = uuid.substring(0, 10); // uuid.substring(beginIndex, endIndex): 마지막 Index 제외(0부터 시작)
 			String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호
 			
 			// DB에 암호화된 비밀번호 업데이트
 			memberService.updatePw(vo.getMem_id(), encoPassword);
 			
 			// 발신자 이름, 발신자 메일, 수신자 메일, 메일 제목, 메일 내용 순으로 생성자 인자 전달
-			String subject = "임시 비밀번호 발급";
-			String content = "임시 비밀번호는 아래와 같습니다.";
+//			String subject = "임시 비밀번호 발급";
+//			String content = "임시 비밀번호는 아래와 같습니다.";
 			
-			dto = new EmailDTO (
-				dto.getSenderName(), // EmailDTO
-				dto.getSenderMail(), // EmailDTO
-			    vo.getMem_email(), // MemberVO
-			    subject, content // EmailDTO
-			);
+//			dto = new EmailDTO (
+//				dto.getSenderName(), // EmailDTO
+//				dto.getSenderMail(), // EmailDTO
+//			    vo.getMem_email(), // MemberVO
+//			    subject, content // EmailDTO
+//			);
 			
 			log.info("이메일 서비스 정보: " + dto);
 			

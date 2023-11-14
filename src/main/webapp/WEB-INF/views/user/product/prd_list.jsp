@@ -56,7 +56,9 @@
 												<p class="card-text">${productVO.prd_name}</p>
 												<div class="d-flex justify-content-between align-items-center">
 													<div class="btn-group">
-														<button type="button" name="btn_cart_add" class="btn btn-sm btn-outline-secondary">Cart</button>
+														<!-- data-변수명="" -> HTML5 속성으로 JS 처리를 위해 상품코드를 숨겨둠 -->
+														<button type="button" name="btn_cart_add" data-prd_num="${productVO.prd_num}"
+															class="btn btn-sm btn-outline-secondary">Cart</button>
 														<button type="button" name="btn_buy" class="btn btn-sm btn-outline-secondary">Buy</button>
 													</div>
 													<small class="text-muted">
@@ -113,34 +115,50 @@
 									</nav>
 								</div>
 							</div>
+							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div> <!-- container 닫는 태그 -->
 
-
-						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 							<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 								<!-- 카테고리 메뉴 자바스크립트 작업 소스-->
 								<script src="/js/category_menu.js"></script>
 
 								<script>
-									let actionForm = $("#actionForm");  // 액션폼 참조
+									$(document).ready(function () {
 
-									// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
-									$(".movepage").on("click", function (e) {
-										e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
+										let actionForm = $("#actionForm");  // 액션폼 참조
 
-										actionForm.attr("action", "/user/product/prd_list");
-										// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
-										actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+										// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
+										$(".movepage").on("click", function (e) {
+											e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
+											actionForm.attr("action", "/user/product/prd_list");
+											// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
+											actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+
+											actionForm.submit(); // 페이지 이동 시 actionForm이 동작
+										});
+
+										// 장바구니 추가(CartVO)
+										$("button[name='btn_cart_add']").on("click", function () {
+											// console.log("장바구니");
+											$.ajax({
+												url: '/cart/cart_add', // url: '장바구니 추가 주소', 
+												type: 'post',
+												// $(this).data("pro_num"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
+												data: { pro_num: $(this).data("pro_num"), cart_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+												dataType: 'text',
+												success: function (result) {
+													if (result == "success") {
+														alert("장바구니에 추가됨");
+														if (confirm("장바구니로 이동하시겠습니까?")) {
+															location.href = "/cart/cart_list"
+														}
+													}
+												}
+											});
+										});
 									});
-
-									// 장바구니 추가
-						            $("button[name='btn_cart_add']").on("click", function() {
-
-						            	console.log("장바구니");
-						            });
 								</script>
 			</body>
 
