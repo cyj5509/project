@@ -1,6 +1,5 @@
 package com.devday.dto;
 
-// import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -8,40 +7,48 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-// @AllArgsConstructor // 기본 생성자를 구현해야 함
+// 기존 @AllArgsConstructor는 정적 팩토리 메서드에서 완성된 객체를 반환하고 있기 때문에 불필요한 코드라서 생략
 public class EmailDTO {
-
-	private String senderName; // 발신자 이름
-	private String senderMail; // 발신자 메일주소
-	private String receiverMail; // 수신자 메일주소 즉, 회원메일 주소로 클라이언트 측에서 제공(join.jsp)
+	
+	private String senderName; // 발신할 이름(공통 필드)
+	private String senderMail; // 발신할 메일 주소(공통 필드)
+	private String receiverMail; // 수신할 메일 주소: 클라이언트 측에서 제공된 회원 메일주소
 	private String subject; // 메일 제목
-	private String content; // 메일 내용(본문)
+	private String content; // 메일 내용
+	
+	// 기본 생성자 생성: 공통 필드에 값을 할당하여 객체를 초기화 
+	public EmailDTO() {
+        this.senderName = "DevDay";
+        this.senderMail = "admin@devday.com";
+    }
+	
+	// 보조 생성자 생성: 중복 방지용으로 해당 클래스 내에서만 사용하기 위해 private 사용 
+    private EmailDTO(String receiverMail, String subject, String content) {
+   		// this(): 기본 생성자를 호출하여 senderName과 senderMail 초기화 
+        this(); // 미작성 시 정적 팩토리 메서드에서 미완성된 객체가 반환되는 결과 초래 
+        
+        this.receiverMail = receiverMail;
+        this.subject = subject;
+        this.content = content;
+    }
 
-	// 생성자 대신 정적 팩토리 메서드 이용
-	// [참고 1] https://pamyferret.tistory.com/31
-	// [참고 2] https://inpa.tistory.com/entry/GOF-%F0%9F%92%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%86%A0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90
-	
-	// 회원가입 관련 메서드
-	public static EmailDTO forJoinConfirm(String receiverMail, String authCode) {
-		String subject = "DevDay 회원가입 인증코드";
-		String content = "인증코드: " + authCode;
-		return new EmailDTO("DevDay", "www.devday.com", receiverMail, subject, content);
-	}
-	
-	// 비밀번호 찾기 관련 메서드
-	public static EmailDTO forPwReset(String receiverMail, String tempPassword) {
-		String subject = "DevDay 임시 비밀번호 안내";
-		String content = "임시 비밀번호는 " + tempPassword + "입니다.";
-		return new EmailDTO("DevDay", "www.devday.com", receiverMail, subject, content);
-	}
-	
-	// @AllArgsConstructor
-//	public EmailDTO() {
-//
-//		this.senderName = "DevDay";
-//		this.senderMail = "www.devday.com";
-//		this.subject = "DevDay 회원가입을 위한 메일 인증코드입니다.";
-//		this.content = "하단의 인증코드를 알맞게 인증코드 입력란에 입력바랍니다.";
-//	}
+    // 네이밍 컨벤션에 따른 메서드명의 'of~': 여러 매개변수를 통해 해당 클래스의 인스턴스 반환 시
+    
+	// 회원가입, 아이디 및 비밀번호 찾기 관련 메서드(정적 팩토리 메서드 1)
+    public static EmailDTO ofAuthCode(String receiverMail, String authCode) {
+        String subject = "DevDay 회원가입 인증번호";
+        String content = "DevDay 회원가입을 위한 인증번호는 " + authCode + "입니다.";
+        
+        // new EmailDTO(receiverMail, subject, content): 세 개의 매개변수를 받는 보조 생성자 호출
+        return new EmailDTO(receiverMail, subject, content); // 완성된 객체 반환
+    }
 
+	// 비밀번호 재설정 관련 메서드(정적 팩토리 메서드 2)
+    public static EmailDTO ofResetPw(String receiverMail, String tempPassword) {
+        String subject = "DevDay 임시 비밀번호 안내";
+        String content = "로그인을 위한 임시 비밀번호는 " + tempPassword + "입니다.";
+        
+        // new EmailDTO(receiverMail, subject, content): 세 개의 매개변수를 받는 보조 생성자 호출
+        return new EmailDTO(receiverMail, subject, content); // 완성된 객체 반환
+    }
 }

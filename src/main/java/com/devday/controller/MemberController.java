@@ -1,7 +1,5 @@
 package com.devday.controller;
 
-import java.util.UUID;
-
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -30,11 +28,13 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class MemberController {
 
-	// interface MemberService -> class MemberServiceImpl implements MemberService
-	private final MemberService memberService;
+	private final MemberService memberService; // interface MemberService -> class MemberServiceImpl implements MemberService
+	
+	// spring-security.xml의 <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
 	// interface PasswordEncoder -> class BCryptPasswordEncoder implements PasswordEncoder
 	private final PasswordEncoder passwordEncoder;
-	private final EmailService emailService;
+	
+	private final EmailService emailService; // interface EmailService -> class EmailServiceImpl implements EmailService
 	
 	// 회원가입 페이지 이동(회원가입 폼)
 	@GetMapping("/join")
@@ -299,12 +299,7 @@ public class MemberController {
 	
 	// 비밀번호 찾기 기능 구현
 	@PostMapping("/findPw")
-	public String findPw(MemberVO vo, EmailDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
-
-		// 세션에서 아이디 가져오기
-		// Object javax.servlet.http.HttpSession.getAttribute(String name)
-		String mem_id = (String) session.getAttribute("mem_id");
-		vo.setMem_id(mem_id); // 세션에서 가져온 아이디를 'vo' 객체에 설정
+	public String findPw(MemberVO vo, RedirectAttributes rttr) throws Exception {
 		
 		// 비밀번호 찾기 전 사용자 존재 유무 확인
 		int user_check = memberService.findPwByINE(vo.getMem_id(), vo.getMem_name(), vo.getMem_email());
@@ -313,33 +308,17 @@ public class MemberController {
 		String msg = "";
 		
 		if (user_check > 0) {
-			// 임시 비밀번호 생성 및 암호화
-			// String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
-			String uuid = UUID.randomUUID().toString().replaceAll("-", ""); // 랜덤 UUID를 문자열로 반환하며, 중간에 들어가는 "-"를 제거
-			String tempPassword = uuid.substring(0, 10); // uuid.substring(beginIndex, endIndex): 마지막 Index 제외(0부터 시작)
-			String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호
-			
-			// DB에 암호화된 비밀번호 업데이트
-			memberService.updatePw(vo.getMem_id(), encoPassword);
-			
-			// 발신자 이름, 발신자 메일, 수신자 메일, 메일 제목, 메일 내용 순으로 생성자 인자 전달
-//			String subject = "임시 비밀번호 발급";
-//			String content = "임시 비밀번호는 아래와 같습니다.";
-			
-//			dto = new EmailDTO (
-//				dto.getSenderName(), // EmailDTO
-//				dto.getSenderMail(), // EmailDTO
-//			    vo.getMem_email(), // MemberVO
-//			    subject, content // EmailDTO
-//			);
-			
-			log.info("이메일 서비스 정보: " + dto);
-			
-			// emailService.sendMail(dto, message): 
-			emailService.sendMail(dto, tempPassword);
-				url = "/member/login"; // 로그인 페이지 이동
-				msg = "임시 비밀번호가 이메일로 전송되었습니다.";
-		} else {
+	        // ResponseEntity<String> response = emailDTO.sendResetPw(vo.getMem_email());
+			 ResponseEntity<String> response = emailService.sendResetPw(memberVO, emailDto);
+			 if (response.getStatusCode() == HttpStatus.OK) {
+	            msg = "임시 비밀번호가 이메일로 전송되었습니다.";
+	            url = "/member/login"; // 로그인 페이지 이동
+			} else {
+			    msg = "이메일 발송에 실패했습니다.";
+			    url = "/member/findPw"; // 비밀번호 찾기 페이지 이동
+			}
+		} 
+		else {
 				url = "/member/findPw"; // 비밀번호 찾기 페이지 이동
 				msg = "입력하신 정보와 일치하는 사용자가 없습니다.";
 		}

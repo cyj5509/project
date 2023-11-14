@@ -199,7 +199,7 @@
 
 									// 인증확인 요청
 									$.ajax({
-										url: '/email/confirmAuthcode',
+										url: '/email/confirmAuthCode',
 										type: 'get',
 										dataType: 'text', // / 스프링에서 보내는 데이터의 타입 ─ <String>
 										data: { authCode: authCode },
