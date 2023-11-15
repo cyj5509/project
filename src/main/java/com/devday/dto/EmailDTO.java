@@ -32,19 +32,19 @@ public class EmailDTO {
         this.content = content;
     }
 
-    // 네이밍 컨벤션에 따른 메서드명의 'of~': 여러 매개변수를 통해 해당 클래스의 인스턴스 반환 시
+    // 정적 팩토리 메서드 네이밍 컨벤션에 따른 메서드명 'of~': 여러 매개변수를 통해 해당 클래스의 인스턴스 반환 시
     
 	// 회원가입, 아이디 및 비밀번호 찾기 관련 메서드(정적 팩토리 메서드 1)
     public static EmailDTO ofAuthCode(String receiverMail, String authCode) {
-        String subject = "DevDay 회원가입 인증번호";
-        String content = "DevDay 회원가입을 위한 인증번호는 " + authCode + "입니다.";
+        String subject = "DevDay 메일 인증번호 안내";
+        String content = "인증번호는 " + authCode + "입니다.";
         
         // new EmailDTO(receiverMail, subject, content): 세 개의 매개변수를 받는 보조 생성자 호출
         return new EmailDTO(receiverMail, subject, content); // 완성된 객체 반환
     }
 
-	// 비밀번호 재설정 관련 메서드(정적 팩토리 메서드 2)
-    public static EmailDTO ofResetPw(String receiverMail, String tempPassword) {
+	// 임시 비빌번호 발송 관련 메서드(정적 팩토리 메서드 2)
+    public static EmailDTO ofTempPw(String receiverMail, String tempPassword) {
         String subject = "DevDay 임시 비밀번호 안내";
         String content = "로그인을 위한 임시 비밀번호는 " + tempPassword + "입니다.";
         

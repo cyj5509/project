@@ -3,6 +3,7 @@ package com.devday.service;
 import org.springframework.stereotype.Service;
 
 import com.devday.domain.MemberVO;
+import com.devday.dto.FindInfoDTO;
 import com.devday.mapper.MemberMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -43,24 +44,24 @@ public class MemberServiceImpl implements MemberService {
 	
 	// 아이디 찾기 관련 메서드
 	@Override
-	public String findIdByNE(String mem_name, String mem_email) {
+	public String findId(FindInfoDTO findInfoDTO) {
 	
-		return memberMapper.findIdByNE(mem_name, mem_email);
+		return memberMapper.findId(findInfoDTO);
 		
 	}
 
 	// 비밀번호 찾기 관련 메서드
 	@Override
-	public int findPwByINE(String mem_id, String mem_name, String mem_email) {
+	public int findPw(FindInfoDTO findInfoDTO) {
 		
-		return memberMapper.findPwByINE(mem_id, mem_name, mem_email);
+		return memberMapper.findPw(findInfoDTO);
 	}
 	
-	// 비밀번호 업데이트 관련 메서드
+	// 비밀번호 재설정 관련 메서드
 	@Override
-	public void updatePw(String mem_id, String mem_pw) {
+	public void updatePw(FindInfoDTO findInfoDTO) {
 	
-		memberMapper.updatePw(mem_id, mem_pw);
+		memberMapper.updatePw(findInfoDTO);
 	}
 	
 	// 회원수정 관련 메서드

@@ -34,7 +34,7 @@
 					<div class="box box-primary login-box">
 						<div class="box-header with-border">
 							<h3 class="box-title login-title">아이디 찾기</h3>
-							<form role="form" id="findId" method="post" action="/member/findId">
+							<form role="form" id="findIdForm" method="post" action="/member/findId">
 								<div class="box-body">
 									<div class="form-group row">
 											<label for="mem_name" class="col-2">이름</label>

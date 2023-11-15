@@ -224,7 +224,7 @@
 									data: { authCode: $("#authCode").val() },
 									success: function (result) {
 										if (result == "success") {
-											alert("인증에 성공하였습니다.");
+											alert("정상적으로 인증되었습니다.");
 											isConfirmAuth = true;
 										} else if (result == "fail") {
 											alert("인증에 실패하였습니다. 다시 확인바랍니다..");

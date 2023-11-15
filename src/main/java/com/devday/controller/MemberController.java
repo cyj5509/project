@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.MemberVO;
-import com.devday.dto.EmailDTO;
+import com.devday.dto.FindInfoDTO;
 import com.devday.dto.LoginDTO;
 import com.devday.service.EmailService;
 import com.devday.service.MemberService;
@@ -259,22 +259,30 @@ public class MemberController {
 	}
 	
 	// 아이디 및 비밀번호 찾기 페이지 이동
-	@GetMapping({"/findId", "/confirmInfo", "/findPw"})
+	@GetMapping("/confirmInfo")
 	public void findIdAndPw() {
 		
-		log.info("아이디 찾기 페이지 진입");
-		
-		log.info("아이디 확인 페이지 진입(비밀번호 찾기 전)");
-		log.info("비밀번호 찾기 페이지 진입");
+		log.info("아이디 및 비밀번호 찾기 페이지 진입");
 	}
 	
 	// 아이디 찾기 기능 구현
 	@PostMapping("/findId")
-	public void findId(MemberVO vo, Model model) throws Exception {
+	public ResponseEntity<String> findId(@RequestParam("mem_name") String mem_name, @RequestParam("mem_email") String mem_email) {
+	    
+		ResponseEntity<String> entity = null;
+	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(mem_name, mem_email); // 아이디 찾기용 정적 팩토리 메서드 호출
 
-	    String mem_id = memberService.findIdByNE(vo.getMem_name(), vo.getMem_email());
-	    model.addAttribute("mem_id", mem_id);
+	    String mem_id = memberService.findId(findInfoDTO); // memberService.findId(findInfoDTO): 아이디 찾기 관련 메서드 호출
+
+	    if (mem_id != null) {
+	        entity = new ResponseEntity<>(mem_id, HttpStatus.OK);
+	    } else {
+	        entity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	    }
+	    
+	    return entity;
 	}
+
 	
 	// 비밀번호 찾기 전 아이디 확인
 	// @GetMapping("/idCheck")와 유사하지만 일부 생략 등 다소 다르게 작성함
@@ -296,27 +304,46 @@ public class MemberController {
 		return entity; // AJAX에서 idUse는 response로 사용(서버 -> 클라이언트)
 	}
 
+	// 비밀번호 재설정 기능 구현
+	@PostMapping("/resetPw")
+	public ResponseEntity<String> resetPw(@RequestParam("mem_id") String mem_id, @RequestParam("newPassword") String newPassword) {
+		
+		// 새 비밀번호 암호화
+		String encodedPassword = passwordEncoder.encode(newPassword);
+		
+		// DB에 암호화된 새 비밀번호 업데이트
+		memberService.updatePw(findInfoDTO);
+
+		return new ResponseEntity<>("Password successfully reset.", HttpStatus.OK);
+	}
+
+	
+	public ResponseEntity<String> updatePw(MemberVO memberVO, String receiverMail, RedirectAttributes rttr) throws Exception {
+	
+					 
+	}
+		
 	
 	// 비밀번호 찾기 기능 구현
 	@PostMapping("/findPw")
 	public String findPw(MemberVO vo, RedirectAttributes rttr) throws Exception {
 		
 		// 비밀번호 찾기 전 사용자 존재 유무 확인
-		int user_check = memberService.findPwByINE(vo.getMem_id(), vo.getMem_name(), vo.getMem_email());
+		int user_check = memberService.findPw(vo.getMem_id(), vo.getMem_name(), vo.getMem_email());
 		
 		String url = "";
 		String msg = "";
 		
 		if (user_check > 0) {
 	        // ResponseEntity<String> response = emailDTO.sendResetPw(vo.getMem_email());
-			 ResponseEntity<String> response = emailService.sendResetPw(memberVO, emailDto);
-			 if (response.getStatusCode() == HttpStatus.OK) {
-	            msg = "임시 비밀번호가 이메일로 전송되었습니다.";
-	            url = "/member/login"; // 로그인 페이지 이동
-			} else {
-			    msg = "이메일 발송에 실패했습니다.";
-			    url = "/member/findPw"; // 비밀번호 찾기 페이지 이동
-			}
+			 // ResponseEntity<String> response = emailService.sendResetPw(memberVO, emailDTO);
+//			 if (response.getStatusCode() == HttpStatus.OK) {
+//	            msg = "임시 비밀번호가 이메일로 전송되었습니다.";
+//	            url = "/member/login"; // 로그인 페이지 이동
+//			} else {
+//			    msg = "이메일 발송에 실패했습니다.";
+//			    url = "/member/findPw"; // 비밀번호 찾기 페이지 이동
+//			}
 		} 
 		else {
 				url = "/member/findPw"; // 비밀번호 찾기 페이지 이동
@@ -326,4 +353,5 @@ public class MemberController {
 		
 	    return "redirect:" + url; // 비밀번호 찾기(findPw.jsp) 또는 아이디 확인 페이지(confirmInfo.jsp) 이동
 	}
+	
 }
