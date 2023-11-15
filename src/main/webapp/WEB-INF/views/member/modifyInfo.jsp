@@ -46,7 +46,7 @@
 								<br>
 								<h3 class="box-title">회원수정</h3>
 								<br>
-								<form role="form" id="modifyForm" method="post" action="/member/modify">
+								<form role="form" id="modifyInfoForm" method="post" action="/member/modifyInfo">
 									<div class="box-body">
 										<div class="form-group row">
 											<label for="mem_id" class="col-2">아이디</label>
@@ -127,15 +127,15 @@
 							// JS 이벤트 등록: https://www.w3schools.com/js/js_htmldom_eventlistener.asp 
 							$(document).ready(function () {
 
-								// form 태그 참조: <form role="form" id="modifyForm" method="post" action="/member/modify">
-								let modifyForm = $("#modifyForm");
+								// form 태그 참조: <form role="form" id="modifyInfoForm" method="post" action="/member/modifyInfo">
+								let modifyInfoForm = $("#modifyInfoForm");
 								// 회원수정 버튼 클릭 시 동작
 								$("#btnModify").click(function () {
 
 									// 회원가입 유효성 검사(JS 이용)
 
 									// 폼 전송 작업(스프링 작업 이후)
-									modifyForm.submit();
+									modifyInfoForm.submit();
 								})
 							});
 						</script>

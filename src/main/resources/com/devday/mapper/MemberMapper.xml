@@ -94,8 +94,8 @@
 	 	mem_id = #{mem_id} AND mem_name = #{mem_name} AND mem_email = #{mem_email}
 </select>
 
-<!-- 비밀번호 업데이트: 임시 비밀번호 생성 및 재발급 -->
-<update id="updatePw" parameterType="com.devday.dto.FindInfoDTO">
+<!-- 비밀번호 업데이트: 임시 비밀번호 생성 및 비밀번호 재발급 -->
+<update id="resetPw" parameterType="com.devday.dto.FindInfoDTO">
 	UPDATE 
 		member_tbl
 	SET

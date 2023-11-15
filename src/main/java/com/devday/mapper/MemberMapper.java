@@ -13,8 +13,9 @@ public interface MemberMapper {
 	void loginTimeUpdate(String mem_id); // 접속일자 업데이트 관련 메서드
 	
 	String findId(FindInfoDTO findInfoDTO); // 아이디 찾기 관련 메서드
+	
 	int findPw(FindInfoDTO findInfoDTO); // 비밀번호 찾기 관련 메서드
-	void updatePw(FindInfoDTO findInfoDTO); // 비밀번호 재설정 관련 메서드
+	boolean resetPw(FindInfoDTO findInfoDTO); // 비밀번호 업데이트 관련 메서드
 	
 	void modify(MemberVO vo); // 회원수정 관련 메서드
 	void delete(String mem_id); // 회원탈퇴 관련 메서드

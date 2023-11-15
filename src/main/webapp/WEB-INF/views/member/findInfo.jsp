@@ -28,7 +28,7 @@
 					<div class="box box-primary login-box">
 						<div class="box-header with-border">
 
-							<form role="form" id="findId" method="post" action="/member/findId">
+							<form role="form" id="findIdForm" method="post" action="/member/findId">
 								<div class="findIdSections">
 									<h3 class="box-title login-title">아이디 찾기</h3>
 									<div class="box-body">
@@ -252,6 +252,8 @@
 									});
 								});
 
+								
+									
 								// 다음 버튼을 클릭 시 이름과 이메일이 빈 칸인 경우 동작
 								$("#btnNameEmailSection").click(function () {
 									let mem_name = $("mem_name").val();
@@ -260,6 +262,21 @@
 										alert("이름과 이메일을 모두 입력해주세요.");
 										return;
 									}
+									// 임시 비밀번호 발송
+									$.ajax({
+										url: '/member/findPw',
+										type: 'post',
+										data: { receiverMail: mem_email },
+										success: function (response) {
+											if (response == "yes") {
+												alert("임시 비밀번호가 이메일로 전송되었습니다.");
+												location.href = "/member/login"
+											} else if (response == "no") {
+												alert("임시 비밀번호 발송에 실패하였습니다.");
+												location.href = "/member/findPw"
+											}
+										}
+									});
 								});
 
 								// 비밀번호 찾기 제3단계: 모든 인증절차를 거친 뒤 비밀번호 재설정 처리
@@ -274,15 +291,10 @@
 										$("#mem_pw1").focus();
 										return;
 									}
-									// AJAX 요청으로 비밀번호 재설정
 									$.ajax({
-										url: '/email/resetPw', // 서버의 비밀번호 재설정 경로를 입력하세요.
-										type: 'get',
-										data: {
-											// 요청과 함께 보낼 데이터
-											mem_id: mem_id,
-											new_pw: resetNewPw
-										},
+										url: '/member/updatePw', 
+										type: 'post',
+										data: {mem_id: mem_id, new_pw: resetNewPw},
 										success: function (response) {
 											// 비밀번호 재설정에 성공했을 때의 처리
 											alert("비밀번호가 재설정되었습니다.");

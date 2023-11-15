@@ -35,7 +35,7 @@
 							<br>
 							<h3 class="box-title">회원탈퇴 인증 확인</h3>
 							<br>
-							<form role="form" id="delConfirmInfoForm" method="post" action="/member/delete">
+							<form role="form" id="deleteInfoForm" method="post" action="/member/deleteInfo">
 								<div class="box-body">
 									<div class="form-group row">
 										<label for="mem_id" class="col-2">아이디</label>
@@ -71,12 +71,12 @@
 					// JS 이벤트 등록: https://www.w3schools.com/js/js_htmldom_eventlistener.asp 
 					$(document).ready(function () {
 
-						let delConfirmInfoForm = $("#delConfirmInfoForm");
+						let deleteInfoForm = $("#deleteInfoForm");
 
 						$("#btnDelete").click(function () {
 							// e.preventDefault(); // button type="submit"인 경우 필요 
 							if (confirm("정말 탈퇴하시겠습니까?")) {
-								delConfirmInfoForm.submit();
+								deleteInfoForm.submit();
 							}
 						});
 					});

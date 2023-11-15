@@ -101,12 +101,12 @@
 
 							// 회원수정 버튼 클릭 이벤트
 							$("#btnModify").click(function () {
-								location.href = "/member/modify"; // 회원수정 페이지로 이동
+								location.href = "/member/modifyInfo"; // 회원수정 페이지로 이동
 							});
 
 							// 회원탈퇴 버튼 클릭 이벤트
 							$("#btnDelete").click(function () {
-								location.href = "/member/confirmInfo"; // 회원탈퇴 전 회원정보 재확인
+								location.href = "/member/deleteInfo"; // 회원탈퇴 전 회원정보 재확인
 							});
 
 						});
