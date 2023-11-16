@@ -27,49 +27,15 @@
 				<div class="text-center">
 					<div class="box box-primary login-box">
 						<div class="box-header with-border">
+							
+							
 
-							<form role="form" id="findIdForm" method="post" action="/member/findId">
-								<div class="findIdSections">
-									<h3 class="box-title login-title">아이디 찾기</h3>
-									<div class="box-body">
-										<div class="form-group row">
-											<label for="mem_name" class="col-2">이름</label>
-											<div class="col-10">
-												<input type="text" class="form-control" name="mem_name" id="mem_name" placeholder="이름을 입력해주세요">
-											</div>
-										</div>
-										<div class="form-group row">
-											<label for="mem_email" class="col-2">이메일</label>
-											<div class="col-7">
-												<input type="email" class="form-control" name="mem_email" id="mem_email"
-													placeholder="이메일을 입력해주세요">
-											</div>
-											<div class="col-3">
-												<button type="button" class="btn btn-outline-info" id="mailAuth">인증번호 발송</button>
-											</div>
-										</div>
-										<div class="form-group row">
-											<label for="authCode" class="col-2">이메일 인증</label>
-											<div class="col-7">
-												<input type="text" class="form-control" name="authCode" id="authCode"
-													placeholder="인증번호를 입력해주세요">
-											</div>
-											<div class="col-3">
-												<button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증번호 확인</button>
-											</div>
-										</div>
-									</div>
-									<div class="box-footer">
-										<button type="button" class="btn btn-primary login-btn" id="">다음</button>
-									</div>
-								</div>
-							</form>
-
+							<!-- 비밀번호 찾기 -->
 							<form role="form" id="findPwForm" method="post" action="/member/findPw">
 								<div class="findPwSections">
 									<h3 class="box-title login-title">비밀번호 찾기</h3>
 									<!--제1단계: 아이디 존재 유무 확인-->
-									<div class="idCheckSection">
+									<div id="idCheckSection">
 										<div>
 											<p><span><b>[제1단계]</b> </span>비밀번호를 찿기 위한 아이디를 입력하세요.</p>
 										</div>
@@ -80,43 +46,41 @@
 											</div>
 										</div>
 										<div class="box-footer">
-											<button type="button" class="btn btn-primary login-btn" id="btnIdCheckSection">다음</button>
+											<button type="button" class="btn btn-primary login-btn" id="btnIdCheck">다음</button>
 										</div>
 									</div>
 
 									<!-- 제2단계: 아이디 확인 후 이름과 이메일 인증 -->
-									<div id="nameEmailSection" style="display:none;">
+									<div id="nameEmailSection" style="display: none;">
 										<div>
 											<p><span><b>[제2단계]</b> </span>본인확인 이메일과 입력한 이메일이 같아야, 인증번호를 받을 수 있습니다.</p>
 										</div>
 										<div class="form-group row">
 											<label for="mem_name" class="col-sm-3">이름</label>
 											<div class="col-sm-9">
-												<input type="text" class="form-control" name="mem_name" id="mem_name" placeholder="이름을 입력해주세요">
+												<input type="text" class="form-control" name="mem_name" placeholder="이름을 입력해주세요">
 											</div>
 										</div>
 										<div class="form-group row">
 											<label for="mem_email" class="col-sm-3">이메일</label>
 											<div class="col-sm-7">
-												<input type="email" class="form-control" name="mem_email" id="mem_email"
-													placeholder="이메일을 입력해주세요">
+												<input type="email" class="form-control" name="mem_email" placeholder="이메일을 입력해주세요">
 											</div>
 											<div class="col-sm-2">
-												<button type="button" class="btn btn-outline-info" id="btnMailAuth">인증번호 발송</button>
+												<button type="button" class="btn btn-outline-info" name="btnMailAuth">인증번호 발송</button>
 											</div>
 										</div>
 										<div class="form-group row">
 											<label for="authCode" class="col-sm-3">이메일 인증</label>
 											<div class="col-sm-7">
-												<input type="text" class="form-control" name="authCode" id="authCode"
-													placeholder="인증번호를 입력해주세요">
+												<input type="text" class="form-control" name="authCode" placeholder="인증번호를 입력해주세요">
 											</div>
 											<div class="col-sm-2">
-												<button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증번호 확인</button>
+												<button type="button" class="btn btn-outline-info" name="btnConfirmAuth">인증번호 확인</button>
 											</div>
 										</div>
 										<div class="box-footer">
-											<button type="button" class="btn btn-primary login-btn" id="btnNameEmailSection">다음</button>
+											<button type="button" class="btn btn-primary login-btn" id="btnNameEmail">다음</button>
 										</div>
 									</div>
 
@@ -140,14 +104,14 @@
 											<button type="button" class="btn btn-primary login-btn" id="btnResetPw">비밀번호 재설정</button>
 										</div>
 										<div class="box-footer">
-											<button type="button" class="btn btn-primary login-btn" id="btnPwResetSection">완료</button>
+											<button type="button" class="btn btn-primary login-btn" id="btnFindPw">완료</button>
 										</div>
 									</div>
 								</div>
 							</form>
 
 							<div class="login-footer">
-								<a href="/member/confirmInfo">아이디 찾기</a> | <a href="/member/confirmInfo">비밀번호 찾기</a> | <a
+								<a href="/member/findInfo">아이디 찾기</a> | <a href="/member/findInfo">비밀번호 찾기</a> | <a
 									href="/member/join">회원가입</a>
 							</div>
 
@@ -165,7 +129,7 @@
 
 								// 비밀번호 찾기 제1단계: 아이디 존재 유무 확인
 								// 다음 버튼을 클릭 시 아이디가 빈칸인 경우 동작
-								$("#btnIdCheckSection").click(function () {
+								$("#btnIdCheck").click(function () {
 									let mem_id = $("#id_check").val();
 									if (mem_id == "") {
 										alert("아이디가 입력되지 않았습니다.");
@@ -173,14 +137,15 @@
 										return; // 빈칸일 때 함수 실행을 멈춤(존재하지 않는)
 									}
 									$.ajax({
-										url: '/member/confirmInfo',
-										type: 'post',
+										url: '/member/findPw',
+										type: 'get',
 										dataType: 'text',
 										data: { mem_id: mem_id },
 										success: function (response) {
 											if (response == "yes") {
-												$("#nameEmailSection").show();
 												$("#idCheckSection").hide();
+												$("#nameEmailSection").show();
+
 												// 서버: 해당 아이디의 존재 여부만 확인 <-> 클라이언트: 다음 단계로의 페이지 이동을 처리
 												// location.href = "/member/findPw"; // 아이디가 존재하는 경우 바로 비밀번호 찾기 페이지로 이동
 
@@ -195,8 +160,9 @@
 
 								// 비밀번호 찾기 제2단계: 아이디 확인 후 이름과 이메일 인증 
 								// 메일 인증번호 요청: 회원가입, 아이디 및 비밀번호 찾기
-								$("#btnMailAuth").click(function () {
-									let mem_email = $("#mem_email").val();
+								// $("button[name='btnMailAuth']").click(function () 같음
+								$("button[name='btnMailAuth']").on("click", function () {
+									let mem_email = $("input[name='mem_email']").val();
 									if (mem_email == "") {
 										alert("이메일이 입력되지 않았습니다.");
 										$("#mem_email").focus();
@@ -236,9 +202,6 @@
 											if (result == "success") { // 인증 성공 시
 												alert("정상적으로 인증되었습니다..");
 												isConfirmAuth = true;
-												$("#idCheckSection").hide();
-												$("#nameEmailSection").hide();
-												$("#pwResetSection").show();
 											} else if (result == "fail") { // 인증 실패 시
 												alert("인증에 실패하였습니다. 다시 확인해 주세요.");
 												$("#authCode").val("");
@@ -252,12 +215,10 @@
 									});
 								});
 
-								
-									
 								// 다음 버튼을 클릭 시 이름과 이메일이 빈 칸인 경우 동작
-								$("#btnNameEmailSection").click(function () {
-									let mem_name = $("mem_name").val();
-									let mem_email = $("mem_email").val();
+								$("#btnNameEmail").click(function () {
+									let mem_name = $("input[name='mem_name']").val();
+									let mem_email = $("input[name='mem_email']").val();
 									if (mem_name == "" || mem_email == "") {
 										alert("이름과 이메일을 모두 입력해주세요.");
 										return;
@@ -270,6 +231,9 @@
 										success: function (response) {
 											if (response == "yes") {
 												alert("임시 비밀번호가 이메일로 전송되었습니다.");
+												$("#idCheckSection").hide();
+												$("#nameEmailSection").hide();
+												$("#pwResetSection").show();
 												location.href = "/member/login"
 											} else if (response == "no") {
 												alert("임시 비밀번호 발송에 실패하였습니다.");
@@ -280,11 +244,11 @@
 								});
 
 								// 비밀번호 찾기 제3단계: 모든 인증절차를 거친 뒤 비밀번호 재설정 처리
-								$("#btnPwResetSection").click(function () {
-									let men_id = $("#mem_id").val();
-									let resetNewPw = $("#mem_pw1").val();
+								$("#btnFindPw").click(function () {
+									let mem_id = $("input[name='mem_id']").val();
+									let resetPw = $("#mem_pw1").val();
 									let confirmPw = $("#mem_pw2").val();
-									if (resetNewPw !== confirmPw) {
+									if (resetPw !== confirmPw) {
 										alert("비밀번호가 일치하지 않습니다.");
 										$("#mem_pw1").val("");
 										$("#mem_pw2").val("");
@@ -292,9 +256,9 @@
 										return;
 									}
 									$.ajax({
-										url: '/member/updatePw', 
+										url: '/member/resetPw',
 										type: 'post',
-										data: {mem_id: mem_id, new_pw: resetNewPw},
+										data: { mem_id: mem_id, mem_pw: resetPw },
 										success: function (response) {
 											// 비밀번호 재설정에 성공했을 때의 처리
 											alert("비밀번호가 재설정되었습니다.");
@@ -304,6 +268,118 @@
 								}); // btnResetPw click 이벤트 핸들러
 
 							}); // $(document).ready 함수
+
+
+
+// 							<!-- 아이디 찾기 -->
+// 							<form role="form" id="findIdForm" method="post" action="/member/findId">
+// 								<div class="findIdSections">
+// 									<h3 class="box-title login-title">아이디 찾기</h3>
+// 									<!-- 제1단계: 이름과 이메일을 통한 아이디 찾기 -->
+// 									<div id="confirmIdSection">
+// 										<div>
+// 											<p><span><b>[제1단계]</b> </span>본인확인 이메일과 입력한 이메일이 같아야, 인증번호를 받을 수 있습니다.</p>
+// 										</div>
+// 										<div class="box-body">
+// 											<div class="form-group row">
+// 												<label for="mem_name" class="col-2">이름</label>
+// 												<div class="col-10">
+// 													<input type="text" class="form-control" name="mem_name" placeholder="이름을 입력해주세요">
+// 												</div>
+// 											</div>
+// 											<div class="form-group row">
+// 												<label for="mem_email" class="col-2">이메일</label>
+// 												<div class="col-7">
+// 													<input type="email" class="form-control" name="mem_email" placeholder="이메일을 입력해주세요">
+// 												</div>
+// 												<div class="col-3">
+// 													<button type="button" class="btn btn-outline-info" name="btnMailAuth">인증번호 발송</button>
+// 												</div>
+// 											</div>
+// 											<div class="form-group row">
+// 												<label for="authCode" class="col-2">이메일 인증</label>
+// 												<div class="col-7">
+// 													<input type="text" class="form-control" name="authCode" placeholder="인증번호를 입력해주세요">
+// 												</div>
+// 												<div class="col-3">
+// 													<button type="button" class="btn btn-outline-info" name="btnConfirmAuth">인증번호 확인</button>
+// 												</div>
+// 											</div>
+// 										</div>
+// 										<div class="box-footer">
+// 											<button type="submit" class="btn btn-primary login-btn" id="btnConfirmId">다음</button>
+// 										</div>
+// 									</div>
+									
+// 									<!-- 제2단계: -->
+// 									<div id="findIdSection">
+// 										<div>
+// 											<p><span><b>[제2단계]</b> </span>회원님의 정보와 일치하는 아이디입니다.</p>
+// 										</div>
+// 										<div class="box-body">
+// 											<div class="form-group row">
+// 												<label for="mem_name" class="col-2">아이디</label>
+// 												<div class="col-10">
+// 													<input type="checkbox" class="form-control" name="mem_id"> 아이디: ${mem_id}
+// 													가입일:
+// 												</div>
+// 											</div>
+// 										</div>
+// 									</div>
+// 									<div class="box-footer">
+// 										<div class="form-group row">
+// 											<div class="col-6">
+// 												<button type="button" class="btn btn-primary login-btn" name="btnDoLogin">로그인하기</button>
+// 											</div>
+// 											<div class="col-6">
+// 												<button type="button" class="btn btn-primary login-btn" name="btnFindPw">비밀번호 찾기</button>
+// 											</div>
+// 										</div>
+// 									</div>
+// 								</div>
+// 							</form>
+
+
+
+
+
+
+
+// // 아이디 찾기 제1단계: 이름과 이메일을 통한 아이디 찾기
+// 								// let findIdForm = $("#findIdForm");
+// 								$("#btnConfirmId").click(function () {
+// 									let mem_name = $("#mem_name").val();
+// 									let mem_email = $("#mem_email").val();
+// 									if (mem_name == "") {
+// 										alert("이름이 입력되지 않았습니다.")
+// 										$("#mem_name").focus();
+// 										return;
+// 									}
+// 									if (mem_email == "") {
+// 										alert("이메일이 입력되지 않았습니다.");
+// 										$("#mem_email").focus();
+// 										return;
+// 									}
+// 									$.ajax({
+// 										url: '/member/findId',
+// 										type: 'post',
+// 										dataType: '',
+// 										data: { mem_name: mem_name, mem_email: mem_email },
+// 										success: function (response) {
+// 											if (response == mem_id) {
+// 												$("#confirmIdSection").show(mem_id);
+// 												$("#findIdSection").hide();
+// 											}
+// 										}
+// 									})
+// 									// findIdForm.submit()
+// 								})
+
+
+
+
+
+
 						</script>
 	</body>
 

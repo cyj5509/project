@@ -22,7 +22,7 @@ public class EmailDTO {
         this.senderMail = "admin@devday.com";
     }
 	
-	// 보조 생성자 생성: 중복 방지용으로 해당 클래스 내에서만 사용하기 위해 private 사용 
+	// 보조 생성자 생성: 정적 팩토리 메서드 내 중복 방지용으로 해당 클래스 내에서만 사용하기 위해 private 사용 
     private EmailDTO(String receiverMail, String subject, String content) {
    		// this(): 기본 생성자를 호출하여 senderName과 senderMail 초기화 
         this(); // 미작성 시 정적 팩토리 메서드에서 미완성된 객체가 반환되는 결과 초래 

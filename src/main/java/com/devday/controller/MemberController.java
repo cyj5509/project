@@ -285,7 +285,7 @@ public class MemberController {
 	    return entity;
 	}
 	
-	// 비밀번호 찾기 기능 구현
+	// 비밀번호 찾기 기능 구현: 세션 관련 파라미터 필요
 	@PostMapping("/findPw")
 	public ResponseEntity<String> findPw(@RequestParam("mem_id") String mem_id, 
 										@RequestParam("mem_name") String mem_name, 
@@ -337,16 +337,16 @@ public class MemberController {
 	}
 		
 	
-	// 위에서 이미 작성한 코드라 중복되는 부분이 있어 나머지 내용들은 View에서 처리할 예정
-	@PostMapping("/findPw")
-	public String findPw(MemberVO vo, RedirectAttributes rttr) throws Exception {
-		
-		// 비밀번호 찾기 전 사용자 존재 유무 확인
-		// int user_check = memberService.findPw(vo.getMem_id(), vo.getMem_name(), vo.getMem_email());
-		
-		String url = "";
-		String msg = "";
-		
+//	// 위에서 이미 작성한 코드라 중복되는 부분이 있어 나머지 내용들은 View에서 처리할 예정
+//	@PostMapping("/findPw")
+//	public String findPw(MemberVO vo, RedirectAttributes rttr) throws Exception {
+//		
+//		// 비밀번호 찾기 전 사용자 존재 유무 확인
+//		// int user_check = memberService.findPw(vo.getMem_id(), vo.getMem_name(), vo.getMem_email());
+//		
+//		String url = "";
+//		String msg = "";
+//		
 //		 if (user_check > 0) {
 //	         ResponseEntity<String> response = emailDTO.sendResetPw(vo.getMem_email());
 //			  ResponseEntity<String> response = emailService.sendResetPw(memberVO, emailDTO);
@@ -362,9 +362,9 @@ public class MemberController {
 //				url = "/member/findPw"; // 비밀번호 찾기 페이지 이동
 //				msg = "입력하신 정보와 일치하는 사용자가 없습니다.";
 //		}
-		rttr.addFlashAttribute("msg", msg);
-		
-	    return "redirect:" + url; // 비밀번호 찾기(findPw.jsp) 또는 아이디 확인 페이지(confirmInfo.jsp) 이동
-	}
+//		rttr.addFlashAttribute("msg", msg);
+//		
+//	    return "redirect:" + url; // 비밀번호 찾기(findPw.jsp) 또는 아이디 확인 페이지(confirmInfo.jsp) 이동
+//	}
 	
 }
