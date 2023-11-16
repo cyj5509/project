@@ -292,23 +292,25 @@ public class MemberController {
 	                                     @RequestParam("mem_email") String mem_email
 	                                     ) throws Exception {
 		
-		log.info("비밀번호 찾기 전 아이디 확인: " + mem_id);
-		
-		String idExist = memberService.idCheck(mem_id) != null ? "yes" : "no";
-		log.info("아이디 존재 유무: " + idExist);
-		
 		ResponseEntity<String> entity = null;
-		FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(mem_id, mem_name, mem_email); // 비밀번호 찾기용 정적 팩토리 메서드 호출
+	
+		// 아이디 존재 유무 확인
+		if(memberService.idCheck(mem_id) == null) {
+			entity = new ResponseEntity<>("no", HttpStatus.OK);
+		} else {
+			// 아이디가 존재하는 경우에만 다음 단계 실행
+			log.info("인증 전 아이디 확인: " + mem_id);
+			
+			FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(mem_id, mem_name, mem_email); // 비밀번호 찾기용 정적 팩토리 메서드 호출
+		    // memberService.processFindPw(findInfoDTO): 회원정보 조회 관련 메서드 호출
+		    boolean confirmInfo = memberService.processFindPw(findInfoDTO); // boolean com.devday.service.MemberService.processFindPw(FindInfoDTO findInfoDTO)
 
-	    // memberService.processFindPw(findInfoDTO): 회원정보 조회 관련 메서드 호출
-	    boolean confirmInfo = memberService.processFindPw(findInfoDTO); // boolean com.devday.service.MemberService.processFindPw(FindInfoDTO findInfoDTO)
-
-	    if (confirmInfo) {
-	        entity = new ResponseEntity<>("yes", HttpStatus.OK); // HTTP 상태 코드(200): 임시 비밀번호 발송 성공
-	    } else {
-	    		entity = new ResponseEntity<>("no", HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 임시 비밀번호 발송 실패
-	    }
-	    
+		    if (confirmInfo) {
+		        entity = new ResponseEntity<>("yes", HttpStatus.OK); // HTTP 상태 코드(200): 임시 비밀번호 발송 성공
+		    } else {
+		    		entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 임시 비밀번호 발송 실패
+		    }
+		}
 	    return entity;
 	}
 	
@@ -330,7 +332,7 @@ public class MemberController {
 	    if (isResetPw) {
 	    		entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200): 비밀번호 재발급 성공
 	    } else {
-	    		entity = new ResponseEntity<>("fail", HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 비밀번호 재발급 실패 
+	    		entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 비밀번호 재발급 실패 
 	    }
 	    
 	    return entity;
