@@ -61,12 +61,12 @@ public class MemberServiceImpl implements MemberService {
 		
 	}
 
-	// 비밀번호 찾기 관련 메서드
-	@Override
-	public int findPw(FindInfoDTO findInfoDTO) {
-		
-		return memberMapper.findPw(findInfoDTO);
-	}
+//	// 비밀번호 찾기 관련 메서드
+//	@Override
+//	public int findPw(FindInfoDTO findInfoDTO) {
+//		
+//		return memberMapper.findPw(findInfoDTO);
+//	}
 	
 	// 비밀번호 업데이트 관련 메서드
 	@Override
@@ -84,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
 			// 사용자가 존재하는 경우
 		 	if (userCheck > 0) {
 	        		// 임시 비밀번호 및 암호화된 비밀번호 생성 후 설정
-	            String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10); // 임시 비밀번호 ─ 클라이언트용
+	            String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8); // 임시 비밀번호 8자리 ─ 클라이언트용
 	            log.info("임시 비밀번호: " + tempPassword);
 	            
 	            String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호 ─ 서버용(DB 저장)

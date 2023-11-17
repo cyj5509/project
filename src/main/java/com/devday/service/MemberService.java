@@ -13,7 +13,7 @@ public interface MemberService {
 	
 	String findId(FindInfoDTO findInfoDTO); // 아이디 찾기 관련 메서드
 
-	int findPw(FindInfoDTO findInfoDTO); // 비밀번호 찾기 관련 메서드
+//	int findPw(FindInfoDTO findInfoDTO); // 비밀번호 찾기 관련 메서드
 	boolean resetPw(FindInfoDTO findInfoDTO); // 비밀번호 업데이트 관련 메서드
 	boolean processFindPw(FindInfoDTO findInfoDTO); // 비밀번호 찾기 및 업데이트 관련 메서드
 	

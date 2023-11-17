@@ -287,33 +287,46 @@ public class MemberController {
 	
 	// 비밀번호 찾기 기능 구현: 세션 관련 파라미터 필요
 	@PostMapping("/findPw")
-	public ResponseEntity<String> findPw(@RequestParam("mem_id") String mem_id, 
-										@RequestParam("mem_name") String mem_name, 
-	                                     @RequestParam("mem_email") String mem_email
+	public ResponseEntity<String> findPw(HttpSession session, 
+										@RequestParam("mem_id") String mem_id, // 필수 파라미터(Default: true)
+										@RequestParam(value = "mem_name", required = false) String mem_name, // 선택적 파라미터
+	                                     @RequestParam(value = "mem_email", required = false) String mem_email // 선택적 파라미터
 	                                     ) throws Exception {
 		
 		ResponseEntity<String> entity = null;
-	
-		// 아이디 존재 유무 확인
-		if(memberService.idCheck(mem_id) == null) {
-			entity = new ResponseEntity<>("no", HttpStatus.OK);
+		
+		// 1단계 ─ 아이디 확인: 우선적 처리를 위해 2단계에서 처리될 이름과 이메일이 null인 경우 진행
+		if (mem_name == null && mem_email == null) {
+			// 아이디 존재 유무 확인
+			if (memberService.idCheck(mem_id) != null) {
+				log.info("존재하는 아이디: " + mem_id);
+				session.setAttribute("mem_id", mem_id); // 세션에 아이디 저장
+				entity = new ResponseEntity<>("yes", HttpStatus.OK);
+			} else { 
+				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		} else {
-			// 아이디가 존재하는 경우에만 다음 단계 실행
-			log.info("인증 전 아이디 확인: " + mem_id);
-			
-			FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(mem_id, mem_name, mem_email); // 비밀번호 찾기용 정적 팩토리 메서드 호출
-		    // memberService.processFindPw(findInfoDTO): 회원정보 조회 관련 메서드 호출
-		    boolean confirmInfo = memberService.processFindPw(findInfoDTO); // boolean com.devday.service.MemberService.processFindPw(FindInfoDTO findInfoDTO)
+			// 2단계 ─ 이름과 이메일 확인
+			// Object javax.servlet.http.HttpSession.getAttribute(String name)
+			String idForPw = (String) session.getAttribute("mem_id"); // 다음 단계 진행을 위해 세션에 저장된 아이디를 변수에 할당
+			// idForPw.equals(mem_id): 사용자가 웹 페이지에서 입력한 아이디와 서버의 세션에 저장된 아이디가 같은지 확인
+			if (idForPw != null && idForPw.equals(mem_id)) {
+				FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(mem_id, mem_name, mem_email); // 비밀번호 찾기용 정적 팩토리 메서드 호출
+				// memberService.processFindPw(findInfoDTO): 회원정보 조회 관련 메서드 호출
+				// boolean com.devday.service.MemberService.processFindPw(FindInfoDTO findInfoDTO)
+				boolean confirmInfo = memberService.processFindPw(findInfoDTO);
 
-		    if (confirmInfo) {
-		        entity = new ResponseEntity<>("yes", HttpStatus.OK); // HTTP 상태 코드(200): 임시 비밀번호 발송 성공
-		    } else {
-		    		entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 임시 비밀번호 발송 실패
-		    }
+				if (confirmInfo) {
+					entity = new ResponseEntity<>("yes", HttpStatus.OK); // HTTP 상태 코드(200): 임시 비밀번호 발송 성공
+				} else {
+					entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 임시 비밀번호 발송 실패
+				}
+			}
 		}
-	    return entity;
+		return entity;
 	}
-	
+
+
 	// 비밀번호 재설정 기능 구현
 	@PostMapping("/resetPw")
 	public ResponseEntity<String> resetPw(@RequestParam("mem_id") String mem_id, 

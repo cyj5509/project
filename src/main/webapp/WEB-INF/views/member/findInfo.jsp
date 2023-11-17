@@ -128,11 +128,11 @@
 							$(document).ready(function () {
 
 								let currentMem_id = ""; // 제3단계인 비밀번호 재설정 단계에서 참조하기 위함
+								let mem_id = $("#id_check").val(); // 1단계 및 2단계에서 사용하기 위함
 
 								// 비밀번호 찾기 제1단계: 아이디 존재 유무 확인
 								// 다음 버튼을 클릭 시 아이디가 빈 칸인 경우 동작
 								$("#btnIdCheck").click(function () {
-									let mem_id = $("#id_check").val();
 									if (mem_id == "") {
 										alert("아이디가 입력되지 않았습니다.");
 										$("#id_check").focus();
@@ -143,7 +143,7 @@
 										url: '/member/findPw',
 										type: 'post',
 										dataType: 'text',
-										data: { mem_id: mem_id },
+										data: { mem_id: mem_id }, // let mem_id = $("#id_check").val();
 										success: function (response) {
 											if (response == "yes") {
 												$("#idCheckSection").hide();
@@ -159,8 +159,36 @@
 									});
 								});
 
-								// 비밀번호 찾기 제2단계: 이름 및 이메일 인증 
-								// 메일 인증번호 요청: 회원가입, 아이디 및 비밀번호 찾기
+								// 비밀번호 찾기 제2단계: 이름 및 이메일 확인
+								// 다음 버튼을 클릭 시 이름과 이메일이 빈 칸인 경우 동작
+								$("#btnNameEmail").click(function () {
+									let mem_name = $("input[name='mem_name']").val();
+									let mem_email = $("input[name='mem_email']").val();
+									if (mem_name == "" || mem_email == "") {
+										alert("이름과 이메일을 모두 입력해주세요.");
+										return;
+									}
+									// 임시 비밀번호 발송
+									$.ajax({
+										url: '/member/findPw',
+										type: 'post',
+										data: { 
+											mem_id: mem_id, // let mem_id = $("#id_check").val();
+											mem_name: mem_name,
+											receiverMail: mem_email
+										},
+										success: function (response) {
+											if (response == "yes") {
+												alert("임시 비밀번호가 이메일로 전송되었습니다.");
+												$("#nameEmailSection").hide();
+												$("#pwResetSection").show();
+												location.href = "/member/login"
+											} 
+										}
+									});
+								});
+
+								// 메일 인증번호 용도: 회원가입, 아이디 및 비밀번호 찾기 
 								// $("button[name='btnMailAuth']").click(function () 같음
 								$("button[name='btnMailAuth']").on("click", function () {
 									let mem_name = $("input[name='mem_name']").val(); 
@@ -223,29 +251,7 @@
 									});
 								});
 
-								// 다음 버튼을 클릭 시 이름과 이메일이 빈 칸인 경우 동작
-								$("#btnNameEmail").click(function () {
-									let mem_name = $("input[name='mem_name']").val();
-									let mem_email = $("input[name='mem_email']").val();
-									if (mem_name == "" || mem_email == "") {
-										alert("이름과 이메일을 모두 입력해주세요.");
-										return;
-									}
-									// 임시 비밀번호 발송
-									$.ajax({
-										url: '/member/findPw',
-										type: 'post',
-										data: { receiverMail: mem_email },
-										success: function (response) {
-											if (response == "yes") {
-												alert("임시 비밀번호가 이메일로 전송되었습니다.");
-												$("#nameEmailSection").hide();
-												$("#pwResetSection").show();
-												location.href = "/member/login"
-											} 
-										}
-									});
-								});
+								
 
 								// 비밀번호 찾기 제3단계: 비밀번호 재설정 처리
 								$("#btnFindPw").click(function () {
