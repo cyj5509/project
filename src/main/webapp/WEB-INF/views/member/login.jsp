@@ -12,10 +12,10 @@
 		<title>데브데이</title>
 
 		<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
-	
-	<!-- CSS 파일 링크 -->
-				<link rel="stylesheet" href="/css/header.css">
-				<link rel="stylesheet" href="/css/member/login.css">
+
+			<!-- CSS 파일 링크 -->
+			<link rel="stylesheet" href="/css/header.css">
+			<link rel="stylesheet" href="/css/member/login.css">
 
 			<script>
 				let msg = '${msg}'; // ${msg}: MemberController의 rttr.addFlashAttribute("msg", msg);에서 앞의 "msg"
@@ -51,12 +51,14 @@
 											<input type="checkbox" class="form-control" name="" id="keep_login">
 										</div>
 										<label for="keep_login" class="col-7">로그인 상태 유지</label>
-									</div>	
+									</div>
 									<button type="submit" class="btn btn-primary login-btn" id="btnJoin">로그인</button>
 								</div>
 							</form>
+							
 							<div class="login-footer">
-								<a href="/member/findInfo">아이디 찾기</a> | <a href="/member/findInfo">비밀번호 찾기</a> | <a href="/member/join">회원가입</a>
+								<a href="/member/findInfo" id="linkFindId">아이디 찾기</a> | <a href="/member/findInfo" id="linkFindPw">비밀번호
+									찾기</a> | <a href="/member/join">회원가입</a>
 							</div>
 						</div>
 					</div>
@@ -67,7 +69,15 @@
 				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
+						<script>
+							document.getElementById('linkFindId').addEventListener('click', function () {
+								sessionStorage.setItem('activeSection', 'findId');
+							});
 
+							document.getElementById('linkFindPw').addEventListener('click', function () {
+								sessionStorage.setItem('activeSection', 'findPw');
+							});
+						</script>
 	</body>
 
 	</html>

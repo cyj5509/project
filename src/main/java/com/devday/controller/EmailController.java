@@ -4,12 +4,13 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devday.dto.EmailDTO;
+import com.devday.dto.FindInfoDTO;
 import com.devday.service.EmailService;
 import com.devday.service.MemberService;
 
@@ -23,37 +24,53 @@ import lombok.extern.log4j.Log4j;
 public class EmailController {
 
 	private final EmailService emailService; // EmailService 인터페이스 implements EmailServiceImpl 클래스
+	private final MemberService memberService; // MemberService 인터페이스 implements MemberServiceImpl 클래스
 
 	// 메일을 통한 회원 인증 기능 구현 ─ 회원가입, 아이디 및 비밀번호 찾기
 	@GetMapping("/authCode")
-	public ResponseEntity<String> sendAuthCode(String receiverMail, HttpSession session) {
-
+	public ResponseEntity<String> sendAuthCode(@RequestParam(value = "mem_id", required = false) String mem_id,
+											  @RequestParam("mem_name") String mem_name, 
+											  @RequestParam("receiverMail") String receiverMail, HttpSession session) {
+		
+		log.info("수신자명: " + mem_name);
 		log.info("수신할 메일 주소: " + receiverMail);
 		
 		ResponseEntity<String> entity = null;
+		
+		boolean userExists; // 사용자가 존재
+	    // 아이디 찾기 요청인 경우
+	    if (mem_id == null) {
+	        userExists = memberService.isUserForId(mem_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
+	    } else {
+	        // 비밀번호 찾기 요청인 경우
+	        userExists = memberService.isUserForPw(mem_id, mem_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
+	    }
 
-		// 인증번호 생성
-		String authCode = "";
-		for (int i = 0; i < 6; i++) {
-			authCode += String.valueOf((int) (Math.random() * 10));
+		// 사용자가 존재하지 않는 경우
+		if (!userExists) {
+			return new ResponseEntity<>("request", HttpStatus.OK);
+		} else {
+			// 사용자가 존재하는 경우 인증번호 생성 및 발송
+			String authCode = "";
+			for (int i = 0; i < 6; i++) {
+				authCode += String.valueOf((int) (Math.random() * 10));
+			}
+			log.info("인증번호: " + authCode);
+
+			// 세션에 인증번호 저장
+			session.setAttribute("authCode", authCode);
+
+			try {
+				EmailDTO emailDTO = EmailDTO.ofAuthCode(receiverMail, authCode); // ofAuthCode: 회원 인증 관련 정적 팩토리 메서드 호출
+				log.info("발송할 이메일 정보: " + emailDTO); // ofAuthCode의 receiverMail 및 authCode 값 포함한 정보 출력
+
+				emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출
+				entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200)
+			} catch (Exception e) {
+				e.printStackTrace();
+				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500)
+			}
 		}
-		log.info("인증번호: " + authCode);
-
-		// 세션에 인증번호 저장
-		session.setAttribute("authCode", authCode);
-
-		try {
-			EmailDTO emailDTO = EmailDTO.ofAuthCode(receiverMail, authCode); // ofAuthCode: 회원 인증 관련 정적 팩토리 메서드 호출 
-			
-			log.info("발송할 이메일 정보: " + emailDTO); // ofAuthCode의 receiverMail 및 authCode 값 포함한 정보 출력
-			
-			emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출
-			entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200)
-		} catch (Exception e) {
-			e.printStackTrace();
-			entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500)
-		}
-
 		return entity;
 	}
 

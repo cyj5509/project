@@ -94,7 +94,7 @@
 											</div>
 										</div>
 										<div class="form-group row">
-											<label for="authCode" class="col-2">이메일 인증</label>
+											<label for="authCode" class="col-2"></label>
 											<div class="col-7">
 												<input type="text" class="form-control" name="authCode" id="authCode"
 													placeholder="인증번호를 입력해주세요">

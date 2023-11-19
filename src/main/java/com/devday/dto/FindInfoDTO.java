@@ -1,5 +1,7 @@
 package com.devday.dto;
 
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,6 +15,7 @@ public class FindInfoDTO {
 	private String mem_pw; // 사용자가 재설정할 평문 비밀번호
 	private String mem_name; // 인증을 위한 회원 이름(공통 사항)
 	private String mem_email; // 인증을 위한 회원 이메일(공통 사항)
+    private Date mem_joindate; // 가입 일자 필드 추가
 	
 	// 아이디 찾기용 정적 팩토리 메서드: 이름과 이메일 필요
 	public static FindInfoDTO ofFindId(String mem_name, String mem_email) {

@@ -75,9 +75,9 @@
 </update>
 
 <!-- 아이디 찾기: 이름과 이메일을 이용한 찾기 -->
-<select id="findId" parameterType="com.devday.dto.FindInfoDTO" resultType="String">
+<select id="findId" parameterType="com.devday.dto.FindInfoDTO" resultType="com.devday.domain.MemberVO">
 	SELECT
-		mem_id
+		mem_id, mem_joindate
 	FROM
 		member_tbl
 	WHERE

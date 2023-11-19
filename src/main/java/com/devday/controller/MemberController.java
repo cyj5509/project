@@ -16,7 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.devday.domain.MemberVO;
 import com.devday.dto.FindInfoDTO;
 import com.devday.dto.LoginDTO;
-import com.devday.service.EmailService;
 import com.devday.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,8 +32,6 @@ public class MemberController {
 	// spring-security.xml의 <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
 	// PasswordEncoder 인터페이스 implements BCryptPasswordEncoder 클래스
 	private final PasswordEncoder passwordEncoder;
-	
-	private final EmailService emailService; // EmailService 인터페이스 implements EmailServiceImpl 클래스
 	
 	// 회원가입 페이지 이동(회원가입 폼)
 	@GetMapping("/join")
@@ -208,7 +205,7 @@ public class MemberController {
 
 		// 세션 정보를 최신 상태로 업데이트(수정된 정보를 활용할 경우)
 		// db_vo.setMem_email(vo.getMem_email());
-		session.setAttribute("loginStatus", db_vo);
+		session.setAttribute("loginStatus", vo);
 
 		rttr.addFlashAttribute("msg", "modify"); // 리디렉션되는 메인 페이지(main.jsp)에서 사용
 
@@ -267,19 +264,16 @@ public class MemberController {
 	
 	// 아이디 찾기 기능 구현
 	@PostMapping("/findId")
-	public ResponseEntity<String> findId(@RequestParam("mem_name") String mem_name, 
-										@RequestParam("mem_email") String mem_email) throws Exception {
+	public ResponseEntity<MemberVO> findId(@RequestParam("mem_name") String mem_name, 
+										  @RequestParam("mem_email") String mem_email) throws Exception {
 	    
-		ResponseEntity<String> entity = null; 
+		ResponseEntity<MemberVO> entity = null;
+
 	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(mem_name, mem_email); // 아이디 찾기용 정적 팩토리 메서드 호출
+	    MemberVO memberVO = memberService.findId(findInfoDTO); 
 	    
-	    // memberService.findId(findInfoDTO): 아이디 찾기 관련 메서드 호출
-	    String mem_id = memberService.findId(findInfoDTO); // // String com.devday.service.MemberService.findId(FindInfoDTO findInfoDTO)
-	    
-	    if (mem_id != null) {
-	        entity = new ResponseEntity<>(mem_id, HttpStatus.OK); // HTTP 상태 코드(200): 이름과 이메일을 통한 아이디 반환 성공
-	    } else {
-	        entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 사용자를 찾지 못한 경우
+	    if (memberVO != null) {
+	      entity = new ResponseEntity<>(memberVO, HttpStatus.OK);
 	    }
 	    
 	    return entity;
@@ -303,7 +297,8 @@ public class MemberController {
 				session.setAttribute("mem_id", mem_id); // 세션에 아이디 저장
 				entity = new ResponseEntity<>("yes", HttpStatus.OK);
 			} else { 
-				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				log.info("존재하지 않는 아이디: " + mem_id);
+				entity = new ResponseEntity<>("no", HttpStatus.OK); // 
 			}
 		} else {
 			// 2단계 ─ 이름과 이메일 확인
@@ -331,6 +326,7 @@ public class MemberController {
 	@PostMapping("/resetPw")
 	public ResponseEntity<String> resetPw(@RequestParam("mem_id") String mem_id, 
 										  @RequestParam("mem_pw") String mem_pw) throws Exception {
+		
 		ResponseEntity<String> entity = null;
 		
 		log.info("암호화 전 비밀번호: " + mem_pw);
@@ -381,5 +377,6 @@ public class MemberController {
 //		
 //	    return "redirect:" + url; // 비밀번호 찾기(findPw.jsp) 또는 아이디 확인 페이지(confirmInfo.jsp) 이동
 //	}
+
 	
 }

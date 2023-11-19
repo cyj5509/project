@@ -12,7 +12,7 @@ public interface MemberMapper {
 	MemberVO login(String mem_id); // 로그인 관련 메서드
 	void loginTimeUpdate(String mem_id); // 접속일자 업데이트 관련 메서드
 	
-	String findId(FindInfoDTO findInfoDTO); // 아이디 찾기 관련 메서드
+	MemberVO findId(FindInfoDTO findInfoDTO); // 아이디 찾기 관련 메서드
 	
 	int findPw(FindInfoDTO findInfoDTO); // 비밀번호 찾기 관련 메서드
 	boolean resetPw(FindInfoDTO findInfoDTO); // 비밀번호 업데이트 관련 메서드

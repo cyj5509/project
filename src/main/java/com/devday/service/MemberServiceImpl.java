@@ -55,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
 	
 	// 아이디 찾기 관련 메서드
 	@Override
-	public String findId(FindInfoDTO findInfoDTO) {
+	public MemberVO findId(FindInfoDTO findInfoDTO) {
 	
 		return memberMapper.findId(findInfoDTO);
 		
@@ -67,6 +67,18 @@ public class MemberServiceImpl implements MemberService {
 //		
 //		return memberMapper.findPw(findInfoDTO);
 //	}
+	
+	@Override
+	public boolean isUserForId(String mem_name, String mem_email) {
+	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(mem_name, mem_email);
+	    return memberMapper.findId(findInfoDTO) != null;
+	}
+	
+	@Override
+	public boolean isUserForPw(String mem_id, String mem_name, String mem_email) {
+	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(mem_id, mem_name, mem_email);
+	    return memberMapper.findPw(findInfoDTO) > 0;
+	}
 	
 	// 비밀번호 업데이트 관련 메서드
 	@Override
@@ -81,31 +93,33 @@ public class MemberServiceImpl implements MemberService {
 		
 		// memberMapper.findPw(findInfoDTO): 회원정보 조회 관련 메서드 호출
 		int userCheck = memberMapper.findPw(findInfoDTO); // int com.devday.mapper.MemberMapper.findPw(FindInfoDTO findInfoDTO)
-			// 사용자가 존재하는 경우
-		 	if (userCheck > 0) {
-	        		// 임시 비밀번호 및 암호화된 비밀번호 생성 후 설정
-	            String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8); // 임시 비밀번호 8자리 ─ 클라이언트용
-	            log.info("임시 비밀번호: " + tempPassword);
-	            
-	            String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호 ─ 서버용(DB 저장)
-	            findInfoDTO.setMem_pw(encoPassword); // 암호화된 비밀번호로 필드값 설정
-	            
-	            memberMapper.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
+		// 사용자가 존재하는 경우
+		if (userCheck > 0) {
+			// 임시 비밀번호 및 암호화된 비밀번호 생성 후 설정
+			String tempPassword = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8); // 임시 비밀번호 8자리 ─ 클라이언트용
+			log.info("임시 비밀번호: " + tempPassword);
 
-	            try {
-	            		// EmailDTO.ofTempPw(receiverMail, tempPassword): 임시 비밀번호 발송을 위한 정적 팩토리 메서드 호출
-	                EmailDTO emailDTO = EmailDTO.ofTempPw(findInfoDTO.getMem_email(), tempPassword);  
-	                log.info("발송할 이메일 정보: " + emailDTO);
-	                
-	                emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출
-	                return true; 
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	                return false;
-	            }
-	        }
+			String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호 ─ 서버용(DB 저장)
+			findInfoDTO.setMem_pw(encoPassword); // 암호화된 비밀번호로 필드값 설정
+
+			memberMapper.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
+
+			try {
+				// EmailDTO.ofTempPw(receiverMail, tempPassword): 임시 비밀번호 발송을 위한 정적 팩토리 메서드 호출
+				EmailDTO emailDTO = EmailDTO.ofTempPw(findInfoDTO.getMem_email(), tempPassword);
+				log.info("발송할 이메일 정보: " + emailDTO);
+
+				emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
 		return false; // 사용자가 존재하지 않는 경우
 	}
+	
+	
 	
 	// 회원수정 관련 메서드
 	@Override
