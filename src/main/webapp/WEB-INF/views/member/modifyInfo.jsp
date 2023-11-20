@@ -72,13 +72,13 @@
 												</div>
 											</div>
 											<div class="form-group row">
-												<label for="mem_pw1" class="col-2">비밀번호</label>
+												<label for="currentPw1" class="col-2">비밀번호</label>
 												<div class="col-3">
-													<input type="password" class="form-control" value="${vo.mem_pw}" readonly>
+													<input type="password" class="form-control" name="currentPw1" value="${vo.mem_pw}" readonly>
 												</div>
-												<label for="mem_pw2" class="col-2">비밀번호 확인</label>
+												<label for="currentPw2" class="col-2">비밀번호 확인</label>
 												<div class="col-3">
-													<input type="password" class="form-control" value="${vo.mem_pw}" readonly>
+													<input type="password" class="form-control" name="currentPw2" value="${vo.mem_pw}" readonly>
 												</div>
 												<div class="col-2">
 													<button type="button" class="btn btn-outline-info" id="btnChangePw">비밀번호 변경</button>
@@ -146,13 +146,21 @@
 											<p><span><b></b> </span>재설정을 위한 비밀번호를 입력해주세요</p>
 										</div>
 										<div class="form-group row">
-											<label for="mem_pw1" class="col-2">비밀번호 </label>
+											<label for="currentPw" class="col-2">현재 비밀번호 </label>
 											<div class="col-10">
-												<input type="password" class="form-control" name="mem_pw1" placeholder="비밀번호를 입력해주세요">
+												<input type="password" class="form-control" name="currentPw" placeholder="비밀번호를 입력해주세요">
 											</div>
-											<label for="mem_pw2" class="col-2">비밀번호 확인</label>
+										</div>
+										<div class="form-group row">
+											<label for="newPw1" class="col-2">새 비밀번호 </label>
 											<div class="col-10">
-												<input type="password" class="form-control" name="mem_pw2" placeholder="동일한 비밀번호를 다시 입력해주세요">
+												<input type="password" class="form-control" name="newPw1" placeholder="비밀번호를 입력해주세요">
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="newPw2" class="col-2">새 비밀번호 확인</label>
+											<div class="col-10">
+												<input type="password" class="form-control" name="newPw2" placeholder="동일한 비밀번호를 다시 입력해주세요">
 											</div>
 										</div>
 
@@ -196,7 +204,7 @@
 
 								// 중복되는 부분이 있어 전역 변수로 해당 변수 설정
 								mem_id = $("#mem_id").val(); // 현재 로그인한 사용자의 아이디로 초기화
-							
+
 								// 비밀번호 재설정 처리
 								$("#btnChangePw").click(function () {
 									$("#modifyInfoSection").hide();
@@ -204,28 +212,41 @@
 								});
 
 								$("#btnResetPw").click(function () {
-									let resetPw = $("input[name='mem_pw1']").val();
-									let confirmPw = $("input[name='mem_pw2']").val();
-									if (resetPw == "" || confirmPw == "") {
-										alert("비밀번호를 입력해 주세요.")
+									let currentPw = $("input[name='currentPw']").val();
+									let resetPw = $("input[name='newPw1']").val();
+									let confirmPw = $("input[name='newPw2']").val();
+
+									if (currentPw == "" || resetPw == "" || confirmPw == "") {
+										alert("현재 비밀번호나 변경할 비밀번호를 입력해 주세요.")
+										return;
+									}
+									if (currentPw == resetPw || currentPw == confirmPw) {
+										alert("동일한 비밀번호가 입력되었습니다.");
+										$("input[name='newPw1']").val("");
+										$("input[name='newPw2']").val("");
+										$("input[name='newPw1']").focus();
 										return;
 									}
 									if (resetPw !== confirmPw) {
-										alert("비밀번호가 일치하지 않습니다.");
-										$("input[name='mem_pw1']").val("");
-										$("input[name='mem_pw2']").val("");
-										$("input[name='mem_pw1']").focus();
+										alert("새로운 비밀번호가 일치하지 않습니다.");
+										$("input[name='newPw1']").val("");
+										$("input[name='newPw2']").val("");
+										$("input[name='newPw1']").focus();
 										return;
 									}
 									$.ajax({
 										url: '/member/resetPw',
 										type: 'post',
-										data: { mem_id: mem_id, mem_pw: resetPw },
+										data: { mem_id: mem_id, currentPw: currentPw, mem_pw: resetPw },
 										success: function (response) {
 											if (response == "success") {
 												// 비밀번호 재설정에 성공했을 때의 처리
 												alert("비밀번호가 정상적으로 재설정되었습니다.");
 												location.href = "/member/login";
+											} else if (response == "request") {
+												alert("기존 비밀번호와 입력된 비밀번호가 일치하지 않습니다.");
+												$("input[name='currentPw']").val("");
+												$("input[name='currentPw']").focus();
 											}
 										}
 									}); // AJAX 요청

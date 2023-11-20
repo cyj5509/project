@@ -16,6 +16,7 @@ public interface MemberMapper {
 	
 	int findPw(FindInfoDTO findInfoDTO); // 비밀번호 찾기 관련 메서드
 	boolean resetPw(FindInfoDTO findInfoDTO); // 비밀번호 업데이트 관련 메서드
+	String isPwMatch(String mem_id); // 현재 비밀번호 일치 여부 관련 메서드
 	
 	void modify(MemberVO vo); // 회원수정 관련 메서드
 	void delete(String mem_id); // 회원탈퇴 관련 메서드

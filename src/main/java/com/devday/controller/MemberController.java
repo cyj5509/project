@@ -324,26 +324,37 @@ public class MemberController {
 
 	// 비밀번호 재설정 기능 구현
 	@PostMapping("/resetPw")
-	public ResponseEntity<String> resetPw(@RequestParam("mem_id") String mem_id, 
-										  @RequestParam("mem_pw") String mem_pw) throws Exception {
-		
+	public ResponseEntity<String> resetPw(@RequestParam("mem_id") String mem_id,
+										 @RequestParam("mem_pw") String mem_pw,
+										 @RequestParam(value = "currentPw", required = false) String currentPw) throws Exception {
+
 		ResponseEntity<String> entity = null;
-		
+
 		log.info("암호화 전 비밀번호: " + mem_pw);
 
-		String encoPassword = passwordEncoder.encode(mem_pw);
-		// log.info("암호화 후 비밀번호: " + encoPassword);
-		
-	    FindInfoDTO findInfoDTO = FindInfoDTO.ofResetPw(mem_id, encoPassword);
-		boolean isResetPw = memberService.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
-		
-		// String으로 반환해서 '변수명 != null'도 true
-	    if (isResetPw) {
-	    		entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200): 비밀번호 재발급 성공
-	    } else {
-	    		entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 비밀번호 재발급 실패 
-	    }
-	    
+	    // 사용자의 현재 비밀번호 조회
+		String storedPw = memberService.isPwMatch(mem_id);
+		if (storedPw == null) {
+		    // 현재 저장된 비밀번호가 없는 경우(사용자가 존재하지 않는 경우)
+			entity = new ResponseEntity<>(HttpStatus.NOT_FOUND); // HTTP 상태 코드(404)
+		} else if (!passwordEncoder.matches(currentPw, storedPw)) {
+			// 클라이언트가 제공한 현재 비밀번호와 저장된 비밀번호가 일치하지 않음
+			entity = new ResponseEntity<>("request", HttpStatus.OK);
+		} else {
+			// 위의 두 조건이 모두 아닌 경우 (비밀번호 재설정 가능)
+			String encoPassword = passwordEncoder.encode(mem_pw);
+			// log.info("암호화 후 비밀번호: " + encoPassword);
+
+			FindInfoDTO findInfoDTO = FindInfoDTO.ofResetPw(mem_id, encoPassword);
+			boolean isResetPw = memberService.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
+
+			if (isResetPw) {
+				entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200): 비밀번호 재발급 성공
+			} else {
+				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 비밀번호 재발급 실패
+			}
+		}
+
 	    return entity;
 	}
 		

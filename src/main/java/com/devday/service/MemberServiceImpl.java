@@ -119,7 +119,11 @@ public class MemberServiceImpl implements MemberService {
 		return false; // 사용자가 존재하지 않는 경우
 	}
 	
-	
+	@Override
+	public String isPwMatch(String mem_id) {
+
+		return memberMapper.isPwMatch(mem_id);
+	}
 	
 	// 회원수정 관련 메서드
 	@Override
@@ -135,5 +139,4 @@ public class MemberServiceImpl implements MemberService {
 		memberMapper.delete(mem_id);
 	}
 
-	
 }

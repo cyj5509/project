@@ -104,6 +104,15 @@
 		mem_id = #{mem_id}
 </update>
 
+<select id="isPwMatch" resultType="String" parameterType="String">
+	SELECT 
+		mem_pw 
+	FROM 
+		member_tbl
+	WHERE 
+		mem_id = #{mem_id}
+</select>
+
 <!-- 회원수정: sysdate로 갱신 필요(mem_updatedate DATE DEFAULT sysdate NOT NULL) -->
 <update id="modify" parameterType="com.devday.domain.MemberVO">
 	UPDATE
