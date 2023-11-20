@@ -263,6 +263,7 @@ public class MemberController {
 	}
 	
 	// 아이디 찾기 기능 구현
+	// 가입일을 전달하는 건 @ModelAttribute로 전달하는 방법을 생각해보자.
 	@PostMapping("/findId")
 	public ResponseEntity<MemberVO> findId(@RequestParam("mem_name") String mem_name, 
 										  @RequestParam("mem_email") String mem_email) throws Exception {

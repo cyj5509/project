@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -45,7 +45,7 @@ public class UserProductController {
 	// 2. REST API 개발 형태의 매핑 주소: /user/product/prd_list/2차 카테고리 코드
 	// 2차 카테고리를 선택했을 때 그걸 조건으로 데이터를 가져옴
 	@GetMapping("/prd_list")
-	public String prd_list(Criteria cri, Integer cg_code, String cg_name, Model model) throws Exception {
+	public String prd_list(Criteria cri, @ModelAttribute("cg_code") Integer cg_code, String cg_name, Model model) throws Exception {
 		
 		// AdProductController에서 Copy & Paste
 		

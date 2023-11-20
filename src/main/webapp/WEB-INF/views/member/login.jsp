@@ -63,9 +63,9 @@
 						</div>
 					</div>
 				</div>
+			<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			</div>
 
-			<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 

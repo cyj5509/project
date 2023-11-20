@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.devday.mapper.OrderMapper">
+		
+<select id="getOrderSeq" resultType="int">
+	SELECT 
+		SEQ_ORD_CODE.NEXTVAL
+	FROM
+		DUAL
+</select>
+
+<insert id="order_insert" parameterType="com.devday.domain.OrderVO">
+	INSERT INTO
+		ORDER_BS_TBL
+			(ord_code, mem_id, ord_name, ord_postcode, ord_addr_basic, ord_addr_detail, ord_tel, ord_price, ord_regdate, ord_status, payment_status)
+		VALUES (
+		#{ord_code}, 
+		#{mem_id}, 
+		#{ord_name}, 
+		#{ord_postcode}, 
+		#{ord_addr_basic}, 
+		#{ord_addr_detail}, 
+		#{ord_tel}, 
+		#{ord_price}, 
+		sysdate, 
+		#{ord_status},
+		#{payment_status}
+		)
+</insert>
+
+<insert id="order_detail_insert" parameterType="map">
+	INSERT INTO
+		ORDER_DT_TBL(ord_code, prd_num, dt_amount, dt_price)
+	SELECT 
+		#{ord_code}, c.prd_num, c.cart_amount, p.prd_price 
+	FROM 
+		CART_TBL C INNER JOIN PRODUCT_TBL P ON C.PRD_NUM = P.PRD_NUM
+	WHERE 
+		mem_id = #{mem_id}
+</insert> 
+
+<delete id="cart_del" parameterType="String">
+	DELETE FROM
+		CART_TBL
+	WHERE
+		mem_id = #{mem_id}
+</delete>
+
+<insert id="payment_insert" parameterType="com.devday.domain.PaymentVO">
+	INSERT INTO
+		payment
+			(pay_code, ord_code, mem_id, pay_method, pay_date, pay_tot_price
+			<if test="pay_nobank_price != null and pay_nobank_price != ''"> <!-- 무통장 입금인 경우 사용, 카카오페이인 경우 미사용 -->
+			, pay_nobank_price, pay_nobank_user, pay_nobank, pay_memo, pay_bankaccount
+			</if>
+			)
+		values 
+			(SEQ_PAYMENT_CODE.NEXTVAL, #{ord_code}, #{mbsp_id}, #{pay_method}, sysdate, #{pay_tot_price} 
+			<if test="pay_nobank_price != null and pay_nobank_price != ''"> <!-- 무통장 입금인 경우 사용, 카카오페이인 경우 미사용 -->
+			, #{pay_nobank_price}, #{pay_nobank_user}, #{pay_nobank}, #{pay_memo}, #{pay_bankaccount}
+			</if>
+			)
+</insert>
+
+</mapper>
+
+  

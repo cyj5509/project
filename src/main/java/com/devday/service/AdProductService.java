@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.devday.domain.ProductVO;
 import com.devday.dto.Criteria;
-import com.devday.domain.CategoryVO;
 
 public interface AdProductService {
 

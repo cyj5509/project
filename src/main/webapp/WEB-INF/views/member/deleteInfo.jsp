@@ -35,7 +35,7 @@
 							<br>
 							<h3 class="box-title">회원탈퇴 인증 확인</h3>
 							<br>
-							<form role="form" id="deleteInfoForm" method="post" action="/member/deleteInfo">
+							<form role="form" id="deleteInfoForm" method="post" action="/member/delete">
 								<div class="box-body">
 									<div class="form-group row">
 										<label for="mem_id" class="col-2">아이디</label>

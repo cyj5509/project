@@ -15,7 +15,9 @@
 
 			<!-- CSS 파일 링크 -->
 			<link rel="stylesheet" href="/css/header.css">
+			<link rel="stylesheet" href="/css/member/login.css">
 
+			
 
 	</head>
 
@@ -30,48 +32,55 @@
 							<br>
 							<h3 class="box-title">정보 조회</h3>
 							<br>
+
 							<form role="form" id="myPageForm" method="get" action="/member/myPage">
 								<div class="box-body">
-									<div class="form-group row">
-										<label for="mem_id" class="col-2">아이디</label>
-										<div class="col-10">
-											<input type="text" class="form-control" name="mem_id" id="mem_id" value="${vo.mem_id}"
-												readonly>
-										</div>
-									</div>
-									<div class="form-group row">
-										<label for="mem_name" class="col-2">이름</label>
-										<div class="col-10">
-											<input type="text" class="form-control" name="mem_name" id="mem_name" value="${vo.mem_name}"
-												readonly>
-										</div>
-									</div>
-									<div class="form-group row">
-										<label for="mem_phone" class="col-2">전화번호</label>
-										<div class="col-10">
-											<input type="text" class="form-control" name="mem_phone" id="mem_phone"
-												value="${vo.mem_phone}" readonly>
-										</div>
-									</div>
-									<div class="form-group row">
-										<label for="mem_email" class="col-2">이메일</label>
-										<div class="col-10">
-											<input type="email" class="form-control" name="mem_email" id="mem_email"
-												value="${vo.mem_email}" readonly>
+									<div class="login-info">
+										<h3>로그인 정보</h3><br>
+										<div class="form-group row">
+											<label for="mem_id" class="col-2">아이디</label>
+											<div class="col-10">
+												<input type="text" class="form-control" name="mem_id" id="mem_id" value="${vo.mem_id}" readonly>
+											</div>
 										</div>
 									</div>
 
-									<div class="form-group row">
-										<label for="sample2_postcode" class="col-2">우편번호</label>
-										<div class="col-2">
-											<input type="text" class="form-control" name="mem_postcode" id="sample2_postcode"
-												value="${vo.mem_postcode}" readonly>
+									<div class="member-info">
+										<h3>회원 정보</h3><br>
+										<div class="form-group row">
+											<label for="mem_name" class="col-2">이름</label>
+											<div class="col-10">
+												<input type="text" class="form-control" name="mem_name" id="mem_name" value="${vo.mem_name}"
+													readonly>
+											</div>
 										</div>
-										<label for="sample2_address" class="col-2">주소</label>
-										<div class="col-6">
-											<input type="text" class="form-control" name="mem_addr" id="sample2_address"
-												value="${vo.mem_addr}, ${vo.mem_deaddr}" readonly>
-											<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
+										<div class="form-group row">
+											<label for="mem_phone" class="col-2">전화번호</label>
+											<div class="col-10">
+												<input type="text" class="form-control" name="mem_phone" id="mem_phone" value="${vo.mem_phone}"
+													readonly>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="mem_email" class="col-2">이메일</label>
+											<div class="col-10">
+												<input type="email" class="form-control" name="mem_email" id="mem_email" value="${vo.mem_email}"
+													readonly>
+											</div>
+										</div>
+
+										<div class="form-group row">
+											<label for="sample2_postcode" class="col-2">우편번호</label>
+											<div class="col-2">
+												<input type="text" class="form-control" name="mem_postcode" id="sample2_postcode"
+													value="${vo.mem_postcode}" readonly>
+											</div>
+											<label for="sample2_address" class="col-2">주소</label>
+											<div class="col-6">
+												<input type="text" class="form-control" name="mem_addr" id="sample2_address"
+													value="${vo.mem_addr}, ${vo.mem_deaddr}" readonly>
+												<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
+											</div>
 										</div>
 									</div>
 
@@ -84,12 +93,9 @@
 						</div>
 					</div>
 				</div>
-
 				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
-
 			</div>
 			<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
-
 				<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 					<script>

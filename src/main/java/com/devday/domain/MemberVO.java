@@ -48,8 +48,8 @@ public class MemberVO {
 	private String mem_phone; // 회원 전화번호
 	private String mem_email; // 회원 이메일
 	private String mem_postcode; // 회원 우편번호
-	private String mem_addr; // 회원 주소
-	private String mem_deaddr; // 회원 상세주소
+	private String mem_addr; // 회원 기본 주소 -> mem_addr_basic
+	private String mem_deaddr; // 회원 상세주소 -> mem_addr_detail
 	private int mem_point; // 회원 포인트(DEFAULT 0)
 	private Date mem_joindate; // 가입 일자(DEFAULT sysdate) 
 	private Date mem_updatedate; // 수정 일자(DEFAULT sysdate)

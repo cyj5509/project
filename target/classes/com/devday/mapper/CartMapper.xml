@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.devday.mapper.CartMapper">
+
+<!-- 장바구니 추가 -->
+<insert id="cart_add" parameterType="com.devday.domain.CartVO">
+	MERGE INTO
+		cart_tbl
+	USING
+		dual
+	ON
+		(mem_id = #{mem_id} AND prd_num = #{prd_num})
+	WHEN 
+		MATCHED THEN
+	    UPDATE SET
+	    		cart_amount = cart_amount + #{cart_amount}
+	WHEN
+		NOT MATCHED THEN
+	    INSERT
+	    		(cart_code, prd_num, mem_id, cart_amount)
+	    VALUES
+	    		(seq_cart_code.NEXTVAL, #{prd_num}, #{mem_id}, #{cart_amount})
+</insert>
+
+<!-- 장바구니 목록: CartVO의 참조된 상품코드를 이용하여 상품 테이블과의 조인 작업 필요 -->
+<select id="cart_list" resultType="com.devday.dto.CartDTOList">
+	SELECT
+  		C.CART_CODE, C.PRD_NUM, C.CART_AMOUNT, P.PRD_NAME, P.PRD_PRICE, P.PRD_UP_FOLDER, P.PRD_IMG, P.PRD_DISCOUNT 
+	FROM 
+		PRODUCT_TBL P 
+			INNER JOIN CART_TBL C 
+			ON P.PRD_NUM = C.PRD_NUM
+	WHERE
+  		C.MEM_ID = #{mem_id}
+</select>
+
+<update id="cart_amount_change" parameterType="map">
+	UPDATE
+		CART_TBL
+	SET
+		<!-- 화면에 보여진 그대로 처리해야 되기 때문에 아래와 같이 처리(CART_AMOUNT =  CART_AMOUNT - #{CART_AMOUNT}는 잘못된 경우)-->
+		CART_AMOUNT = #{cart_amount}
+	WHERE
+		CART_CODE = #{cart_code}
+</update>
+
+<delete id="cart_list_del" parameterType="Long">
+	DELETE FROM
+		cart_tbl
+	WHERE
+		cart_code = #{cart_code}
+</delete>
+
+<delete id="cart_sel_delete">
+	<!--  파라미터로 List컬렉션이 사용될 경우에는 mybatis 구문에서는 collection="list" 사용해야 함. -->
+	DELETE FROM 
+		CART_TBL
+	WHERE
+		CART_CODE IN
+		<foreach collection="list" item="cart_code" open="(" close=")" separator=",">
+			#{cart_code}
+		</foreach>
+</delete>
+
+</mapper>
+  

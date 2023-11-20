@@ -6,9 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
-@Data
-public class ProductVO {
-
 /*
 CREATE TABLE product_tbl(
         prd_num                 NUMBER CONSTRAINT pk_prd_tbl PRIMARY KEY,
@@ -27,7 +24,10 @@ CREATE TABLE product_tbl(
         FOREIGN KEY(cg_code)    REFERENCES category_tbl(cg_code)
 );
 */
-	
+
+@Data
+public class ProductVO {
+
 	// prd_nun, prd_up_folder, prd_img, prd_date, prd_updatedate는 직접 입력 받지 않음
 	
 	private Integer prd_num; // 시퀀스 생성(사용자로부터 직접 입력받지 않음)

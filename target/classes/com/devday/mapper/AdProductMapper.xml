@@ -94,7 +94,8 @@
 		prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy, prd_date, prd_updatedate
 	FROM 
 		product_tbl 
-	WHERE prd_num = #{prd_num}
+	WHERE 
+		prd_num = #{prd_num}
 </select>
 
 <!-- 상품 수정 -->

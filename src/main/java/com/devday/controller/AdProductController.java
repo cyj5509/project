@@ -283,6 +283,8 @@ public class AdProductController {
 		// 상품 수정 내용
 		log.info("상품 수정 내용: " + vo);
 		
+		vo.setPrd_up_folder(vo.getPrd_up_folder().replace("/", "\\")); // Escape Sequence 특수문자
+		
 		// 작업
 		// 파일이 변경되었을 때 해야 할 작업: 1) 기존 이미지 파일 삭제 -> 2) 업로드 작업
 		// [참고] 클라이언트 파일명을 DB에 저장하는 부분도 고려해야 한다.

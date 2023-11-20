@@ -4,9 +4,6 @@ import java.util.Date;
 
 import lombok.Data;
 
-@Data
-public class AdminVO {
-
 /*
 CREATE TABLE admin_tbl (
     adm_id      VARCHAR2(15),
@@ -15,7 +12,10 @@ CREATE TABLE admin_tbl (
     CONSTRAINT pk_adm_tbl PRIMARY KEY(adm_id)
 );
 */
-	
+
+@Data
+public class AdminVO {
+
 	private String adm_id;
 	private String adm_pw;
 	private Date adm_con;
