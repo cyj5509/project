@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.devday.dto.EmailDTO;
 import com.devday.dto.FindInfoDTO;
 import com.devday.service.EmailService;
-import com.devday.service.MemberService;
+import com.devday.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -24,7 +24,7 @@ import lombok.extern.log4j.Log4j;
 public class EmailController {
 
 	private final EmailService emailService; // EmailService 인터페이스 implements EmailServiceImpl 클래스
-	private final MemberService memberService; // MemberService 인터페이스 implements MemberServiceImpl 클래스
+	private final UserService memberService; // MemberService 인터페이스 implements MemberServiceImpl 클래스
 
 	// 메일을 통한 회원 인증 기능 구현 ─ 회원가입, 아이디 및 비밀번호 찾기
 	@GetMapping("/authCode")

@@ -10,8 +10,8 @@ import lombok.ToString;
 public class LoginDTO {
 
 	// 로그인 정보
-	private String mem_id; // 사용자 아이디
-	private String mem_pw; // 사용자가 입력한 평문 비밀번호
+	private String user_id; // 사용자 아이디
+	private String user_pw; // 사용자가 입력한 평문 비밀번호
 	
 	//@ToString
 	/*

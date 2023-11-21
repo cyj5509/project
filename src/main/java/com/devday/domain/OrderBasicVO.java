@@ -7,7 +7,7 @@ import lombok.Data;
 /*
 CREATE TABLE order_bs_tbl(
         ord_code            NUMBER                  PRIMARY KEY,
-        mem_id              VARCHAR2(15)            NOT NULL,
+        user_id              VARCHAR2(15)            NOT NULL,
         ord_name            VARCHAR2(30)            NOT NULL,
         ord_postcode        CHAR(5)                 NOT NULL,
         ord_addr_basic      VARCHAR2(50)            NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE order_bs_tbl(
 public class OrderBasicVO {
 
 	private Long ord_code; // 주문 번호: DB의 시퀀스 사용
-	private String mem_id; // 회원 아이디: 인증 세션에서 처리
+	private String user_id; // 회원 아이디: 인증 세션에서 처리
 	
 	// 주문정보 페이지 전송에서 받음
 	private String ord_name; // 주문자명

@@ -36,4 +36,13 @@
 		cg_code = #{cg_code}
 </select>
 
+<select id="prd_detail" parameterType="Integer" resultType="com.devday.domain.ProductVO">
+	SELECT
+		PRD_NUM, CG_CODE, PRD_NAME, PRD_PRICE, PRD_DISCOUNT, PRD_PUBLISHER, PRD_CONTENT, PRD_UP_FOLDER, PRD_IMG, PRD_AMOUNT, PRD_BUY, PRD_DATE, PRD_UPDATEDATE
+	FROM
+		PRODUCT_TBL
+	WHERE
+		prd_num = #{prd_num}
+</select>
+
 </mapper>

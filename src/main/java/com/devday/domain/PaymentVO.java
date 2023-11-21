@@ -8,7 +8,7 @@ import lombok.Data;
 CREATE TABLE payment_tbl (
 	pay_code          NUMBER PRIMARY KEY,    
   	ord_code          NUMBER NOT NULL,        
-  	mem_id            VARCHAR2(50) NOT NULL, 
+  	user_id            VARCHAR2(50) NOT NULL, 
   	pay_method        VARCHAR2(50) NOT NULL, 
   	pay_date          DATE  NULL,             
   	pay_tot_price     NUMBER NOT NULL,			
@@ -27,7 +27,7 @@ public class PaymentVO {
 	
 	private Integer pay_code; // 일련번호
 	private Long ord_code; // 주문번호
-	private String mem_id; // 회원 ID
+	private String user_id; // 회원 ID
 	private String pay_method; // 결제방식
 	private Date pay_date; // 걀제일
 	private Integer pay_tot_price; // 결제금액: private int pay_tot_price;

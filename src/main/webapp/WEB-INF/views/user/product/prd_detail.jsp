@@ -14,6 +14,15 @@
 				<title>Pricing example · Bootstrap v4.6</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+					<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+					<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+					<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+					<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+					<script>
+						$(function () {
+							$("#tabs_pro_detail").tabs();
+						});
+					</script>
 
 					<style>
 						.bd-placeholder-img {
@@ -31,12 +40,9 @@
 							}
 						}
 					</style>
-
-
 			</head>
 
 			<body>
-
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 					<%@include file="/WEB-INF/views/comm/category_menu.jsp" %>
 
@@ -46,32 +52,63 @@
 
 						<div class="container">
 							<div class="card-deck mb-3 text-center row">
-								<c:forEach items="${prd_list}" var="productVO">
-									<div class="col-md-3">
-										<div class="card mb-4 shadow-sm">
-											<img class="btn_prd_img" data-prd_num="${productVO.prd_num}" width="100%" height="200"
-												src="/user/product/imageDisplay?dateFolderName=${productVO.prd_up_folder}&fileName=${productVO.prd_img}"
-												alt="" style="cursor: pointer;">
-											<div class="card-body">
-												<p class="card-text btn_prd_img" data-prd_num="${productVO.prd_num}" style="cursor: pointer;">
-													${productVO.prd_name}</p>
-												<div class="d-flex justify-content-between align-items-center">
-													<div class="btn-group">
-														<!-- data-변수명="" -> HTML5 속성으로 JS 처리를 위해 상품코드를 숨겨둠 -->
-														<button type="button" name="btn_cart_add" data-prd_num="${productVO.prd_num}"
-															class="btn btn-sm btn-outline-secondary">Cart</button>
-														<button type="button" name="btn_buy" class="btn btn-sm btn-outline-secondary">Buy</button>
-													</div>
-													<small class="text-muted">
-														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${productVO.prd_price}">
-														</fmt:formatNumber>
-													</small>
-												</div>
-											</div>
+								<div class="col-md-6"> <!-- 상품 이미지 -->
+									<img class="btn_prd_img" data-prd_num="${productVO.prd_num}" width="100%" height="200"
+										src="/user/product/imageDisplay?dateFolderName=${productVO.prd_up_folder}&fileName=${productVO.prd_img}"
+										alt="">
+								</div>
+
+								<div class="col-md-6">
+									<div class="row text-left">
+										<div class="col"> <!-- 상품명 -->
+											상품명: ${productVO.prd_name}
 										</div>
 									</div>
-								</c:forEach>
+									<div class="row text-left">
+										<div class="col"> <!-- 상품가격 -->
+											가격: <span id="unit_price">${productVO.prd_price}</span>
+										</div>
+									</div>
+									<div class="row text-left">
+										<div class="col">
+											수량: <input type="number" id="btn_quantity" value="1" style="width: 80px">
+										</div>
+									</div>
+									<div class="row text-left">
+										<div class="col">
+											총 상품금액: <span id="tot_price">${productVO.prd_price}</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+											<button type="button" class="btn btn-link" name="btn_order"
+												data-prd_num="${productVO.prd_num}">구매하기</button>
+										</div>
+										<div class="col-md-6">
+											<button type="button" class="btn btn-link" name="btn_cart_add"
+												data-prd_num="${productVO.prd_num}">장바구니</button>
+										</div>
+									</div>
+								</div>
 							</div> <!-- card-deck mb-3 text-center row 닫는 태그 -->
+
+							<div class="row">
+								<div class="col-md-12">
+									<div id="tabs_pro_detail">
+										<ul>
+											<li><a href="#tabs-prodetail">상품 설명</a></li>
+											<li><a href="#tabs-proreview">상품 후기</a></li>
+										</ul>
+										<div id="tabs-prodetail">
+											<p>${productVO.prd_content}/p>
+										</div>
+										<div id="tabs-proreview">
+											<p>상품후기 목록</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
 							<div class="row text-center">
 								<div class="col-md-12">
 									<!-- <form id="actionForm">의 용도 -->
@@ -82,44 +119,17 @@
 										<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
 										<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
 										<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
-
 										<input type="hidden" name="cg_code" id="cg_code" value="${cg_code}" />
 										<input type="hidden" name="cg_name" id="cg_name" value="${cg_name}" />
 									</form>
-
-									<nav aria-label="...">
-										<ul class="pagination">
-											<!-- 이전 표시 여부 -->
-											<c:if test="${pageMaker.prev}">
-												<li class="page-item">
-													<a href="${pageMaker.startPage - 1}" class="page-link movepage">Previous</a>
-												</li>
-											</c:if>
-
-											<!-- 페이지 번호 출력 작업 -->
-											<!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
-											<!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
-											<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="num">
-												<li class='page-item ${pageMaker.cri.pageNum == num ? "active" : "" }' aria-current="page">
-													<a class="page-link movepage" href="${num}" data-page="${num}">${num}</a>
-													<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
-												</li>
-											</c:forEach>
-
-											<!-- 다음 표시 여부 -->
-											<c:if test="${pageMaker.next}">
-												<li class="page-item">
-													<a href="${pageMaker.endPage + 1}" class="page-link movepage">Next</a>
-												</li>
-											</c:if>
-										</ul>
-									</nav>
 								</div>
 							</div>
+
 							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div> <!-- container 닫는 태그 -->
 
-						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+						<!-- JSP 주석 -->
+						<%-- <%@include file="/WEB-INF/views/comm/plugIn2.jsp" %> --%>
 
 							<!-- 카테고리 메뉴 자바스크립트 작업 소스-->
 							<script src="/js/category_menu.js"></script>
@@ -146,8 +156,8 @@
 										$.ajax({
 											url: '/cart/cart_add', // url: '장바구니 추가 주소', 
 											type: 'post',
-											// $(this).data("pro_num"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-											data: { pro_num: $(this).data("pro_num"), cart_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+											// $(this).data("prd_num"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
+											data: { prd_num: $(this).data("prd_num"), cart_amount: $("#btn_quantity").val() }, // mbsp_id는 스프링에서 자체 처리
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
@@ -160,6 +170,13 @@
 										});
 									});
 
+									// 구매하기(주문)
+									$("button[name='btn_order']").on("click", function () {
+
+										let url = `/user/order/order_ready?prd_num=$(this).data("prd_num")&cart_amount=$("#btn_quantity").val()`;
+										location.href = url;
+									});
+
 									// 상품 이미지 또는 상품명 클릭 시 상세로 보내는 작업
 									$(".btn_prd_img").on("click", function () {
 										console.log("상품 상세 설명");
@@ -168,10 +185,19 @@
 										actionForm.attr("action", "/user/product/prd_detail");
 										let prd_num = $(this).data("prd_num");
 
-										actionForm.find("input[name='prd_num']").remove(); // 뒤로가기 시 URL 내용 지우기
+										actionForm.find("input[name='prd_num']").remove(); // 뒤로가기 시 
 										// <input type='hidden' name='prd_num' value='상품코드'> 미리 만들어서 작성
 										actionForm.append("<input type='hidden' name='prd_num' value='" + prd_num + "'>")
 										actionForm.submit();
+									});
+
+									// 수량 변경 시
+									$("#btn_quantity").on("change", function () {
+										// parseInt(): 문자열을 정수로 변환(현재 작동에서는 정상 작동해서 불필요할 수 있음. 더하기 작업 등에 쓰임)
+										let tot_price = $("#unit_price").text() * $("#btn_quantity").val();
+
+										// 총 상품금액 표시
+										$("#tot_price").text(tot_price);
 									});
 
 								}); // ready event end

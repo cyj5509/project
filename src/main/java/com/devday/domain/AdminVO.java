@@ -6,17 +6,17 @@ import lombok.Data;
 
 /*
 CREATE TABLE admin_tbl (
-    adm_id      VARCHAR2(15),
-    adm_pw      VARCHAR2(60)                NOT NULL,
-    adm_con     DATE    DEFAULT   sysdate   NOT NULL,
-    CONSTRAINT pk_adm_tbl PRIMARY KEY(adm_id)
+    ad_id          VARCHAR2(15),                          -- 관리자 아이디
+    ad_pw          VARCHAR2(60)                NOT NULL,  -- 관리자 비밀번호
+    ad_last_login   DATE    DEFAULT   sysdate   NOT NULL, -- 관리자 접속일자
+    CONSTRAINT admin_pk PRIMARY KEY(ad_id)
 );
 */
 
 @Data
 public class AdminVO {
 
-	private String adm_id;
-	private String adm_pw;
-	private Date adm_con;
+	private String ad_id;
+	private String ad_pw;
+	private Date ad_last_login;
 }

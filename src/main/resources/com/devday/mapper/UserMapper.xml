@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.devday.mapper.UserMapper">
+
+<!-- 회원가입: 나머지 컬럼들은 Default로 설정한 값들이 있어 따로 기입하지 않아도 됨 -->
+<insert id="join" parameterType="com.devday.domain.UserVO">
+	INSERT INTO 
+		user_tbl (
+			user_id, 
+			user_pw, 
+			user_name, 
+			user_phone, 
+			user_email, 
+			user_postcode, 
+			user_addr_basic, 
+			user_addr_detail
+		)
+		VALUES (
+			#{user_id}, 
+			#{user_pw}, 
+			#{user_name}, 
+			#{user_phone}, 
+			#{user_email}, 
+			#{user_postcode}, 
+			#{user_addr_basic}, 
+			#{user_addr_detail}
+		)
+</insert>
+
+<!-- 아이디 중복검사: String user_id -> parameterType="String" -->
+<!-- resultType="int" 또는 "Integer"일 경우, SELECT COUNT(*) FROM user_tbl WHERE user_id = #{user_id} -->
+<select id="idCheck" parameterType="String" resultType="String">
+	SELECT
+		user_id
+	FROM
+		user_tbl
+	WHERE
+		user_id = #{user_id}
+</select>
+
+<!-- 로그인: 관리자/사용자를 구분 짓기 위해 select문에 user_status(회원 상태) 컬럼 추가 -->
+<select id="login" parameterType="String" resultType="com.devday.domain.UserVO">
+	select 
+		user_id, 
+		user_pw, 
+		user_name, 
+		user_phone, 
+		user_email, 
+		user_postcode, 
+		user_addr_basic, 
+		user_addr_detail, 
+		user_point, 
+		user_join_date, 
+		user_update_date,
+		user_last_login,
+		user_status
+	from 
+		user_tbl 
+	where 
+		user_id = #{user_id}
+</select>
+
+<!-- 접속일자 업데이트: 로그인 관련 메서드 내에서 사용 -->
+<!-- sysdate로 갱신 필요(user_lastlogin DATE DEFAULT sysdate NOT NULL) -->
+<update id="loginTimeUpdate" parameterType="String">
+	UPDATE
+		user_tbl
+	SET
+		user_last_login = sysdate
+	WHERE
+		user_id = #{user_id}
+</update>
+
+<!-- 아이디 찾기: 이름과 이메일을 이용한 찾기 -->
+<select id="findId" parameterType="com.devday.dto.FindInfoDTO" resultType="com.devday.domain.UserVO">
+	SELECT
+		user_id, user_join_date
+	FROM
+		user_tbl
+	WHERE
+		user_name = #{user_name} AND user_email = #{user_email}
+</select>
+
+<!-- 비밀번호 찾기: 아이디 및 이름과 이메일을 이용한 찾기 -->
+<select id="findPw" parameterType="com.devday.dto.FindInfoDTO" resultType="int">
+	 SELECT
+	 	COUNT(*)
+	 FROM
+	 	user_tbl
+	 WHERE
+	 	user_id = #{user_id} AND user_name = #{user_name} AND user_email = #{user_email}
+</select>
+
+<!-- 비밀번호 업데이트: 임시 비밀번호 생성 및 비밀번호 재발급 -->
+<update id="resetPw" parameterType="com.devday.dto.FindInfoDTO">
+	UPDATE 
+		user_tbl
+	SET
+		user_pw = #{user_pw}
+	WHERE
+		user_id = #{user_id}
+</update>
+
+<select id="isPwMatch" resultType="String" parameterType="String">
+	SELECT 
+		user_pw 
+	FROM 
+		user_tbl
+	WHERE 
+		user_id = #{user_id}
+</select>
+
+<!-- 회원수정: sysdate로 갱신 필요(user_updatedate DATE DEFAULT sysdate NOT NULL) -->
+<update id="modify" parameterType="com.devday.domain.UserVO">
+	UPDATE
+		user_tbl
+	SET
+		user_phone = #{user_phone},
+		user_email = #{user_email}, 
+		user_postcode = #{user_postcode}, 
+		user_addr_basic = #{user_addr_basic}, 
+		user_addr_detail = #{user_addr_detail},
+		user_update_date = sysdate
+	WHERE 
+		user_id = #{user_id}
+</update>
+
+<!-- 회원탈퇴 -->
+<delete id="delete" parameterType="String">
+	DELETE FROM
+		user_tbl
+	WHERE 
+		user_id = #{user_id}
+</delete>
+
+</mapper>  

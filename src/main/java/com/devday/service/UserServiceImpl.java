@@ -5,10 +5,10 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.devday.domain.MemberVO;
+import com.devday.domain.UserVO;
 import com.devday.dto.EmailDTO;
 import com.devday.dto.FindInfoDTO;
-import com.devday.mapper.MemberMapper;
+import com.devday.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -16,9 +16,9 @@ import lombok.extern.log4j.Log4j;
 @Service
 @RequiredArgsConstructor
 @Log4j
-public class MemberServiceImpl implements MemberService {
+public class UserServiceImpl implements UserService {
 
-	private final MemberMapper memberMapper; // MemberMapper 인터페이스
+	private final UserMapper userMapper; // MemberMapper 인터페이스
 	private final EmailService emailService; // EmailService 인터페이스 implements EmailServiceImpl 클래스
 	
 	// spring-security.xml의 <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
@@ -27,37 +27,37 @@ public class MemberServiceImpl implements MemberService {
 	
 	// 회원가입 관련 메서드
 	@Override
-	public void join(MemberVO vo) {
+	public void join(UserVO vo) {
 		
-		memberMapper.join(vo);
+		userMapper.join(vo);
 	}
 	
 	// 아이디 중복검사 관련 메서드
 	@Override
 	public String idCheck(String mem_id) {
 		
-		return memberMapper.idCheck(mem_id);
+		return userMapper.idCheck(mem_id);
 	}
 	
 	// 로그인 관련 메서드
 	@Override
-	public MemberVO login(String mem_id) {
+	public UserVO login(String mem_id) {
 
-		return memberMapper.login(mem_id);
+		return userMapper.login(mem_id);
 	}
 	
 	// 접속일자 업데이트 관련 메서드
 	@Override
 	public void loginTimeUpdate(String mem_id) {
 
-		memberMapper.loginTimeUpdate(mem_id);
+		userMapper.loginTimeUpdate(mem_id);
 	}
 	
 	// 아이디 찾기 관련 메서드
 	@Override
-	public MemberVO findId(FindInfoDTO findInfoDTO) {
+	public UserVO findId(FindInfoDTO findInfoDTO) {
 	
-		return memberMapper.findId(findInfoDTO);
+		return userMapper.findId(findInfoDTO);
 		
 	}
 
@@ -65,34 +65,34 @@ public class MemberServiceImpl implements MemberService {
 //	@Override
 //	public int findPw(FindInfoDTO findInfoDTO) {
 //		
-//		return memberMapper.findPw(findInfoDTO);
+//		return userMapper.findPw(findInfoDTO);
 //	}
 	
 	@Override
 	public boolean isUserForId(String mem_name, String mem_email) {
 	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(mem_name, mem_email);
-	    return memberMapper.findId(findInfoDTO) != null;
+	    return userMapper.findId(findInfoDTO) != null;
 	}
 	
 	@Override
 	public boolean isUserForPw(String mem_id, String mem_name, String mem_email) {
 	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(mem_id, mem_name, mem_email);
-	    return memberMapper.findPw(findInfoDTO) > 0;
+	    return userMapper.findPw(findInfoDTO) > 0;
 	}
 	
 	// 비밀번호 업데이트 관련 메서드
 	@Override
 	public boolean resetPw(FindInfoDTO findInfoDTO) {
 	
-		return memberMapper.resetPw(findInfoDTO);
+		return userMapper.resetPw(findInfoDTO);
 	}
 	
 	// 비밀번호 찾기 및 업데이트 관련 메서드
 	@Override
 	public boolean processFindPw(FindInfoDTO findInfoDTO) {
 		
-		// memberMapper.findPw(findInfoDTO): 회원정보 조회 관련 메서드 호출
-		int userCheck = memberMapper.findPw(findInfoDTO); // int com.devday.mapper.MemberMapper.findPw(FindInfoDTO findInfoDTO)
+		// userMapper.findPw(findInfoDTO): 회원정보 조회 관련 메서드 호출
+		int userCheck = userMapper.findPw(findInfoDTO); // int com.devday.mapper.MemberMapper.findPw(FindInfoDTO findInfoDTO)
 		// 사용자가 존재하는 경우
 		if (userCheck > 0) {
 			// 임시 비밀번호 및 암호화된 비밀번호 생성 후 설정
@@ -102,7 +102,7 @@ public class MemberServiceImpl implements MemberService {
 			String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호 ─ 서버용(DB 저장)
 			findInfoDTO.setMem_pw(encoPassword); // 암호화된 비밀번호로 필드값 설정
 
-			memberMapper.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
+			userMapper.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
 
 			try {
 				// EmailDTO.ofTempPw(receiverMail, tempPassword): 임시 비밀번호 발송을 위한 정적 팩토리 메서드 호출
@@ -122,21 +122,21 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public String isPwMatch(String mem_id) {
 
-		return memberMapper.isPwMatch(mem_id);
+		return userMapper.isPwMatch(mem_id);
 	}
 	
 	// 회원수정 관련 메서드
 	@Override
-	public void modify(MemberVO vo) {
+	public void modify(UserVO vo) {
 		
-		memberMapper.modify(vo);
+		userMapper.modify(vo);
 	}
 
 	// 회원탈퇴 관련 메서드
 	@Override
 	public void delete(String mem_id) {
 		
-		memberMapper.delete(mem_id);
+		userMapper.delete(mem_id);
 	}
 
 }

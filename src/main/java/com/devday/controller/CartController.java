@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.devday.domain.CartVO;
-import com.devday.domain.MemberVO;
+import com.devday.domain.UserVO;
 import com.devday.dto.CartDTOList;
 import com.devday.service.CartService;
 import com.devday.util.FileUtils;
@@ -51,8 +51,8 @@ public class CartController {
 		// 클라이언트 ─ AJAX 방식으로 상품코드, 상품수량 2개 정보만 전송 -> data: {pro_num:
 		// $(this).data("pro_num"), cart_amount: 1}
 		// Object javax.servlet.http.HttpSession.getAttribute(String name)
-		String mem_id = ((MemberVO) session.getAttribute("loginStatus")).getMem_id();
-		vo.setMem_id(mem_id);
+		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUser_id();
+		vo.setUser_id(user_id);
 
 		cartService.cart_add(vo);
 
@@ -65,7 +65,7 @@ public class CartController {
 	@GetMapping("/cart_list")
 	public void cart_list(HttpSession session, Model model) throws Exception {
 
-		String mbsp_id = ((MemberVO) session.getAttribute("loginStatus")).getMem_id();
+		String mbsp_id = ((UserVO) session.getAttribute("loginStatus")).getUser_id();
 
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")

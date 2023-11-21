@@ -11,4 +11,6 @@ public interface UserProductService {
 	List<ProductVO> prd_list(Integer cg_code, Criteria cri);
 	
 	int getTotalCount(Integer cg_code);
+	
+	ProductVO prd_detail(Integer prd_num);
 }

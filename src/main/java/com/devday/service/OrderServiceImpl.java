@@ -28,8 +28,8 @@ public class OrderServiceImpl implements OrderService {
 	public void order_insert(OrderBasicVO o_vo, PaymentVO p_vo) {
 		
 		orderMapper.order_insert(o_vo);
-		orderMapper.order_detail_insert(o_vo.getOrd_code(), o_vo.getMem_id());
-		orderMapper.cart_del(o_vo.getMem_id());
+		orderMapper.order_detail_insert(o_vo.getOrd_code(), o_vo.getUser_id());
+		orderMapper.cart_del(o_vo.getUser_id());
 		orderMapper.payment_insert(p_vo);
 	}
 	

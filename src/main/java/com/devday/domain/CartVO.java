@@ -23,6 +23,6 @@ public class CartVO {
 	
 	private Long cart_code; // 장바구니 코드: 시퀀스를 통해 처리. 그 외 나머지는 Ajax 처리(pro_list.jsp 참고)
 	private Integer prd_num; // 상품 코드
-	private String mem_id; // 회원아이디: 세션 활용
+	private String user_id; // 회원아이디: 세션 활용
 	private int cart_amount; // 장바구니 수량
 }

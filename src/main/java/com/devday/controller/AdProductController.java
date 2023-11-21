@@ -1,4 +1,4 @@
-package com.devday.controller;
+	package com.devday.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,9 +30,9 @@ import com.devday.domain.CategoryVO;
 import com.devday.domain.ProductVO;
 import com.devday.dto.Criteria;
 import com.devday.dto.PageDTO;
+import com.devday.service.AdCategoryService;
 import com.devday.service.AdProductService;
 import com.devday.util.FileUtils;
-import com.devday.service.AdCategoryService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -57,7 +57,7 @@ public class AdProductController {
 
 	// 상품등록 폼
 	@GetMapping("/prd_insert")
-	public void prd_insert() {
+	public void pd_insert() {
 
 		log.info("상품등록 폼");
 	}
@@ -80,9 +80,9 @@ public class AdProductController {
 	// <input type = "file" class="form-control" name="uploadFile" id="uploadFile"
 	// placeholder="작성자 입력..."/>
 	@PostMapping("/prd_insert")
-	// public String prd_insert(ProductVO vo, List<MultipartFile> uploadFile) { //
+	// public String pd_insert(ProductVO vo, List<MultipartFile> uploadFile) { //
 	// 파일이 여러 개일 때
-	public String prd_insert(ProductVO vo, MultipartFile uploadFile, RedirectAttributes rttr) { // 파일이 하나일 때
+	public String pd_insert(ProductVO vo, MultipartFile uploadFile, RedirectAttributes rttr) { // 파일이 하나일 때
 
 		log.info("상품정보: " + vo);
 
@@ -90,8 +90,8 @@ public class AdProductController {
 		String dateFolder = FileUtils.getDateFolder();
 		String savedFileName = FileUtils.uploadFile(uploadPath, dateFolder, uploadFile);
 
-		vo.setPrd_img(savedFileName);
-		vo.setPrd_up_folder(dateFolder);
+		vo.setPd_img(savedFileName);
+		vo.setPd_img_folder(dateFolder);
 
 		log.info("상품정보: " + vo);
 
@@ -175,18 +175,18 @@ public class AdProductController {
 	// 상품 리스트: 목록과 페이징
 	// 테이블의 전체 데이터를 가져옴
 	@GetMapping("/prd_list")
-	public void prd_list(Criteria cri, Model model) throws Exception {
+	public void pd_list(Criteria cri, Model model) throws Exception {
 
 		// 10 -> 2로 변경
 		cri.setAmount(2); // Criteria에서 this(1, 2);
 
-		List<ProductVO> prd_list = adProductService.prd_list(cri);
+		List<ProductVO> pd_list = adProductService.prd_list(cri);
 
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
-		prd_list.forEach(vo -> {
-			vo.setPrd_up_folder(vo.getPrd_up_folder().replace("\\", "/"));
+		pd_list.forEach(vo -> {
+			vo.setPd_img_folder(vo.getPd_img_folder().replace("\\", "/"));
 		});
-		model.addAttribute("prd_list", prd_list);
+		model.addAttribute("pd_list", pd_list);
 
 		int totalCount = adProductService.getTotalCount(cri);
 		model.addAttribute("pageMaker", new PageDTO(cri, totalCount));
@@ -202,25 +202,25 @@ public class AdProductController {
 
 	// [방법 1] 체크상품 목록 수정(Ajax 요청) ─ DB 연동 여러 번
 	@ResponseBody // Ajax 요청을 받을 것이기 때문 <-> @RestController에서는 사용하지 않음
-	@PostMapping("/prd_checked_modify1") // prd_list.jsp에서 type이 post 방식(329행)
+	@PostMapping("/pd_checked_modify1") // pd_list.jsp에서 type이 post 방식(329행)
 	// 일반적으로 Ajax에선 ResponseEntity 클래스 방식이 사용
 	// -> 이유: 해당 클래스가 헤더 작업과 http 상태코드 작업을 지원하기 때문
-	// 일반요청 시 배열 형태로 파라미터가 전송되어 오면 @RequestParam("prd_num_arr[]")에서 []를 제외
+	// 일반요청 시 배열 형태로 파라미터가 전송되어 오면 @RequestParam("pd_num_arr[]")에서 []를 제외
 	// <-> Ajax 요청으로 들어오기 때문에 아래와 같이 []를 붙인 형태로 작성됨
-	// public ResponseEntity<String> prd_checked_modify(클라이언트에 보낸 정보를 받는 매개변수)
-	public ResponseEntity<String> prd_checked_modify1(@RequestParam("prd_num_arr[]") List<Integer> prd_num_arr,
-			@RequestParam("prd_price_arr[]") List<Integer> prd_price_arr,
-			@RequestParam("prd_buy_arr[]") List<String> prd_buy_arr) throws Exception {
+	// public ResponseEntity<String> pd_checked_modify(클라이언트에 보낸 정보를 받는 매개변수)
+	public ResponseEntity<String> pd_checked_modify1(@RequestParam("pd_num_arr[]") List<Integer> pd_num_arr,
+			@RequestParam("pd_price_arr[]") List<Integer> pd_price_arr,
+			@RequestParam("pd_buy_arr[]") List<String> pd_buy_arr) throws Exception {
 
 		// 클라이언트에서 값이 넘어오는 것을 확인하고 Mapper 등의 서버 측 스프링 작업할 것
-		log.info("상품코드: " + prd_num_arr);
-		log.info("상품가격: " + prd_price_arr);
-		log.info("판매여부: " + prd_buy_arr);
+		log.info("상품코드: " + pd_num_arr);
+		log.info("상품가격: " + pd_price_arr);
+		log.info("판매여부: " + pd_buy_arr);
 
 		ResponseEntity<String> entity = null; // 참조타입이라 null이 가능
 
 		// 체크상품 수정 작업
-		adProductService.prd_checked_modify1(prd_num_arr, prd_price_arr, prd_buy_arr);
+		adProductService.prd_checked_modify1(pd_num_arr, pd_price_arr, pd_buy_arr);
 
 		entity = new ResponseEntity<String>("success", HttpStatus.OK); // function (result)
 
@@ -230,18 +230,18 @@ public class AdProductController {
 	// [방법 2] 체크상품 목록 수정(Ajax 요청) ─ DB 연동 한 번(for문 이용)
 	@ResponseBody
 	@PostMapping("/prd_checked_modify2")
-	public ResponseEntity<String> prd_checked_modify2(@RequestParam("prd_num_arr[]") List<Integer> prd_num_arr,
-			@RequestParam("prd_price_arr[]") List<Integer> prd_price_arr,
-			@RequestParam("prd_buy_arr[]") List<String> prd_buy_arr) throws Exception {
+	public ResponseEntity<String> pd_checked_modify2(@RequestParam("pd_num_arr[]") List<Integer> pd_num_arr,
+			@RequestParam("pd_price_arr[]") List<Integer> pd_price_arr,
+			@RequestParam("pd_buy_arr[]") List<String> pd_buy_arr) throws Exception {
 
-		log.info("상품코드: " + prd_num_arr);
-		log.info("상품가격: " + prd_price_arr);
-		log.info("판매여부: " + prd_buy_arr);
+		log.info("상품코드: " + pd_num_arr);
+		log.info("상품가격: " + pd_price_arr);
+		log.info("판매여부: " + pd_buy_arr);
 
 		ResponseEntity<String> entity = null;
 
 		// 체크상품 수정 작업
-		adProductService.prd_checked_modify2(prd_num_arr, prd_price_arr, prd_buy_arr);
+		adProductService.prd_checked_modify2(pd_num_arr, pd_price_arr, pd_buy_arr);
 
 		entity = new ResponseEntity<String>("success", HttpStatus.OK); // function (result)
 
@@ -250,14 +250,14 @@ public class AdProductController {
 
 	// 상품수정 폼 페이지
 	@GetMapping("/prd_edit")
-	public void pro_edit(@ModelAttribute("cri") Criteria cri, Integer prd_num, Model model) throws Exception {
+	public void pro_edit(@ModelAttribute("cri") Criteria cri, Integer pd_num, Model model) throws Exception {
 
 		// 선택한 상품정보
-		ProductVO productVO = adProductService.prd_edit(prd_num);
+		ProductVO productVO = adProductService.prd_edit(pd_num);
 		
 		// '\'(역슬래시)를 '/'(슬래시)로 변환하는 작업
 		// 요청 타겟에서 유효하지 않은 문자가 발견되었습니다. 유효한 문자들은 RFC 7230과 RFC 3986에 정의되어 있습니다.
-		productVO.setPrd_up_folder(productVO.getPrd_up_folder().replace("\\", "/")); // Escape Sequence 특수문자
+		productVO.setPd_img_folder(productVO.getPd_img_folder().replace("\\", "/")); // Escape Sequence 특수문자
 		
 		model.addAttribute("productVO", productVO);
 
@@ -271,19 +271,19 @@ public class AdProductController {
 
 		// 1차 카테고리를 부모로 둔 2차 카테고리 정보 예) TOP(1)
 		// 현재 상품의 1차 카테고리 코드: firstCategory.getCg_parent_code()
-		model.addAttribute("second_categoryList", adCategoryService.getSecondCategoryList(firstCategory.getCg_prt_code())); // second_categoryList: 여러 개
+		model.addAttribute("second_categoryList", adCategoryService.getSecondCategoryList(firstCategory.getCg_parent_code())); // second_categoryList: 여러 개
 	}
 	
 	// 상품 수정
 	@PostMapping("/prd_edit")
-	public String prd_edit(Criteria cri, ProductVO vo, MultipartFile uploadFile, RedirectAttributes rttr) throws Exception {
+	public String pd_edit(Criteria cri, ProductVO vo, MultipartFile uploadFile, RedirectAttributes rttr) throws Exception {
 		
 		// 상품 리스트에서 사용할 정보(검색, 페이징 정보)
 		log.info("검색 및 페이징 정보: " + cri);
 		// 상품 수정 내용
 		log.info("상품 수정 내용: " + vo);
 		
-		vo.setPrd_up_folder(vo.getPrd_up_folder().replace("/", "\\")); // Escape Sequence 특수문자
+		vo.setPd_img_folder(vo.getPd_img_folder().replace("/", "\\")); // Escape Sequence 특수문자
 		
 		// 작업
 		// 파일이 변경되었을 때 해야 할 작업: 1) 기존 이미지 파일 삭제 -> 2) 업로드 작업
@@ -292,15 +292,15 @@ public class AdProductController {
 		if(!uploadFile.isEmpty()) {
 
 			// 1) 기존 이미지 파일 삭제 작업
-			FileUtils.deleteFile(uploadPath, vo.getPrd_up_folder(), vo.getPrd_img());
+			FileUtils.deleteFile(uploadPath, vo.getPd_img_folder(), vo.getPd_img());
 
 			// 2) 업로드 작업
 			String dateFolder = FileUtils.getDateFolder();
 			String savedFileName = FileUtils.uploadFile(uploadPath, dateFolder, uploadFile);
 
 			// 3) DB에 저장할 새로운 날짜폴더명 및 이미지명 변경 작업
-			vo.setPrd_img(savedFileName);
-			vo.setPrd_up_folder(dateFolder);	
+			vo.setPd_img(savedFileName);
+			vo.setPd_img_folder(dateFolder);	
 		}
 		
 		// DB 연동 작업
@@ -310,10 +310,10 @@ public class AdProductController {
 	}
 	
 	@PostMapping("/prd_delete")
-	public String pro_delete(Criteria cri, Integer prd_num) throws Exception {
+	public String pro_delete(Criteria cri, Integer pd_num) throws Exception {
 		
 		// DB 연동 작업
-		adProductService.prd_delete(prd_num);
+		adProductService.prd_delete(pd_num);
 		
 		return "redirect:/admin/product/prd_list" + cri.getListLink();
 	}

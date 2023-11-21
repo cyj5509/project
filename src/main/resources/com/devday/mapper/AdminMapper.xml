@@ -8,7 +8,7 @@
 
 <select id="admin_ok" resultType="com.devday.domain.AdminVO" parameterType="String">
 	SELECT
-		adm_id, adm_pw, adm_con
+		adm_id, adm_pw, adm_last_login
 	FROM
 		admin_tbl
 	WHERE
@@ -19,7 +19,7 @@
 	UPDATE
 		admin_tbl
 	SET
-		adm_con = sysdate
+		adm_last_login = sysdate
 	WHERE
 		adm_id = #{adm_id}
 </update>

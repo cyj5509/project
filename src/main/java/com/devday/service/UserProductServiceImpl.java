@@ -27,4 +27,10 @@ public class UserProductServiceImpl implements UserProductService {
 		
 		return userProductMapper.getTotalCount(cg_code);
 	}
+	
+	@Override
+	public ProductVO prd_detail(Integer prd_num) {
+
+		return userProductMapper.prd_detail(prd_num);
+	}
 }
