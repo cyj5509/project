@@ -10,8 +10,8 @@
 <!-- cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy -->
 <insert id="prd_insert" parameterType="com.devday.domain.ProductVO">
 	INSERT INTO
-		product_tbl (prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy)
-	VALUES (seq_prd_tbl.NEXTVAL, #{cg_code}, #{prd_name}, #{prd_price}, #{prd_discount}, #{prd_publisher}, #{prd_content}, #{prd_up_folder}, #{prd_img}, #{prd_amount}, #{prd_buy}) 
+		product_table (pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status)
+	VALUES (sequence_pd_number.NEXTVAL, #{cg_code}, #{pd_name}, #{pd_price}, #{pd_discount}, #{pd_company}, #{pd_content}, #{pd_image_folder}, #{pd_image}, #{pd_amount}, #{pd_buy_status}) 
 </insert>
 
 <sql id="criteria">
@@ -20,13 +20,13 @@
 			<trim prefix="OR">
 			    <choose>
 			        <when test="type == 'N'.toString()">
-			            PRD_NAME like '%' || #{keyword} || '%' 
+			            pd_name LIKE '%' || #{keyword} || '%' 
 			        </when>
 			        <when test="type == 'C'.toString()">
-			            PRD_NUM like '%' || #{keyword} || '%' 
+			            pd_number LIKE '%' || #{keyword} || '%' 
 			        </when>
 			        <when test="type == 'P'.toString()">
-			            PRD_PUBLISHER like '%' || #{keyword} || '%' 
+			            pd_company LIKE '%' || #{keyword} || '%' 
 			        </when>
 			    </choose>
 			</trim>
@@ -37,13 +37,13 @@
 <select id="prd_list" resultType="com.devday.domain.ProductVO" parameterType="com.devday.dto.Criteria">
 	<![CDATA[
 	SELECT
-		prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy, prd_date, prd_updatedate
+		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	FROM 
 	    (
-	    SELECT /*+ INDEX_DESC(product_tbl pk_prd_num) */
-	    		ROWNUM rn, prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy, prd_date, prd_updatedate
+	    SELECT /*+ INDEX_DESC(product_table pk_pd_number) */
+	    		ROWNUM rn, pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	    FROM
-	    		product_tbl
+	    		product_table
 	    WHERE]]>
 	    <include refid="criteria"></include> 
 	    <![CDATA[
@@ -57,21 +57,21 @@
 	SELECT
 		COUNT(*)
 	FROM
-		product_tbl
+		product_table
 	WHERE 
 		<include refid="criteria"></include>
-		prd_num > 0
+		pd_number > 0
 </select>
 
 <!-- 체크상품 수정 작업 1 -->
 <update id="prd_checked_modify1" parameterType="map">
 	UPDATE
-		product_tbl
+		product_table
 	SET
-		PRD_PRICE = #{prd_price}, 
-		PRD_BUY = #{prd_buy} 
+		pd_price = #{pd_price}, 
+		pd_buy_status = #{pd_buy_status} 
 	WHERE 
-		PRD_NUM = #{prd_num}
+		pd_number = #{pd_number}
 </update>
 
 <!-- 체크상품 수정 작업 2 -->
@@ -79,51 +79,51 @@
 <update id="prd_checked_modify2">
 	<foreach collection="list" item="item" open="declare begin" separator=";" close="; end;">
 		UPDATE
-			product_tbl
+			product_table
 		SET
-			PRD_PRICE = #{item.prd_price}, 
-			PRD_BUY = #{item.prd_buy} 
+			pd_price = #{item.pd_price}, 
+			pd_buy_status = #{item.pd_buy_status} 
 		WHERE 
-			PRD_NUM = #{item.prd_num}
+			pd_number = #{item.pd_number}
 	</foreach>
 </update>
 
 <!-- 같은 형태(생략 가능): <select id="prd_edit" resultType="com.devday.domain.ProductVO"> -->
 <select id="prd_edit" resultType="com.devday.domain.ProductVO" parameterType="Integer">
 	SELECT
-		prd_num, cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy, prd_date, prd_updatedate
+		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	FROM 
-		product_tbl 
+		product_table 
 	WHERE 
-		prd_num = #{prd_num}
+		pd_number = #{pd_number}
 </select>
 
 <!-- 상품 수정 -->
 <update id="prd_edit_ok" parameterType="com.devday.domain.ProductVO">
 	UPDATE
-		product_tbl
+		product_table
 	SET 
 		cg_code = #{cg_code}, 
-		prd_name = #{prd_name}, 
-		prd_price = #{prd_price}, 
-		prd_discount = #{prd_discount}, 
-		prd_publisher = #{prd_publisher}, 
-		prd_content = #{prd_content},
-		prd_up_folder = #{prd_up_folder}, 
-		prd_img = #{prd_img},
-		prd_amount = #{prd_amount}, 
-		prd_buy = #{prd_buy}, 
-		prd_updatedate = sysdate
+		pd_name = #{pd_name}, 
+		pd_price = #{pd_price}, 
+		pd_discount = #{pd_discount}, 
+		pd_company = #{pd_company}, 
+		pd_content = #{pd_content},
+		pd_image_folder = #{pd_image_folder}, 
+		pd_image = #{pd_image},
+		pd_amount = #{prd_amount}, 
+		pd_buy_status = #{pd_buy_status}, 
+		pd_update_date = sysdate
 	WHERE 
-		prd_num = #{prd_num}
+		pd_number = #{pd_number}
 </update>
 
 <delete id="prd_delete" parameterType="Integer">
 	
 	DELETE FROM
-		product_tbl
+		product_table
 	WHERE
-		prd_num = #{prd_num}
+		pd_number = #{pd_number}
 </delete>
 
 </mapper>

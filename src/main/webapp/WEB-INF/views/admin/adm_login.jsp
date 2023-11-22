@@ -29,13 +29,13 @@
 								<p>
 									<span class="fa fa-user"></span>
 									<input type="text"
-										name="adm_id" value="admin" Placeholder="Username" required>
+										name="ad_id" value="admin" Placeholder="Username" required>
 								</p>
 								<!-- JS because of IE support; better: placeholder="Username" -->
 								<p>
 									<span class="fa fa-lock"></span>
 									<input type="password"
-										name="adm_pw" value="1234" Placeholder="Password" required>
+										name="ad_pw" value="1234" Placeholder="Password" required>
 								</p>
 								<!-- JS because of IE support; better: placeholder="Password" -->
 								<div>

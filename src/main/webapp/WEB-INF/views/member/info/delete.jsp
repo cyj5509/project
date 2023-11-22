@@ -35,7 +35,7 @@
 							<br>
 							<h3 class="box-title">회원탈퇴 인증 확인</h3>
 							<br>
-							<form role="form" id="deleteInfoForm" method="post" action="/member/delete">
+							<form role="form" id="deleteInfoForm" method="post" action="/member/delete_info">
 								<div class="box-body">
 									<div class="form-group row">
 										<label for="mem_id" class="col-2">아이디</label>
@@ -58,9 +58,9 @@
 						</div>
 					</div>
 				</div>
-				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			</div>
 
+				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 				<script>

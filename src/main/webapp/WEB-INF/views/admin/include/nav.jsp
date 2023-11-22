@@ -12,7 +12,7 @@
           <img src="/images/devday_logo.png" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p>조영준(${sessionScope.adminStatus.adm_id})</p>
+          <p>조영준(${sessionScope.adminStatus.ad_id})</p>
           <!-- Status -->
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>

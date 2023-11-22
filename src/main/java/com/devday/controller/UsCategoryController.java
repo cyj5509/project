@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devday.domain.CategoryVO;
-import com.devday.service.UserCategoryService;
+import com.devday.service.UsCategoryService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -27,9 +27,9 @@ import lombok.extern.log4j.Log4j;
 @RequiredArgsConstructor
 @RequestMapping("/category")
 @Log4j
-public class UserCategoryController {
+public class UsCategoryController {
 
-	private final UserCategoryService userCategoryService;
+	private final UsCategoryService usCategoryService;
 
 	// 2차 카테고리 정보를 불러오는 작업(AdCategoryController에서 Copy & Paste)
 	@ResponseBody
@@ -39,7 +39,7 @@ public class UserCategoryController {
 		log.info("1차 카테고리 코드: " + cg_prt_code);
 		
 		ResponseEntity<List<CategoryVO>> entity = null;
-		entity = new ResponseEntity<List<CategoryVO>>(userCategoryService.getSecondCategoryList(cg_prt_code), HttpStatus.OK);
+		entity = new ResponseEntity<List<CategoryVO>>(usCategoryService.getSecondCategoryList(cg_prt_code), HttpStatus.OK);
 	
 		// List<CategoryVO> list = adCategoryService.getSecondCategoryList(cg_parent_code) 
 		// list 객체를 JSON으로 변환하는 라이브러리로 Jackson Databind 필요(pom.xml 참고) 

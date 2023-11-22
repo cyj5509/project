@@ -8,7 +8,7 @@
 <!-- 회원가입: 나머지 컬럼들은 Default로 설정한 값들이 있어 따로 기입하지 않아도 됨 -->
 <insert id="join" parameterType="com.devday.domain.UserVO">
 	INSERT INTO 
-		us_tbl (
+		user_table (
 			us_id, 
 			us_pw, 
 			us_name, 
@@ -31,12 +31,12 @@
 </insert>
 
 <!-- 아이디 중복검사: String us_id -> parameterType="String" -->
-<!-- resultType="int" 또는 "Integer"일 경우, SELECT COUNT(*) FROM us_tbl WHERE us_id = #{us_id} -->
+<!-- resultType="int" 또는 "Integer"일 경우, SELECT COUNT(*) FROM user_table WHERE us_id = #{us_id} -->
 <select id="idCheck" parameterType="String" resultType="String">
 	SELECT
 		us_id
 	FROM
-		us_tbl
+		user_table
 	WHERE
 		us_id = #{us_id}
 </select>
@@ -58,7 +58,7 @@
 		us_last_login,
 		us_status
 	from 
-		us_tbl 
+		user_table 
 	where 
 		us_id = #{us_id}
 </select>
@@ -67,7 +67,7 @@
 <!-- sysdate로 갱신 필요(us_lastlogin DATE DEFAULT sysdate NOT NULL) -->
 <update id="loginTimeUpdate" parameterType="String">
 	UPDATE
-		us_tbl
+		user_table
 	SET
 		us_last_login = sysdate
 	WHERE
@@ -79,7 +79,7 @@
 	SELECT
 		us_id, us_join_date
 	FROM
-		us_tbl
+		user_table
 	WHERE
 		us_name = #{us_name} AND us_email = #{us_email}
 </select>
@@ -89,7 +89,7 @@
 	 SELECT
 	 	COUNT(*)
 	 FROM
-	 	us_tbl
+	 	user_table
 	 WHERE
 	 	us_id = #{us_id} AND us_name = #{us_name} AND us_email = #{us_email}
 </select>
@@ -97,7 +97,7 @@
 <!-- 비밀번호 업데이트: 임시 비밀번호 생성 및 비밀번호 재발급 -->
 <update id="resetPw" parameterType="com.devday.dto.FindInfoDTO">
 	UPDATE 
-		us_tbl
+		user_table
 	SET
 		us_pw = #{us_pw}
 	WHERE
@@ -108,7 +108,7 @@
 	SELECT 
 		us_pw 
 	FROM 
-		us_tbl
+		user_table
 	WHERE 
 		us_id = #{us_id}
 </select>
@@ -116,7 +116,7 @@
 <!-- 회원수정: sysdate로 갱신 필요(us_updatedate DATE DEFAULT sysdate NOT NULL) -->
 <update id="modify" parameterType="com.devday.domain.UserVO">
 	UPDATE
-		us_tbl
+		user_table
 	SET
 		us_phone = #{us_phone},
 		us_email = #{us_email}, 
@@ -131,7 +131,7 @@
 <!-- 회원탈퇴 -->
 <delete id="delete" parameterType="String">
 	DELETE FROM
-		us_tbl
+		user_table
 	WHERE 
 		us_id = #{us_id}
 </delete>

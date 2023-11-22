@@ -3,17 +3,17 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.devday.mapper.UserCategoryMapper">
+<mapper namespace="com.devday.mapper.UsCategoryMapper">
 
 <!-- AdCategoryMapper -> CommCategoryMapper 형태로 작업해도 됨 -->
 <!-- <select id="getSecondCategoryList" parameterType="int">로도 사용 가능 -->
 <select id="getSecondCategoryList" parameterType="Integer" resultType="com.devday.domain.CategoryVO">
 	SELECT
-		CG_CODE, CG_PRT_CODE, CG_NAME
+		cg_code, cg_parent_code, cg_name
 	FROM
-		CATEGORY_TBL
+		category_table
 	WHERE
-		CG_PRT_CODE = #{cg_prt_code}
+		cg_parent_code = #{cg_parent_code}
 </select>
 
 </mapper>

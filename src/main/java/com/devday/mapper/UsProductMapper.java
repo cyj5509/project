@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.devday.domain.ProductVO;
 import com.devday.dto.Criteria;
 
-public interface UserProductMapper {
+public interface UsProductMapper {
 
 	// 2차 카테고리별 상품 리스트(페이징 정보 사용, 검색 제외)
 	// 파라미터가 하나인 경우 Mapper.xml에서 아래와 같이 작업함

@@ -29,49 +29,56 @@ public class EmailController {
 	// 메일을 통한 회원 인증 기능 구현 ─ 회원가입, 아이디 및 비밀번호 찾기
 	@GetMapping("/authCode")
 	public ResponseEntity<String> sendAuthCode(@RequestParam(value = "us_id", required = false) String us_id,
-											  @RequestParam("us_name") String us_name, 
-											  @RequestParam("receiverMail") String receiverMail, HttpSession session) {
+											  @RequestParam(value = "us_name", required = false) String us_name, 
+											  @RequestParam("receiverMail") String receiverMail, HttpSession httpSession) {
 		
-		log.info("수신자명: " + us_name);
+		log.info("수신자 이름: " + us_name);
 		log.info("수신할 메일 주소: " + receiverMail);
-		
-		ResponseEntity<String> entity = null;
-		
-		boolean userExists; // 사용자가 존재
-	    // 아이디 찾기 요청인 경우
-	    if (us_id == null) {
-	        userExists = userService.isUserForId(us_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
-	    } else {
-	        // 비밀번호 찾기 요청인 경우
-	        userExists = userService.isUserForPw(us_id, us_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
-	    }
 
-		// 사용자가 존재하지 않는 경우
-		if (!userExists) {
-			return new ResponseEntity<>("request", HttpStatus.OK);
-		} else {
-			// 사용자가 존재하는 경우 인증번호 생성 및 발송
-			String authCode = "";
-			for (int i = 0; i < 6; i++) {
-				authCode += String.valueOf((int) (Math.random() * 10));
-			}
-			log.info("인증번호: " + authCode);
+		ResponseEntity<String> res_entity = null;
+		boolean isExistingUser = false; // 사용자가 존재하지 않는다고 가정
 
-			// 세션에 인증번호 저장
-			session.setAttribute("authCode", authCode);
-
-			try {
-				EmailDTO emailDTO = EmailDTO.ofAuthCode(receiverMail, authCode); // ofAuthCode: 회원 인증 관련 정적 팩토리 메서드 호출
-				log.info("발송할 이메일 정보: " + emailDTO); // ofAuthCode의 receiverMail 및 authCode 값 포함한 정보 출력
-
-				emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출
-				entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200)
-			} catch (Exception e) {
-				e.printStackTrace();
-				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500)
-			}
+		// 회원가입 요청: 이메일만 필요(아이디, 이름 불필요)
+		if (us_id == null && us_name == null) {
+			isExistingUser = true; // 별도의 사용자 존재 검사는 필요 없음
 		}
-		return entity;
+		// 아이디 찾기 요청: 이름, 이메일 필요(아이디 불필요)
+		else if (us_id == null && us_name != null) {
+			isExistingUser = userService.isUserForId(us_name, receiverMail); // 존재하면 true, 존재하지 않으면 false 반환
+		}
+		// 비밀번호 찾기 요청: 아이디, 이름, 이메일 모두 필요
+		else if (us_id != null && us_name != null) {
+			isExistingUser = userService.isUserForPw(us_id, us_name, receiverMail); // 존재하면 true, 존재하지 않으면 false 반환
+		}
+
+		// 해당 이름과 일치하는 사용자가 존재하지 않는 경우(회원가입 제외)
+		if (!isExistingUser && us_name != null) {
+			res_entity = new ResponseEntity<>("request", HttpStatus.OK);
+		}
+
+		// 인증번호 생성 및 이메일 발송
+		String authCode = "";
+		for (int i = 0; i < 6; i++) {
+			authCode += String.valueOf((int) (Math.random() * 10));
+		}
+		
+		log.info("인증번호: " + authCode);
+
+		// 세션에 인증번호 저장
+		httpSession.setAttribute("authCode", authCode);
+
+		try {
+			EmailDTO emailDTO = EmailDTO.ofAuthCode(receiverMail, authCode); // ofAuthCode: 회원 인증 관련 정적 팩토리 메서드 호출
+			
+			log.info("발송할 이메일 정보: " + emailDTO); // ofAuthCode의 receiverMail 및 authCode 값 포함한 정보 출력
+			
+			emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출
+			res_entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200)
+		} catch (Exception e) {
+			e.printStackTrace();
+			res_entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500)
+		}
+		return res_entity;
 	}
 
 	// 인증번호 확인 기능 구현: 세션 형태로 저장한 정보를 이용

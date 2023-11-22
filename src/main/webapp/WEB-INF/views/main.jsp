@@ -96,10 +96,10 @@
 							</div>
 						</div>
 
-						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 
 					</div>
 
+					<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 						<!-- 카테고리 메뉴 자바스크립트 작업 소스-->

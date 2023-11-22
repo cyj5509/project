@@ -7,21 +7,21 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 
 /*
-CREATE TABLE product_tbl(
-    pd_number            NUMBER CONSTRAINT product_pk PRIMARY KEY, -- 상품 번호
-    cg_code              NUMBER                NULL,               -- 카테고리 코드(2차 이후)
-    pd_name              VARCHAR2(50)          NOT NULL,           -- 상품 이름
-    pd_price             NUMBER                NOT NULL,           -- 상품 개별 가격
-    pd_discount          NUMBER                NOT NULL,           -- 상품 할인율
-    pd_company           VARCHAR2(50)          NOT NULL,           -- 상품 제조사(또는 출판사)
-    pd_content           VARCHAR2(4000)        NOT NULL,           -- 상품 상세 내용
-    pd_img_folder        VARCHAR2(50)          NOT NULL,           -- 상품 이미지 폴더명
-    pd_img               VARCHAR2(100)         NOT NULL,           -- 상품 이미지
-    pd_amount            NUMBER                NOT NULL,           -- 상품 수량
-    pd_buy_status        CHAR(1)               NOT NULL,           -- 판매 여부
-    pd_register_date     DATE DEFAULT sysdate  NOT NULL,           -- 등록일자
-    pd_update_date       DATE DEFAULT sysdate  NOT NULL,           -- 수정일자
-    FOREIGN KEY(cg_code) REFERENCES category_tbl(cg_code)
+CREATE TABLE product_table(
+    pd_number            NUMBER CONSTRAINT pk_pd_number PRIMARY KEY,  -- 상품 번호
+    cg_code              NUMBER                NULL,                  -- 카테고리 코드(2차 이후)
+    pd_name              VARCHAR2(50)          NOT NULL,              -- 상품 이름
+    pd_price             NUMBER                NOT NULL,              -- 상품 개별 가격
+    pd_discount          NUMBER                NOT NULL,              -- 상품 할인율
+    pd_company           VARCHAR2(50)          NOT NULL,              -- 상품 제조사(또는 출판사)
+    pd_content           VARCHAR2(4000)        NOT NULL,              -- 상품 상세 내용
+    pd_image_folder      VARCHAR2(50)          NOT NULL,              -- 상품 이미지 폴더명
+    pd_image             VARCHAR2(100)         NOT NULL,              -- 상품 이미지
+    pd_amount            NUMBER                NOT NULL,              -- 상품 수량
+    pd_buy_status        CHAR(1)               NOT NULL,              -- 판매 여부
+    pd_register_date     DATE DEFAULT sysdate  NOT NULL,              -- 등록 일자
+    pd_update_date       DATE DEFAULT sysdate  NOT NULL,              -- 수정 일자
+    CONSTRAINT fk_pd_cg_code FOREIGN KEY(cg_code) REFERENCES category_table(cg_code)
 );
 */
 
@@ -38,8 +38,8 @@ public class ProductVO {
 
 	private String pd_company;
 	private String pd_content;
-	private String pd_img_folder; // 클라이언트에서 직접 입력받지 않고 스프링에서 별도로 처리(매퍼 작업)
-	private String pd_img; // 클라이언트에서 직접 입력받지 않고 스프링에서 별도로 처리(매퍼 작업)
+	private String pd_image_folder; // 클라이언트에서 직접 입력받지 않고 스프링에서 별도로 처리(매퍼 작업)
+	private String pd_image; // 클라이언트에서 직접 입력받지 않고 스프링에서 별도로 처리(매퍼 작업)
 	
 	private int pd_amount;
 	private String pd_buy_status;

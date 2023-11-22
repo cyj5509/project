@@ -73,7 +73,7 @@ desired effect
 														<select name="type">
 															<option selected>검색 종류 선택</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
-															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품코드</option>
+															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
 															<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
 															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명 or 제조사</option>
 														</select>

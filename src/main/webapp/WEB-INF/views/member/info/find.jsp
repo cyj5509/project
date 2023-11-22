@@ -30,7 +30,7 @@
 
 
 							<!-- 아이디 찾기 -->
-							<form role="form" id="findIdForm" method="post" action="/member/findId">
+							<form role="form" id="findIdForm" method="post" action="/member/find_id">
 								<div id="findIdSections">
 									<h3 class="box-title login-title">아이디 찾기</h3>
 									<!-- 제1단계: 이름과 이메일을 통한 아이디 찾기 -->
@@ -40,15 +40,15 @@
 										</div>
 										<div class="box-body">
 											<div class="form-group row">
-												<label for="mem_name" class="col-2">이름</label>
+												<label for="us_name" class="col-2">이름</label>
 												<div class="col-10">
-													<input type="text" class="form-control" name="mem_name" placeholder="이름을 입력해주세요">
+													<input type="text" class="form-control" name="us_name" placeholder="이름을 입력해주세요">
 												</div>
 											</div>
 											<div class="form-group row">
-												<label for="mem_email" class="col-2">이메일</label>
+												<label for="us_email" class="col-2">이메일</label>
 												<div class="col-7">
-													<input type="email" class="form-control" name="mem_email" placeholder="이메일을 입력해주세요">
+													<input type="email" class="form-control" name="us_email" placeholder="이메일을 입력해주세요">
 												</div>
 												<div class="col-3">
 													<button type="button" class="btn btn-outline-info" name="btnMailAuth">인증번호 발송</button>
@@ -76,15 +76,15 @@
 										</div>
 										<div class="box-body">
 											<div class="form-group row">
-												<label for="mem_id" class="col-3">아이디</label>
+												<label for="us_id" class="col-3">아이디</label>
 												<div class="col-9">
-													<input type="text" class="form-control" name="mem_id" readonly>
+													<input type="text" class="form-control" name="us_id" readonly>
 												</div>
 											</div>
 											<div class="form-group row">
 												<label for="" class="col-3">가입일</label>
 												<div class="col-9">
-													<input type="text" class="form-control" name="mem_joindate" readonly>
+													<input type="text" class="form-control" name="us_join_date" readonly>
 												</div>
 											</div>
 										</div>
@@ -104,7 +104,7 @@
 							</form>
 
 							<!-- 비밀번호 찾기 -->
-							<form role="form" id="findPwForm" method="post" action="/member/findPw">
+							<form role="form" id="findPwForm" method="post" action="/member/find_pw">
 								<div id="findPwSections">
 									<h3 class="box-title login-title">비밀번호 찾기</h3>
 									<!--제1단계: 아이디 존재 유무 확인-->
@@ -115,7 +115,7 @@
 										<div class="form-group row">
 											<label for="idCheck" class="col-sm-3">아이디</label>
 											<div class="col-sm-9">
-												<input type="text" class="form-control" name="mem_id" id="idCheck">
+												<input type="text" class="form-control" name="us_id" id="idCheck">
 											</div>
 										</div>
 										<div class="box-footer">
@@ -129,15 +129,15 @@
 											<p><span><b>[제2단계]</b> </span>본인확인 이메일과 입력한 이메일이 같아야, 인증번호를 받을 수 있습니다.</p>
 										</div>
 										<div class="form-group row">
-											<label for="mem_name" class="col-2">이름</label>
+											<label for="us_name" class="col-2">이름</label>
 											<div class="col-10">
-												<input type="text" class="form-control" name="mem_name" placeholder="이름을 입력해주세요">
+												<input type="text" class="form-control" name="us_name" placeholder="이름을 입력해주세요">
 											</div>
 										</div>
 										<div class="form-group row">
-											<label for="mem_email" class="col-2">이메일</label>
+											<label for="us_email" class="col-2">이메일</label>
 											<div class="col-7">
-												<input type="email" class="form-control" name="mem_email" placeholder="이메일을 입력해주세요">
+												<input type="email" class="form-control" name="us_email" placeholder="이메일을 입력해주세요">
 											</div>
 											<div class="col-3">
 												<button type="button" class="btn btn-outline-info" name="btnMailAuth">인증번호 발송</button>
@@ -163,14 +163,14 @@
 											<p><span><b>[제3단계]</b> </span>재설정을 위한 비밀번호를 입력해주세요</p>
 										</div>
 										<div class="form-group row">
-											<label for="mem_pw1" class="col-2">비밀번호 </label>
-											<div class="col-10">
-												<input type="password" class="form-control" name="mem_pw" id="mem_pw1"
+											<label for="us_pw1" class="col-4">새 비밀번호</label>
+											<div class="col-8">
+												<input type="password" class="form-control" name="us_pw" id="us_pw1"
 													placeholder="비밀번호를 입력해주세요">
 											</div>
-											<label for="mem_pw2" class="col-2">비밀번호 확인</label>
-											<div class="col-10">
-												<input type="password" class="form-control" id="mem_pw2" placeholder="동일한 비밀번호를 다시 입력해주세요">
+											<label for="us_pw2" class="col-4">새 비밀번호 확인</label>
+											<div class="col-8">
+												<input type="password" class="form-control" id="us_pw2" placeholder="동일한 비밀번호를 다시 입력해주세요">
 											</div>
 										</div>
 										<div class="box-footer">
@@ -181,15 +181,15 @@
 							</form>
 
 							<div class="login-footer">
-								<a href="/member/findInfo" id="linkFindId">아이디 찾기</a> | <a href="/member/findInfo" id="linkFindPw">비밀번호
+								<a href="/member/info/find" id="linkFindId">아이디 찾기</a> | <a href="/member/info/find" id="linkFindPw">비밀번호
 									찾기</a> | <a href="/member/join">회원가입</a>
 							</div>
 
 						</div>
 					</div>
 				</div>
-				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			</div>
+				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
@@ -232,37 +232,37 @@
 								});
 
 								// 중복되는 부분이 있어 전역 변수로 해당 변수 설정
-								let mem_name = ""; // 아이디 및 비밀번호 찾기용
-								let mem_email = ""; // 아이디 및 비밀번호 찾기용
+								let us_name = ""; // 아이디 및 비밀번호 찾기용
+								let us_email = ""; // 아이디 및 비밀번호 찾기용
 								let authCode = ""; // 아이디 및 비밀번호 찾기용
-								let mem_id = ""; // 비밀번호 찾기용
+								let us_id = ""; // 비밀번호 찾기용
 
 								// 입력 필드의 값이 변경될 때마다 해당 필드 업데이트
-								$("input[name='mem_name']").on('input', function () {
-									mem_name = $(this).val();
+								$("input[name='us_name']").on('input', function () {
+									us_name = $(this).val();
 								});
-								$("input[name='mem_email']").on('input', function () {
-									mem_email = $(this).val();
+								$("input[name='us_email']").on('input', function () {
+									us_email = $(this).val();
 								});
 								$("input[name='authCode']").on('input', function () {
 									authCode = $(this).val();
 								});
 								$("#idCheck").on('input', function () {
-									mem_id = $(this).val();
+									us_id = $(this).val();
 								});
 
 								// 이하 아이디 찾기 관련
 
 								// 아이디 찾기 제1단계: 이름과 이메일을 통한 아이디 찾기
 								$("#btnConfirmId").click(function () {
-									if (mem_name == "") {
+									if (us_name == "") {
 										alert("이름이 입력되지 않았습니다.");
-										$("input[name='mem_name']").focus();
+										$("input[name='us_name']").focus();
 										return;
 									}
-									if (mem_email == "") {
+									if (us_email == "") {
 										alert("이메일이 입력되지 않았습니다.");
-										$("input[name='mem_email']").focus();
+										$("input[name='us_email']").focus();
 										return;
 									}
 									if (authCode == "") {
@@ -275,20 +275,20 @@
 										return;
 									}
 									$.ajax({
-										url: '/member/findId',
+										url: '/member/find_id',
 										type: 'post',
 										dataType: 'json',
-										data: { mem_name: mem_name, mem_email: mem_email },
+										data: { us_name: us_name, us_email: us_email },
 										success: function (memberVO) {
 											if (memberVO) {
-												$("input[name='mem_id']").val(memberVO.mem_id)
+												$("input[name='us_id']").val(memberVO.us_id)
 												$("#confirmSection").hide();
 												$("#showIdSection").show();
-												let joinDate = new Date(memberVO.mem_joindate);
+												let joinDate = new Date(memberVO.us_joindate);
 												let formatDate = joinDate.getFullYear() + '년 ' +
 													(joinDate.getMonth() + 1) + '월 ' + // getMonth()는 0부터 시작
 													joinDate.getDate() + '일';
-												$("input[name='mem_joindate']").val(formatDate);
+												$("input[name='us_joindate']").val(formatDate);
 											} else {
 												// 사용자가 존재하지 않는 경우의 처리
 												alert("해당 정보로 등록된 사용자가 없습니다.");
@@ -302,7 +302,7 @@
 									location.href = "/member/login"
 								});
 								$("button[name='btnFindPw']").click(function () {
-									location.href = "/member/findInfo"
+									location.href = "/member/info/find"
 								});
 
 								// 이하 비밀번호 찾기 관련
@@ -310,16 +310,16 @@
 								// 비밀번호 찾기 제1단계: 아이디 존재 유무 확인
 								// 다음 버튼을 클릭 시 아이디가 빈 칸인 경우 동작
 								$("#btnIdCheck").click(function () {
-									if (mem_id == "") {
+									if (us_id == "") {
 										alert("아이디가 입력되지 않았습니다.");
 										$("#idCheck").focus();
 										return; // 빈 칸일 때 함수 실행을 멈춤(존재하지 않는 경우)
 									}
 									$.ajax({
-										url: '/member/findPw',
+										url: '/member/find_pw',
 										type: 'post',
 										dataType: 'text',
-										data: { mem_id: mem_id }, // let mem_id = "";
+										data: { us_id: us_id }, // let us_id = "";
 										success: function (response) {
 											if (response == "yes") {
 												$("#idCheckSection").hide();
@@ -341,26 +341,26 @@
 								// $("button[name='btnMailAuth']").click(function () 같음
 								$("button[name='btnMailAuth']").on("click", function () {
 									// 이름을 입력하지 않고 발송 버튼을 누를 시에도 작동하게끔 하기 위함
-									if (mem_name == "") {
+									if (us_name == "") {
 										alert("이름이 입력되지 않았습니다.");
-										$("input[name='mem_name']").focus();
+										$("input[name='us_name']").focus();
 										return;
 									}
-									if (mem_email == "") {
+									if (us_email == "") {
 										alert("이메일이 입력되지 않았습니다.");
-										$("input[name='mem_email']").focus();
+										$("input[name='us_email']").focus();
 										return;
 									}
-									let data = { mem_name: mem_name, receiverMail: mem_email };
+									let data = { us_name: us_name, receiverMail: us_email };
 
 									if (activeSection === 'findPw') {
-										data.mem_id = mem_id;
+										data.us_id = us_id;
 									}
 									$.ajax({
 										url: '/email/authCode', // @GetMapping("/authCode")
 										type: 'get',
 										dataType: 'text', // 스프링에서 보내는 데이터의 타입 ─ <String> -> "success" -> text
-										data: data, // let data = { mem_name: mem_name, receiverMail: mem_email };
+										data: data, // let data = { us_name: us_name, receiverMail: us_email };
 										success: function (result) {
 											if (result == "success") {
 												alert("인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.")
@@ -404,14 +404,14 @@
 
 								// 다음 버튼을 클릭 시 이름과 이메일이 빈 칸인 경우 동작
 								$("#btnNameEmail").click(function () {
-									if (mem_name == "") {
+									if (us_name == "") {
 										alert("이름이 입력되지 않았습니다.");
-										$("input[name='mem_name']").focus();
+										$("input[name='us_name']").focus();
 										return;
 									}
-									if (mem_email == "") {
+									if (us_email == "") {
 										alert("이메일이 입력되지 않았습니다.");
-										$("input[name='mem_email']").focus();
+										$("input[name='us_email']").focus();
 										return;
 									}
 									if (authCode == "") {
@@ -425,12 +425,12 @@
 									}
 									// 임시 비밀번호 발송
 									$.ajax({
-										url: '/member/findPw',
+										url: '/member/find_pw',
 										type: 'post',
 										data: {
-											mem_id: mem_id, // let mem_id = "";
-											mem_name: mem_name,
-											mem_email: mem_email
+											us_id: us_id, // let us_id = "";
+											us_name: us_name,
+											us_email: us_email
 										},
 										success: function (response) {
 											if (response == "yes") {
@@ -448,23 +448,23 @@
 
 								// 비밀번호 찾기 제3단계: 비밀번호 재설정 처리
 								$("#btnResetPw").click(function () {
-									let resetPw = $("#mem_pw1").val();
-									let confirmPw = $("#mem_pw2").val();
+									let resetPw = $("#us_pw1").val();
+									let confirmPw = $("#us_pw2").val();
 									if (resetPw == "" || confirmPw == "") {
 										alert("비밀번호를 입력해 주세요.")
 										return;
 									}
-									if (resetPw !== confirmPw) {
+									if (resetPw != confirmPw) {
 										alert("비밀번호가 일치하지 않습니다.");
-										$("#mem_pw1").val("");
-										$("#mem_pw2").val("");
-										$("#mem_pw1").focus();
+										$("#us_pw1").val("");
+										$("#us_pw2").val("");
+										$("#us_pw1").focus();
 										return;
 									}
 									$.ajax({
-										url: '/member/resetPw',
+										url: '/member/reset_pw',
 										type: 'post',
-										data: { mem_id: mem_id, mem_pw: resetPw },
+										data: { us_id: us_id, us_pw: resetPw },
 										success: function (response) {
 											if (response == "success") {
 												// 비밀번호 재설정에 성공했을 때의 처리

@@ -88,10 +88,10 @@ public class CartController {
 		for (int i = 0; i < cart_list.size(); i++) {
 			CartDTOList vo = cart_list.get(i);
 			
-			vo.setPrd_up_folder(vo.getPrd_up_folder().replace("\\", "/"));
+			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 			// vo.setPro_discount(vo.getPro_discount() * 1/100);
 			
-			cart_total_price +=  (vo.getPrd_price() * vo.getCart_amount());
+			cart_total_price +=  (vo.getPd_price() * vo.getCt_amount());
 		}
 		
 		model.addAttribute("cart_list", cart_list);

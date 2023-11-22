@@ -42,28 +42,28 @@
 									<div class="login-info">
 										<h3>로그인 정보</h3><br>
 										<div class="form-group row">
-											<label for="mem_id" class="col-2">아이디</label>
+											<label for="us_id" class="col-2">아이디</label>
 											<div class="col-4">
-												<input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="아이디를 입력해주세요">
+												<input type="text" class="form-control" name="us_id" id="us_id" placeholder="아이디를 입력해주세요">
 											</div>
 											<div class="col-2">
 												<button type="button" class="btn btn-outline-info" id="idCheck">ID 중복검사</button>
 											</div>
 											<div class="col-4">
-												<span class="mem_id_yes">사용 가능한 아이디입니다.</span>
-												<span class="mem_id_no">이미 존재하는 아이디입니다.</span>
+												<span class="us_id_yes">사용 가능한 아이디입니다.</span>
+												<span class="us_id_no">이미 존재하는 아이디입니다.</span>
 											</div>
 										</div>
 
 										<div class="form-group row">
-											<label for="mem_pw1" class="col-2">비밀번호</label>
+											<label for="us_pw1" class="col-2">비밀번호</label>
 											<div class="col-4">
-												<input type="password" class="form-control" name="mem_pw" id="mem_pw1"
+												<input type="password" class="form-control" name="us_pw" id="us_pw1"
 													placeholder="비밀번호를 입력해주세요">
 											</div>
-											<label for="mem_pw2" class="col-2">비밀번호 확인</label>
+											<label for="us_pw2" class="col-2">비밀번호 확인</label>
 											<div class="col-4">
-												<input type="password" class="form-control" id="mem_pw2" placeholder="한 번 더 입력해주세요">
+												<input type="password" class="form-control" id="us_pw2" placeholder="한 번 더 입력해주세요">
 											</div>
 										</div>
 									</div>
@@ -71,22 +71,22 @@
 									<div class="member-info">
 										<h3>회원 정보</h3><br>
 										<div class="form-group row">
-											<label for="mem_name" class="col-2">이름</label>
+											<label for="us_name" class="col-2">이름</label>
 											<div class="col-10">
-												<input type="text" class="form-control" name="mem_name" id="mem_name" placeholder="이름을 입력해주세요">
+												<input type="text" class="form-control" name="us_name" id="us_name" placeholder="이름을 입력해주세요">
 											</div>
 										</div>
 										<div class="form-group row">
-											<label for="mem_phone" class="col-2">전화번호</label>
+											<label for="us_phone" class="col-2">전화번호</label>
 											<div class="col-10">
-												<input type="text" class="form-control" name="mem_phone" id="mem_phone"
+												<input type="text" class="form-control" name="us_phone" id="us_phone"
 													placeholder="번호를 '-' 없이 입력해주세요">
 											</div>
 										</div>
 										<div class="form-group row">
-											<label for="mem_email" class="col-2">이메일</label>
+											<label for="us_email" class="col-2">이메일</label>
 											<div class="col-7">
-												<input type="email" class="form-control" name="mem_email" id="mem_email"
+												<input type="email" class="form-control" name="us_email" id="us_email"
 													placeholder="이메일을 입력해주세요">
 											</div>
 											<div class="col-3">
@@ -106,7 +106,7 @@
 										<div class="form-group row">
 											<label for="sample2_postcode" class="col-2">우편번호</label>
 											<div class="col-7">
-												<input type="text" class="form-control" name="mem_postcode" id="sample2_postcode"
+												<input type="text" class="form-control" name="us_postcode" id="sample2_postcode"
 													placeholder="우편번호">
 											</div>
 											<div class="col-3">
@@ -117,14 +117,14 @@
 										<div class="form-group row">
 											<label for="sample2_address" class="col-2">주소</label>
 											<div class="col-10">
-												<input type="text" class="form-control" name="mem_addr" id="sample2_address"
+												<input type="text" class="form-control" name="us_addr_basic" id="sample2_address"
 													placeholder="기본주소 입력...">
 											</div>
 										</div>
 										<div class="form-group row">
 											<label for="sample2_detailAddress" class="col-2">상세주소</label>
 											<div class="col-10">
-												<input type="text" class="form-control" name="mem_deaddr" id="sample2_detailAddress"
+												<input type="text" class="form-control" name="us_addr_detail" id="sample2_detailAddress"
 													placeholder="상세주소 입력...">
 												<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
 											</div>
@@ -139,12 +139,12 @@
 					</div>
 				</div>
 
-				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 
 			</div>
 
+			<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
-				<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+			<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 					<script>
 
@@ -155,9 +155,9 @@
 							// JS 문법: document.getElementById("idCheck");
 							$("#idCheck").click(function () {
 								// alert("아이디 중복 확인");
-								if ($("#mem_id").val() == "") {
+								if ($("#us_id").val() == "") {
 									alert("아이디가 입력되지 않았습니다.");
-									$("#mem_id").focus();
+									$("#us_id").focus();
 									return;
 								}
 
@@ -166,19 +166,19 @@
 									url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
 									type: 'get', // get or post
 									dataType: 'text', // <String>
-									data: { mem_id: $("#mem_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
+									data: { us_id: $("#us_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
 									success: function (result) { // success: function (매개변수명) { 
 										if (result == "yes") {
-											$('.mem_id_yes').css("display", "inline-block");
-											$('.mem_id_no').css("display", "none");
+											$('.us_id_yes').css("display", "inline-block");
+											$('.us_id_no').css("display", "none");
 											useIDCheck = true; // let useIDCheck = false;
 										} else {
-											$('.mem_id_no').css("display", "inline-block");
-											$('.mem_id_yes').css("display", "none");
+											$('.us_id_no').css("display", "inline-block");
+											$('.us_id_yes').css("display", "none");
 											useIDCheck = false; 
-											// $("#mem_id").val()는 GETTER, $("#mem_id").val("")는 SETTER
-											$("#mem_id").val(""); // 아이디 텍스트 박스의 값을 지움
-											$("#mem_id").focus(); // 포커스 기능
+											// $("#us_id").val()는 GETTER, $("#us_id").val("")는 SETTER
+											$("#us_id").val(""); // 아이디 텍스트 박스의 값을 지움
+											$("#us_id").focus(); // 포커스 기능
 										}
 									}
 								});
@@ -186,9 +186,9 @@
 
 							// 메일 인증 요청
 							$("#mailAuth").click(function () {
-								if ($("#mem_email").val() == "") {
+								if ($("#us_email").val() == "") {
 									alert("이메일을 입력하세요");
-									$("#mem_email").focus();
+									$("#us_email").focus();
 									return;
 								}
 
@@ -196,7 +196,7 @@
 									url: '/email/authCode', // @GetMapping("/authCode")
 									type: 'get',
 									dataType: 'text', // 스프링에서 보내는 데이터의 타입 ─ <String> -> "success" -> text
-									data: { receiverMail: $("#mem_email").val() }, // EmailDTO ─ private String receiverMail;
+									data: { receiverMail: $("#us_email").val() }, // EmailDTO ─ private String receiverMail;
 									success: function (result) {
 										if (result == "success") {
 											alert("인증 메일이 발송되었습니다. 메일 확인 바랍니다.")

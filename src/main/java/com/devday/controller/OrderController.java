@@ -44,22 +44,22 @@ public class OrderController {
 		log.info("주문 정보 페이지 진입");
 		
 		// 주문 정보
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
 
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")
-		List<CartDTOList> order_info = cartService.cart_list(user_id);
+		List<CartDTOList> order_info = cartService.cart_list(us_id);
 		
-		int order_price = 0;
+		int od_price = 0;
 
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
 		// 스프링에서 처리 안하면 자바스크립트에서 처리할 수도 있다.
 		/*
 		cart_list.forEach(vo -> {
-			vo.setPro_up_folder(vo.getPro_up_folder().replace("\\", "/"));
+			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 			
 			// 금액 = (판매가 - (판매가 * 할인율)) * 수량
-			cart_total_price += (double) (vo.getPro_price() - (vo.getPro_price() * vo.getPro_discount() * 1/100)) * vo.getCart_amount();
+			cart_total_price += (double) (vo.getPd_price() - (vo.getPd_price() * vo.getPd_discount() * 1/100)) * vo.getCt_amount();
 		});
 		*/
 		
@@ -67,22 +67,22 @@ public class OrderController {
 		for (int i = 0; i < order_info.size(); i++) {
 			CartDTOList vo = order_info.get(i);
 			
-			vo.setPrd_up_folder(vo.getPrd_up_folder().replace("\\", "/"));
-			// vo.setPro_discount(vo.getPro_discount() * 1/100);
+			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
+			// vo.setPd_discount(vo.getPd_discount() * 1/100);
 			
-			order_price += (vo.getPrd_price() * vo.getCart_amount());
+			od_price += (vo.getPd_price() * vo.getCt_amount());
 		}
 		
 		model.addAttribute("order_info", order_info);
-		model.addAttribute("order_price", order_price);
+		model.addAttribute("od_price", od_price);
 	}
 	
 	// 상품상세에서 주문하기
 	@GetMapping("/order_ready")
 	public String order_ready(CartVO vo, HttpSession session) throws Exception {
 
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
-		vo.setUs_id(user_id);
+		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		vo.setUs_id(us_id);
 
 		cartService.cart_add(vo);
 
@@ -94,7 +94,7 @@ public class OrderController {
 	// 1) 결제 준비 요청
 	@GetMapping(value = "/orderPay", produces = "application/json")
 	public @ResponseBody ReadyResponse payReady(String paymethod, OrderBasicVO o_vo, /* OrderDetailVO od_vo, */ PaymentVO p_vo, 
-											   int totalprice, HttpSession session) throws Exception {
+											   int total_price, HttpSession session) throws Exception {
 		/*
 		   1) 주문정보 구성 
 		   - 주문 테이블(OrderBasicVO): ord_status, payment_status 정보 존재하지 않음
@@ -104,22 +104,22 @@ public class OrderController {
 		   - 스프링에서 처리할 수 있는 부분
 		*/
 		
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();;
-		o_vo.setUs_id(user_id); // 아이디 값 할당(설정)
+		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();;
+		o_vo.setUs_id(us_id); // 아이디 값 할당(설정)
 		
 
 		// 시퀀스를 주문번호로 사용: 동일한 주문번호 값이 사용
 		// int com.docmall.service.OrderService.getOrderSeq()
-		Long ord_code = (long) orderService.getOrderSeq();
-		o_vo.setOd_code(ord_code); // 주문번호 저장		
+		Long od_number = (long) orderService.getOrderSeq();
+		o_vo.setOd_number(od_number); // 주문번호 저장		
 	
 		// 1) 주문 테이블 저장 작업: ord_status, payment_status 데이터 준비할 것(우선은 누락시킴)
 		// 2) 주문 상세 테이블 저장 작업
 		
-		p_vo.setOd_code(ord_code);
-		p_vo.setUs_id(user_id);
+		p_vo.setOd_number(od_number);
+		p_vo.setUs_id(us_id);
 		p_vo.setPm_method("카카오페이");
-		p_vo.setPm_total_price(totalprice);
+		p_vo.setPm_total_price(total_price);
 		
 		o_vo.setOd_status("주문완료");
 		o_vo.setPm_status("결제완료");
@@ -128,20 +128,20 @@ public class OrderController {
 		log.info("주문정보: " + o_vo);
 		log.info("결제정보: " + p_vo);		
 		
-		List<CartDTOList> cart_list = cartService.cart_list(user_id);
-		String itemName = cart_list.get(0).getPrd_name() + "외 " + String.valueOf(cart_list.size() - 1) + "건";
+		List<CartDTOList> cart_list = cartService.cart_list(us_id);
+		String itemName = cart_list.get(0).getPd_name() + "외 " + String.valueOf(cart_list.size() - 1) + "건";
 		
 		orderService.order_insert(o_vo, p_vo); // 주문, 주문상세 정보 저장, 장바구니 삭제, 결제 정보 저장
 		
 		// 3) Kakao Pay 호출 -> 1) 결제 준비 요청
-		ReadyResponse readyResponse = kakaoPayServiceImpl.payReady(o_vo.getOd_code(), user_id, itemName, cart_list.size(), totalprice);
+		ReadyResponse readyResponse = kakaoPayServiceImpl.payReady(o_vo.getOd_number(), us_id, itemName, cart_list.size(), total_price);
 		
 		log.info("결제 고유번호: " + readyResponse.getTid());
 		log.info("결제 요청 URL: " + readyResponse.getNext_redirect_pc_url());
 	
 		// 카카오페이 결제 승인 요청 작업에 필요한 정보 준비
 		session.setAttribute("tid", readyResponse.getTid());
-		session.setAttribute("odr_code", o_vo.getOd_code());
+		session.setAttribute("odr_code", o_vo.getOd_number());
 		
 		return readyResponse;
 	}
@@ -178,7 +178,7 @@ public class OrderController {
 	// 결제선택 ─ 무통장 입금
 	@GetMapping("/nobank")
 	public ResponseEntity<String> nobank(String paymethod, OrderBasicVO o_vo, /* OrderDetailVO od_vo,는 장바구니에서 참조  */ PaymentVO p_vo,
-			   			int totalprice, HttpSession session) throws Exception {
+			   			int total_price, HttpSession session) throws Exception {
 		
 		ResponseEntity<String> entity = null;
 		
@@ -187,8 +187,8 @@ public class OrderController {
 		
 		// 시퀀스를 주문번호로 사용: 동일한 주문번호 값이 사용
 		// int com.docmall.service.OrderService.getOrderSeq()
-		Long ord_code = (long) orderService.getOrderSeq();
-		o_vo.setOd_code(ord_code); // 주문번호 저장		
+		Long od_number = (long) orderService.getOrderSeq();
+		o_vo.setOd_number(od_number); // 주문번호 저장		
 		
 		// 1) 주문 테이블 저장 작업: ord_status, payment_status 데이터 준비할 것(우선은 누락시킴)
 		// 2) 주문 상세 테이블 저장 작업
@@ -197,10 +197,10 @@ public class OrderController {
 		o_vo.setPm_status("결제완료");
 		
 		p_vo.setPm_method("무통장입금");
-		p_vo.setOd_code(ord_code);
+		p_vo.setOd_number(od_number);
 		p_vo.setUs_id(user_id);
-		p_vo.setPm_total_price(totalprice);
-		p_vo.setPm_nobank_price(totalprice);
+		p_vo.setPm_total_price(total_price);
+		p_vo.setPm_no_bankbook_price(total_price);
 		
 		log.info("결제방법: " + paymethod);
 		log.info("주문정보: " + o_vo);

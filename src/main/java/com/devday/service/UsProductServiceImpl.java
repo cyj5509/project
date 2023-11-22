@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service;
 
 import com.devday.domain.ProductVO;
 import com.devday.dto.Criteria;
-import com.devday.mapper.UserProductMapper;
+import com.devday.mapper.UsProductMapper;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserProductServiceImpl implements UserProductService {
+public class UsProductServiceImpl implements UsProductService {
 
-	private final UserProductMapper userProductMapper;
+	private final UsProductMapper userProductMapper;
 
 	@Override
 	public List<ProductVO> prd_list(Integer cg_code, Criteria cri) {

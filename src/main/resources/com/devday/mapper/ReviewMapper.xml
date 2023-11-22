@@ -3,13 +3,13 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="com.docmall.mapper.ReviewMapper">
+<mapper namespace="com.devday.mapper.ReviewMapper">
 
-<insert id="review_insert" parameterType="com.docmall.domain.ReviewVO">
+<insert id="review_insert" parameterType="com.devday.domain.ReviewVO">
 	INSERT INTO 
-		review_tbl(rew_num, mbsp_id, pro_num, rew_content, rew_score)
+		review_tbl(rv_number, us_id, pd_number, rv_content, rv_score)
 	VALUES 
-		(seq_review_tbl.NEXTVAL, #{mbsp_id}, #{pro_num}, #{rew_content}, #{rew_score})
+		(sequence_rv_number.NEXTVAL, #{us_id}, #{pd_number}, #{rv_content}, #{rv_score})
 </insert>
 
 </mapper>

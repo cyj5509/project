@@ -90,8 +90,8 @@ public class AdProductController {
 		String dateFolder = FileUtils.getDateFolder();
 		String savedFileName = FileUtils.uploadFile(uploadPath, dateFolder, uploadFile);
 
-		vo.setPd_img(savedFileName);
-		vo.setPd_img_folder(dateFolder);
+		vo.setPd_image(savedFileName);
+		vo.setPd_image_folder(dateFolder);
 
 		log.info("상품정보: " + vo);
 
@@ -184,7 +184,7 @@ public class AdProductController {
 
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
 		pd_list.forEach(vo -> {
-			vo.setPd_img_folder(vo.getPd_img_folder().replace("\\", "/"));
+			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 		});
 		model.addAttribute("pd_list", pd_list);
 
@@ -257,7 +257,7 @@ public class AdProductController {
 		
 		// '\'(역슬래시)를 '/'(슬래시)로 변환하는 작업
 		// 요청 타겟에서 유효하지 않은 문자가 발견되었습니다. 유효한 문자들은 RFC 7230과 RFC 3986에 정의되어 있습니다.
-		productVO.setPd_img_folder(productVO.getPd_img_folder().replace("\\", "/")); // Escape Sequence 특수문자
+		productVO.setPd_image_folder(productVO.getPd_image_folder().replace("\\", "/")); // Escape Sequence 특수문자
 		
 		model.addAttribute("productVO", productVO);
 
@@ -283,7 +283,7 @@ public class AdProductController {
 		// 상품 수정 내용
 		log.info("상품 수정 내용: " + vo);
 		
-		vo.setPd_img_folder(vo.getPd_img_folder().replace("/", "\\")); // Escape Sequence 특수문자
+		vo.setPd_image_folder(vo.getPd_image_folder().replace("/", "\\")); // Escape Sequence 특수문자
 		
 		// 작업
 		// 파일이 변경되었을 때 해야 할 작업: 1) 기존 이미지 파일 삭제 -> 2) 업로드 작업
@@ -292,15 +292,15 @@ public class AdProductController {
 		if(!uploadFile.isEmpty()) {
 
 			// 1) 기존 이미지 파일 삭제 작업
-			FileUtils.deleteFile(uploadPath, vo.getPd_img_folder(), vo.getPd_img());
+			FileUtils.deleteFile(uploadPath, vo.getPd_image_folder(), vo.getPd_image());
 
 			// 2) 업로드 작업
 			String dateFolder = FileUtils.getDateFolder();
 			String savedFileName = FileUtils.uploadFile(uploadPath, dateFolder, uploadFile);
 
 			// 3) DB에 저장할 새로운 날짜폴더명 및 이미지명 변경 작업
-			vo.setPd_img(savedFileName);
-			vo.setPd_img_folder(dateFolder);	
+			vo.setPd_image(savedFileName);
+			vo.setPd_image_folder(dateFolder);	
 		}
 		
 		// DB 연동 작업

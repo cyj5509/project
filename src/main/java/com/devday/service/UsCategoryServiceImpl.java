@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.devday.domain.CategoryVO;
-import com.devday.mapper.UserCategoryMapper;
+import com.devday.mapper.UsCategoryMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -16,9 +16,9 @@ import lombok.extern.log4j.Log4j;
 @Service 
 @RequiredArgsConstructor
 @Log4j
-public class UserCategoryServiceImpl implements UserCategoryService {
+public class UsCategoryServiceImpl implements UsCategoryService {
 
-	private final UserCategoryMapper userCategoryMapper;
+	private final UsCategoryMapper userCategoryMapper;
 
 	@Override
 	public List<CategoryVO> getSecondCategoryList(Integer cg_prt_code) {

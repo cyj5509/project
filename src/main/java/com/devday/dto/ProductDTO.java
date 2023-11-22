@@ -7,17 +7,17 @@ import lombok.Data;
 @AllArgsConstructor // 모든 필드를 대상으로 매개변수가 있는 생성자 메서드 생성
 public class ProductDTO {
 
-	private Integer prd_num;
-	private int prd_price;
-	private String prd_buy;
+	private Integer pd_number;
+	private int pd_price;
+	private String pd_buy_status;
 	
 	// @AllArgsConstructor
 	/*
-	public ProductDTO(Integer pro_num, int pro_price, String pro_buy) {
+	public ProductDTO(Integer pd_number, int pd_price, String pd_buy_status) {
 		super();
-		this.pro_num = pro_num;
-		this.pro_price = pro_price;
-		this.pro_buy = pro_buy;
+		this.pd_number = pd_number;
+		this.pd_price = pd_price;
+		this.pd_buy_status = pd_buy_status;
 	}
 	*/
 	

@@ -10,6 +10,7 @@ COMMIT;
 
 -- 1. 사용자 테이블 ─ 회원가입을 포함한 회원관리(비회원 포함)
 -- 기본키: 회원 아이디 / 외래키: 없음
+DROP TABLE member_tbl;
 DROP TABLE user_table;
 CREATE TABLE user_table (
     us_id            VARCHAR2(15),                      -- 사용자 아이디
@@ -31,12 +32,6 @@ CREATE TABLE user_table (
 -- 다른 PK 설정 방법
 -- ALTER TABLE user_table ADD CONSTRAINT user_pk PRIMARY KEY (user_id);
 
--- 사용자 계정 활성화
-INSERT INTO
-    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status) 
-VALUES 
-    ('user01', '1234', '홍길동', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0);
-
 -- 관리자 계정 활성화
 INSERT INTO
     user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status) 
@@ -44,6 +39,12 @@ VALUES
     ('admin', '1234', 'admin', 'admin', 'admin', 'admin', 'admin', 'admin', 9999999, sysdate, sysdate, sysdate, 1);
 
 UPDATE user_table SET us_status = 1 WHERE us_id = 'admin';
+
+-- 사용자 계정 활성화
+INSERT INTO
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status) 
+VALUES 
+    ('user01', '1234', '홍길동', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0);
 
 COMMIT;
 
@@ -213,8 +214,8 @@ CREATE TABLE product_table(
     pd_discount          NUMBER                NOT NULL,              -- 상품 할인율
     pd_company           VARCHAR2(50)          NOT NULL,              -- 상품 제조사(또는 출판사)
     pd_content           VARCHAR2(4000)        NOT NULL,              -- 상품 상세 내용
-    pd_img_folder        VARCHAR2(50)          NOT NULL,              -- 상품 이미지 폴더명
-    pd_img               VARCHAR2(100)         NOT NULL,              -- 상품 이미지
+    pd_image_folder      VARCHAR2(50)          NOT NULL,              -- 상품 이미지 폴더명
+    pd_image             VARCHAR2(100)         NOT NULL,              -- 상품 이미지
     pd_amount            NUMBER                NOT NULL,              -- 상품 수량
     pd_buy_status        CHAR(1)               NOT NULL,              -- 판매 여부
     pd_register_date     DATE DEFAULT sysdate  NOT NULL,              -- 등록 일자

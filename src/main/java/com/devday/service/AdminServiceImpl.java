@@ -20,15 +20,15 @@ public class AdminServiceImpl implements AdminService {
 //	}
 	
 	@Override
-	public AdminVO admin_ok(String adm_id) {
+	public AdminVO admin_ok(String ad_id) {
 		
-		return adminMapper.admin_ok(adm_id);
+		return adminMapper.admin_ok(ad_id);
 	}
 
 	@Override
-	public void loginTime(String adm_id) {
+	public void loginTime(String ad_id) {
 
-		adminMapper.loginTime(adm_id);
+		adminMapper.loginTime(ad_id);
 	}
 	
 }

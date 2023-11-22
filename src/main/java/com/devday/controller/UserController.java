@@ -265,7 +265,7 @@ public class UserController {
 	// 가입일을 전달하는 건 @ModelAttribute로 전달하는 방법을 생각해보자.
 	@PostMapping("/find_id")
 	public ResponseEntity<UserVO> findId(@RequestParam("us_name") String us_name, 
-										  @RequestParam("us_email") String us_email) throws Exception {
+										@RequestParam("us_email") String us_email) throws Exception {
 	    
 		ResponseEntity<UserVO> entity = null;
 

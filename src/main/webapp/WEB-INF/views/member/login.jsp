@@ -37,10 +37,10 @@
 							<form role="form" id="btnJoin" method="post" action="/member/login">
 								<div class="box-body">
 									<div class="form-group">
-										<input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="아이디">
+										<input type="text" class="form-control" name="us_id" id="us_id" placeholder="아이디">
 									</div>
 									<div class="form-group">
-										<input type="password" class="form-control" name="mem_pw" id="mem_pw" placeholder="비밀번호">
+										<input type="password" class="form-control" name="us_pw" id="us_pw" placeholder="비밀번호">
 									</div>
 									<div>
 									</div>
@@ -55,29 +55,30 @@
 									<button type="submit" class="btn btn-primary login-btn" id="btnJoin">로그인</button>
 								</div>
 							</form>
-							
+
 							<div class="login-footer">
-								<a href="/member/findInfo" id="linkFindId">아이디 찾기</a> | <a href="/member/findInfo" id="linkFindPw">비밀번호
+								<a href="/member/info/find" id="linkFindId">아이디 찾기</a> | <a href="/member/info/find" id="linkFindPw">비밀번호
 									찾기</a> | <a href="/member/join">회원가입</a>
 							</div>
+
 						</div>
 					</div>
 				</div>
-			<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			</div>
+			
+			<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+			<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
+			<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
-					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+					<script>
+						document.getElementById('linkFindId').addEventListener('click', function () {
+							sessionStorage.setItem('activeSection', 'findId');
+						});
 
-						<script>
-							document.getElementById('linkFindId').addEventListener('click', function () {
-								sessionStorage.setItem('activeSection', 'findId');
-							});
-
-							document.getElementById('linkFindPw').addEventListener('click', function () {
-								sessionStorage.setItem('activeSection', 'findPw');
-							});
-						</script>
+						document.getElementById('linkFindPw').addEventListener('click', function () {
+							sessionStorage.setItem('activeSection', 'findPw');
+						});
+					</script>
 	</body>
 
 	</html>

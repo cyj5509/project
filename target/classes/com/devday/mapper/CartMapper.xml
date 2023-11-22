@@ -8,60 +8,60 @@
 <!-- 장바구니 추가 -->
 <insert id="cart_add" parameterType="com.devday.domain.CartVO">
 	MERGE INTO
-		cart_tbl
+		cart_table
 	USING
 		dual
 	ON
-		(mem_id = #{mem_id} AND prd_num = #{prd_num})
+		(us_id = #{us_id} AND pd_number = #{pd_number})
 	WHEN 
 		MATCHED THEN
 	    UPDATE SET
-	    		cart_amount = cart_amount + #{cart_amount}
+	    		ct_amount = ct_amount + #{ct_amount}
 	WHEN
 		NOT MATCHED THEN
 	    INSERT
-	    		(cart_code, prd_num, mem_id, cart_amount)
+	    		(ct_code, pd_number, us_id, ct_amount)
 	    VALUES
-	    		(seq_cart_code.NEXTVAL, #{prd_num}, #{mem_id}, #{cart_amount})
+	    		(sequence_ct_code.NEXTVAL, #{pd_number}, #{us_id}, #{ct_amount})
 </insert>
 
 <!-- 장바구니 목록: CartVO의 참조된 상품코드를 이용하여 상품 테이블과의 조인 작업 필요 -->
 <select id="cart_list" resultType="com.devday.dto.CartDTOList">
 	SELECT
-  		C.CART_CODE, C.PRD_NUM, C.CART_AMOUNT, P.PRD_NAME, P.PRD_PRICE, P.PRD_UP_FOLDER, P.PRD_IMG, P.PRD_DISCOUNT 
+  		C.ct_code, C.pd_number, C.ct_amount, P.pd_name, P.pd_price, P.pd_image_folder, P.pd_image, P.pd_discount 
 	FROM 
-		PRODUCT_TBL P 
-			INNER JOIN CART_TBL C 
-			ON P.PRD_NUM = C.PRD_NUM
+		product_table P 
+			INNER JOIN cart_table C 
+			ON P.pd_number = C.pd_number
 	WHERE
-  		C.MEM_ID = #{mem_id}
+  		C.us_id = #{us_id}
 </select>
 
 <update id="cart_amount_change" parameterType="map">
 	UPDATE
-		CART_TBL
+		cart_table
 	SET
 		<!-- 화면에 보여진 그대로 처리해야 되기 때문에 아래와 같이 처리(CART_AMOUNT =  CART_AMOUNT - #{CART_AMOUNT}는 잘못된 경우)-->
-		CART_AMOUNT = #{cart_amount}
+		ct_amount = #{ct_amount}
 	WHERE
-		CART_CODE = #{cart_code}
+		ct_code = #{ct_code}
 </update>
 
 <delete id="cart_list_del" parameterType="Long">
 	DELETE FROM
-		cart_tbl
+		cart_table
 	WHERE
-		cart_code = #{cart_code}
+		ct_code = #{ct_code}
 </delete>
 
 <delete id="cart_sel_delete">
 	<!--  파라미터로 List컬렉션이 사용될 경우에는 mybatis 구문에서는 collection="list" 사용해야 함. -->
 	DELETE FROM 
-		CART_TBL
+		cart_table
 	WHERE
-		CART_CODE IN
-		<foreach collection="list" item="cart_code" open="(" close=")" separator=",">
-			#{cart_code}
+		ct_code IN
+		<foreach collection="list" item="ct_code" open="(" close=")" separator=",">
+			#{ct_code}
 		</foreach>
 </delete>
 

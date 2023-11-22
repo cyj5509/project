@@ -6,14 +6,14 @@ import lombok.Data;
 public class CartDTOList {
 	
 	// CartVO에서 Copy & Paste
-	private Long cart_code;
-	private Integer prd_num;
-	private int cart_amount;
+	private Long ct_code;
+	private Integer pd_number;
+	private int ct_amount;
 	
 	// ProductVO에서 Copy & Paste
-	private String prd_name;
-	private int prd_price;
-	private String prd_up_folder;
-	private String prd_img;
-	private int prd_discount;
+	private String pd_name;
+	private int pd_price;
+	private String pd_image_folder;
+	private String pd_image;
+	private int pd_discount;
 }

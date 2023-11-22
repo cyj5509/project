@@ -31,26 +31,26 @@
 								<br>
 								<h3 class="box-title">회원수정</h3>
 								<br>
-								<form role="form" id="modifyInfoForm" method="post" action="/member/modify">
+								<form role="form" id="modifyInfoForm" method="post" action="/member/modify_info">
 									<div id="modifyInfoSection">
 										<div class="box-body">
 											<div class="login-info">
 												<h3>로그인 정보</h3><br>
 												<div class="form-group row">
-													<label for="mem_id" class="col-2">아이디</label>
+													<label for="us_id" class="col-2">아이디</label>
 													<div class="col-10">
-														<input type="text" class="form-control" name="mem_id" id="mem_id" value="${vo.mem_id}"
+														<input type="text" class="form-control" name="us_id" id="us_id" value="${vo.us_id}"
 															readonly>
 													</div>
 												</div>
 												<div class="form-group row">
 													<label for="currentPw1" class="col-2">비밀번호</label>
 													<div class="col-3">
-														<input type="password" class="form-control" name="currentPw1" value="${vo.mem_pw}" readonly>
+														<input type="password" class="form-control" name="currentPw1" value="${vo.us_pw}" readonly>
 													</div>
 													<label for="currentPw2" class="col-2">비밀번호 확인</label>
 													<div class="col-3">
-														<input type="password" class="form-control" name="currentPw2" value="${vo.mem_pw}" readonly>
+														<input type="password" class="form-control" name="currentPw2" value="${vo.us_pw}" readonly>
 													</div>
 													<div class="col-2">
 														<button type="button" class="btn btn-outline-info" id="btnChangePw">비밀번호 변경</button>
@@ -63,32 +63,32 @@
 											<div class="member-info">
 												<h3>회원 정보</h3><br>
 												<div class="form-group row">
-													<label for="mem_name" class="col-2">이름</label>
+													<label for="us_name" class="col-2">이름</label>
 													<div class="col-10">
-														<input type="text" class="form-control" name="mem_name" id="mem_name" value="${vo.mem_name}"
+														<input type="text" class="form-control" name="us_name" id="us_name" value="${vo.us_name}"
 															readonly>
 													</div>
 												</div>
 												<div class="form-group row">
-													<label for="mem_phone" class="col-2">전화번호</label>
+													<label for="us_phone" class="col-2">전화번호</label>
 													<div class="col-10">
-														<input type="text" class="form-control" name="mem_phone" id="mem_phone"
-															value="${vo.mem_phone}" placeholder="전화번호 입력...">
+														<input type="text" class="form-control" name="us_phone" id="us_phone"
+															value="${vo.us_phone}" placeholder="전화번호 입력...">
 													</div>
 												</div>
 												<div class="form-group row">
-													<label for="mem_email" class="col-2">이메일</label>
+													<label for="us_email" class="col-2">이메일</label>
 													<div class="col-10">
-														<input type="email" class="form-control" name="mem_email" id="mem_email"
-															value="${vo.mem_email}" placeholder="전자우편 입력...">
+														<input type="email" class="form-control" name="us_email" id="us_email"
+															value="${vo.us_email}" placeholder="전자우편 입력...">
 													</div>
 												</div>
 
 												<div class="form-group row">
 													<label for="sample2_postcode" class="col-2">우편번호</label>
 													<div class="col-8">
-														<input type="text" class="form-control" name="mem_postcode" id="sample2_postcode"
-															value="${vo.mem_postcode}" placeholder="우편번호 입력...">
+														<input type="text" class="form-control" name="us_postcode" id="sample2_postcode"
+															value="${vo.us_postcode}" placeholder="우편번호 입력...">
 													</div>
 													<div class="col-2">
 														<button type="button" onclick="sample2_execDaumPostcode()" class="btn btn-outline-info">우편번호
@@ -96,17 +96,17 @@
 													</div>
 												</div>
 												<div class="form-group row">
-													<label for="sample2_address" class="col-2">주소</label>
+													<label for="sample2_address" class="col-2">기본 주소</label>
 													<div class="col-10">
-														<input type="text" class="form-control" name="mem_addr" id="sample2_address"
-															value="${vo.mem_addr}" placeholder="기본주소 입력...">
+														<input type="text" class="form-control" name="us_addr_basic" id="sample2_address"
+															value="${vo.us_addr}" placeholder="기본 주소 입력...">
 													</div>
 												</div>
 												<div class="form-group row">
-													<label for="sample2_detailAddress" class="col-2">상세주소</label>
+													<label for="sample2_detailAddress" class="col-2">상세 주소</label>
 													<div class="col-10">
-														<input type="text" class="form-control" name="mem_deaddr" id="sample2_detailAddress"
-															value="${vo.mem_deaddr}" placeholder="상세주소 입력...">
+														<input type="text" class="form-control" name="us_addr_detail" id="sample2_detailAddress"
+															value="${vo.us_deaddr}" placeholder="상세 주소 입력...">
 														<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
 													</div>
 												</div>
@@ -119,7 +119,7 @@
 									</div>
 								</form>
 
-								<form role="form" id="ResetPwForm" method="post" action="/member/resetPw">
+								<form role="form" id="ResetPwForm" method="post" action="/member/reset_Pw">
 									<div id="pwResetSection" style="display: none;">
 										<h3 class="box-title">비밀번호 변경</h3>
 										<div>
@@ -149,19 +149,14 @@
 										</div>
 									</div>
 								</form>
-
 							</div>
 						</div>
 					</div>
-
-					<%@include file="/WEB-INF/views/comm/footer.jsp" %>
-
 				</div>
 
+					<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 					<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
 						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
-
-
 
 							<script>
 								// jquery.slim.min.js 파일에 jQuery 명령어가 정의되어 있음
@@ -182,7 +177,7 @@
 									})
 
 									// 중복되는 부분이 있어 전역 변수로 해당 변수 설정
-									mem_id = $("#mem_id").val(); // 현재 로그인한 사용자의 아이디로 초기화
+									us_id = $("#us_id").val(); // 현재 로그인한 사용자의 아이디로 초기화
 
 									// 비밀번호 재설정 처리
 									$("#btnChangePw").click(function () {
@@ -206,7 +201,7 @@
 											$("input[name='newPw1']").focus();
 											return;
 										}
-										if (resetPw !== confirmPw) {
+										if (resetPw != confirmPw) {
 											alert("새로운 비밀번호가 일치하지 않습니다.");
 											$("input[name='newPw1']").val("");
 											$("input[name='newPw2']").val("");
@@ -214,9 +209,9 @@
 											return;
 										}
 										$.ajax({
-											url: '/member/resetPw',
+											url: '/member/reset_pw',
 											type: 'post',
-											data: { mem_id: mem_id, currentPw: currentPw, mem_pw: resetPw },
+											data: { us_id: us_id, currentPw: currentPw, us_pw: resetPw },
 											success: function (response) {
 												if (response == "success") {
 													// 비밀번호 재설정에 성공했을 때의 처리

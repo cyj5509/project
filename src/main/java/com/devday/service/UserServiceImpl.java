@@ -34,23 +34,23 @@ public class UserServiceImpl implements UserService {
 	
 	// 아이디 중복검사 관련 메서드
 	@Override
-	public String idCheck(String mem_id) {
+	public String idCheck(String us_id) {
 		
-		return userMapper.idCheck(mem_id);
+		return userMapper.idCheck(us_id);
 	}
 	
 	// 로그인 관련 메서드
 	@Override
-	public UserVO login(String mem_id) {
+	public UserVO login(String us_id) {
 
-		return userMapper.login(mem_id);
+		return userMapper.login(us_id);
 	}
 	
 	// 접속일자 업데이트 관련 메서드
 	@Override
-	public void loginTimeUpdate(String mem_id) {
+	public void loginTimeUpdate(String us_id) {
 
-		userMapper.loginTimeUpdate(mem_id);
+		userMapper.loginTimeUpdate(us_id);
 	}
 	
 	// 아이디 찾기 관련 메서드
@@ -69,14 +69,16 @@ public class UserServiceImpl implements UserService {
 //	}
 	
 	@Override
-	public boolean isUserForId(String mem_name, String mem_email) {
-	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(mem_name, mem_email);
+	public boolean isUserForId(String us_name, String us_email) {
+	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(us_name, us_email);
+	    lo
+	    
 	    return userMapper.findId(findInfoDTO) != null;
 	}
 	
 	@Override
-	public boolean isUserForPw(String mem_id, String mem_name, String mem_email) {
-	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(mem_id, mem_name, mem_email);
+	public boolean isUserForPw(String us_id, String us_name, String us_email) {
+	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindPw(us_id, us_name, us_email);
 	    return userMapper.findPw(findInfoDTO) > 0;
 	}
 	
@@ -120,9 +122,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public String isPwMatch(String mem_id) {
+	public String isPwMatch(String us_id) {
 
-		return userMapper.isPwMatch(mem_id);
+		return userMapper.isPwMatch(us_id);
 	}
 	
 	// 회원수정 관련 메서드
@@ -134,9 +136,9 @@ public class UserServiceImpl implements UserService {
 
 	// 회원탈퇴 관련 메서드
 	@Override
-	public void delete(String mem_id) {
+	public void delete(String us_id) {
 		
-		userMapper.delete(mem_id);
+		userMapper.delete(us_id);
 	}
 
 }
