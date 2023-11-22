@@ -100,13 +100,13 @@ public class UserServiceImpl implements UserService {
 			log.info("임시 비밀번호: " + tempPassword);
 
 			String encoPassword = passwordEncoder.encode(tempPassword); // 암호화된 비밀번호 ─ 서버용(DB 저장)
-			findInfoDTO.setMem_pw(encoPassword); // 암호화된 비밀번호로 필드값 설정
+			findInfoDTO.setUs_pw(encoPassword); // 암호화된 비밀번호로 필드값 설정
 
 			userMapper.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
 
 			try {
 				// EmailDTO.ofTempPw(receiverMail, tempPassword): 임시 비밀번호 발송을 위한 정적 팩토리 메서드 호출
-				EmailDTO emailDTO = EmailDTO.ofTempPw(findInfoDTO.getMem_email(), tempPassword);
+				EmailDTO emailDTO = EmailDTO.ofTempPw(findInfoDTO.getUs_email(), tempPassword);
 				log.info("발송할 이메일 정보: " + emailDTO);
 
 				emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출

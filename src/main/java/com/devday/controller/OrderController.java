@@ -44,7 +44,7 @@ public class OrderController {
 		log.info("주문 정보 페이지 진입");
 		
 		// 주문 정보
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUser_id();
+		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
 
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")
@@ -81,8 +81,8 @@ public class OrderController {
 	@GetMapping("/order_ready")
 	public String order_ready(CartVO vo, HttpSession session) throws Exception {
 
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUser_id();
-		vo.setUser_id(user_id);
+		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		vo.setUs_id(user_id);
 
 		cartService.cart_add(vo);
 
@@ -104,25 +104,25 @@ public class OrderController {
 		   - 스프링에서 처리할 수 있는 부분
 		*/
 		
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUser_id();;
-		o_vo.setUser_id(user_id); // 아이디 값 할당(설정)
+		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();;
+		o_vo.setUs_id(user_id); // 아이디 값 할당(설정)
 		
 
 		// 시퀀스를 주문번호로 사용: 동일한 주문번호 값이 사용
 		// int com.docmall.service.OrderService.getOrderSeq()
 		Long ord_code = (long) orderService.getOrderSeq();
-		o_vo.setOrd_code(ord_code); // 주문번호 저장		
+		o_vo.setOd_code(ord_code); // 주문번호 저장		
 	
 		// 1) 주문 테이블 저장 작업: ord_status, payment_status 데이터 준비할 것(우선은 누락시킴)
 		// 2) 주문 상세 테이블 저장 작업
 		
-		p_vo.setOrd_code(ord_code);
-		p_vo.setUser_id(user_id);
-		p_vo.setPay_method("카카오페이");
-		p_vo.setPay_tot_price(totalprice);
+		p_vo.setOd_code(ord_code);
+		p_vo.setUs_id(user_id);
+		p_vo.setPm_method("카카오페이");
+		p_vo.setPm_total_price(totalprice);
 		
-		o_vo.setOrd_status("주문완료");
-		o_vo.setPayment_status("결제완료");
+		o_vo.setOd_status("주문완료");
+		o_vo.setPm_status("결제완료");
 		
 		log.info("결제방법: " + paymethod);
 		log.info("주문정보: " + o_vo);
@@ -134,14 +134,14 @@ public class OrderController {
 		orderService.order_insert(o_vo, p_vo); // 주문, 주문상세 정보 저장, 장바구니 삭제, 결제 정보 저장
 		
 		// 3) Kakao Pay 호출 -> 1) 결제 준비 요청
-		ReadyResponse readyResponse = kakaoPayServiceImpl.payReady(o_vo.getOrd_code(), user_id, itemName, cart_list.size(), totalprice);
+		ReadyResponse readyResponse = kakaoPayServiceImpl.payReady(o_vo.getOd_code(), user_id, itemName, cart_list.size(), totalprice);
 		
 		log.info("결제 고유번호: " + readyResponse.getTid());
 		log.info("결제 요청 URL: " + readyResponse.getNext_redirect_pc_url());
 	
 		// 카카오페이 결제 승인 요청 작업에 필요한 정보 준비
 		session.setAttribute("tid", readyResponse.getTid());
-		session.setAttribute("odr_code", o_vo.getOrd_code());
+		session.setAttribute("odr_code", o_vo.getOd_code());
 		
 		return readyResponse;
 	}
@@ -153,7 +153,7 @@ public class OrderController {
 		// 2) Kakao Pay 결제 승인 요청 작업
 		String tid = (String) session.getAttribute("tid");
 		Long odr_code = (Long) session.getAttribute("odr_code");
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUser_id();;
+		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();;
 
 		ApproveResponse approveResponse = kakaoPayServiceImpl.payApprove(tid, odr_code, user_id, pg_token);
 
@@ -182,25 +182,25 @@ public class OrderController {
 		
 		ResponseEntity<String> entity = null;
 		
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUser_id();;
-		o_vo.setUser_id(user_id); // 아이디 값 할당(설정)
+		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		o_vo.setUs_id(user_id); // 아이디 값 할당(설정)
 		
 		// 시퀀스를 주문번호로 사용: 동일한 주문번호 값이 사용
 		// int com.docmall.service.OrderService.getOrderSeq()
 		Long ord_code = (long) orderService.getOrderSeq();
-		o_vo.setOrd_code(ord_code); // 주문번호 저장		
+		o_vo.setOd_code(ord_code); // 주문번호 저장		
 		
 		// 1) 주문 테이블 저장 작업: ord_status, payment_status 데이터 준비할 것(우선은 누락시킴)
 		// 2) 주문 상세 테이블 저장 작업
 		
-		o_vo.setOrd_status("주문완료");
-		o_vo.setPayment_status("결제완료");
+		o_vo.setOd_status("주문완료");
+		o_vo.setPm_status("결제완료");
 		
-		p_vo.setPay_method("무통장입금");
-		p_vo.setOrd_code(ord_code);
-		p_vo.setUser_id(user_id);
-		p_vo.setPay_tot_price(totalprice);
-		p_vo.setPay_nobank_price(totalprice);
+		p_vo.setPm_method("무통장입금");
+		p_vo.setOd_code(ord_code);
+		p_vo.setUs_id(user_id);
+		p_vo.setPm_total_price(totalprice);
+		p_vo.setPm_nobank_price(totalprice);
 		
 		log.info("결제방법: " + paymethod);
 		log.info("주문정보: " + o_vo);

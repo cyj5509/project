@@ -39,7 +39,7 @@ public class AdminController {
 		
 		log.info("관리자 로그인: " + vo);
 
-		AdminVO db_vo = adminService.admin_ok(vo.getAdm_id());
+		AdminVO db_vo = adminService.admin_ok(vo.getAd_id());
 
 		String url = "";
 		String msg = "";
@@ -48,13 +48,13 @@ public class AdminController {
 			// 아이디가 일치하는 경우 실행
 			// 사용자가 입력한 비밀번호(평문 텍스트)와 DB에서 가져온 암호화된 비밀번호 일치 여부 검사
 			// passwordEncoder.matches(rawPassword, encodedPassword)
-			if (passwordEncoder.matches(vo.getAdm_pw(), db_vo.getAdm_pw())) {
+			if (passwordEncoder.matches(vo.getAd_pw(), db_vo.getAd_pw())) {
 				url = "/admin/adm_menu"; // 관리자 메뉴 페이지 주소
 				// 로그인 성공 결과로 서버 측의 메모리를 사용하는 세션 형태 작업
 				session.setAttribute("adminStatus", db_vo); // logiStatus와 이름이 중복돼선 안 된다
 				
 				// 최근 접속(로그인) 시간 업데이트
-				adminService.loginTime(vo.getAdm_id());	
+				adminService.loginTime(vo.getAd_id());	
 				
 			} else {
 				url = "/admin/intro"; // 로그인 폼 주소

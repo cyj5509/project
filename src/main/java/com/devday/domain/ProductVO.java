@@ -11,7 +11,7 @@ CREATE TABLE product_tbl(
     pd_number            NUMBER CONSTRAINT product_pk PRIMARY KEY, -- 상품 번호
     cg_code              NUMBER                NULL,               -- 카테고리 코드(2차 이후)
     pd_name              VARCHAR2(50)          NOT NULL,           -- 상품 이름
-    pd_price             NUMBER                NOT NULL,           -- 상품 가격
+    pd_price             NUMBER                NOT NULL,           -- 상품 개별 가격
     pd_discount          NUMBER                NOT NULL,           -- 상품 할인율
     pd_company           VARCHAR2(50)          NOT NULL,           -- 상품 제조사(또는 출판사)
     pd_content           VARCHAR2(4000)        NOT NULL,           -- 상품 상세 내용

@@ -4,20 +4,21 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+// 비밀번호 암호화 처리를 위해 별도로 분리한 클래스
+
 @Getter
 @Setter
-@ToString
+//@ToString
 public class LoginDTO {
 
-	// 로그인 정보
-	private String user_id; // 사용자 아이디
-	private String user_pw; // 사용자가 입력한 평문 비밀번호
+	private String us_id;
+	private String us_pw; // 사용자가 입력한 평문 비밀번호(비암호화)
 	
 	//@ToString
 	/*
 	@Override
 	public String toString() {
-		return "LoginDTO [mem_id=" + mem_id + ", mem_pw=" + mem_pw + "]";
+		return "LoginDTO [us_id=" + us_id + ", us_pw=" + us_pw + "]";
 	}
 	*/
 }

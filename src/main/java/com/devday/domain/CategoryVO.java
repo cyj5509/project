@@ -8,7 +8,7 @@ CREATE TABLE category_tbl(
     cg_parent_code  NUMBER         NULL,        -- 상위 카테고리 코드(1차)
     cg_name         VARCHAR2(50)   NOT NULL,    -- 카테고리 이름(범주)
     FOREIGN KEY(cg_parent_code) REFERENCES category_tbl(cg_code)
-)
+);
 */
 
 // @Data
@@ -18,7 +18,6 @@ public class CategoryVO {
 	private Integer cg_parent_code; // 1차 카테고리 코드
 	private String cg_name; // 카테고리명
 	
-	// 소스 메뉴 단축키: [Alt]+[Shift]+[S]
 	// @Getter, @Setter
 	public Integer getCg_code() {
 		return cg_code;

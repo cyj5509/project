@@ -24,26 +24,26 @@ import lombok.extern.log4j.Log4j;
 public class EmailController {
 
 	private final EmailService emailService; // EmailService 인터페이스 implements EmailServiceImpl 클래스
-	private final UserService memberService; // MemberService 인터페이스 implements MemberServiceImpl 클래스
+	private final UserService userService; // MemberService 인터페이스 implements MemberServiceImpl 클래스
 
 	// 메일을 통한 회원 인증 기능 구현 ─ 회원가입, 아이디 및 비밀번호 찾기
 	@GetMapping("/authCode")
-	public ResponseEntity<String> sendAuthCode(@RequestParam(value = "mem_id", required = false) String mem_id,
-											  @RequestParam("mem_name") String mem_name, 
+	public ResponseEntity<String> sendAuthCode(@RequestParam(value = "us_id", required = false) String us_id,
+											  @RequestParam("us_name") String us_name, 
 											  @RequestParam("receiverMail") String receiverMail, HttpSession session) {
 		
-		log.info("수신자명: " + mem_name);
+		log.info("수신자명: " + us_name);
 		log.info("수신할 메일 주소: " + receiverMail);
 		
 		ResponseEntity<String> entity = null;
 		
 		boolean userExists; // 사용자가 존재
 	    // 아이디 찾기 요청인 경우
-	    if (mem_id == null) {
-	        userExists = memberService.isUserForId(mem_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
+	    if (us_id == null) {
+	        userExists = userService.isUserForId(us_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
 	    } else {
 	        // 비밀번호 찾기 요청인 경우
-	        userExists = memberService.isUserForPw(mem_id, mem_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
+	        userExists = userService.isUserForPw(us_id, us_name, receiverMail); // 사용자가 존재하는 경우 true를 반환
 	    }
 
 		// 사용자가 존재하지 않는 경우

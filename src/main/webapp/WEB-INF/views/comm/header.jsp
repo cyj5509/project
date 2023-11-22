@@ -13,9 +13,9 @@
                     <c:if test="${sessionScope.loginStatus != null}">
                         <a href="/member/logout" class="nav-item">로그아웃(${sessionScope.loginStatus.mem_id} 님)</a>
                     </c:if>
-                        <a href="/member/myPage" class="nav-item">마이페이지</a>
-                        <a href="#" class="nav-item">주문조회</a>
-                        <a href="#" class="nav-item">장바구니</a>
+                        <a href="/member/my_page" class="nav-item">마이페이지</a>
+                        <a href="/user/cart/cart_list" class="nav-item">장바구니</a>
+                        <a href="/user/order/order_info" class="nav-item">주문조회</a>
                     	<a href="/user/community" class="nav-item">커뮤니티</a>
                 </div>
 
@@ -35,7 +35,7 @@
 		                    		<a href="/admin/intro" class="admin-section">[Admin]</a>
 		                    </c:if>
                             <b>최근 접속일자:
-                                <fmt:formatDate value="${sessionScope.loginStatus.mem_lastlogin}"
+                                <fmt:formatDate value="${sessionScope.loginStatus.us_last_login}"
                                     pattern="yyyy-MM-dd HH:mm:ss" />
                             </b>
                         </c:if>
