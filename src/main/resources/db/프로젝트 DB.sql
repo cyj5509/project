@@ -10,7 +10,6 @@ COMMIT;
 
 -- 1. 사용자 테이블 ─ 회원가입을 포함한 회원관리(비회원 포함)
 -- 기본키: 회원 아이디 / 외래키: 없음
--- DROP TABLE member_table;
 DROP TABLE user_table;
 CREATE TABLE user_table (
     us_id            VARCHAR2(15),                      -- 사용자 아이디
@@ -33,10 +32,10 @@ CREATE TABLE user_table (
 -- ALTER TABLE user_table ADD CONSTRAINT user_pk PRIMARY KEY (user_id);
 
 -- 사용자 계정 활성화
---INSERT INTO
---    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status) 
---VALUES 
---    ('user01', '1234', 'admin', 'admin', 'admin', 'admin', 'admin', 'admin', 9999999, sysdate, sysdate, sysdate, 1);
+INSERT INTO
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status) 
+VALUES 
+    ('user01', '1234', '홍길동', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0);
 
 -- 관리자 계정 활성화
 INSERT INTO
@@ -60,7 +59,7 @@ DROP TABLE admin_table;
 CREATE TABLE admin_table (
     ad_id          VARCHAR2(15),                          -- 관리자 아이디
     ad_pw          VARCHAR2(60)                NOT NULL,  -- 관리자 비밀번호
-    ad_last_login   DATE    DEFAULT   sysdate   NOT NULL, -- 접속 일자
+    ad_last_login   DATE    DEFAULT   sysdate  NOT NULL, -- 접속 일자
     CONSTRAINT pk_ad_id PRIMARY KEY(ad_id)
 );
 
@@ -309,47 +308,48 @@ DELETE FROM order_detail_table;
 
 -- 8. 결제 테이블: 카카오페이 및 무통장입금
 -- 기본키: 결제 코드 / 외래키: 없음
-CREATE TABLE payment_tbl (
-    pm_number             NUMBER CONSTRAINT pk_pm_code PRIMARY KEY, -- 결제 번호
-    od_number             NUMBER NOT NULL,                          -- 주문 번호
-    us_id                 VARCHAR2(50) NOT NULL,                    -- 사용자 아이디
-    pm_method             VARCHAR2(50) NOT NULL,                    -- 결제 방식
-    pm_date               DATE DEFAULT sysdate NULL,                -- 결제 일자
-    pm_total_price        NUMBER NOT NULL,                          -- 결제 금액
-    pm_no_bankbook_bank   VARCHAR2(50) NULL,                        -- 무통장 입금은행
-    pm_no_bank_account    VARCHAR2(50) NULL,                        -- 무통장 입금계좌
-    pm_no_bankbook_price  NUMBER NULL,                              -- 무통장 입금금액
-    pm_no_bankbook_user   VARCHAR2(50) NULL,                        -- 무통장 입금자명
-    pm_memo               VARCHAR2(50) NULL                         -- 메모
+DROP TABLE payment_table;
+CREATE TABLE payment_table (
+    pm_number               NUMBER CONSTRAINT pk_pm_code PRIMARY KEY, -- 결제 번호
+    od_number               NUMBER NOT NULL,                          -- 주문 번호
+    us_id                   VARCHAR2(50) NOT NULL,                    -- 사용자 아이디
+    pm_method               VARCHAR2(50) NOT NULL,                    -- 결제 방식
+    pm_complete_date        DATE DEFAULT sysdate NULL,       -- 결제 완료 일자
+    pm_total_price          NUMBER NOT NULL,                          -- 결제 금액
+    pm_no_bankbook_bank     VARCHAR2(50) NULL,                        -- 무통장 입금은행
+    pm_no_bankbook_account  VARCHAR2(50) NULL,                    -- 무통장 입금계좌
+    pm_no_bankbook_price    NUMBER NULL,                              -- 무통장 입금금액
+    pm_no_bankbook_user     VARCHAR2(50) NULL,                        -- 무통장 입금자명
+    pm_memo                 VARCHAR2(50) NULL                         -- 메모
 );
 
 -- 시퀀스: 결제 테이블의 결제 코드 컬럼(pm_number)
-CREATE SEQUENCE sequence_pm_number_;
+CREATE SEQUENCE sequence_pm_number;
 
 COMMIT;
 
 -- 전체 데이터 조회 및 삭제
-SELECT * FROM payment_tbl;
-DELETE FROM payment_tbl;
+SELECT * FROM payment_table;
+DELETE FROM payment_table;
 
 
 
 -- 9. 리뷰 테이블
 -- 기본키: 리뷰 번호 / 외래키: 사용자 테이블의 사용자 아이디, 상품 테이블의 상품 번호
-DROP TABLE review_tbl;
-CREATE TABLE review_tbl(
+DROP TABLE review_table;
+CREATE TABLE review_table(
     rv_number         NUMBER,                         -- 리뷰 번호
     us_id             VARCHAR2(15)          NOT NULL, -- 사용자 아이디
     pd_number         NUMBER                NOT NULL, -- 상품 번호
     rv_content        VARCHAR2(200)         NOT NULL, -- 리뷰 내용
     rv_score          NUMBER                NOT NULL, -- 리뷰 평점
     rv_register_date  DATE DEFAULT sysdate  NOT NULL, -- 등록 일자
-    CONSTRAINT fk_rv_us_id FOREIGN KEY(us_id) REFERENCES user_tbl(us_id),
-    CONSTRAINT fk_rv_pd_number FOREIGN KEY(pd_number) REFERENCES product_tbl(pd_number)
+    CONSTRAINT fk_rv_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id),
+    CONSTRAINT fk_rv_pd_number FOREIGN KEY(pd_number) REFERENCES product_table(pd_number)
 );
 
 -- 리뷰 번호에 대한 기본키 설정
-ALTER TABLE review_tbl ADD CONSTRAINT pk_rv_number PRIMARY KEY(rv_number);
+ALTER TABLE review_table ADD CONSTRAINT pk_rv_number PRIMARY KEY(rv_number);
 
 -- 시퀀스: 리뷰 테이블의 리뷰 번호 컬럼(rv_number)
 CREATE SEQUENCE sequence_rv_number;
@@ -357,8 +357,8 @@ CREATE SEQUENCE sequence_rv_number;
 COMMIT;
 
 -- 전체 데이터 조회 및 삭제
-SELECT * FROM review_tbl;
-DELETE FROM review_tbl;
+SELECT * FROM review_table;
+DELETE FROM review_table;
 
 
 

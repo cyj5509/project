@@ -7,60 +7,61 @@
 		
 <select id="getOrderSeq" resultType="int">
 	SELECT 
-		SEQ_ORD_CODE.NEXTVAL
+		SEQUENCE_OD_NUMBER.NEXTVAL
 	FROM
 		DUAL
 </select>
 
-<insert id="order_insert" parameterType="com.devday.domain.OrderVO">
+<insert id="order_insert" parameterType="com.devday.domain.OrderBasicVO">
 	INSERT INTO
-		ORDER_BS_TBL
-			(ord_code, mem_id, ord_name, ord_postcode, ord_addr_basic, ord_addr_detail, ord_tel, ord_price, ord_regdate, ord_status, payment_status)
+		ORDER_BASIC_TBL
+			(od_number, us_id, od_name, od_phone, od_postcode, od_addr_basic, od_addr_detail, od_total_price, od_pay_date, od_status, pm_status)
 		VALUES (
-		#{ord_code}, 
-		#{mem_id}, 
-		#{ord_name}, 
-		#{ord_postcode}, 
-		#{ord_addr_basic}, 
-		#{ord_addr_detail}, 
-		#{ord_tel}, 
-		#{ord_price}, 
+		#{od_number}, 
+		#{us_id}, 
+		#{od_name}, 
+		#{od_phone}, 
+		#{od_postcode}, 
+		#{od_addr_basic}, 
+		#{od_addr_detail}, 
+		#{od_total_price}, 
 		sysdate, 
-		#{ord_status},
-		#{payment_status}
+		#{od_status},
+		#{pm_status}
 		)
 </insert>
 
 <insert id="order_detail_insert" parameterType="map">
 	INSERT INTO
-		ORDER_DT_TBL(ord_code, prd_num, dt_amount, dt_price)
+		ORDER_DETAIL_TBL
+			(od_number, pd_number, od_amount, od_price)
 	SELECT 
-		#{ord_code}, c.prd_num, c.cart_amount, p.prd_price 
+		#{od_number}, c.pd_number, c.ct_amount, p.pd_price 
 	FROM 
-		CART_TBL C INNER JOIN PRODUCT_TBL P ON C.PRD_NUM = P.PRD_NUM
+		CART_TABLE C INNER JOIN PRODUCT_TABLE P ON C.PD_NUMBER = P.PD_NUMBER
 	WHERE 
-		mem_id = #{mem_id}
+		us_id = #{us_id}
 </insert> 
 
 <delete id="cart_del" parameterType="String">
 	DELETE FROM
-		CART_TBL
+		CART_TABLE
 	WHERE
-		mem_id = #{mem_id}
+		us_id = #{us_id}
 </delete>
 
 <insert id="payment_insert" parameterType="com.devday.domain.PaymentVO">
 	INSERT INTO
 		payment
-			(pay_code, ord_code, mem_id, pay_method, pay_date, pay_tot_price
-			<if test="pay_nobank_price != null and pay_nobank_price != ''"> <!-- 무통장 입금인 경우 사용, 카카오페이인 경우 미사용 -->
-			, pay_nobank_price, pay_nobank_user, pay_nobank, pay_memo, pay_bankaccount
+			(pm_number, od_number, us_id, pm_method, pm_complete_date, pm_total_price
+			<if test="pm_nobank_price != null and pm_nobank_price != ''"> <!-- 무통장 입금인 경우 사용, 카카오페이인 경우 미사용 -->
+			, pm_no_bankbook_bank, pm_no_bankbook_account, pm_no_bankbook_price, pm_no_bankbook_user, pm_memo
 			</if>
 			)
 		values 
-			(SEQ_PAYMENT_CODE.NEXTVAL, #{ord_code}, #{mbsp_id}, #{pay_method}, sysdate, #{pay_tot_price} 
-			<if test="pay_nobank_price != null and pay_nobank_price != ''"> <!-- 무통장 입금인 경우 사용, 카카오페이인 경우 미사용 -->
-			, #{pay_nobank_price}, #{pay_nobank_user}, #{pay_nobank}, #{pay_memo}, #{pay_bankaccount}
+			(SEQUENCE_PM_NUMBER.NEXTVAL, #{od_number}, #{us_id}, #{pm_method}, sysdate, #{pm_total_price} 
+			<if test="pm_nobank_price != null and pm_nobank_price != ''"> <!-- 무통장 입금인 경우 사용, 카카오페이인 경우 미사용 -->
+			, #{pm_no_bankbook_bank}, #{pm_no_bankbook_account}, #{pm_no_bankbook_price}, #{pm_no_bankbook_user}, #{pm_memo}
 			</if>
 			)
 </insert>

@@ -16,11 +16,14 @@
 	<logger name="com.devday.controller">
 		<level value="info" />
 	</logger>
-
+	
+	<!-- 임시 비밀번호 확인용 -->
+	<!-- 
 	<logger name="com.devday.service">
 		<level value="info" />
 	</logger>
-
+ 	-->
+ 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
 		<level value="info" />
