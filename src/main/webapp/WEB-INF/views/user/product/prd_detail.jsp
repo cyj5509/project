@@ -18,7 +18,31 @@
 					<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
 					<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 					<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-
+					<!-- Handlebars(자바스크립트 템플릿 엔진): 서버에서 보내온 JSON 형태의 데이터를 사용하여 작업을 편하게 할 수 있는 특징 -->
+					<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+					<script id="reviewTemplate" type="text/x-handlebars-template">
+						<table class="table table-sm">
+							<thead>
+								<tr>
+									<th scope="col">번호</th>
+									<th scope="col">리뷰내용</th>
+									<th scope="col">평점</th>
+									<th scope="col">날짜</th>th>
+								</tr>
+							</thead>
+							<tbody>
+								{{#each .}}
+								<tr>
+									<th scope="row">{{rv_number}}</th>
+									<td>{{rv_content}}</td>
+									<td>{{displayStar rv_score}}</td>
+									<td>{{convertDate rv_register_date}}</td>
+								</tr>
+								{{/each}}
+							</tbody>
+						</table>
+					</script>
+					
 					<script>
 						$(function () {
 							$("#tabs_pro_detail").tabs();
@@ -117,6 +141,11 @@
 										</div>
 										<div id="tabs-proreview">
 											<p>상품후기 목록</p>
+											<div class="row">
+												<div class="col-md-12" id="review_list"> <!-- 정적 태그(이하 동적 태그) -->
+													
+												</div>
+											</div>
 											<div class="row">
 												<div class="col-md-12 text-right">
 													<button type="button" id="btn_review_write" class="btn btn-info">상품후기 작성</button>
@@ -241,7 +270,72 @@
 									// 상품평 목록 불러오는 작업(이벤트 사용하지 않고 직접 호출)
 									let reviewPage = 1; // 목록에서 첫 번째 페이지를 의미
 									// @GetMapping("/list/{pro_num}/{page}")
-									let url = "/user/review/list" + 상품코드 + "/" + reviewPage;
+									let url = "/user/review/list/" + "${productVO.pd_number}" + "/" + reviewPage;
+
+									getReviewInfo(url);
+
+									function getReviewInfo(url) {
+										$.getJSON(url, function(data) {
+
+											// console.log("상품 후기", data.list[0].rv_content);
+											// console.log("페이징 정보", data.pageMaker.total);
+											// review_list
+
+											printReviewList(data.list, $("#review_list"), $("#reviewTemplate"));
+										});
+									}
+
+									// 상품후기 작업 함수
+									let printReviewList = function (reviewData, target, template) {
+										let templateObj = Handlebars.compile(template.html());
+										let reviewHtml = templateObj(reviewData);
+
+										// 상품후기 목록 위치를 참조하여 추가 작업
+										$("#review_list").children().remove();
+										target.append(reviewHtml)
+									}
+
+									// 사용자 정의 Helper(핸들바의 함수 정의)
+									// 상품후기 등록일 millisecond -> 자바스크립트의 Date 객체로 변환
+									Handlebars.registerHelper("convertDate", function (reviewTime) {
+
+										const dateObj = new Date(reviewTime);
+										let year = dateObj.getFullYear();
+										let month = dateObj.getMonth() + 1;
+										let date = dateObj.getDate();
+										let hour = dateObj.getHours();
+										let minute = dateObj.getMinutes();
+
+										return year + "/" + month + "/" + date + " " + hour + ":" + minute;
+									});
+
+									// 평점(숫자)를 별 모양으로 출력하기
+									Handlebars.registerHelper("displayStar", function (rating) {
+										let starStr = "";
+										
+										switch (rating) {
+											case 1:
+												starStr = "★☆☆☆☆";
+												break;
+											case 2:
+												starStr = "★★☆☆☆"
+												break;
+											case 3:
+												starStr = "★★★☆☆"
+												break;
+											case 4:
+												starStr = "★★★★☆"
+												break;
+											case 5:
+												starStr = "★★★★★"
+												break;
+										}
+										return starStr;
+									});
+
+
+
+									// 페이징 작업 함수
 
 									// 상품후기 저장
 									$("#btn_review_save").on("click", function () {
@@ -284,6 +378,7 @@
 													alert("상품평이 등록되었습니다.")
 													$('#review_modal').modal('hide'); // 부트스트랩 4.6 버전의 자바스크립트 명령어
 													// 상품평 목록 불러오는 작업
+													getReviewInfo(url);
 												}
 											}
 										});

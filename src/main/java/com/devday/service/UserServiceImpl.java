@@ -71,7 +71,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean isUserForId(String us_name, String us_email) {
 	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(us_name, us_email);
-	    lo
 	    
 	    return userMapper.findId(findInfoDTO) != null;
 	}
