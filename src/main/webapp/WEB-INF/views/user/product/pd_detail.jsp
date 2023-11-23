@@ -45,7 +45,7 @@
 					
 					<script>
 						$(function () {
-							$("#tabs_pro_detail").tabs();
+							$("#tabs_pd_detail").tabs();
 						});
 					</script>
 
@@ -90,20 +90,20 @@
 						<div class="container">
 							<div class="card-deck mb-3 text-center row">
 								<div class="col-md-6"> <!-- 상품 이미지 -->
-									<img class="btn_prd_img" data-prd_num="${productVO.prd_num}" width="100%" height="200"
-										src="/user/product/imageDisplay?dateFolderName=${productVO.prd_up_folder}&fileName=${productVO.prd_img}"
+									<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="200"
+										src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
 										alt="">
 								</div>
 
 								<div class="col-md-6">
 									<div class="row text-left">
 										<div class="col"> <!-- 상품명 -->
-											상품명: ${productVO.prd_name}
+											상품명: ${productVO.pd_name}
 										</div>
 									</div>
 									<div class="row text-left">
 										<div class="col"> <!-- 상품가격 -->
-											가격: <span id="unit_price">${productVO.prd_price}</span>
+											가격: <span id="unit_price">${productVO.pd_price}</span>
 										</div>
 									</div>
 									<div class="row text-left">
@@ -113,17 +113,17 @@
 									</div>
 									<div class="row text-left">
 										<div class="col">
-											총 상품금액: <span id="tot_price">${productVO.prd_price}</span>
+											총 상품금액: <span id="tot_price">${productVO.pd_price}</span>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-md-6">
 											<button type="button" class="btn btn-link" name="btn_order"
-												data-prd_num="${productVO.prd_num}">구매하기</button>
+												data-pd_number="${productVO.pd_number}">구매하기</button>
 										</div>
 										<div class="col-md-6">
 											<button type="button" class="btn btn-link" name="btn_cart_add"
-												data-prd_num="${productVO.prd_num}">장바구니</button>
+												data-pd_number="${productVO.pd_number}">장바구니</button>
 										</div>
 									</div>
 								</div>
@@ -131,13 +131,13 @@
 
 							<div class="row">
 								<div class="col-md-12">
-									<div id="tabs_pro_detail">
+									<div id="tabs_pd_detail">
 										<ul>
 											<li><a href="#tabs-prodetail">상품 설명</a></li>
 											<li><a href="#tabs-proreview">상품 후기</a></li>
 										</ul>
 										<div id="tabs-prodetail">
-											<p>${productVO.prd_content}/p>
+											<p>${productVO.pd_content}/p>
 										</div>
 										<div id="tabs-proreview">
 											<p>상품후기 목록</p>
@@ -196,7 +196,7 @@
 									$(".movepage").on("click", function (e) {
 										e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-										actionForm.attr("action", "/user/product/prd_list");
+										actionForm.attr("action", "/user/product/pd_list");
 										// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
 										actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
@@ -209,8 +209,8 @@
 										$.ajax({
 											url: '/cart/cart_add', // url: '장바구니 추가 주소', 
 											type: 'post',
-											// $(this).data("prd_num"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-											data: { prd_num: $(this).data("prd_num"), cart_amount: $("#btn_quantity").val() }, // mbsp_id는 스프링에서 자체 처리
+											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
+											data: { pd_number: $(this).data("pd_number"), cart_amount: $("#btn_quantity").val() }, // mbsp_id는 스프링에서 자체 처리
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
@@ -226,21 +226,21 @@
 									// 구매하기(주문)
 									$("button[name='btn_order']").on("click", function () {
 
-										let url = `/user/order/order_ready?prd_num=$(this).data("prd_num")&cart_amount=$("#btn_quantity").val()`;
+										let url = `/user/order/order_ready?pd_number=$(this).data("pd_number")&cart_amount=$("#btn_quantity").val()`;
 										location.href = url;
 									});
 
 									// 상품 이미지 또는 상품명 클릭 시 상세로 보내는 작업
-									$(".btn_prd_img").on("click", function () {
+									$(".btn_pd_image").on("click", function () {
 										console.log("상품 상세 설명");
 
 										// actionForm.attr("action", "상품 상세 주소");
-										actionForm.attr("action", "/user/product/prd_detail");
-										let prd_num = $(this).data("prd_num");
+										actionForm.attr("action", "/user/product/pd_detail");
+										let pd_number = $(this).data("pd_number");
 
-										actionForm.find("input[name='prd_num']").remove(); // 뒤로가기 시 
-										// <input type='hidden' name='prd_num' value='상품코드'> 미리 만들어서 작성
-										actionForm.append("<input type='hidden' name='prd_num' value='" + prd_num + "'>")
+										actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 
+										// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
+										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
 										actionForm.submit();
 									});
 
@@ -269,7 +269,7 @@
 
 									// 상품평 목록 불러오는 작업(이벤트 사용하지 않고 직접 호출)
 									let reviewPage = 1; // 목록에서 첫 번째 페이지를 의미
-									// @GetMapping("/list/{pro_num}/{page}")
+									// @GetMapping("/list/{pd_num}/{page}")
 									let url = "/user/review/list/" + "${productVO.pd_number}" + "/" + reviewPage;
 
 									getReviewInfo(url);
@@ -340,30 +340,30 @@
 									// 상품후기 저장
 									$("#btn_review_save").on("click", function () {
 										// 평점 값
-										let rew_score = 0;
-										let rew_content = $("#rew_content").val();
+										let rv_score = 0;
+										let rv_content = $("#rv_content").val();
 
 										$("p#star_rv_score a.rv_score").each(function (index, item) {
 											if ($(this).attr("class") == "rv_score on") {
-												rew_score += 1;
+												rv_score += 1;
 											}
 
 
 											// 평점 선택 안했을 경우 체크
-											if (rew_score == 0) {
+											if (rv_score == 0) {
 												alert("평점을 선택해 주세요.");
 												return;
 											}
 
 											// 후기 작성 안했을 경우
-											if (rew_content == "") {
+											if (rv_content == "") {
 												alert("상품평을 작성해 주세요.");
 												return;
 											}
 										});
 
 										// AJAX를 사용하여 스프링으로 리뷰 데이터 전송 작업
-										let review_data = { prd_num: $(this).data("prd_num"), rew_content: rew_content, rew_score: rew_score }
+										let review_data = { pd_number: $(this).data("pd_number"), rv_content: rv_content, rv_score: rv_score }
 
 										$.ajax({
 											url: '/user/review/new',
@@ -412,14 +412,14 @@
 												</div>
 												<div class="form-group">
 													<label for="message-text" class="col-form-label">내용</label>
-													<textarea class="form-control" id="rew_content"></textarea>
+													<textarea class="form-control" id="rv_content"></textarea>
 												</div>
 											</form>
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 											<button type="button" id="btn_review_save" class="btn btn-primary"
-												data-prd_num="${productVO.prd_num}">상품후기 저장</button>
+												data-pd_number="${productVO.pd_number}">상품후기 저장</button>
 										</div>
 									</div>
 								</div>

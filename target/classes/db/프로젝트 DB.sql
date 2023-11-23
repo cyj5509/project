@@ -10,7 +10,7 @@ COMMIT;
 
 -- 1. 사용자 테이블 ─ 회원가입을 포함한 회원관리(비회원 포함)
 -- 기본키: 회원 아이디 / 외래키: 없음
-DROP TABLE member_tbl;
+-- DROP TABLE member_tbl;
 DROP TABLE user_table;
 CREATE TABLE user_table (
     us_id            VARCHAR2(15),                      -- 사용자 아이디
@@ -60,7 +60,7 @@ DROP TABLE admin_table;
 CREATE TABLE admin_table (
     ad_id          VARCHAR2(15),                          -- 관리자 아이디
     ad_pw          VARCHAR2(60)                NOT NULL,  -- 관리자 비밀번호
-    ad_last_login   DATE    DEFAULT   sysdate  NOT NULL, -- 접속 일자
+    ad_last_login   DATE    DEFAULT   sysdate  NOT NULL,  -- 접속 일자
     CONSTRAINT pk_ad_id PRIMARY KEY(ad_id)
 );
 
@@ -78,7 +78,7 @@ DELETE FROM admin_table;
 -- 3. 카테고리 테이블
 -- 기본키: 하위 카테고리 코드(2차 이후) / 외래키: 상위 카테고리 코드(1차)
 DROP TABLE category_table;
-CREATE TABLE category_table(
+CREATE TABLE category_table (
     cg_code         NUMBER        CONSTRAINT pk_cg_code PRIMARY KEY,  -- 하위 카테고리 코드(2차 이후)
     cg_parent_code  NUMBER        NULL,                               -- 상위 카테고리 코드(1차)
     cg_name         VARCHAR2(50)  NOT NULL,                           -- 카테고리 이름(범주)
@@ -206,16 +206,16 @@ SELECT * FROM category_table WHERE cg_parent_code IS NOT NULL;
 -- 4. 상품 테이블
 -- 기본키: 상품 번호 / 외래키: 카테고리 테이블의 하위 카테고리 코드(2차 이후)
 DROP TABLE product_table;
-CREATE TABLE product_table(
+CREATE TABLE product_table (
     pd_number            NUMBER CONSTRAINT pk_pd_number PRIMARY KEY,  -- 상품 번호
     cg_code              NUMBER                NULL,                  -- 카테고리 코드(2차 이후)
-    pd_name              VARCHAR2(50)          NOT NULL,              -- 상품 이름
+    pd_name              VARCHAR2(100)          NOT NULL,              -- 상품 이름
     pd_price             NUMBER                NOT NULL,              -- 상품 개별 가격
     pd_discount          NUMBER                NOT NULL,              -- 상품 할인율
-    pd_company           VARCHAR2(50)          NOT NULL,              -- 상품 제조사(또는 출판사)
+    pd_company           VARCHAR2(100)          NOT NULL,              -- 상품 제조사(또는 출판사)
     pd_content           VARCHAR2(4000)        NOT NULL,              -- 상품 상세 내용
-    pd_image_folder      VARCHAR2(50)          NOT NULL,              -- 상품 이미지 폴더명
-    pd_image             VARCHAR2(100)         NOT NULL,              -- 상품 이미지
+    pd_image_folder      VARCHAR2(100)          NOT NULL,              -- 상품 이미지 폴더명
+    pd_image             VARCHAR2(200)         NOT NULL,              -- 상품 이미지
     pd_amount            NUMBER                NOT NULL,              -- 상품 수량
     pd_buy_status        CHAR(1)               NOT NULL,              -- 판매 여부
     pd_register_date     DATE DEFAULT sysdate  NOT NULL,              -- 등록 일자
@@ -262,7 +262,7 @@ DELETE FROM cart_table;
 -- 기본키: 주문 번호 / 외래키: 사용자 테이블의 사용자 아이디
 -- DROP TABLE order_table;
 DROP TABLE order_basic_table;
-CREATE TABLE order_basic_table(
+CREATE TABLE order_basic_table (
     od_number         NUMBER CONSTRAINT pk_bs_od_number PRIMARY KEY,  -- 주문 번호
     us_id             VARCHAR2(15)          NOT NULL,                 -- 회원 아이디
     od_name           VARCHAR2(30)          NOT NULL,                 -- 주문자의 이름
@@ -315,10 +315,10 @@ CREATE TABLE payment_table (
     od_number               NUMBER NOT NULL,                          -- 주문 번호
     us_id                   VARCHAR2(50) NOT NULL,                    -- 사용자 아이디
     pm_method               VARCHAR2(50) NOT NULL,                    -- 결제 방식
-    pm_complete_date        DATE DEFAULT sysdate NULL,       -- 결제 완료 일자
+    pm_complete_date        DATE DEFAULT sysdate NULL,                -- 결제 완료 일자
     pm_total_price          NUMBER NOT NULL,                          -- 결제 금액
     pm_no_bankbook_bank     VARCHAR2(50) NULL,                        -- 무통장 입금은행
-    pm_no_bankbook_account  VARCHAR2(50) NULL,                    -- 무통장 입금계좌
+    pm_no_bankbook_account  VARCHAR2(50) NULL,                        -- 무통장 입금계좌
     pm_no_bankbook_price    NUMBER NULL,                              -- 무통장 입금금액
     pm_no_bankbook_user     VARCHAR2(50) NULL,                        -- 무통장 입금자명
     pm_memo                 VARCHAR2(50) NULL                         -- 메모
@@ -338,7 +338,7 @@ DELETE FROM payment_table;
 -- 9. 리뷰 테이블
 -- 기본키: 리뷰 번호 / 외래키: 사용자 테이블의 사용자 아이디, 상품 테이블의 상품 번호
 DROP TABLE review_table;
-CREATE TABLE review_table(
+CREATE TABLE review_table (
     rv_number         NUMBER,                         -- 리뷰 번호
     us_id             VARCHAR2(15)          NOT NULL, -- 사용자 아이디
     pd_number         NUMBER                NOT NULL, -- 상품 번호

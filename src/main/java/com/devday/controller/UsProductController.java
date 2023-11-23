@@ -34,37 +34,37 @@ public class UsProductController {
 	@Resource(name = "uploadPath")
 	private String uploadPath;
 	
-	// 1. 일반적인 매핑 주소: /user/product/prd_list?cg_code=2차 카테고리 코드
+	// 1. 일반적인 매핑 주소: /user/product/pd_list?cg_code=2차 카테고리 코드
 	/*
-	@GetMapping("/prd_list")
-	public void prd_list(Criteria cri, @RequestParam("cg_code") Integer cg_code, Model model) throws Exception {
+	@GetMapping("/pd_list")
+	public void pd_list(Criteria cri, @RequestParam("cg_code") Integer cg_code, Model model) throws Exception {
 		
 	}
 	*/
 	
-	// 2. REST API 개발 형태의 매핑 주소: /user/product/prd_list/2차 카테고리 코드
+	// 2. REST API 개발 형태의 매핑 주소: /user/product/pd_list/2차 카테고리 코드
 	// 2차 카테고리를 선택했을 때 그걸 조건으로 데이터를 가져옴
-	@GetMapping("/prd_list")
-	public String prd_list(Criteria cri, @ModelAttribute("cg_code") Integer cg_code, String cg_name, Model model) throws Exception {
+	@GetMapping("/pd_list")
+	public String pd_list(Criteria cri, @ModelAttribute("cg_code") Integer cg_code, String cg_name, Model model) throws Exception {
 		
 		// AdProductController에서 Copy & Paste
 		
 		// 10 -> 2 -> 8로 변경
 		cri.setAmount(8); // Criteria에서 this(1, 2);
 
-		List<ProductVO> prd_list = usProductService.prd_list(cg_code, cri);
+		List<ProductVO> pd_list = usProductService.pd_list(cg_code, cri);
 
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
 		// 스프링에서 처리 안하면 자바스크립트에서 처리할 수도 있다.
-		prd_list.forEach(vo -> {
+		pd_list.forEach(vo -> {
 			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 		});
-		model.addAttribute("prd_list", prd_list); // 상품 목록
+		model.addAttribute("pd_list", pd_list); // 상품 목록
 
 		int totalCount = usProductService.getTotalCount(cg_code);
 		model.addAttribute("pageMaker", new PageDTO(cri, totalCount)); // 페이징 정보
 		
-		return "/user/product/prd_list";
+		return "/user/product/pd_list";
 	}
 	
 	// 상품 리스트에서 보여줄 이미지. <img src="매핑주소">
@@ -77,13 +77,13 @@ public class UsProductController {
 	
 	// 상품 상세(상품 후기 작업 포함)
 	// Integer cg_code, String cg_name: 액션폼에서 넘어오는 값으로 cg_name은 다시 활용
-	@GetMapping("/prd_detail")
-	public void prd_detail(Criteria cri, Integer cg_code, @ModelAttribute("cg_name") String cg_name, Integer prd_num, Model model) throws Exception {
+	@GetMapping("/pd_detail")
+	public void pd_detail(Criteria cri, Integer cg_code, @ModelAttribute("cg_name") String cg_name, Integer pd_number, Model model) throws Exception {
 	
 		log.info("페이징 정보: " + cri);
-		log.info("상품코드: " + prd_num);
+		log.info("상품코드: " + pd_number);
 		
-		ProductVO productVO = usProductService.prd_detail(prd_num);
+		ProductVO productVO = usProductService.pd_detail(pd_number);
 		// 클라이언트에서 이미지 출력작업: \(역슬래시)가 서버로 보낼 때 문제가 되어 /(슬래시)를 사용하고자 함 
 		productVO.setPd_image_folder(productVO.getPd_image_folder().replace("\\", "/"));
 		

@@ -13,19 +13,19 @@ public interface UsProductMapper {
 	// 파라미터가 하나인 경우 Mapper.xml에서 아래와 같이 작업함
 	/*
   	ROWNUM <= #{pageNum} * #{amount} 
-	RN > (#{pageNum} -1) * #{amount}]]>
+	rn > (#{pageNum} -1) * #{amount}]]>
 	*/
 	// 파라미터가 여러 개면 Mapper.xml에서 아래와 같이 작업함
 	/*
   	ROWNUM <= #{cri.pageNum} * #{cri.amount} 
-	RN > (#{cri.pageNum} -1) * #{cri.amount}]]>
+	rn > (#{cri.pageNum} -1) * #{cri.amount}]]>
 	*/
-	List<ProductVO> prd_list(
+	List<ProductVO> pd_list(
 			@Param("cg_code") Integer cg_code, 
 			@Param("cri") Criteria cri
 	);
 	
 	int getTotalCount(Integer cg_code);
 	
-	ProductVO prd_detail(Integer prd_num);
+	ProductVO pd_detail(Integer pd_number);
 }

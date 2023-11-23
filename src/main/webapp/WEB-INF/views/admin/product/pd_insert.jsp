@@ -69,30 +69,22 @@ desired effect
                   <div class="col-md-12">
                     <div class="box box-primary">
                       <div class="box-header with-border">
-                        <h3 class="box-title mt-5">Product Edit</h3>
-                        <form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
-                          <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
-                          <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
-                          <input type="hidden" name="type" id="type" value="${cri.type}" />
-                          <input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
-                        </form>
+                        <h3 class="box-title mt-5">Product Insert</h3>
                       </div>
 
                       <!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
-                      <form role="form" method="post" action="/admin/product/prd_edit" enctype="multipart/form-data">
+                      <form role="form" method="post" action="/admin/product/pd_insert" enctype="multipart/form-data">
                         <!-- 절대 경로: /board/register와 동일 -->
                         <div class="box-body">
                           <div class="form-group row">
                             <label for="title" class="col-sm-2 col-form-label">카테고리</label>
                             <div class="col-sm-3">
-	                          <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
-	                          <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
-	                          <input type="hidden" name="type" id="type" value="${cri.type}" />
-	                          <input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
                               <select class="form-control" id="firstCategory">
                                 <option>1차 카테고리 선택</option>
                                 <c:forEach items="${firstCategoryList}" var="categoryVO">
-                                  <option value="${categoryVO.cg_code}" ${categoryVO.cg_code==first_category.cg_prt_code ? 'selected' : '' }>${categoryVO.cg_name}</option>
+                                  <option value="${categoryVO.cg_code}">
+                                    ${categoryVO.cg_name}
+                                  </option>
                                 </c:forEach>
                               </select>
                             </div>
@@ -100,82 +92,70 @@ desired effect
                             <div class="col-sm-3">
                               <select class="form-control" id="secondCategory" name="cg_code">
                                 <option>2차 카테고리 선택</option>
-                                <c:forEach items="${second_categoryList}" var="categoryVO">
-                                  <option value="${categoryVO.cg_code}" ${categoryVO.cg_code==productVO.cg_code
-                                    ? 'selected' : '' }>
-                                    ${categoryVO.cg_name}</option>
-                                </c:forEach>
                               </select>
                             </div>
                           </div>
 
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">상품명</label>
+                            <label for="pd_name" class="col-sm-2 col-form-label">상품명</label>
                             <div class="col-sm-4">
-                              <input type="hidden" name="prd_num" value="${productVO.prd_num }">
-                              <input type="text" class="form-control" name="prd_name" id="prd_name"
-                                value="${productVO.prd_name}" placeholder="상품명 입력..." />
+                              <input type="text" class="form-control" name="pd_name" id="pd_name"
+                                placeholder="상품명 입력..." />
                             </div>
-                            <label for="title" class="col-sm-2 col-form-label">상품가격</label>
+                            <label for="pd_price" class="col-sm-2 col-form-label">상품가격</label>
                             <div class="col-sm-4">
-                              <input type="text" class="form-control" name="prd_price" id="prd_price"
-                                value="${productVO.prd_price}" placeholder="상품가격 입력..." />
-                            </div>
-                          </div>
-
-                          <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">할인율</label>
-                            <div class="col-sm-4">
-                              <input type="text" class="form-control" name="prd_discount" id="prd_discount"
-                                value="${productVO.prd_discount}" placeholder="할인율 입력..." />
-                            </div>
-                            <label for="title" class="col-sm-2 col-form-label">제조사</label>
-                            <div class="col-sm-4">
-                              <input type="text" class="form-control" name="prd_publisher" id="prd_publisher"
-                                value="${productVO.prd_publisher}" placeholder="제조사 입력..." />
+                              <input type="text" class="form-control" name="pd_price" id="pd_price"
+                                placeholder="상품가격 입력..." />
                             </div>
                           </div>
 
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">상품 이미지</label>
+                            <label for="pd_discount" class="col-sm-2 col-form-label">할인율</label>
+                            <div class="col-sm-4">
+                              <input type="text" class="form-control" name="pd_discount" id="pd_discount"
+                                placeholder="할인율 입력..." />
+                            </div>
+                            <label for="pd_company" class="col-sm-2 col-form-label">저자&#47;출판사</label>
+                            <div class="col-sm-4">
+                              <input type="text" class="form-control" name="pd_company" id="pd_company"
+                                placeholder="저자/출판사 입력..." />
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label for="uploadFile" class="col-sm-2 col-form-label">상품 이미지</label>
                             <div class="col-sm-4">
                               <input type="file" class="form-control" name="uploadFile" id="uploadFile"
                                 placeholder="작성자 입력..." />
-                              <!-- 상품 이미지 변경 시 기존 이미지 삭제를 위해 사용됨 -->
-                              <input type="hidden" name="prd_up_folder" value="${productVO.prd_up_folder }">
-                              <input type="hidden" name="prd_img" value="${productVO.prd_img }">
-                              <!-- name 속성은 실제로 사용하지 않는다, 즉, ProductVO의 prd_img와는 다른 용도이다. -->
+                              <!-- name 속성은 실제로 사용하지 않는다, 즉, ProductVO의 pd_img와는 다른 용도이다. -->
                             </div>
-                            <label for="title" class="col-sm-2 col-form-label">미리보기 이미지</label>
+                            <label for="image_preview" class="col-sm-2 col-form-label">미리보기 이미지</label>
                             <div class="col-sm-4">
-                              <img id="img_preview"
-                                src="/admin/product/imageDisplay?dateFolderName=${productVO.prd_up_folder }&fileName=${productVO.prd_img }"
-                                style="width: 200px; height: 200px" />
+                              <img id="image_preview" style="width: 200px; height: 200px" />
                             </div>
                           </div>
 
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">상품 설명</label>
+                            <label for="pd_content" class="col-sm-2 col-form-label">상품 설명</label>
                             <div class="col-sm-10">
-                              <textarea class="form-control" rows="3" name="prd_content"
-                                id="prd_content">${productVO.prd_content}</textarea>
+                              <textarea class="form-control" rows="3" name="pd_content" id="pd_content"></textarea>
                             </div>
                           </div>
 
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">수량</label>
+                            <label for="pd_amount" class="col-sm-2 col-form-label">수량</label>
                             <div class="col-sm-4">
-                              <input type="text" class="form-control" name="prd_amount" id="prd_amount"
-                                value="${productVO.prd_amount}" placeholder="수량 입력..." />
+                              <input type="text" class="form-control" name="pd_amount" id="pd_amount"
+                                placeholder="수량 입력..." />
                             </div>
-                            <label for="title" class="col-sm-2 col-form-label">판매 여부</label>
+                            <label for="pd_buy_status" class="col-sm-2 col-form-label">판매 여부</label>
                             <div class="col-sm-4">
-                              <select class="form-control" id="prd_buy" name="prd_buy">
+                              <select class="form-control" id="pd_buy_status" name="pd_buy_status">
                                 <!-- value 값이 없으면 option 사이 값이 들어감 -->
-                                <!-- 상품 테이블에서 prd_BUY CHAR(1) NOT NULL, -- VARCHAR(2) -> CHAR(1) -->
+                                <!-- 상품 테이블에서 PRO_BUY CHAR(1) NOT NULL, -- VARCHAR(2) -> CHAR(1) -->
                                 <!-- 기존: value값은 각각 가능, 불가능이었음 -->
-                                <option value="Y" ${productVO.prd_buy}=='Y' ? 'selected' : ''>판매 가능</option>
-                                <option value="N" ${productVO.prd_buy}=='N' ? 'selected' : ''>판매 불가능</option>
+                                <option value="Y">판매 가능</option>
+                                <option value="N">판매 불가능</option>
                               </select>
                             </div>
                           </div>
@@ -311,7 +291,7 @@ desired effect
             };
 
             //해당 이름으로 된 textarea에 에디터를 적용
-            CKEDITOR.replace("prd_content", ckeditor_config);
+            CKEDITOR.replace("pd_content", ckeditor_config);
 
             console.log("ckeditor 버전: " + CKEDITOR.version);
 
@@ -321,7 +301,7 @@ desired effect
               // $(this): option 태그 중 선택한 option 태그를 가리킴
               let cg_parent_code = $(this).val();
 
-              // console.log("1차 카테고리 코드", cg_parent_code);
+              console.log("1차 카테고리 코드", cg_parent_code);
 
               // 1차 카테고리 선택에 의한 2차 카테고리 정보를 가져오는 url
               // .json 생략해도 기능에는 이상 없지만 추후 결과가 달라질 수 있음
@@ -332,8 +312,8 @@ desired effect
               $.getJSON(url, function (secondCategoryList) {
                 // function() {}: 콜백함수(스프링을 콜하고 백)
 
-                // console.log("2차 카테고리 정보", secondCategoryList);
-                // console.log("2차 카테고리 개수", secondCategoryList.length);
+                console.log("2차 카테고리 정보", secondCategoryList);
+                console.log("2차 카테고리 개수", secondCategoryList.length);
 
                 // 2차 카테고리 select 태그 참조
                 let secondCategory = $("#secondCategory");
@@ -367,9 +347,9 @@ desired effect
 
               reader.readAsDataURL(file); // reader 객체에 파일 정보가 할당
               reader.onload = function (e) {
-                // <img id="img_preview" style="width: 200px; height: 200px" />
+                // <img id="image_preview" style="width: 200px; height: 200px" />
                 // e.targer.result: reader 객체의 이미지 파일 정보
-                $("#img_preview").attr("src", e.target.result);
+                $("#image_preview").attr("src", e.target.result);
               };
             });
           });

@@ -30,7 +30,7 @@ public class AdminController {
 	public String adm_login() {
 		log.info("관리자 로그인 페이지");
 		
-		return "/admin/adm_login";
+		return "/admin/ad_login";
 	}
 	
 	// 관리자 로그인 인증
@@ -49,7 +49,7 @@ public class AdminController {
 			// 사용자가 입력한 비밀번호(평문 텍스트)와 DB에서 가져온 암호화된 비밀번호 일치 여부 검사
 			// passwordEncoder.matches(rawPassword, encodedPassword)
 			if (passwordEncoder.matches(vo.getAd_pw(), db_vo.getAd_pw())) {
-				url = "/admin/adm_menu"; // 관리자 메뉴 페이지 주소
+				url = "/admin/ad_menu"; // 관리자 메뉴 페이지 주소
 				// 로그인 성공 결과로 서버 측의 메모리를 사용하는 세션 형태 작업
 				session.setAttribute("adminStatus", db_vo); // logiStatus와 이름이 중복돼선 안 된다
 				
@@ -80,8 +80,8 @@ public class AdminController {
 	}
 	
 	// 관리자 메뉴 페이지
-	@GetMapping("/adm_menu")
-	public void adm_menu() {
+	@GetMapping("/ad_menu")
+	public void ad_menu() {
 		
 	}
 }

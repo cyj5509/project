@@ -7,21 +7,21 @@ import lombok.Setter;
 import lombok.ToString;
 
 /*
-CREATE TABLE user_tbl (
-    us_id            VARCHAR2(15),                        -- 회원 아이디
-    us_pw            VARCHAR2(60)               NOT NULL, -- 회원 비밀번호
-    us_name          VARCHAR2(30)               NOT NULL, -- 회원 이름
-    us_phone         VARCHAR2(15)               NOT NULL, -- 회원 전화번호
-    us_email         VARCHAR2(50)               NOT NULL, -- 회원 이메일 
-    us_postcode      CHAR(5)                    NOT NULL, -- 회원 우편번호
-    us_addr_basic    VARCHAR2(100)              NOT NULL, -- 회원 기본주소
-    us_addr_detail   VARCHAR2(100)              NOT NULL, -- 회원 상세주소
-    us_point         NUMBER  DEFAULT   0        NOT NULL, -- 회원 포인트
-    us_join_date     DATE    DEFAULT   sysdate  NOT NULL, -- 회원 가입일자
-    us_update_date   DATE    DEFAULT   sysdate  NOT NULL, -- 회원 수정일자
-    us_last_login    DATE    DEFAULT   sysdate  NOT NULL, -- 회원 접속일자
-    us_status        NUMBER  DEFAULT   0        NOT NULL, -- 회원 상태(사용자: 0 / 관리자: 1)
-    CONSTRAINT user_pk PRIMARY KEY(us_id)
+CREATE TABLE user_table (
+    us_id            VARCHAR2(15),                      -- 사용자 아이디
+    us_pw            VARCHAR2(60)             NOT NULL, -- 사용자 비밀번호
+    us_name          VARCHAR2(30)             NOT NULL, -- 사용자 이름
+    us_phone         VARCHAR2(15)             NOT NULL, -- 사용자 전화번호
+    us_email         VARCHAR2(50)             NOT NULL, -- 사용자 이메일 
+    us_postcode      CHAR(5)                  NOT NULL, -- 사용자 우편번호
+    us_addr_basic    VARCHAR2(100)            NOT NULL, -- 사용자 기본주소
+    us_addr_detail   VARCHAR2(100)            NOT NULL, -- 사용자 상세주소
+    us_point         NUMBER DEFAULT 0         NOT NULL, -- 사용자 포인트
+    us_join_date     DATE   DEFAULT sysdate   NOT NULL, -- 가입 일자
+    us_update_date   DATE   DEFAULT sysdate   NOT NULL, -- 수정 일자
+    us_last_login    DATE   DEFAULT sysdate   NOT NULL, -- 접속 일자
+    us_status        NUMBER DEFAULT 0         NOT NULL, -- 사용자 상태(사용자: 0, 관리자: 1)
+    CONSTRAINT pk_us_id PRIMARY KEY(us_id)
 );
 */
 

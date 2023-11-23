@@ -17,9 +17,9 @@ public class UsProductServiceImpl implements UsProductService {
 	private final UsProductMapper userProductMapper;
 
 	@Override
-	public List<ProductVO> prd_list(Integer cg_code, Criteria cri) {
+	public List<ProductVO> pd_list(Integer cg_code, Criteria cri) {
 		
-		return userProductMapper.prd_list(cg_code, cri);
+		return userProductMapper.pd_list(cg_code, cri);
 	}
 
 	@Override
@@ -29,8 +29,8 @@ public class UsProductServiceImpl implements UsProductService {
 	}
 	
 	@Override
-	public ProductVO prd_detail(Integer prd_num) {
+	public ProductVO pd_detail(Integer pd_number) {
 
-		return userProductMapper.prd_detail(prd_num);
+		return userProductMapper.pd_detail(pd_number);
 	}
 }

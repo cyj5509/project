@@ -7,8 +7,8 @@
 <mapper namespace="com.devday.mapper.AdProductMapper">
 
 <!-- 상품 등록 -->
-<!-- cg_code, prd_name, prd_price, prd_discount, prd_publisher, prd_content, prd_up_folder, prd_img, prd_amount, prd_buy -->
-<insert id="prd_insert" parameterType="com.devday.domain.ProductVO">
+<!-- cg_code, pd_name, pd_price, pd_discount, pd_publisher, pd_content, pd_up_folder, pd_img, pd_amount, pd_buy -->
+<insert id="pd_insert" parameterType="com.devday.domain.ProductVO">
 	INSERT INTO
 		product_table (pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status)
 	VALUES (sequence_pd_number.NEXTVAL, #{cg_code}, #{pd_name}, #{pd_price}, #{pd_discount}, #{pd_company}, #{pd_content}, #{pd_image_folder}, #{pd_image}, #{pd_amount}, #{pd_buy_status}) 
@@ -34,7 +34,7 @@
 	</trim>
 </sql>
 
-<select id="prd_list" resultType="com.devday.domain.ProductVO" parameterType="com.devday.dto.Criteria">
+<select id="pd_list" resultType="com.devday.domain.ProductVO" parameterType="com.devday.dto.Criteria">
 	<![CDATA[
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
@@ -64,7 +64,7 @@
 </select>
 
 <!-- 체크상품 수정 작업 1 -->
-<update id="prd_checked_modify1" parameterType="map">
+<update id="pd_checked_modify1" parameterType="map">
 	UPDATE
 		product_table
 	SET
@@ -76,7 +76,7 @@
 
 <!-- 체크상품 수정 작업 2 -->
 <!-- PL/SQL 익명블록: open과 close는 한 번씩 진행. 즉, declare begin UPDATE ~~~; UPDATE ~~~; UPDATE ~~~ ; end; -->
-<update id="prd_checked_modify2">
+<update id="pd_checked_modify2">
 	<foreach collection="list" item="item" open="declare begin" separator=";" close="; end;">
 		UPDATE
 			product_table
@@ -88,8 +88,8 @@
 	</foreach>
 </update>
 
-<!-- 같은 형태(생략 가능): <select id="prd_edit" resultType="com.devday.domain.ProductVO"> -->
-<select id="prd_edit" resultType="com.devday.domain.ProductVO" parameterType="Integer">
+<!-- 같은 형태(생략 가능): <select id="pd_edit" resultType="com.devday.domain.ProductVO"> -->
+<select id="pd_edit" resultType="com.devday.domain.ProductVO" parameterType="Integer">
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	FROM 
@@ -99,7 +99,7 @@
 </select>
 
 <!-- 상품 수정 -->
-<update id="prd_edit_ok" parameterType="com.devday.domain.ProductVO">
+<update id="pd_edit_ok" parameterType="com.devday.domain.ProductVO">
 	UPDATE
 		product_table
 	SET 
@@ -111,14 +111,14 @@
 		pd_content = #{pd_content},
 		pd_image_folder = #{pd_image_folder}, 
 		pd_image = #{pd_image},
-		pd_amount = #{prd_amount}, 
+		pd_amount = #{pd_amount}, 
 		pd_buy_status = #{pd_buy_status}, 
 		pd_update_date = sysdate
 	WHERE 
 		pd_number = #{pd_number}
 </update>
 
-<delete id="prd_delete" parameterType="Integer">
+<delete id="pd_delete" parameterType="Integer">
 	
 	DELETE FROM
 		product_table

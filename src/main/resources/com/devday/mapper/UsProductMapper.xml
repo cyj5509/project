@@ -7,7 +7,7 @@
 
 <!-- AdProductMapper.xml  -->
 <!-- 검색 조건이 추가된다면 첫 번째 where 절에 추가. 검색 기능 생략 -->
-<select id="prd_list" resultType="com.devday.domain.ProductVO" parameterType="map">
+<select id="pd_list" resultType="com.devday.domain.ProductVO" parameterType="map">
 	<![CDATA[
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
@@ -35,7 +35,7 @@
 		cg_code = #{cg_code}
 </select>
 
-<select id="prd_detail" parameterType="Integer" resultType="com.devday.domain.ProductVO">
+<select id="pd_detail" parameterType="Integer" resultType="com.devday.domain.ProductVO">
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	FROM

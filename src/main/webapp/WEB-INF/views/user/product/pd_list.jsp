@@ -46,24 +46,24 @@
 
 						<div class="container">
 							<div class="card-deck mb-3 text-center row">
-								<c:forEach items="${prd_list}" var="productVO">
+								<c:forEach items="${pd_list}" var="productVO">
 									<div class="col-md-3">
 										<div class="card mb-4 shadow-sm">
-											<img class="btn_prd_img" data-prd_num="${productVO.prd_num}" width="100%" height="200"
-												src="/user/product/imageDisplay?dateFolderName=${productVO.prd_up_folder}&fileName=${productVO.prd_img}"
+											<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="200"
+												src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
 												alt="" style="cursor: pointer;">
 											<div class="card-body">
-												<p class="card-text btn_prd_img" data-prd_num="${productVO.prd_num}" style="cursor: pointer;">
-													${productVO.prd_name}</p>
+												<p class="card-text btn_pd_image" data-pd_number="${productVO.pd_number}" style="cursor: pointer;">
+													${productVO.pd_name}</p>
 												<div class="d-flex justify-content-between align-items-center">
 													<div class="btn-group">
 														<!-- data-변수명="" -> HTML5 속성으로 JS 처리를 위해 상품코드를 숨겨둠 -->
-														<button type="button" name="btn_cart_add" data-prd_num="${productVO.prd_num}"
+														<button type="button" name="btn_cart_add" data-pd_number="${productVO.pd_number}"
 															class="btn btn-sm btn-outline-secondary">Cart</button>
 														<button type="button" name="btn_buy" class="btn btn-sm btn-outline-secondary">Buy</button>
 													</div>
 													<small class="text-muted">
-														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${productVO.prd_price}">
+														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${productVO.pd_price}">
 														</fmt:formatNumber>
 													</small>
 												</div>
@@ -133,7 +133,7 @@
 									$(".movepage").on("click", function (e) {
 										e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-										actionForm.attr("action", "/user/product/prd_list");
+										actionForm.attr("action", "/user/product/pd_list");
 										// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
 										actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
@@ -146,8 +146,8 @@
 										$.ajax({
 											url: '/cart/cart_add', // url: '장바구니 추가 주소', 
 											type: 'post',
-											// $(this).data("pro_num"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-											data: { pro_num: $(this).data("pro_num"), cart_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
+											data: { pd_number: $(this).data("pd_number"), cart_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
@@ -161,16 +161,16 @@
 									});
 
 									// 상품 이미지 또는 상품명 클릭 시 상세로 보내는 작업
-									$(".btn_prd_img").on("click", function () {
+									$(".btn_pd_image").on("click", function () {
 										console.log("상품 상세 설명");
 
 										// actionForm.attr("action", "상품 상세 주소");
-										actionForm.attr("action", "/user/product/prd_detail");
-										let prd_num = $(this).data("prd_num");
+										actionForm.attr("action", "/user/product/pd_detail");
+										let pd_number = $(this).data("pd_number");
 
-										actionForm.find("input[name='prd_num']").remove(); // 뒤로가기 시 URL 내용 지우기
-										// <input type='hidden' name='prd_num' value='상품코드'> 미리 만들어서 작성
-										actionForm.append("<input type='hidden' name='prd_num' value='" + prd_num + "'>")
+										actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 URL 내용 지우기
+										// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
+										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
 										actionForm.submit();
 									});
 

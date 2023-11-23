@@ -21,9 +21,9 @@ public class UsCategoryServiceImpl implements UsCategoryService {
 	private final UsCategoryMapper userCategoryMapper;
 
 	@Override
-	public List<CategoryVO> getSecondCategoryList(Integer cg_prt_code) {
+	public List<CategoryVO> getSecondCategoryList(Integer cg_parent_code) {
 		
-		return userCategoryMapper.getSecondCategoryList(cg_prt_code);
+		return userCategoryMapper.getSecondCategoryList(cg_parent_code);
 	}
 
 }

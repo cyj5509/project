@@ -11,28 +11,28 @@ import com.devday.dto.ProductDTO;
 public interface AdProductMapper {
 
 	// 상품 등록
-	void prd_insert(ProductVO vo);
+	void pd_insert(ProductVO vo);
 
-	List<ProductVO> prd_list(Criteria cri);
+	List<ProductVO> pd_list(Criteria cri);
 
 	int getTotalCount(Criteria cri);
 
 	// [방법 1]
 	// @Param(""): 파라미터가 2개 이상 사용되는 경우 해당 어노테이션 필수(Mapper에서만 쓰임)
-	void prd_checked_modify1(
-			@Param("prd_num") Integer prd_num, 
-			@Param("prd_price") Integer prd_price,
-			@Param("prd_buy") String prd_buy
+	void pd_checked_modify1(
+			@Param("pd_number") Integer pd_number, 
+			@Param("prd_price") Integer pd_price,
+			@Param("pd_buy_status") String pd_buy_status
 	);
 
 	// [방법 2]
-	void prd_checked_modify2(List<ProductDTO> prd_modify_list);
+	void pd_checked_modify2(List<ProductDTO> pd_modify_list);
 
-	ProductVO prd_edit(Integer prd_num);
+	ProductVO pd_edit(Integer pd_number);
 	
 	// 상품 수정
-	void prd_edit_ok(ProductVO vo);
+	void pd_edit_ok(ProductVO vo);
 	
 	// 상품 삭제
-	void prd_delete(Integer prd_num);
+	void pd_delete(Integer pd_number);
 }

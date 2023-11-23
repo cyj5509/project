@@ -8,23 +8,23 @@ import com.devday.dto.Criteria;
 public interface AdProductService {
 
 	// 상품 등록
-	void prd_insert(ProductVO vo);
+	void pd_insert(ProductVO vo);
 
-	List<ProductVO> prd_list(Criteria cri);
+	List<ProductVO> pd_list(Criteria cri);
 	
 	int getTotalCount(Criteria cri);
 	
 	// [방법 1]
-	void prd_checked_modify1(List<Integer> prd_num_arr, List<Integer> prd_price_arr, List<String> prd_buy_arr);
+	void pd_checked_modify1(List<Integer> pd_number_arr, List<Integer> pd_price_arr, List<String> pd_buy_status_arr);
 	
 	// [방법 2]
-	void prd_checked_modify2(List<Integer> prd_num_arr, List<Integer> prd_price_arr, List<String> prd_buy_arr);
+	void pd_checked_modify2(List<Integer> pd_number_arr, List<Integer> pd_price_arr, List<String> pd_buy_status_arr);
 
-	ProductVO prd_edit(Integer prd_num);	
+	ProductVO pd_edit(Integer pd_number);	
 	
 	// 상품 수정
-	void prd_edit(ProductVO vo); // 꼭 prd_edit_ok로 이름을 변경할 필요 없음
+	void pd_edit(ProductVO vo); // 꼭 prd_edit_ok로 이름을 변경할 필요 없음
 	
 	// 상품 삭제
-	void prd_delete(Integer prd_num);
+	void pd_delete(Integer pd_number);
 }

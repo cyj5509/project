@@ -69,7 +69,7 @@ desired effect
 
 											<div class="box-body">
 												<div>
-													<form action="/admin/product/prd_list" method="get">
+													<form action="/admin/product/pd_list" method="get">
 														<select name="type">
 															<option selected>검색 종류 선택</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
@@ -98,23 +98,23 @@ desired effect
 														</tr>
 														<!-- BoardController에서 작성한부이름과 동일한 이름을 items로 작성 -->
 														<!-- 목록이 출력되는 부분 -->
-														<c:forEach items="${prd_list}" var="productVO">
+														<c:forEach items="${pd_list}" var="productVO">
 															<tr>
-																<td><input type="checkbox" name="check" value="${productVO.prd_num }"></td>
-																<td>${productVO.prd_num}</td>
-																<td><a class="move" href="#" data-bno="${productVO.prd_num}"><img
-																			src="/admin/product/imageDisplay?dateFolderName=${productVO.prd_up_folder }&fileName=s_${productVO.prd_img}"></a>
-																	<a class="move prd_name" href="#" data-bno="${productVO.prd_num}">${productVO.prd_name}</a>
+																<td><input type="checkbox" name="check" value="${productVO.pd_number}"></td>
+																<td>${productVO.pd_number}</td>
+																<td><a class="move" href="#" data-bno="${productVO.pd_number}"><img
+																			src="/admin/product/imageDisplay?dateFolderName=${productVO.pd_image_folder }&fileName=s_${productVO.pd_image}"></a>
+																	<a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 																</td>
 																<!-- 클래스명 move는 제목과 관련 -->
-																<td><input type="text" name="prd_price" value="${productVO.prd_price}"></td>
+																<td><input type="text" name="pd_price" value="${productVO.pd_price}"></td>
 																<td>
-																	<fmt:formatDate value="${productVO.prd_date}" pattern="yyyy-MM-dd" />
+																	<fmt:formatDate value="${productVO.pd_register_date}" pattern="yyyy-MM-dd" />
 																</td>
 																<td>
-																	<select name="prd_buy" id="prd_buy">
-																		<option value="Y" ${productVO.prd_buy=='Y' ? 'selected' : '' }>판매가능</option>
-																		<option value="N" ${productVO.prd_buy=='N' ? 'selected' : '' }>판매불가능</option>
+																	<select name="pd_buy_status" id="pd_buy_status">
+																		<option value="Y" ${productVO.pd_buy_status=='Y' ? 'selected' : '' }>판매가능</option>
+																		<option value="N" ${productVO.pd_buy_status=='N' ? 'selected' : '' }>판매불가능</option>
 																	</select>
 																</td>
 																<!-- name이나 class는 두 번 이상 사용 가능 -->
@@ -175,7 +175,7 @@ desired effect
 													</div>
 
 													<div class="col-md-2 text-right"><button type="button" class="btn btn-primary"
-															id="btn_prd_insert" role="button">상품등록</button></div>
+															id="btn_pd_insert" role="button">상품등록</button></div>
 
 												</div>
 											</div>
@@ -275,7 +275,7 @@ desired effect
 						$(".movepage").on("click", function (e) {
 							e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-							actionForm.attr("action", "/admin/product/prd_list");
+							actionForm.attr("action", "/admin/product/pd_list");
 							// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
 							actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
@@ -310,27 +310,27 @@ desired effect
 							}
 
 							// 배열 문법
-							let prd_num_arr = []; // 체크된 상품코드 배열
-							let prd_price_arr = []; // 체크된 상품가격 배열
-							let prd_buy_arr = []; // 체크된 상품진열(판매여부) 배열
+							let pd_number_arr = []; // 체크된 상품코드 배열
+							let pd_price_arr = []; // 체크된 상품가격 배열
+							let pd_buy_status_arr = []; // 체크된 상품진열(판매여부) 배열
 
 							// 데이터행에서 체크된 체크박스 선택자
 							$("input[name='check']:checked").each(function () {
-								prd_num_arr.push($(this).val());
-								prd_price_arr.push($(this).parent().parent().find("input[name='prd_price']").val());
-								prd_buy_arr.push($(this).parent().parent().find("select[name='prd_buy']").val());
+								pd_number_arr.push($(this).val());
+								pd_price_arr.push($(this).parent().parent().find("input[name='pd_price']").val());
+								pd_buy_status_arr.push($(this).parent().parent().find("select[name='pd_buy_status']").val());
 							});
 
 							// 클라이언트: 보낼 정보들을 브라우저상에서 확인한 후 아래 작업 및 서버 측 작업할 것
-							console.log("상품코드", prd_num_arr);
-							console.log("상품가격", prd_price_arr);
-							console.log("상품진열", prd_buy_arr);
+							console.log("상품코드", pd_number_arr);
+							console.log("상품가격", pd_price_arr);
+							console.log("상품진열", pd_buy_status_arr);
 
 							$.ajax({
-								url: '/admin/product/prd_checked_modify1', //'체크상품을 수정하는 스프링 매핑 주소',
+								url: '/admin/product/pd_checked_modify1', //'체크상품을 수정하는 스프링 매핑 주소',
 								type: 'post', // get or post
 								// data: {파라미터명: 값1, 파라미터명2: 값2, 파라미터명3: 값3 ...} -> 파라미터명은 임의로 설정
-								data: { prd_num_arr: prd_num_arr, prd_price_arr: prd_price_arr, prd_buy_arr: prd_buy_arr },
+								data: { pd_number_arr: pd_number_arr, pd_price_arr: pd_price_arr, pd_buy_status_arr: pd_buy_status_arr },
 								dataType: 'text', // "success"(String) -> 'text'. dataType에는 이외에도 html, json, xml 등이 있음
 								success: function (result) {
 									if (result == "success") {
@@ -338,10 +338,10 @@ desired effect
 
 										// DB에서 다시 불러오는 작업 
 										/*
-										1) location.href = "/admin/product/prd_list";
+										1) location.href = "/admin/product/pd_list";
 										2) 현재 리스트 상태로 불러오는 의미
 										actionForm.attr("method", "get");
-										actionForm.attr("action", "/admin/product/prd_list");
+										actionForm.attr("action", "/admin/product/pd_list");
 										actionForm.submit();
 										*/
 									}
@@ -358,27 +358,27 @@ desired effect
 							}
 
 							// 배열 문법
-							let prd_num_arr = []; // 체크된 상품코드 배열
-							let prd_price_arr = []; // 체크된 상품가격 배열
-							let prd_buy_arr = []; // 체크된 상품진열(판매여부) 배열
+							let pd_number_arr = []; // 체크된 상품코드 배열
+							let pd_price_arr = []; // 체크된 상품가격 배열
+							let pd_buy_status_arr = []; // 체크된 상품진열(판매여부) 배열
 
 							// 데이터행에서 체크된 체크박스 선택자
 							$("input[name='check']:checked").each(function () {
-								prd_num_arr.push($(this).val());
-								prd_price_arr.push($(this).parent().parent().find("input[name='prd_price']").val());
-								prd_buy_arr.push($(this).parent().parent().find("select[name='prd_buy']").val());
+								pd_number_arr.push($(this).val());
+								pd_price_arr.push($(this).parent().parent().find("input[name='pd_price']").val());
+								pd_buy_status_arr.push($(this).parent().parent().find("select[name='pd_buy_status']").val());
 							});
 
 							// 클라이언트: 보낼 정보들을 브라우저상에서 확인한 후 아래 작업 및 서버 측 작업할 것
-							console.log("상품코드", prd_num_arr);
-							console.log("상품가격", prd_price_arr);
-							console.log("상품진열", prd_buy_arr);
+							console.log("상품코드", pd_number_arr);
+							console.log("상품가격", pd_price_arr);
+							console.log("상품진열", pd_buy_status_arr);
 
 							$.ajax({
-								url: '/admin/product/prd_checked_modify2', //'체크상품을 수정하는 스프링 매핑 주소',
+								url: '/admin/product/pd_checked_modify2', //'체크상품을 수정하는 스프링 매핑 주소',
 								type: 'post', // get or post
 								// data: {파라미터명: 값1, 파라미터명2: 값2, 파라미터명3: 값3 ...} -> 파라미터명은 임의로 설정
-								data: { prd_num_arr: prd_num_arr, prd_price_arr: prd_price_arr, prd_buy_arr: prd_buy_arr },
+								data: { pd_number_arr: pd_number_arr, pd_price_arr: pd_price_arr, pd_buy_status_arr: pd_buy_status_arr },
 								dataType: 'text', // "success"(String) -> 'text'. dataType에는 이외에도 html, json, xml 등이 있음
 								success: function (result) {
 									if (result == "success") {
@@ -386,10 +386,10 @@ desired effect
 
 										// DB에서 다시 불러오는 작업 
 										/*
-										1) location.href = "/admin/product/prd_list";
+										1) location.href = "/admin/product/pd_list";
 										2) 현재 리스트 상태로 불러오는 의미
 										actionForm.attr("method", "get");
-										actionForm.attr("action", "/admin/product/prd_list");
+										actionForm.attr("action", "/admin/product/pd_list");
 										actionForm.submit();
 										*/
 									}
@@ -398,8 +398,8 @@ desired effect
 						});
 
 						// 상품등록
-						$("#btn_prd_insert").on("click", function () {
-							location.href = "/admin/product/prd_insert";
+						$("#btn_pd_insert").on("click", function () {
+							location.href = "/admin/product/pd_insert";
 						})
 
 						// 상품수정
@@ -408,39 +408,39 @@ desired effect
 							// 수정 상품코드
 							// let 수정상품코드 = $(this).parent().parent().find("상품코드를 참조하는 태그").val()
 							// let 수정상품코드 = $(this).parent("tr").find("상품코드를 참조하는 태그").val(); -> 해당 작업 오류 발생
-							let prd_num = $(this).parent().parent().find("input[name='check']").val();
+							let pd_number = $(this).parent().parent().find("input[name='check']").val();
 
-							console.log(prd_num);
+							console.log(pd_number);
 
 							// 뒤로가기 클릭 후 다시 수정버튼 클릭시 코드 중복되는 부분 때문에 제거
-              actionForm.find("input[name='prd_num']").remove();          
+              actionForm.find("input[name='pd_number']").remove();          
 
-							// <input type="hidden" name="prd_num" id="prd_num" value="값" />              
-							actionForm.append('<input type="hidden" name="prd_num" id="prd_num" value="' + prd_num + '" />');
+							// <input type="hidden" name="pd_number" id="pd_number" value="값" />              
+							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
 
 							actionForm.attr("method", "get");
-							actionForm.attr("action", "/admin/product/prd_edit");
+							actionForm.attr("action", "/admin/product/pd_edit");
 							actionForm.submit();
 						});
 
 						// 상품 삭제, 화살표 함수 사용 시 상품코드 값을 읽을 수 없다.
 						$(".btn_pro_del").on("click", function() {
 
-							// <a class="move prd_name" href="#" data-bno="${productVO.prd_num}">${productVO.prd_name}</a>
+							// <a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 							// text(): 입력양식 태그가 아닌 일반 태그의 값을 변경하거나 읽을 때 사용
-							let prd_name = $(this).parent().parent().find(".prd_name").text();
-              if(!confirm(prd_name + " 상품을 삭제하겠습니까?")) return;
+							let pd_name = $(this).parent().parent().find(".pd_name").text();
+              if(!confirm(pd_name + " 상품을 삭제하겠습니까?")) return;
 
 							// val()은 input, select, textarea 태그의 값을 변경하거나 읽을 때 사용
-              let prd_num = $(this).parent().parent().find("input[name='check']").val(); // val()은 input, select, textarea태그일 때
+              let pd_number = $(this).parent().parent().find("input[name='check']").val(); // val()은 input, select, textarea태그일 때
 
-              console.log("상품코드", prd_num)
+              console.log("상품코드", pd_number)
 
-							// <input type="hidden" name="prd_num" id="prd_num" value="값" />
-							actionForm.append('<input type="hidden" name="prd_num" id="prd_num" value="' + prd_num + '" />');
+							// <input type="hidden" name="pd_number" id="pd_number" value="값" />
+							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
 
 							actionForm.attr("method", "post");
-							actionForm.attr("action", "/admin/product/prd_delete");
+							actionForm.attr("action", "/admin/product/pd_delete");
 							actionForm.submit();
 						});
 

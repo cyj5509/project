@@ -19,15 +19,15 @@ public class AdProductServiceImpl implements AdProductService {
 	private final AdProductMapper adProductMapper;
 
 	@Override
-	public void prd_insert(ProductVO vo) {
+	public void pd_insert(ProductVO vo) {
 		
-		adProductMapper.prd_insert(vo);
+		adProductMapper.pd_insert(vo);
 	}
 
 	@Override
-	public List<ProductVO> prd_list(Criteria cri) {
+	public List<ProductVO> pd_list(Criteria cri) {
 		
-		return adProductMapper.prd_list(cri);
+		return adProductMapper.pd_list(cri);
 	}
 
 	@Override
@@ -37,46 +37,46 @@ public class AdProductServiceImpl implements AdProductService {
 	}
 
 	@Override
-	public void prd_checked_modify1(List<Integer> prd_num_arr, List<Integer> prd_price_arr, List<String> prd_buy_arr) {
+	public void pd_checked_modify1(List<Integer> pd_number_arr, List<Integer> pd_price_arr, List<String> pd_buy_status_arr) {
 
 		// DB의 연동작업이 size만큼 아래 작업이 진행이 된다.
 		// Connection Open -> mapper.xml SQL 구문 실행 -> Connection Close
 		
 		// 배열은 [i], List는 .get(i)
-		for (int i = 0; i < prd_num_arr.size(); i++) {
-			adProductMapper.prd_checked_modify1(prd_num_arr.get(i), prd_price_arr.get(i), prd_buy_arr.get(i));
+		for (int i = 0; i < pd_number_arr.size(); i++) {
+			adProductMapper.pd_checked_modify1(pd_number_arr.get(i), pd_price_arr.get(i), pd_buy_status_arr.get(i));
 		}
 
 	}
 
 	@Override
-	public void prd_checked_modify2(List<Integer> prd_num_arr, List<Integer> prd_price_arr, List<String> prd_buy_arr) {
+	public void pd_checked_modify2(List<Integer> pd_number_arr, List<Integer> pd_price_arr, List<String> pd_buy_status_arr) {
 
-		List<ProductDTO> prd_modify_list = new ArrayList<ProductDTO>();
+		List<ProductDTO> pd_modify_list = new ArrayList<ProductDTO>();
 
-		for (int i = 0; i < prd_num_arr.size(); i++) {
-			ProductDTO productDTO = new ProductDTO(prd_num_arr.get(i), prd_price_arr.get(i), prd_buy_arr.get(i));
-			prd_modify_list.add(productDTO);
+		for (int i = 0; i < pd_number_arr.size(); i++) {
+			ProductDTO productDTO = new ProductDTO(pd_number_arr.get(i), pd_price_arr.get(i), pd_buy_status_arr.get(i));
+			pd_modify_list.add(productDTO);
 		}
 		
-		adProductMapper.prd_checked_modify2(prd_modify_list);
+		adProductMapper.pd_checked_modify2(pd_modify_list);
 	}
 
 	@Override
-	public ProductVO prd_edit(Integer prd_num) {
+	public ProductVO pd_edit(Integer pd_number) {
 		
-		return adProductMapper.prd_edit(prd_num);
+		return adProductMapper.pd_edit(pd_number);
 	}
 
 	@Override
-	public void prd_edit(ProductVO vo) {
+	public void pd_edit(ProductVO vo) {
 
-		adProductMapper.prd_edit_ok(vo);
+		adProductMapper.pd_edit_ok(vo);
 	}
 
 	@Override
-	public void prd_delete(Integer prd_num) {
+	public void pd_delete(Integer pd_number) {
 		
-		adProductMapper.prd_delete(prd_num);
+		adProductMapper.pd_delete(pd_number);
 	}
 }

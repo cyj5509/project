@@ -56,7 +56,7 @@ public class AdProductController {
 	private String uploadCKPath;
 
 	// 상품등록 폼
-	@GetMapping("/prd_insert")
+	@GetMapping("/pd_insert")
 	public void pd_insert() {
 
 		log.info("상품등록 폼");
@@ -74,12 +74,11 @@ public class AdProductController {
 	// 상품정보 저장 작업
 	// 파일 업로드 기능
 	// 1) 스프링에서 내장된 기본 라이브러리 -> servlet-context.xml에서 MultipartFile에 대한 bean 등록 작업
-	// 2) 외부 라이브러리를 이용(pom.xml의 commons-fileupload) -> servlet-context.xml에서
-	// MultipartFile에 대한 bean 등록 작업
+	// 2) 외부 라이브러리를 이용(pom.xml의 commons-fileupload) -> servlet-context.xml에서 MultipartFile에 대한 bean 등록 작업
 	// 매개변수로 쓰인 MultipartFile uploadFile은 ProductVO에 직접 집어 넣어서 사용해도 됨
 	// <input type = "file" class="form-control" name="uploadFile" id="uploadFile"
 	// placeholder="작성자 입력..."/>
-	@PostMapping("/prd_insert")
+	@PostMapping("/pd_insert")
 	// public String pd_insert(ProductVO vo, List<MultipartFile> uploadFile) { //
 	// 파일이 여러 개일 때
 	public String pd_insert(ProductVO vo, MultipartFile uploadFile, RedirectAttributes rttr) { // 파일이 하나일 때
@@ -96,9 +95,9 @@ public class AdProductController {
 		log.info("상품정보: " + vo);
 
 		// 2) 상품 정보 작업
-		adProductService.prd_insert(vo);
+		adProductService.pd_insert(vo);
 
-		return "redirect:/admin/product/prd_list"; // 상품 리스트 주소로 이동
+		return "redirect:/admin/product/pd_list"; // 상품 리스트 주소로 이동
 	}
 
 	// CkEditor 업로드 탭에서 파일 업로드 시 동작하는 매핑주소
@@ -174,13 +173,13 @@ public class AdProductController {
 
 	// 상품 리스트: 목록과 페이징
 	// 테이블의 전체 데이터를 가져옴
-	@GetMapping("/prd_list")
+	@GetMapping("/pd_list")
 	public void pd_list(Criteria cri, Model model) throws Exception {
 
 		// 10 -> 2로 변경
 		cri.setAmount(2); // Criteria에서 this(1, 2);
 
-		List<ProductVO> pd_list = adProductService.prd_list(cri);
+		List<ProductVO> pd_list = adProductService.pd_list(cri);
 
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
 		pd_list.forEach(vo -> {
@@ -205,22 +204,22 @@ public class AdProductController {
 	@PostMapping("/pd_checked_modify1") // pd_list.jsp에서 type이 post 방식(329행)
 	// 일반적으로 Ajax에선 ResponseEntity 클래스 방식이 사용
 	// -> 이유: 해당 클래스가 헤더 작업과 http 상태코드 작업을 지원하기 때문
-	// 일반요청 시 배열 형태로 파라미터가 전송되어 오면 @RequestParam("pd_num_arr[]")에서 []를 제외
+	// 일반요청 시 배열 형태로 파라미터가 전송되어 오면 @RequestParam("pd_number_arr[]")에서 []를 제외
 	// <-> Ajax 요청으로 들어오기 때문에 아래와 같이 []를 붙인 형태로 작성됨
 	// public ResponseEntity<String> pd_checked_modify(클라이언트에 보낸 정보를 받는 매개변수)
-	public ResponseEntity<String> pd_checked_modify1(@RequestParam("pd_num_arr[]") List<Integer> pd_num_arr,
-			@RequestParam("pd_price_arr[]") List<Integer> pd_price_arr,
-			@RequestParam("pd_buy_arr[]") List<String> pd_buy_arr) throws Exception {
+	public ResponseEntity<String> pd_checked_modify1(@RequestParam("pd_number_arr[]") List<Integer> pd_number_arr,
+													@RequestParam("pd_price_arr[]") List<Integer> pd_price_arr,
+													@RequestParam("pd_buy_status_arr[]") List<String> pd_buy_status_arr) throws Exception {
 
 		// 클라이언트에서 값이 넘어오는 것을 확인하고 Mapper 등의 서버 측 스프링 작업할 것
-		log.info("상품코드: " + pd_num_arr);
+		log.info("상품코드: " + pd_number_arr);
 		log.info("상품가격: " + pd_price_arr);
-		log.info("판매여부: " + pd_buy_arr);
+		log.info("판매여부: " + pd_buy_status_arr);
 
 		ResponseEntity<String> entity = null; // 참조타입이라 null이 가능
 
 		// 체크상품 수정 작업
-		adProductService.prd_checked_modify1(pd_num_arr, pd_price_arr, pd_buy_arr);
+		adProductService.pd_checked_modify1(pd_number_arr, pd_price_arr, pd_buy_status_arr);
 
 		entity = new ResponseEntity<String>("success", HttpStatus.OK); // function (result)
 
@@ -229,19 +228,19 @@ public class AdProductController {
 
 	// [방법 2] 체크상품 목록 수정(Ajax 요청) ─ DB 연동 한 번(for문 이용)
 	@ResponseBody
-	@PostMapping("/prd_checked_modify2")
-	public ResponseEntity<String> pd_checked_modify2(@RequestParam("pd_num_arr[]") List<Integer> pd_num_arr,
-			@RequestParam("pd_price_arr[]") List<Integer> pd_price_arr,
-			@RequestParam("pd_buy_arr[]") List<String> pd_buy_arr) throws Exception {
+	@PostMapping("/pd_checked_modify2")
+	public ResponseEntity<String> pd_checked_modify2(@RequestParam("pd_number_arr[]") List<Integer> pd_number_arr,
+													@RequestParam("pd_price_arr[]") List<Integer> pd_price_arr,
+													@RequestParam("pd_buy_status_arr[]") List<String> pd_buy_status_arr) throws Exception {
 
-		log.info("상품코드: " + pd_num_arr);
+		log.info("상품코드: " + pd_number_arr);
 		log.info("상품가격: " + pd_price_arr);
-		log.info("판매여부: " + pd_buy_arr);
+		log.info("판매여부: " + pd_buy_status_arr);
 
 		ResponseEntity<String> entity = null;
 
 		// 체크상품 수정 작업
-		adProductService.prd_checked_modify2(pd_num_arr, pd_price_arr, pd_buy_arr);
+		adProductService.pd_checked_modify2(pd_number_arr, pd_price_arr, pd_buy_status_arr);
 
 		entity = new ResponseEntity<String>("success", HttpStatus.OK); // function (result)
 
@@ -249,11 +248,12 @@ public class AdProductController {
 	}
 
 	// 상품수정 폼 페이지
-	@GetMapping("/prd_edit")
-	public void pro_edit(@ModelAttribute("cri") Criteria cri, Integer pd_num, Model model) throws Exception {
+	@GetMapping("/pd_edit")
+	public void pd_edit(@ModelAttribute("cri") Criteria cri, 
+						Integer pd_number, Model model) throws Exception {
 
 		// 선택한 상품정보
-		ProductVO productVO = adProductService.prd_edit(pd_num);
+		ProductVO productVO = adProductService.pd_edit(pd_number);
 		
 		// '\'(역슬래시)를 '/'(슬래시)로 변환하는 작업
 		// 요청 타겟에서 유효하지 않은 문자가 발견되었습니다. 유효한 문자들은 RFC 7230과 RFC 3986에 정의되어 있습니다.
@@ -275,7 +275,7 @@ public class AdProductController {
 	}
 	
 	// 상품 수정
-	@PostMapping("/prd_edit")
+	@PostMapping("/pd_edit")
 	public String pd_edit(Criteria cri, ProductVO vo, MultipartFile uploadFile, RedirectAttributes rttr) throws Exception {
 		
 		// 상품 리스트에서 사용할 정보(검색, 페이징 정보)
@@ -304,17 +304,17 @@ public class AdProductController {
 		}
 		
 		// DB 연동 작업
-		adProductService.prd_edit(vo);
+		adProductService.pd_edit(vo);
 		
-		return "redirect:/admin/product/prd_list" + cri.getListLink();
+		return "redirect:/admin/product/pd_list" + cri.getListLink();
 	}
 	
-	@PostMapping("/prd_delete")
-	public String pro_delete(Criteria cri, Integer pd_num) throws Exception {
+	@PostMapping("/pd_delete")
+	public String pd_delete(Criteria cri, Integer pd_number) throws Exception {
 		
 		// DB 연동 작업
-		adProductService.prd_delete(pd_num);
+		adProductService.pd_delete(pd_number);
 		
-		return "redirect:/admin/product/prd_list" + cri.getListLink();
+		return "redirect:/admin/product/pd_list" + cri.getListLink();
 	}
 }

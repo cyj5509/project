@@ -5,7 +5,7 @@
       <header class="main-header">
 
         <!-- Logo -->
-        <a href="/admin/adm_menu" class="logo">
+        <a href="/admin/ad_menu" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini"><b>DD</b></span>
           <!-- logo for regular state and mobile devices -->
