@@ -12,8 +12,13 @@ public class PageDTO {
 
 	private int startPage; // 각 블록에서 출력할 시작 페이지 번호
 	private int endPage; // 각 블록에서 출력할 종료 페이지 번호
+	
+	private int readEnd; // 게시판마다 존재하는 총 페이지 수
 
-	private boolean prev, next; // 이전, 다음 표시 여부
+	private boolean prev; // 이전 표시 여부
+	private boolean next; // 다음 표시 여부
+	private boolean foremost; // 맨 처음 표시 여부
+	private boolean rearmost; // 맨 끝 표시 여부
 
 	private int total; // 테이블의 데이터 총 개수
 
@@ -47,7 +52,7 @@ public class PageDTO {
 		
 		// 나머지가 있는 경우 한 페이지가 더 필요해서 Math.ceil()을 사용함
 		// [예시] int readEnd = (int) (Math.ceil((13 * 1.0) / 5));
-		int readEnd = (int) (Math.ceil((total * 1.0) / cri.getAmount()));
+		this.readEnd = (int) (Math.ceil((total * 1.0) / cri.getAmount()));
 		
 		if(readEnd <= this.endPage) {
 			this.endPage = readEnd; // 위의 가정을 전제로 endPage가 3임;
@@ -55,6 +60,9 @@ public class PageDTO {
 		
 		this.prev = this.startPage > 1; // false 값 대입  
 		this.next = this.endPage < readEnd; // false 값 대입
+		
+		this.foremost = cri.getPageNum() > 1;
+		this.rearmost = cri.getPageNum() < readEnd;
 		
 		// cri: pageNum=1, amount=10, type=null, keyword=null
 		// pageSize, startPage, endPage, prev, next가 값을 갖게 됨

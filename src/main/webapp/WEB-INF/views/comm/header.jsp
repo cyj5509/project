@@ -16,7 +16,7 @@
                         <a href="/member/my_page" class="nav-item">마이페이지</a>
                         <a href="/user/cart/cart_list" class="nav-item">장바구니</a>
                         <a href="/user/order/order_info" class="nav-item">주문조회</a>
-                    	<a href="/user/community" class="nav-item">커뮤니티</a>
+                    	<a href="/user/board/list" class="nav-item">커뮤니티</a>
                 </div>
 
                 <!-- 상단 로고 및 정보 행 -->

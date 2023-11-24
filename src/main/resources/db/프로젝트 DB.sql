@@ -364,3 +364,23 @@ DELETE FROM review_table;
 
 
 -- 10. 게시판 테이블
+-- 기본키: 게시물 번호 / 외래키: 사용자 테이블의 사용자 아이디
+DROP TABLE board_table;
+CREATE TABLE board_table (
+    bd_number         NUMBER,                           -- 게시물 번호
+    bd_type           VARCHAR2(40)            NOT NULL, -- 게시물 구분(타입)
+    us_id             VARCHAR2(15)            NOT NULL, -- 사용자 아이디
+    bd_title          VARCHAR2(100)           NOT NULL, -- 게시물 제목
+    bd_content        VARCHAR2(4000)          NOT NULL, -- 게시물 내용
+    bd_register_date  DATE    DEFAULT sysdate,          -- 등록 일자
+    bd_update_date    DATE    DEFAULT sysdate,          -- 수정 일자
+    bd_view_count     NUMBER  DEFAULT 0,           -- 조회수
+    CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
+);
+
+-- 참조키(외래키) 추가
+ALTER TABLE board_table ADD CONSTRAINT fk_bd_us_id
+FOREIGN KEY (us_id) REFERENCES user_table(us_id);
+
+-- 시퀀스: 게시판 테이블의 게시판 번호 컬럼(bd_number)
+CREATE SEQUENCE sequence_bd_number;
