@@ -73,6 +73,7 @@ desired effect
                       </div>
 
                       <!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
+                      <!-- enctype="multipart/form-data": 파일 업로드용 -->
                       <form role="form" method="post" action="/admin/product/pd_insert" enctype="multipart/form-data">
                         <!-- 절대 경로: /board/register와 동일 -->
                         <div class="box-body">

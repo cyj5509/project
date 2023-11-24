@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,7 +58,7 @@ public class ReviewController {
 	// 전통적인 형태의 주소 list?pro_num=10&page=1 -> REST API 개발형태 주소 list/10/1
 	// ResponseEntity<String>는 AJAX 요청 시 SELECT 외 나머지, AJAX 요청 시 SELECT면 해당하는 리턴 타입 필요
 	@GetMapping("/list/{pd_number}/{page}") // RESTful 개발방법론의 주소
-	public ResponseEntity<Map<String, Object>> list(@PathVariable("pro_num") Integer pd_number, 
+	public ResponseEntity<Map<String, Object>> list(@PathVariable("pd_number") Integer pd_number, 
 												   @PathVariable("page") Integer page) throws Exception {
 		
 		// 리턴 타입에 따른 구분 ─ SELECT 문
@@ -73,7 +74,7 @@ public class ReviewController {
 		
 		// 1) 상품 후기 목록 데이터: Handelbars 이용
 		Criteria cri = new Criteria(); // 파라미터가 아닌 수동 작업
-		cri.setAmount(20); // 기본값이 10이라서 20개씩 조회
+		cri.setAmount(2); // 기본값이 10이라서 2개씩 조회
 		cri.setPageNum(page);
 		
 		// DB 연동
@@ -96,5 +97,19 @@ public class ReviewController {
 		
 		return entity;
 	}
+	
+	// 상품후기 삭제
+	// 웹 요청 방식인 GET(SELECT 문), POST(SELECT 제외) 외에 PUT/PETCH(UPDATE 문), DELETE(DELETE 문)
+	// REST API 개발방법론 CRUD(Create, Read, Update, Delete)에 의함
+	@DeleteMapping("/delete/{rv_number}")
+	public ResponseEntity<String> delete(@PathVariable("rv_number") Long rv_number) throws Exception {
 
+		ResponseEntity<String> entity = null;
+
+		// DB 연동
+		reviewService.delete(rv_number);
+		entity = new ResponseEntity<String>("success", HttpStatus.OK); // HTTP 상태 코드 200
+
+		return entity;
+	}
 }

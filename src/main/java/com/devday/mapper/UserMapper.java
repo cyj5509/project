@@ -5,6 +5,8 @@ import com.devday.dto.FindInfoDTO;
 
 public interface UserMapper {
 	
+	// 타입관련 ReviewMapper 참고해서 수정해볼 것
+	
 	void join(UserVO vo); // 회원가입 관련 메서드
 	// int idCheck(String us_id); 또는 Integer idCheck(String us_id); 
 	String idCheck(String us_id); // 아이디 중복검사 관련 메서드

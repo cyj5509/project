@@ -33,7 +33,7 @@
 							<h3 class="box-title">정보 조회</h3>
 							<br>
 
-							<form role="form" id="myPageForm" method="get" action="/member/myPage">
+							<form role="form" id="myPageForm" method="get" action="/member/my_page">
 								<div class="box-body">
 									<div class="login-info">
 										<h3>로그인 정보</h3><br>
@@ -77,7 +77,7 @@
 											</div>
 											<label for="sample2_address" class="col-2">주소</label>
 											<div class="col-6">
-												<input type="text" class="form-control" name="us_addr" id="sample2_address"
+												<input type="text" class="form-control" name="" id="sample2_address"
 													value="${vo.us_addr_basic}, ${vo.us_addr_detail}" readonly>
 												<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
 											</div>
@@ -108,12 +108,12 @@
 
 							// 회원수정 버튼 클릭 이벤트
 							$("#btnModify").click(function () {
-								location.href = "/member/modifyInfo"; // 회원수정 페이지로 이동
+								location.href = "/member/info/modify"; // 회원수정 페이지로 이동
 							});
 
 							// 회원탈퇴 버튼 클릭 이벤트
 							$("#btnDelete").click(function () {
-								location.href = "/member/deleteInfo"; // 회원탈퇴 전 회원정보 재확인
+								location.href = "/member/info/delete"; // 회원탈퇴 전 회원정보 재확인
 							});
 
 						});

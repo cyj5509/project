@@ -40,4 +40,11 @@
 		pd_number = #{pd_number}
 </select>
 
+<delete id="delete" parameterType="Long">
+	DELETE FROM
+		review_table
+	WHERE
+		rv_num = #{rv_num}
+</delete>
+
 </mapper>

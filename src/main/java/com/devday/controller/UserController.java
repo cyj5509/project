@@ -329,29 +329,30 @@ public class UserController {
 										 @RequestParam(value = "currentPw", required = false) String currentPw) throws Exception {
 
 		ResponseEntity<String> entity = null;
-
 		log.info("암호화 전 비밀번호: " + us_pw);
 
 	    // 사용자의 현재 비밀번호 조회
 		String storedPw = userService.isPwMatch(us_id);
+		
 		if (storedPw == null) {
-		    // 현재 저장된 비밀번호가 없는 경우(사용자가 존재하지 않는 경우)
-			entity = new ResponseEntity<>(HttpStatus.NOT_FOUND); // HTTP 상태 코드(404)
-		} else if (!passwordEncoder.matches(currentPw, storedPw)) {
-			// 클라이언트가 제공한 현재 비밀번호와 저장된 비밀번호가 일치하지 않음
+			// 현재 저장된 비밀번호가 없는 경우(사용자가 존재하지 않는 경우)
+			entity = new ResponseEntity<>(HttpStatus.NOT_FOUND); // HTTP 상태 코드 404
+		} else if (currentPw != null && !currentPw.isEmpty() && !passwordEncoder.matches(currentPw, storedPw)) {
+			// 현재 비밀번호가 제공되었으나 저장된 비밀번호가 일치하지 않는 경우(단순 재설정 시도)
 			entity = new ResponseEntity<>("request", HttpStatus.OK);
 		} else {
-			// 위의 두 조건이 모두 아닌 경우 (비밀번호 재설정 가능)
+			// 현재 비밀번호가 제공되지 않았거나 제공된 비밀번호가 저장된 비밀번호와 일치하는 경우
+			// 1) 비밀번호 찾기를 통한 재설정(현재 비밀번호 미제공)
+			// 2) 사용자가 현재 비밀번호를 알고 있고 이를 변경하려는 경우(현재 비밀번호 제공)
 			String encoPassword = passwordEncoder.encode(us_pw);
 			// log.info("암호화 후 비밀번호: " + encoPassword);
-
 			FindInfoDTO findInfoDTO = FindInfoDTO.ofResetPw(us_id, encoPassword);
+			
 			boolean isResetPw = userService.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
-
 			if (isResetPw) {
-				entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200): 비밀번호 재발급 성공
+				entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드 200: 비밀번호 재발급 성공
 			} else {
-				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500): 비밀번호 재발급 실패
+				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드 500: 비밀번호 재발급 실패
 			}
 		}
 

@@ -33,4 +33,10 @@ public class ReviewServiceImpl implements ReviewService {
 		
 		return reviewMapper.listCount(pd_number);
 	}
+
+	@Override
+	public void delete(Long rv_number) {
+
+		reviewMapper.delete(rv_number);
+	}
 }

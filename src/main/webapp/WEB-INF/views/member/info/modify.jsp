@@ -99,14 +99,14 @@
 													<label for="sample2_address" class="col-2">기본 주소</label>
 													<div class="col-10">
 														<input type="text" class="form-control" name="us_addr_basic" id="sample2_address"
-															value="${vo.us_addr}" placeholder="기본 주소 입력...">
+															value="${vo.us_addr_basic}" placeholder="기본 주소 입력...">
 													</div>
 												</div>
 												<div class="form-group row">
 													<label for="sample2_detailAddress" class="col-2">상세 주소</label>
 													<div class="col-10">
 														<input type="text" class="form-control" name="us_addr_detail" id="sample2_detailAddress"
-															value="${vo.us_deaddr}" placeholder="상세 주소 입력...">
+															value="${vo.us_addr_detail}" placeholder="상세 주소 입력...">
 														<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
 													</div>
 												</div>
