@@ -374,9 +374,17 @@ CREATE TABLE board_table (
     bd_content        VARCHAR2(4000)          NOT NULL, -- 게시물 내용
     bd_register_date  DATE    DEFAULT sysdate,          -- 등록 일자
     bd_update_date    DATE    DEFAULT sysdate,          -- 수정 일자
-    bd_view_count     NUMBER  DEFAULT 0,           -- 조회수
+    bd_view_count     NUMBER  DEFAULT 0,                -- 조회수
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
+
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
+  VALUES(sequence_bd_number.NEXTVAL, '자유', 'user02', '테스트', '게시판 테스트');
+
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
+SELECT sequence_bd_number.NEXTVAL, bd_type, us_id, bd_title, bd_content FROM board_table;
+
+COMMIT;
 
 -- 참조키(외래키) 추가
 ALTER TABLE board_table ADD CONSTRAINT fk_bd_us_id
