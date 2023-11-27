@@ -36,7 +36,7 @@ public class UsCategoryController {
 	@GetMapping("/secondCategory/{cg_parent_code}") // secondCategory(1차 카테고리 선택)
 	public ResponseEntity<List<CategoryVO>> secondCategory(@PathVariable("cg_parent_code") Integer cg_parent_code) throws Exception {  // DB 작업을 위해 ~ throws Exception
 		
-		log.info("1차 카테고리 코드: " + cg_parent_code);
+		// log.info("1차 카테고리 코드: " + cg_parent_code);
 		
 		ResponseEntity<List<CategoryVO>> entity = null;
 		entity = new ResponseEntity<List<CategoryVO>>(usCategoryService.getSecondCategoryList(cg_parent_code), HttpStatus.OK);

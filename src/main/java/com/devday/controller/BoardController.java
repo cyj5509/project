@@ -1,5 +1,6 @@
 package com.devday.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -31,19 +32,19 @@ public class BoardController {
 	public void register(Model model) {
 		
 		log.info("called register...");
-		BoardVO board = new BoardVO();
 		
-		// board.setBd_register_dateNow();
+		BoardVO boardVO = new BoardVO();
+		boardVO.setBd_register_date(new Date());
 		
-		model.addAttribute("board", board);
+		model.addAttribute("boardVO", boardVO);
 	}
 	
 	@PostMapping("/register")
-	public String register(@ModelAttribute("board") BoardVO board) {
+	public String register(@ModelAttribute("boardVO") BoardVO boardVO) {
 	
-		log.info("게시판 입력 데이터: " + board); 		
+		log.info("게시판 입력 데이터: " + boardVO); 		
 		
-		boardService.register(board);
+		boardService.register(boardVO);
 				
 		return "redirect:/user/board/list";  
 	}
@@ -76,17 +77,17 @@ public class BoardController {
 		log.info("게시물 번호: " + bd_number);
 		log.info("페이징과 검색 정보: " + cri);
 		
-		BoardVO board = boardService.get(bd_number);
-		model.addAttribute("board", board);
+		BoardVO boardVO = boardService.get(bd_number);
+		model.addAttribute("boardVO", boardVO);
 	}
 	
 	@PostMapping("/modify")
-	public String modify(BoardVO board, Criteria cri, RedirectAttributes rttr) {
+	public String modify(BoardVO boardVO, Criteria cri, RedirectAttributes rttr) {
 		
-		log.info("수정 데이터: " + board);
+		log.info("수정 데이터: " + boardVO);
 		log.info("Criteria: " + cri);
 		
-		boardService.modify(board);
+		boardService.modify(boardVO);
 		
 		// 검색과 페이지 정보를 이동주소(/board/list)의 파라미터로 사용하기 위한 작업
 		rttr.addAttribute("pageNum", cri.getPageNum());

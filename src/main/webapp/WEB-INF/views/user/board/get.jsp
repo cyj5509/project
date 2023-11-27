@@ -12,9 +12,12 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>DevDay</title>
+				<title>데브데이</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/header.css">
 
 					<style>
 						.bd-placeholder-img {
@@ -92,11 +95,11 @@
 													<label for="bd_number" class="col-2">No.</label>
 													<div class="col-4">
 														<input type="text" class="form-control" name="bd_number" id="bd_number"
-															value="${board.bd_number}" readonly="readonly">
+															value="${boardVO.bd_number}" readonly="readonly">
 													</div>
 													<label for="us_id" class="col-2">작성자</label>
 													<div class="col-4">
-														<input type="text" class="form-control" name="us_id" id="us_id" value="${board.us_id}"
+														<input type="text" class="form-control" name="us_id" id="us_id" value="${boardVO.us_id}"
 															readonly>
 													</div>
 												</div>
@@ -105,24 +108,24 @@
 													<label for="bd_title">제목</label>
 													<!-- readonly="readonly"와 같이 속성명과 값이 같은 경우 값을 생략할 수 있다. -->
 													<input type="text" class="form-control" name="bd_title" id="bd_title"
-														value="${board.bd_title}" readonly>
+														value="${boardVO.bd_title}" readonly>
 												</div>
 												<div class="form-group">
 													<label for="bd_content">내용</label>
-													<input type="text" class="form-control" name="bd_content" value="${board.bd_content}"
+													<input type="text" class="form-control" name="bd_content" value="${boardVO.bd_content}"
 														style="height: 500px; width: 100%;" readonly="readonly">
 												</div>
 												<div class="form-group row">
 													<label for="bd_register_date" class="col-2">등록일</label>
 													<div class="col-4">
 														<input type="text" class="form-control" name="bd_register_date" id="bd_register_date"
-															value='<fmt:formatDate value="${board.bd_register_date}" pattern="yyyy년 MM월 dd일 HH시 mm분" />'
+															value='<fmt:formatDate value="${boardVO.bd_register_date}" pattern="yyyy년 MM월 dd일 HH시 mm분" />'
 															readonly>
 													</div>
 													<label for="bd_update_date" class="col-2">수정일</label>
 													<div class="col-4">
 														<input type="text" class="form-control" name="bd_update_date" id="bd_update_date"
-															value='<fmt:formatDate value="${board.bd_update_date}" pattern="yyyy년 MM월 dd일 HH시 mm분" />'
+															value='<fmt:formatDate value="${boardVO.bd_update_date}" pattern="yyyy년 MM월 dd일 HH시 mm분" />'
 															readonly>
 													</div>
 												</div>
@@ -136,7 +139,7 @@
 													<input type="hidden" name="amount" id="amount" value="${cri.amount}" />
 													<input type="hidden" name="type" id="type" value="${cri.type}" />
 													<input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
-													<input type="hidden" name="bd_number" id="bd_number" value="${board.bd_number}" />
+													<input type="hidden" name="bd_number" id="bd_number" value="${boardVO.bd_number}" />
 												</form>
 												<button type="button" id="btn_modify" class="btn btn-primary">수정</button>
 												<button type="button" id="btn_delete" class="btn btn-primary">삭제</button>
@@ -152,9 +155,9 @@
 
 					<footer class="footer mt-auto py-3">
 						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 					</footer>
 
-					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 						<script>
 
@@ -166,8 +169,8 @@
 							document.getElementById("btn_modify").addEventListener("click", fn_modify);
 
 							function fn_modify() {
+								console.log("수정 버튼 클릭");
 								// alert('수정');
-
 								// location.href = "/user/board/modify?bno=${board.bno}"; // location.href = "URL 매핑 주소";
 								curListInfo.setAttribute("action", "/user/board/modify"); // /user/board/list -> /user/board/get 전송
 								curListInfo.submit();
@@ -177,7 +180,7 @@
 							document.getElementById("btn_delete").addEventListener("click", fn_delete); // 괄호는 제외
 
 							function fn_delete() {
-
+								console.log("삭제 버튼 클릭");
 								if (!confirm("삭제를 하시겠습니까?")) return;
 								// 페이지(주소) 이동
 								// location.href = "/user/board/delete?bno=${board.bno}";
@@ -189,14 +192,11 @@
 							document.getElementById("btn_list").addEventListener("click", fn_list); // 괄호는 제외
 
 							function fn_list() {
-
+								console.log("목록 버튼 클릭");
 								curListInfo.setAttribute("action", "/user/board/list"); // /user/board/list -> /user/board/get 전송
 								curListInfo.submit();
 							}
 						</script>
-
-						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
-
 			</body>
 
 			</html>

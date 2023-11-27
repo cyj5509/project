@@ -68,7 +68,7 @@ desired effect
 											</div>
 
 											<div class="box-body">
-												<div>
+												<div style="text-align: right;">
 													<form action="/admin/product/pd_list" method="get">
 														<select name="type">
 															<option selected>검색 종류 선택</option>
@@ -143,9 +143,17 @@ desired effect
 															<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
 														</form>
 													</div>
-													<div class="col-md-6 text-center">
+													<div class="col-md-4 text-center">
 														<nav aria-label="...">
 															<ul class="pagination">
+
+																<!-- 맨 처음 표시 여부 -->
+																<c:if test="${pageMaker.foremost}">
+																	<li class="page-item">
+																		<a href="${pageMaker.startPage}" class="page-link movepage">처음으로</a>
+																	</li>
+																</c:if>
+
 																<!-- 이전 표시 여부 -->
 																<c:if test="${pageMaker.prev}">
 																	<li class="page-item">
@@ -170,11 +178,18 @@ desired effect
 																		<a href="${pageMaker.endPage + 1}" class="page-link movepage">Next</a>
 																	</li>
 																</c:if>
-															</ul>
+
+																<!-- 맨 끝 표시 여부 -->
+																<c:if test="${pageMaker.rearmost}">
+																	<li class="page-item">
+																		<a href="${pageMaker.readEnd}" class="page-link movepage">끝으로</a>
+																	</li>
+																</c:if>
+																</ul>
 														</nav>
 													</div>
 
-													<div class="col-md-2 text-right"><button type="button" class="btn btn-primary"
+													<div class="col-md-4 text-right"><button type="button" class="btn btn-primary"
 															id="btn_pd_insert" role="button">상품등록</button></div>
 
 												</div>

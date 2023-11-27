@@ -34,9 +34,4 @@ CREATE TABLE board_table (
 	private Date bd_register_date;
 	private Date bd_update_date;
 	private int bd_view_count;
-	
-	public void setBd_register_dateNow() {
-		
-		this.bd_register_date = new Date();
-	}
 }

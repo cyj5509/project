@@ -188,7 +188,10 @@ public class AdProductController {
 		model.addAttribute("pd_list", pd_list);
 
 		int totalCount = adProductService.getTotalCount(cri);
-		model.addAttribute("pageMaker", new PageDTO(cri, totalCount));
+		
+		// model.addAttribute("pageMaker", new PageDTO(cri, totalCount));
+		PageDTO pageDTO = new PageDTO(cri, totalCount);
+		model.addAttribute("pageMaker", pageDTO);
 	}
 
 	// 상품 리스트에서 보여줄 이미지. <img src="매핑주소">

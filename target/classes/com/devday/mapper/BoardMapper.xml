@@ -119,38 +119,14 @@
 		bd_number = #{bd_number}
 </delete>
 
-<!-- 개인적으로 만든 메서드 -->
-<sql id="board">
-	<choose>
-        <when test="bd_type == '공지'">
-           bd_type = #{bd_type} 
-        </when>
-        <when test="bd_type == '잡담'">
-           bd_type = #{bd_type} 
-        </when>
-        <when test="bd_type == '정보'">
-           bd_type = #{bd_type} 
-        </when>
-        <when test="bd_type == '공부'">
-           bd_type = #{bd_type} 
-        </when>
-        <when test="bd_type == '플젝'">
-           bd_type = #{bd_type} 
-        </when>
-        <when test="bd_type == '문의'">
-           bd_type = #{bd_type} 
-		</when>
-	</choose>
-</sql>
-
-<!-- 개인적으로 만든 메서드 -->
-<select id="listType" resultType="com.devday.domain.BoardVO" parameterType="String">
+<!-- 게시판 타입별 구분 -->
+<select id="getListType" resultType="com.devday.domain.BoardVO" parameterType="String">
 	SELECT
 		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
 	FROM
 		board_table
 	WHERE
-		<include refid="board"></include> 		
+		bd_type = #{bd_type}	
 </select>
 
 

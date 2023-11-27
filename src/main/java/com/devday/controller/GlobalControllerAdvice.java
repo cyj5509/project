@@ -28,14 +28,14 @@ public class GlobalControllerAdvice {
 	@ModelAttribute // @ControllerAdvice에서는 메서드 상위 수준에 해당 작업 필요
 	public void getFirstCategoryList(Model model) {
 
-		log.info("1차 카테고리 리스트");
+		// log.info("1차 카테고리 리스트");
 		
 		List<CategoryVO> firstCategoryList = adCategoryService.getFirstCategoryList();
 		
-		for (CategoryVO category : firstCategoryList) {
-			List<CategoryVO> secondCategoryList = adCategoryService.getSecondCategoryList(category.getCg_code());
-			category.setSecondCategoryList(secondCategoryList);
-		}
+//		for (CategoryVO category : firstCategoryList) {
+//			List<CategoryVO> secondCategoryList = adCategoryService.getSecondCategoryList(category.getCg_code());
+//			category.setSecondCategoryList(secondCategoryList);
+//		}
 		
 		model.addAttribute("firstCategoryList", firstCategoryList);
 	}

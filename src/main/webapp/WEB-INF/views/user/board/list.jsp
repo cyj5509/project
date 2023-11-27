@@ -12,9 +12,12 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>DevDay</title>
+				<title>데브데이</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/header.css">
 
 					<style>
 						.bd-placeholder-img {
@@ -98,13 +101,13 @@
 
 					<br />
 					<ul class="horizontal-menu">
-						<li><a href="/user/board/list?bd_type=전체">전체 게시판</a></li>
-						<li><a href="/user/board/list?bd_type=공지">공지사항</a></li>
-						<li><a href="/user/board/list?bd_type=잡담">자유 게시판</a></li>
-						<li><a href="/user/board/list?bd_type=정보">정보 공유</a></li>
-						<li><a href="/user/board/list?bd_type=공부">스터디 모집</a></li>
-						<li><a href="/user/board/list?bd_type=플젝">프로젝트 모집</a></li>
-						<li><a href="/user/board/list?bd_type=문의">문의(Q&A)</a></li>
+						<li><a href="/user/board/list?bd_type=total">전체 게시판</a></li>
+						<li><a href="/user/board/list?bd_type=notice">공지사항</a></li>
+						<li><a href="/user/board/list?bd_type=free">자유 게시판</a></li>
+						<li><a href="/user/board/list?bd_type=information">정보 공유</a></li>
+						<li><a href="/user/board/list?bd_type=study">스터디 모집</a></li>
+						<li><a href="/user/board/list?bd_type=project">프로젝트 모집</a></li>
+						<li><a href="/user/board/list?bd_type=q_and_a">문의(Q&A)</a></li>
 					</ul>
 
 					<!-- Begin page content -->
@@ -118,12 +121,12 @@
 											<div class="box-header with-border">
 												<h2 class="box-title" style="margin: 40px;">
 													<c:choose>
-														<c:when test="${param.bd_type == '공지'}">공지사항</c:when>
-														<c:when test="${param.bd_type == '잡담'}">자유 게시판</c:when>
-														<c:when test="${param.bd_type == '정보'}">정보 공유</c:when>
-														<c:when test="${param.bd_type == '공부'}">스터디 모집</c:when>
-														<c:when test="${param.bd_type == '플젝'}">프로젝트 모집</c:when>
-														<c:when test="${param.bd_type == '문의'}">문의(Q&A)</c:when>
+														<c:when test="${param.bd_type == 'N'}">공지사항</c:when>
+														<c:when test="${param.bd_type == 'F'}">자유 게시판</c:when>
+														<c:when test="${param.bd_type == 'I'}">정보 공유</c:when>
+														<c:when test="${param.bd_type == 'S'}">스터디 모집</c:when>
+														<c:when test="${param.bd_type == 'P'}">프로젝트 모집</c:when>
+														<c:when test="${param.bd_type == 'Q'}">문의(Q&A)</c:when>
 														<c:otherwise>전체 게시판</c:otherwise>
 													</c:choose>
 												</h2>
@@ -143,6 +146,7 @@
 														<input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+														<input type="hidden" name="bd_type" id="bd_type" value="${param.bd_type}" />
 														<button type="submit" class="btn btn-primary">검색</button>
 													</form>
 

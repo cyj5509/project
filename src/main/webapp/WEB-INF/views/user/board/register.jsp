@@ -11,9 +11,12 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>DevDay</title>
+				<title>데브데이</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/header.css">
 
 					<style>
 						.bd-placeholder-img {
@@ -97,57 +100,6 @@
 											<div class="box-header with-border">
 												<h2 class="box-title mt-5"><b>등록하기</b></h2>
 											</div><br />
-
-											<c:choose>
-												<c:when test="${empty sessionScope.loginStatus}">
-													<form role="form" method="post" action="./register">
-														<!-- 절대 경로: /user/user/board/register와 동일 -->
-														<div class="box-body">
-															<div class="form-group row">
-																<label for="us_id" class="col-3">작성자(비회원)</label>
-																<div class="col-3">
-																	<input type="text" class="form-control" name="us_id" id="us_id"
-																		placeholder="닉네임을 입력하세요">
-																</div>
-																<label for="bd_register_date" class="col-2">작성일</label>
-																<div class="col-4">
-																	<input type="text" class="form-control" id="bd_register_date"
-																		value='<fmt:formatDate value="${board.bd_register_date}" pattern="yyyy-MM-dd HH:mm" />'
-																		readonly="readonly"> <!-- name 속성 주면 400번 에러(클라이언트 에러) 발생 -->
-																</div>
-															</div>
-															<div class="form-group row">
-																<label for="bd_title" class="col-2">제목</label>
-																<div class="col-4">
-																	<input type="text" class="form-control" name="bd_title" id="bd_title"
-																		placeholder="제목을 입력하세요">
-																</div>
-																<label for="bd_type" class="col-2">카테고리</label>
-																<div class="col-4">
-																	<select class="form-control" name="bd_type" id="bd_type">
-																		<option value="잡담">자유 게시판</option>
-																		<option value="정보">정보 공유</option>
-																		<option value="공부">스터디원 모집</option>
-																		<option value="플젝">플젝팀원 모집</option>
-																		<option value="문의">Q&A(문의)</option>
-																	</select>
-																</div>
-															</div>
-															<div class="form-group">
-																<label for="bd_content">내용</label>
-																<input type="text" class="form-control" name="bd_content"
-																	style="height: 500px; width: 100%;" placeholder="내용을 입력하세요">
-															</div>
-														</div>
-														<input type="hidden" name="bd_type" id="bd_type" value="${board.bd_type}" />
-														<div class="box-footer">
-															<button type="submit" class="btn btn-primary">저장</button>
-															<button type="reset" class="btn btn-primary">취소</button>
-														</div>
-													</form>
-												</c:when>
-
-												<c:otherwise>
 													<form role="form" method="post" action="./register"> <!-- 절대 경로: /user/board/register와 동일 -->
 														<div class="box-body">
 															<div class="form-group row">
@@ -159,7 +111,7 @@
 																<label for="bd_register_date" class="col-2">작성일</label>
 																<div class="col-4">
 																	<input type="text" class="form-control" id="bd_register_date"
-																		value='<fmt:formatDate value="${board.bd_register_date}" pattern="yyyy년 MM월 dd일" />'
+																		value='<fmt:formatDate value="${boardVO.bd_register_date}" pattern="yyyy년 MM월 dd일" />'
 																		readonly="readonly">
 																</div>
 															</div>
@@ -186,14 +138,12 @@
 																	style="height: 500px; width: 100%;" placeholder="내용을 입력하세요">
 															</div>
 														</div>
-														<input type="hidden" name="bd_type" id="bd_type" value="${board.bd_type}" />
+														<!-- <input type="hidden" name="bd_type" id="bd_type" value="${boardVO.bd_type}" /> -->
 														<div class="box-footer">
-															<button type="submit" class="btn btn-primary">저장</button>
-															<button type="reset" class="btn btn-primary">취소</button>
+															<button type="submit" id="btn_save" class="btn btn-primary">저장</button>
+															<button type="reset" id="btn_list" class="btn btn-primary">취소</button>
 														</div>
 													</form>
-												</c:otherwise>
-											</c:choose>
 										</div>
 									</div>
 								</div>
@@ -203,9 +153,20 @@
 
 					<footer class="footer mt-auto py-3">
 						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 					</footer>
 
-					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+
+					<script>
+						$(document).ready(function() {
+
+							$("#btn_list").on("click", function() {
+								// console.log("취소 시 목록 페이지로 이동");
+								location.href = "/user/board/list";
+							});
+
+						})
+					</script>
 
 			</body>
 

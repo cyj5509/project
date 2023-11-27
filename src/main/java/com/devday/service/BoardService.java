@@ -21,5 +21,5 @@ public interface BoardService {
 
 	int getTotalCount(Criteria cri);
 	
-	BoardVO listType(String bd_type);
+	BoardVO getListType(String bd_type);
 }

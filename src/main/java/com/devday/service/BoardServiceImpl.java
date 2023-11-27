@@ -63,8 +63,8 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public BoardVO listType(String bd_type) {
+	public BoardVO getListType(String bd_type) {
 		
-		return boardMapper.listType(bd_type);
+		return boardMapper.getListType(bd_type);
 	}	
 }

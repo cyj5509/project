@@ -35,6 +35,6 @@ public interface BoardMapper {
 	// 글 삭제하기
 	void delete(Long bd_number);
 
-	// 개인적으로 만든 메서드
-	BoardVO listType(String bd_type);
+	// 게시판 타입별 구분
+	BoardVO getListType(String bd_type);
 }

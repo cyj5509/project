@@ -12,9 +12,12 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>DevDay</title>
+				<title>데브데이</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/header.css">
 
 					<style>
 						.bd-placeholder-img {
@@ -88,7 +91,7 @@
 											</div>
 
 											<!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
-											<form role="form" method="post" action="./modify"> <!-- 절대 경로: /user/board/register와 동일 -->
+											<form role="form" method="post" action="/user/board/modify"> <!-- 절대 경로: /user/board/modify와 동일 -->
 												<div class="box-body">
 													<div class="form-group">
 														<label for="bd_number">No.</label>
@@ -97,33 +100,33 @@
 														<input type="hidden" name="type" id="type" value="${cri.type}" />
 														<input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
 														<input type="text" class="form-control" name="bd_number" id="bd_number"
-															value="${board.bd_number}" readonly>
+															value="${boardVO.bd_number}" readonly>
 													</div>
 													<div class="form-group">
 														<label for="bd_title">제목</label>
 														<!-- readonly="readonly"와 같이 속성명과 값이 같은 경우 값을 생략할 수 있다. -->
 														<input type="text" class="form-control" name="bd_title" id="bd_title"
-															value="${board.bd_title}">
+															value="${boardVO.bd_title}">
 													</div>
 													<div class="form-group">
 														<label for="us_id">작성자</label>
-														<input type="text" class="form-control" name="us_id" id="us_id" value="${board.us_id}"
+														<input type="text" class="form-control" name="us_id" id="us_id" value="${boardVO.us_id}"
 															readonly>
 													</div>
 													<div class="form-group">
 														<label for="bd_content">내용</label>
 														<!-- input 태그는 value 속성이 있지만, textarea 태그는 없음 -->
-														<textarea class="form-control" rows="3" name="bd_content">${board.bd_content}</textarea>
+														<textarea class="form-control" rows="3" name="bd_content">${boardVO.bd_content}</textarea>
 													</div>
 													<div class="form-group">
 														<label for="bd_registe_date">등록일</label>
 														<input type="text" class="form-control" name="bd_registe_date" id="bd_registe_date"
-															value='<fmt:formatDate value="${board.bd_registe_date}" pattern="yyyy/MM/dd" />' readonly>
+															value='<fmt:formatDate value="${boardVO.bd_register_date}" pattern="yyyy/MM/dd" />' readonly>
 													</div>
 													<div class="form-group">
 														<label for="bd_update_date">수정일</label>
 														<input type="text" class="form-control" name="bd_update_date" id="bd_update_date"
-															value='<fmt:formatDate value="${board.bd_update_date}" pattern="yyyy/MM/dd" />' readonly>
+															value='<fmt:formatDate value="${boardVO.bd_update_date}" pattern="yyyy/MM/dd" />' readonly>
 													</div>
 
 												</div>
@@ -142,9 +145,9 @@
 
 					<footer class="footer mt-auto py-3">
 						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 					</footer>
 
-					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 			</body>
 
