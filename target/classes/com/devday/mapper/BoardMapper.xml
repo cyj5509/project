@@ -27,17 +27,17 @@
 <sql id="criteria">
 	<trim prefix="(" suffix=") AND" prefixOverrides="OR">
 	<!-- collection은 getTypeArr() 메서드 호출, item은 의미 없음 -->
-    	<foreach collection="typeArr" item="type">
+    	<foreach collection="cri.typeArr" item="type">
 			<trim prefix="OR">
 			    <choose>
 			        <when test="type == 'T'.toString()">
-			            bd_title LIKE '%' || #{keyword} || '%' 
+			            bd_title LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
 			        <when test="type == 'W'.toString()">
-			            us_id LIKE '%' || #{keyword} || '%' 
+			            us_id LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
 			        <when test="type == 'C'.toString()">
-			            bd_content LIKE '%' || #{keyword} || '%' 
+			            bd_content LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
 			    </choose>
 			</trim>
@@ -47,7 +47,7 @@
 
 <!-- 페이징 목록(여러 개) ─ resultType="" -->
 <!-- CDATA 섹션: XML 관점에서 적합한지에 대해 문법 검사를 하지 않음 -->
-<select id="getListWithPaging" resultType="com.devday.domain.BoardVO" parameterType="com.devday.dto.Criteria">
+<select id="getListWithPaging" resultType="com.devday.domain.BoardVO" parameterType="map">
 	<![CDATA[
 	SELECT
 		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
@@ -59,22 +59,30 @@
 	    		board_table 
 	    WHERE
 			]]>
+			<if test="bd_type != null and bd_type != 'total'">
+                bd_type = #{bd_type}
+                AND
+            </if>
 			<include refid="criteria"></include> 
 			<![CDATA[
-	     	ROWNUM <= #{pageNum} * #{amount}
+	     	ROWNUM <= #{cri.pageNum} * #{cri.amount}
 	    )
 	WHERE
-		rn > (#{pageNum} - 1) * #{amount}
+		rn > (#{cri.pageNum} - 1) * #{cri.amount}
 	]]>
 </select>
 
 <!--  전체 데이터 개수 -->
-<select id="getTotalCount" resultType="int">
+<select id="getTotalCount" resultType="int" parameterType="map">
 	SELECT
 		COUNT(*)
 	FROM
 		board_table
 	WHERE 
+		<if test="bd_type != null and bd_type != 'total'">
+            bd_type = #{bd_type}
+            AND
+        </if>
 		<include refid="criteria"></include> bd_number > 0
 </select>
 
@@ -118,16 +126,5 @@
 	WHERE
 		bd_number = #{bd_number}
 </delete>
-
-<!-- 게시판 타입별 구분 -->
-<select id="getListType" resultType="com.devday.domain.BoardVO" parameterType="String">
-	SELECT
-		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
-	FROM
-		board_table
-	WHERE
-		bd_type = #{bd_type}	
-</select>
-
 
 </mapper>

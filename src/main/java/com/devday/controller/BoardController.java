@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,57 +29,94 @@ public class BoardController {
 	
 	private final BoardService boardService;
 	
-	@GetMapping("/register")
-	public void register(Model model) {
+	@GetMapping("/register/{bd_type}")
+	public String register(@PathVariable("bd_type") String bd_type, Model model) {
 		
 		log.info("called register...");
 		
 		BoardVO boardVO = new BoardVO();
+		boardVO.setBd_type(bd_type);
 		boardVO.setBd_register_date(new Date());
 		
 		model.addAttribute("boardVO", boardVO);
+		
+		return "/user/board/register";
 	}
 	
 	@PostMapping("/register")
 	public String register(@ModelAttribute("boardVO") BoardVO boardVO) {
 	
-		log.info("게시판 입력 데이터: " + boardVO); 		
+		log.info("게시판 입력 데이터: " + boardVO);
+		log.info("게시판 종류: " + boardVO.getBd_type());		
 		
 		boardService.register(boardVO);
-				
-		return "redirect:/user/board/list";  
+		
+		return "redirect:/user/board/list" + "/" + boardVO.getBd_type();  
 	}
 	
-	@GetMapping("/list")
-	public void list(Criteria cri, Model model) {
+	@GetMapping(value = {"/list", "/list/{bd_type}"})
+	public String list(@PathVariable(value = "bd_type", required = false) String bd_type, Criteria cri, Model model) {
+		
+		// bd_type이 null이거나 빈 문자열인 경우, 전체 게시판("total")로 설정
+		if (bd_type == null || bd_type == "") {
+			bd_type = "total";
+		}
 		
 		// log.info("list: " + cri); 
-	
-		List<BoardVO> list = boardService.getListWithPaging(cri);
+		BoardVO boardVO = new BoardVO();
+		boardVO.setBd_type(bd_type);
+		
+		List<BoardVO> list = boardService.getListWithPaging(cri, bd_type);
+		log.info("게시판 타입: " + bd_type); 
+		log.info("타입별 목록: " + list); 
+		
 		model.addAttribute("list", list);
 		
-		int total = boardService.getTotalCount(cri);
+		int total = boardService.getTotalCount(cri, bd_type);
 		
-		log.info("데이터 총 개수: " + total);
+		model.addAttribute("bd_type", bd_type);
 		
 		PageDTO pageDTO = new PageDTO(cri, total);
 		model.addAttribute("pageMaker", pageDTO);
 		
-		log.info("페이징 정보: " + pageDTO);
+		// log.info("데이터 총 개수: " + total);
+		// log.info("페이징 정보: " + pageDTO);
+		// log.info("게시판 분류: " + boardService.getListType(bd_type));
 		
-	
-		// log.info("게시판 분류: " + boardService.listType(bd_type));
-		
+		return "/user/board/list"; // JSP 페이지 경로
 	}
 	
-	@GetMapping({"/get", "/modify"})
-	public void get(@RequestParam("bd_number") Long bd_number, @ModelAttribute("cri") Criteria cri, Model model) {
+	
+	@GetMapping("/get/{bd_type}") 
+	public String get(@PathVariable("bd_type") String bd_type, 
+					@RequestParam("bd_number") Long bd_number, 
+				    @ModelAttribute("cri") Criteria cri, Model model) {
 		
 		log.info("게시물 번호: " + bd_number);
 		log.info("페이징과 검색 정보: " + cri);
 		
 		BoardVO boardVO = boardService.get(bd_number);
+		boardVO.setBd_type(bd_type);
+		
 		model.addAttribute("boardVO", boardVO);
+		
+		return "/user/board/get"; // JSP 페이지 경로
+	}
+	
+	@GetMapping("/modify/{bd_type}") 
+	public String modify(@PathVariable("bd_type") String bd_type, 
+						@RequestParam("bd_number") Long bd_number, 
+						@ModelAttribute("cri") Criteria cri, Model model) {
+		
+		log.info("게시물 번호: " + bd_number);
+		log.info("페이징과 검색 정보: " + cri);
+		
+		BoardVO boardVO = boardService.get(bd_number);
+		boardVO.setBd_type(bd_type);
+		
+		model.addAttribute("boardVO", boardVO);
+		
+		return "/user/board/modify"; // JSP 페이지 경로
 	}
 	
 	@PostMapping("/modify")
@@ -95,12 +133,15 @@ public class BoardController {
 		rttr.addAttribute("type", cri.getType());	
 		rttr.addAttribute("keyword", cri.getKeyword());	
 		
-		return "redirect:/user/board/list" + cri.getListLink();
+		return "redirect:/user/board/list" + "/" + boardVO.getBd_type() + cri.getListLink();
 	}
 	
-	@GetMapping("/delete")
-	public String delete(@RequestParam("bd_number") Long bd_number, Criteria cri, RedirectAttributes rttr) {
+	@GetMapping("/delete/{bd_type}")
+	public String delete(@PathVariable("bd_type") String bd_type, 
+						@RequestParam("bd_number") Long bd_number,
+						Criteria cri, RedirectAttributes rttr) {
 		
+		log.info("삭제할 게시판: " + bd_type);
 		log.info("삭제할 번호: " + bd_number);
 		// log.info("Criteria: " + cri);
 		
@@ -112,7 +153,10 @@ public class BoardController {
 		rttr.addAttribute("type", cri.getType());	
 		rttr.addAttribute("keyword", cri.getKeyword());
 		
-		return "redirect:/user/board/list";
+		BoardVO boardVO = new BoardVO();
+		boardVO.setBd_type(bd_type);
+		
+		return "redirect:/user/board/list" + "/" + bd_type;
 	}
 	
 	

@@ -17,9 +17,8 @@ public interface BoardService {
 
 	void delete(Long bd_number);
 
-	List<BoardVO> getListWithPaging(Criteria cri);
+	List<BoardVO> getListWithPaging(Criteria cri, String bd_type);
 
-	int getTotalCount(Criteria cri);
-	
-	BoardVO getListType(String bd_type);
+	int getTotalCount(Criteria cri, String bd_type);
+
 }

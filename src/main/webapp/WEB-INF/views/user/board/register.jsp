@@ -100,10 +100,10 @@
 											<div class="box-header with-border">
 												<h2 class="box-title mt-5"><b>등록하기</b></h2>
 											</div><br />
-													<form role="form" method="post" action="./register"> <!-- 절대 경로: /user/board/register와 동일 -->
+													<form role="form" id="registerForm" method="post" action="/user/board/register"> <!-- 절대 경로: /user/board/register와 동일 -->
 														<div class="box-body">
 															<div class="form-group row">
-																<label for="us_id" class="col-2">작성자(회원)</label>
+																<label for="us_id" class="col-2">작성자</label>
 																<div class="col-4">
 																	<input type="text" class="form-control" name="us_id" id="us_id"
 																		value="${sessionScope.loginStatus.us_id}" readonly="readonly">
@@ -124,24 +124,27 @@
 																<label for="bd_type" class="col-2">카테고리</label>
 																<div class="col-4">
 																	<select class="form-control" name="bd_type" id="bd_type">
-																		<option value="잡담">자유 게시판</option>
-																		<option value="정보">정보 공유</option>
-																		<option value="공부">스터디원 모집</option>
-																		<option value="플젝">플젝팀원 모집</option>
-																		<option value="문의">Q&A(문의)</option>
+																		<option	value="total">--- 카테고리 선택 ---</option>
+																		<option value="notice" ${boardVO.bd_type == 'notice' ? 'selected' : ''} style="display: none;">공지사항</option>
+																		<option value="free" ${boardVO.bd_type == 'free' ? 'selected' : ''}>자유 게시판</option>
+																		<option value="info" ${boardVO.bd_type == 'info' ? 'selected' : ''}>정보 공유</option>
+																		<option value="study" ${boardVO.bd_type == 'study' ? 'selected' : ''}>스터디원 모집</option>
+																		<option value="project" ${boardVO.bd_type == 'project' ? 'selected' : ''}>플젝팀원 모집</option>
+																		<option value="inquery" ${boardVO.bd_type == 'inquery' ? 'selected' : ''}>Q&A(문의)</option>
 																	</select>
 																</div>
 															</div>
 															<div class="form-group">
 																<label for="bd_content">내용</label>
-																<input type="text" class="form-control" name="bd_content"
+																<input type="text" class="form-control" name="bd_content" id="bd_content"
 																	style="height: 500px; width: 100%;" placeholder="내용을 입력하세요">
 															</div>
 														</div>
 														<!-- <input type="hidden" name="bd_type" id="bd_type" value="${boardVO.bd_type}" /> -->
 														<div class="box-footer">
-															<button type="submit" id="btn_save" class="btn btn-primary">저장</button>
-															<button type="reset" id="btn_list" class="btn btn-primary">취소</button>
+
+															<button type="button" id="btn_register" class="btn btn-primary">등록</button>
+															<button type="button" id="btn_list" class="btn btn-primary">취소</button>
 														</div>
 													</form>
 										</div>
@@ -159,6 +162,30 @@
 
 					<script>
 						$(document).ready(function() {
+
+							let registerForm = $("#registerForm"); 
+							
+							$("#btn_register").on("click", function() {
+								let bd_title = $("#bd_title").val();
+								let bd_type = $("#bd_type").val();
+								let bd_content = $("#bd_content").val();
+
+								if(bd_title == "") {
+									alert("제목을 입력해주세요.")
+									$("#bd_title").focus();
+									return;
+								}
+								if(bd_type == "total") {
+									alert("카테고리를 선택해주세요.");
+									return;
+								}
+								if(bd_content == "") {
+									alert("내용을 입력해주세요.");
+									$("#bd_content").focus();
+									return;
+								}
+								registerForm.submit();
+							});
 
 							$("#btn_list").on("click", function() {
 								// console.log("취소 시 목록 페이지로 이동");

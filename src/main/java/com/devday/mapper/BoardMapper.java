@@ -1,6 +1,9 @@
 package com.devday.mapper;
 
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
 
 import com.devday.domain.BoardVO;
 import com.devday.dto.Criteria;
@@ -21,10 +24,10 @@ public interface BoardMapper {
 	List<BoardVO> getList();
 
 	// 페이징 목록(여러 개): List<BoardVO> 리턴값 -> pageNum, amount, type, keyword 사용
-	List<BoardVO> getListWithPaging(Criteria cri);
+	List<BoardVO> getListWithPaging(@Param("cri") Criteria cri, @Param("bd_type") String bd_type);
 
 	// 전체 데이터 개수(검색 포함)
-	int getTotalCount(Criteria cri);
+	int getTotalCount(@Param("cri") Criteria cri, @Param("bd_type") String bd_type);
 
 	// 조회수 증가
 	void readCount(Long bd_number);
@@ -34,7 +37,4 @@ public interface BoardMapper {
 
 	// 글 삭제하기
 	void delete(Long bd_number);
-
-	// 게시판 타입별 구분
-	BoardVO getListType(String bd_type);
 }

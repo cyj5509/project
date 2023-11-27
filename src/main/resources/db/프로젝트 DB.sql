@@ -379,7 +379,7 @@ CREATE TABLE board_table (
 );
 
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, '자유', 'user02', '테스트', '게시판 테스트');
+  VALUES(sequence_bd_number.NEXTVAL, '잡담', 'user02', '테스트', '게시판 테스트');
 
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
 SELECT sequence_bd_number.NEXTVAL, bd_type, us_id, bd_title, bd_content FROM board_table;
@@ -392,3 +392,7 @@ FOREIGN KEY (us_id) REFERENCES user_table(us_id);
 
 -- 시퀀스: 게시판 테이블의 게시판 번호 컬럼(bd_number)
 CREATE SEQUENCE sequence_bd_number;
+
+-- 전체 데이터 조회 및 삭제
+SELECT * FROM board_table;
+DELETE FROM board_table;

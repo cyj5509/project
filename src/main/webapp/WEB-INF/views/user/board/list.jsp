@@ -16,8 +16,8 @@
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
-				<!-- CSS 파일 링크 -->
-				<link rel="stylesheet" href="/css/header.css">
+					<!-- CSS 파일 링크 -->
+					<link rel="stylesheet" href="/css/header.css">
 
 					<style>
 						.bd-placeholder-img {
@@ -91,6 +91,20 @@
 						.horizontal-menu li:last-child {
 							margin-right: 0;
 						}
+
+						.capitalize {
+							text-transform: capitalize;
+						}
+
+						.box-title {
+							font-size: 40px;
+							margin-bottom: 20px;
+						}
+
+						.box-body {
+							font-size: 20px;
+							padding: 20px;
+						}
 					</style>
 
 			</head>
@@ -101,13 +115,13 @@
 
 					<br />
 					<ul class="horizontal-menu">
-						<li><a href="/user/board/list?bd_type=total">전체 게시판</a></li>
-						<li><a href="/user/board/list?bd_type=notice">공지사항</a></li>
-						<li><a href="/user/board/list?bd_type=free">자유 게시판</a></li>
-						<li><a href="/user/board/list?bd_type=information">정보 공유</a></li>
-						<li><a href="/user/board/list?bd_type=study">스터디 모집</a></li>
-						<li><a href="/user/board/list?bd_type=project">프로젝트 모집</a></li>
-						<li><a href="/user/board/list?bd_type=q_and_a">문의(Q&A)</a></li>
+						<li><a href="/user/board/list/total">전체 게시판</a></li>
+						<li><a href="/user/board/list/notice">공지사항</a></li>
+						<li><a href="/user/board/list/free">자유 게시판</a></li>
+						<li><a href="/user/board/list/info">정보 공유</a></li>
+						<li><a href="/user/board/list/study">스터디 모집</a></li>
+						<li><a href="/user/board/list/project">프로젝트 모집</a></li>
+						<li><a href="/user/board/list/inquery">문의(Q&A)</a></li>
 					</ul>
 
 					<!-- Begin page content -->
@@ -119,17 +133,17 @@
 									<div class="col-md-12">
 										<div class="box">
 											<div class="box-header with-border">
-												<h2 class="box-title" style="margin: 40px;">
+												<h2 class="box-title mt-5"><b>
 													<c:choose>
-														<c:when test="${param.bd_type == 'N'}">공지사항</c:when>
-														<c:when test="${param.bd_type == 'F'}">자유 게시판</c:when>
-														<c:when test="${param.bd_type == 'I'}">정보 공유</c:when>
-														<c:when test="${param.bd_type == 'S'}">스터디 모집</c:when>
-														<c:when test="${param.bd_type == 'P'}">프로젝트 모집</c:when>
-														<c:when test="${param.bd_type == 'Q'}">문의(Q&A)</c:when>
+														<c:when test="${bd_type == 'notice'}">공지사항</c:when>
+														<c:when test="${bd_type == 'free'}">자유 게시판</c:when>
+														<c:when test="${bd_type == 'info'}">정보 공유</c:when>
+														<c:when test="${bd_type == 'study'}">스터디 모집</c:when>
+														<c:when test="${bd_type == 'project'}">프로젝트 모집</c:when>
+														<c:when test="${bd_type == 'inquery'}">Q&A(문의)</c:when>
 														<c:otherwise>전체 게시판</c:otherwise>
 													</c:choose>
-												</h2>
+												</b></h2>
 											</div>
 											<div class="row" style="text-align: right;">
 												<div class="col-12">
@@ -146,7 +160,6 @@
 														<input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-														<input type="hidden" name="bd_type" id="bd_type" value="${param.bd_type}" />
 														<button type="submit" class="btn btn-primary">검색</button>
 													</form>
 
@@ -159,6 +172,7 @@
 														<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
 														<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
 														<input type="hidden" name="bd_number" id="bd_number" />
+														<!-- <input type="hidden" name="bd_type" id="bd_type" /> -->
 													</form>
 												</div>
 											</div>
@@ -167,28 +181,29 @@
 												<table class="table table-bordered">
 													<tbody>
 														<tr style="text-align: center; background-color: lightgray;">
-															<th style="width: 7.5%">구분</th>
 															<th style="width: 7.5%">No.</th>
-															<th style="width: 15%">제목</th>
+															<th style="width: 7.5%">구분</th>
+															<th style="width: 30%">제목</th>
 															<th style="width: 15%">작성자</th>
-															<th style="width: 20%">등록일</th>
-															<th style="width: 20%">수정일</th>
-															<th style="width: 15%">조회수</th>
+															<th style="width: 15%">등록일</th>
+															<th style="width: 15%">수정일</th>
+															<th style="width: 10%">조회</th>
 														</tr>
 														<!-- BoardController에서 작성한 이름과 동일한 이름을 items로 작성 -->
 														<!-- 목록이 출력되는 부분 -->
 														<c:forEach items="${list}" var="board">
 															<tr style="text-align: center;">
-																<td>${board.bd_type}</td>
 																<td>${board.bd_number}</td>
+																<th class="capitalize">${board.bd_type}</th>
+																<!-- <td><a class="move" href="#" data-bd_number="${board.bd_number}" data-bd_type="${board.bd_type}">${board.bd_title}</a> -->
 																<td><a class="move" href="#" data-bd_number="${board.bd_number}">${board.bd_title}</a>
 																</td> <!-- 클래스명 move는 제목과 관련 -->
 																<td> ${board.us_id}</td>
 																<td>
-																	<fmt:formatDate value="${board.bd_register_date}" pattern="yyyy년 MM월 dd일" />
+																	<fmt:formatDate value="${board.bd_register_date}" pattern="yy.MM.dd." />
 																</td>
 																<td>
-																	<fmt:formatDate value="${board.bd_update_date}" pattern="yyyy년 MM월 dd일" />
+																	<fmt:formatDate value="${board.bd_update_date}" pattern="yy.MM.dd." />
 																</td>
 																<td>${board.bd_view_count}</td>
 															</tr>
@@ -199,21 +214,21 @@
 
 											<div class="box-footer clearfix">
 												<div class="row">
-													<div class="col-12">
+													<div class="col-10">
 														<nav aria-label="...">
 															<ul class="pagination">
 
 																<!-- 맨 처음 표시 여부 -->
 																<c:if test="${pageMaker.foremost}">
 																	<li class="page-item">
-																		<a href="/user/board/list?pageNum=1" class="page-link">처음으로</a>
+																		<a href="/user/board/list/${bd_type}?pageNum=1" class="page-link">처음으로</a>
 																	</li>
 																</c:if>
 
 																<!-- 이전 표시 여부 -->
 																<c:if test="${pageMaker.prev}">
 																	<li class="page-item">
-																		<a href="/user/board/list?pageNum=${pageMaker.startPage - 1}"
+																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.startPage - 1}"
 																			class="page-link">이전</a>
 																	</li>
 																</c:if>
@@ -232,88 +247,115 @@
 																<!-- 다음 표시 여부 -->
 																<c:if test="${pageMaker.next}">
 																	<li class="page-item">
-																		<a href="/user/board/list?pageNum=${pageMaker.endPage + 1}" class="page-link">다음</a>
+																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.endPage + 1}" class="page-link">다음</a>
 																	</li>
 																</c:if>
 
 																<!-- 맨 끝 표시 여부 -->
 																<c:if test="${pageMaker.rearmost}">
 																	<li class="page-item">
-																		<a href="/user/board/list?pageNum=${pageMaker.readEnd}" class="page-link">끝으로</a>
+																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.readEnd}" class="page-link">끝으로</a>
 																	</li>
 																</c:if>
 															</ul>
 														</nav>
 													</div>
+													<div class="col-2" style="text-align: right;">
+														<c:if test="${sessionScope.loginStatus != null}">
+															<%-- 공지사항 게시판의 경우, 관리자만 글쓰기 버튼 보임 --%>
+																<c:if test="${bd_type == 'notice'}">
+																	<c:if test="${sessionScope.isAdmin}">
+																		<a class="btn btn-primary" href="/user/board/register/notice" role="button">글쓰기</a>
+																	</c:if>
+																</c:if>
 
+																<%-- 그 외 게시판은 로그인한 사용자만 글쓰기 버튼 보임 --%>
+																	<c:if test="${bd_type != 'notice'}">
+																		<a class="btn btn-primary" href="/user/board/register/${bd_type}"
+																			role="button">글쓰기</a>
+																	</c:if>
+														</c:if>
+													</div>
 												</div>
-												<a class="btn btn-primary" href="/user/board/register" role="button">글쓰기</a>
+
+
 											</div>
 										</div>
 									</div>
 								</div>
 							</section>
+							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div>
 					</main>
 
 					<footer class="footer mt-auto py-3">
-						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 					</footer>
 
+
+					<script>
+
+						// 폼 태그 참조
+						let actionForm = document.getElementById("actionForm");
+
+						// <form id="actionForm"> 태그를 참조하여 필요한 정보를 변경 및 사용
+
+						// 1) 페이지 번호 클릭 시 동작되는 이벤트 설정
+						// <a class="movepage">1</a><a class="movepage">2</a><a class="movepage">3</a><a class="movepage">4</a><a class="movepage">5</a> ...
+						const movePages = document.getElementsByClassName("movepage");
+						Array.from(movePages).forEach(function (mv_page) {
+							// actionForm 폼 전송 작업
+							mv_page.addEventListener("click", function (event) {
+								event.preventDefault();
+								// console.log("페이지 번호:", event.target.dataset.page); // data-page -> dataset.page
+								document.getElementById("pageNum").value = event.target.dataset.page;
+
+								actionForm.setAttribute("action", "/user/board/list/${bd_type}");
+								actionForm.submit(); // /user/board/list로 전송
+							});
+						});
+
+						// 2) 제목 클릭 시 이벤트 설정: 게시물 읽기
+						// <a class="move" href="#" data-bd_number="게시물 번호"></a>
+						const moves = document.getElementsByClassName("move");
+						Array.from(moves).forEach(function (move) {
+							// actionForm 폼 전송 작업
+							move.addEventListener("click", function (event) {
+								event.preventDefault();
+
+								// bd_number 제거 작업: 목록에서 제목을 클릭 후 게시물 읽기에서 뒤로가기 버튼에 의해 목록으로 돌아가서
+								// 다시 제목을 클릭하면 bd_number 파라미터가 추가되기 때문에 기존 bd_number 파라미터를 삭제해야 한다.
+								document.getElementById("bd_number").remove();
+								// document.getElementById("bd_type").remove();
+
+								let bd_number = event.target.dataset.bd_number // data-bd_number -> dataset.bd_number 
+								// let bd_type = event.target.dataset.bd_type // data-bd_type -> dataset.bd_type 
+
+								// actionForm.append("<input type='hidden' name='bd_number' value='" + bd_number + "'>");
+								// HTML DOM 문법
+								const newNumber = document.createElement("input");
+								newNumber.setAttribute("type", "hidden");
+								newNumber.setAttribute("name", "bd_number");
+								newNumber.setAttribute("id", "bd_number");
+								newNumber.setAttribute("value", bd_number); // bd_number는 변수명
+								actionForm.appendChild(newNumber);
+
+								// actionForm.append("<input type='hidden' name='bd_type' value='" + bd_type + "'>");
+								// HTML DOM 문법
+								// const newType = document.createElement("input");
+								// newType.setAttribute("type", "hidden");
+								// newType.setAttribute("name", "bd_type");
+								// newType.setAttribute("id", "bd_type");
+								// newType.setAttribute("value", bd_type); // bd_type은 변수명
+								// actionForm.appendChild(newType);
+
+								actionForm.setAttribute("action", "/user/board/get/${bd_type}"); // /user/board/list -> /user/board/get 전송
+								actionForm.submit();
+							});
+						});
+					</script>
+
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
-
-						<script>
-
-							// 폼 태그 참조
-							let actionForm = document.getElementById("actionForm");
-
-							// <form id="actionForm"> 태그를 참조하여 필요한 정보를 변경 및 사용
-
-							// 1) 페이지 번호 클릭 시 동작되는 이벤트 설정
-							// <a class="movepage">1</a><a class="movepage">2</a><a class="movepage">3</a><a class="movepage">4</a><a class="movepage">5</a> ...
-							const movePages = document.getElementsByClassName("movepage");
-							Array.from(movePages).forEach(function (mv_page) {
-								// actionForm 폼 전송 작업
-								mv_page.addEventListener("click", function (event) {
-									event.preventDefault();
-									// console.log("페이지 번호:", event.target.dataset.page); // data-page -> dataset.page
-									document.getElementById("pageNum").value = event.target.dataset.page;
-
-									actionForm.setAttribute("action", "/user/board/list");
-									actionForm.submit(); // /user/board/list로 전송
-								});
-							});
-
-							// 2) 제목 클릭 시 이벤트 설정: 게시물 읽기
-							// <a class="move" href="#" data-bd_number="게시물 번호"></a>
-							const moves = document.getElementsByClassName("move");
-							Array.from(moves).forEach(function (move) {
-								// actionForm 폼 전송 작업
-								move.addEventListener("click", function (event) {
-									event.preventDefault();
-
-									// bd_number 제거 작업: 목록에서 제목을 클릭 후 게시물 읽기에서 뒤로가기 버튼에 의해 목록으로 돌아가서
-									// 다시 제목을 클릭하면 bd_number 파라미터가 추가되기 때문에 기존 bd_number 파라미터를 삭제해야 한다.
-									document.getElementById("bd_number").remove();
-
-									let bd_number = event.target.dataset.bd_number // data-bd_number -> dataset.bd_number 
-
-									// actionForm.append("<input type='hidden' name='bd_number' value='" + bd_number + "'>");
-									// HTML DOM 문법
-									const newInput = document.createElement("input");
-									newInput.setAttribute("type", "hidden");
-									newInput.setAttribute("name", "bd_number");
-									newInput.setAttribute("id", "bd_number");
-									newInput.setAttribute("value", bd_number); // bd_number는 변수명
-									actionForm.appendChild(newInput);
-
-									actionForm.setAttribute("action", "/user/board/get"); // /user/board/list -> /user/board/get 전송
-									actionForm.submit();
-								});
-							});
-						</script>
-
-						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 			</body>
 
