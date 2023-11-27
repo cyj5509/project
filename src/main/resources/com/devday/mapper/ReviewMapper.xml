@@ -12,6 +12,15 @@
 		(sequence_rv_number.NEXTVAL, #{us_id}, #{pd_number}, #{rv_content}, #{rv_score})
 </insert>
 
+<update id="review_modify" parameterType="com.devday.domain.ReviewVO">
+	UPDATE
+		review_table
+	SET
+		rv_content = #{rv_content}, rv_score = #{rv_score}
+	WHERE
+		rv_number = #{rv_number}
+</update>
+
 <!-- com.devday.mapper.ReviewMapper -->
 <select id="list" parameterType="map" resultType="com.devday.domain.ReviewVO">
 	<![CDATA[

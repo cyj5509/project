@@ -1,5 +1,7 @@
 package com.devday.domain;
 
+import java.util.List;
+
 // import lombok.Data;
 
 /*
@@ -17,6 +19,8 @@ public class CategoryVO {
 	private Integer cg_code; // 1차든 2차든 모든 카테고리 코드
 	private Integer cg_parent_code; // 1차 카테고리 코드
 	private String cg_name; // 카테고리명
+    private List<CategoryVO> secondCategoryList; // 2차 카테고리 목록
+
 	
 	// @Getter, @Setter
 	public Integer getCg_code() {
@@ -37,10 +41,16 @@ public class CategoryVO {
 	public void setCg_name(String cg_name) {
 		this.cg_name = cg_name;
 	}
-	
+	public List<CategoryVO> getSecondCategoryList() {
+		return secondCategoryList;
+	}
+	public void setSecondCategoryList(List<CategoryVO> secondCategoryList) {
+		this.secondCategoryList = secondCategoryList;
+	}
+
 	// @ToString
 	@Override
 	public String toString() {
-		return "CategotyVO [cg_code=" + cg_code + ", cg_parent_code=" + cg_parent_code + ", cg_name=" + cg_name + "]";
+		return "CategotyVO [cg_code=" + cg_code + ", cg_parent_code=" + cg_parent_code + ", cg_name=" + cg_name + ", secondCategoryList=" + secondCategoryList + "]";
 	}
 }

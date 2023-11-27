@@ -8,6 +8,8 @@ import com.devday.dto.Criteria;
 public interface ReviewService {
 
 	void review_insert(ReviewVO vo);
+	
+	void review_modify(ReviewVO vo);
 
 	List<ReviewVO> list(Integer pd_number, Criteria cri); // Criteria에서 검색 관련 필드 사용 안함
 	

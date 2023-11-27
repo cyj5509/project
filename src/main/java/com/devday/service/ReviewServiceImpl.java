@@ -21,6 +21,13 @@ public class ReviewServiceImpl implements ReviewService {
 
 		reviewMapper.review_insert(vo);
 	}
+	
+	@Override
+	public void review_modify(ReviewVO vo) {
+
+		reviewMapper.review_modify(vo);
+	}
+
 
 	@Override
 	public List<ReviewVO> list(Integer pd_number, Criteria cri) {

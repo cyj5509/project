@@ -19,8 +19,8 @@ import lombok.extern.log4j.Log4j;
 */
 
 @ControllerAdvice(basePackages = { "com.devday.controller" })
-@Log4j
 @RequiredArgsConstructor
+@Log4j
 public class GlobalControllerAdvice {
 
 	private final AdCategoryService adCategoryService;
@@ -31,6 +31,12 @@ public class GlobalControllerAdvice {
 		log.info("1차 카테고리 리스트");
 		
 		List<CategoryVO> firstCategoryList = adCategoryService.getFirstCategoryList();
+		
+		for (CategoryVO category : firstCategoryList) {
+			List<CategoryVO> secondCategoryList = adCategoryService.getSecondCategoryList(category.getCg_code());
+			category.setSecondCategoryList(secondCategoryList);
+		}
+		
 		model.addAttribute("firstCategoryList", firstCategoryList);
 	}
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +53,25 @@ public class ReviewController {
 		
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 		
+		return entity;
+	}
+	
+	// 상품후기 수정
+	@PutMapping(value = "/modify", consumes = "application/json", produces = { MediaType.TEXT_PLAIN_VALUE })
+	public ResponseEntity<String> review_modify(@RequestBody ReviewVO vo, HttpSession session) throws Exception {
+
+		log.info("리뷰 수정: " + vo);
+
+		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		vo.setUs_id(us_id);
+
+		ResponseEntity<String> entity = null;
+
+		// DB 저장
+		reviewService.review_modify(vo);
+
+		entity = new ResponseEntity<String>("success", HttpStatus.OK);
+
 		return entity;
 	}
 	

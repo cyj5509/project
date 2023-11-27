@@ -100,7 +100,8 @@
 
 											<c:choose>
 												<c:when test="${empty sessionScope.loginStatus}">
-													<form role="form" method="post" action="./register"> <!-- 절대 경로: /user/user/board/register와 동일 -->
+													<form role="form" method="post" action="./register">
+														<!-- 절대 경로: /user/user/board/register와 동일 -->
 														<div class="box-body">
 															<div class="form-group row">
 																<label for="us_id" class="col-3">작성자(비회원)</label>
