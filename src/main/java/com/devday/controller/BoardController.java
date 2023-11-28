@@ -89,14 +89,13 @@ public class BoardController {
 	
 	@GetMapping("/get/{bd_type}") 
 	public String get(@PathVariable("bd_type") String bd_type, 
-					@RequestParam("bd_number") Long bd_number, 
-				    @ModelAttribute("cri") Criteria cri, Model model) {
+					  @RequestParam("bd_number") Long bd_number, 
+				      @ModelAttribute("cri") Criteria cri, Model model) {
 		
 		log.info("게시물 번호: " + bd_number);
 		log.info("페이징과 검색 정보: " + cri);
 		
 		BoardVO boardVO = boardService.get(bd_number);
-		boardVO.setBd_type(bd_type);
 		
 		model.addAttribute("boardVO", boardVO);
 		
@@ -112,7 +111,6 @@ public class BoardController {
 		log.info("페이징과 검색 정보: " + cri);
 		
 		BoardVO boardVO = boardService.get(bd_number);
-		boardVO.setBd_type(bd_type);
 		
 		model.addAttribute("boardVO", boardVO);
 		

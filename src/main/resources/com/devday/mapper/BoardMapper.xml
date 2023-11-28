@@ -27,13 +27,14 @@
 <sql id="criteria">
 	<trim prefix="(" suffix=") AND" prefixOverrides="OR">
 	<!-- collection은 getTypeArr() 메서드 호출, item은 의미 없음 -->
+	<!-- 파라미터가 Map이기 때문에 'cri.'의 형태로 접근해줘야 한다. -->
     	<foreach collection="cri.typeArr" item="type">
 			<trim prefix="OR">
 			    <choose>
 			        <when test="type == 'T'.toString()">
 			            bd_title LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
-			        <when test="type == 'W'.toString()">
+			        <when test="type == 'I'.toString()">
 			            us_id LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
 			        <when test="type == 'C'.toString()">
@@ -113,7 +114,7 @@
 	SET
 		bd_title = #{bd_title},
 		bd_content = #{bd_content},
-		bd_update_date = SYSDATE,
+		bd_update_date = sysdate,
 		bd_type = #{bd_type}
 	WHERE
 		bd_number = #{bd_number}

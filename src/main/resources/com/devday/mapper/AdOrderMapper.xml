@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 마이바티스 중 시작하기 ─ 매핑된 SQL 구문 살펴보기에서 확인 가능 -->
+  
+<mapper namespace="com.devday.mapper.AdOrderMapper">
+
+<sql id="criteria">
+	<trim prefix="(" suffix=") AND" prefixOverrides="OR">	 <!--  prefixOverrides="AND"는 오류 발생 -->
+    		<foreach collection="typeArr" item="type">
+			<trim prefix="OR">
+			    <choose>
+			        <when test="type == 'N'.toString()">
+			            od_number like '%' || #{keyword} || '%' 
+			        </when>
+			        <when test="type == 'C'.toString()">
+			            od_name like '%' || #{keyword} || '%' 
+			        </when>
+			    </choose>
+			</trim>
+    		</foreach>
+	</trim>
+</sql>
+
+<select id="order_list" resultType="com.devday.domain.OrderBasicVO" parameterType="com.devday.dto.Criteria">
+	<![CDATA[
+	SELECT
+		od_number, us_id, od_name, od_phone, od_postcode, od_addr_basic, od_addr_detail, od_total_price, od_pay_date, od_status, pm_status
+	FROM 
+	    (
+	    SELECT /*+ INDEX_DESC(order_table pk_bs_od_number) */
+    			ROWNUM rn, od_number, us_id, od_name, od_phone, od_postcode, od_addr_basic, od_addr_detail, od_total_price, od_pay_date, od_status, pm_status
+	    FROM
+    			order_table
+	    WHERE]]>
+		    <include refid="criteria"></include> 
+		    <![CDATA[
+	     	ROWNUM <= #{pageNum} * #{amount}
+	    )
+	WHERE
+		rn > (#{pageNum} -1) * #{amount}]]>
+
+</select>
+
+<select id="getTotalCount" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		order_table
+	WHERE 
+		<include refid="criteria"></include>
+		od_number > 0
+</select>
+
+</mapper>

@@ -52,7 +52,7 @@
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#">주문목록</a></li>
+            <li><a href="/admin/order/order_list">주문목록</a></li>
             <li><a href="#">배송목록</a></li>
           </ul>
         </li>

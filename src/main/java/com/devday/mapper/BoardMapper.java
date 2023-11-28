@@ -24,10 +24,12 @@ public interface BoardMapper {
 	List<BoardVO> getList();
 
 	// 페이징 목록(여러 개): List<BoardVO> 리턴값 -> pageNum, amount, type, keyword 사용
-	List<BoardVO> getListWithPaging(@Param("cri") Criteria cri, @Param("bd_type") String bd_type);
+	List<BoardVO> getListWithPaging(@Param("cri") Criteria cri, 
+								   @Param("bd_type") String bd_type);
 
 	// 전체 데이터 개수(검색 포함)
-	int getTotalCount(@Param("cri") Criteria cri, @Param("bd_type") String bd_type);
+	int getTotalCount(@Param("cri") Criteria cri, 
+					  @Param("bd_type") String bd_type);
 
 	// 조회수 증가
 	void readCount(Long bd_number);

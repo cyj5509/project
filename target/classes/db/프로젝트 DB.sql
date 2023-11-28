@@ -277,6 +277,7 @@ CREATE TABLE order_basic_table (
     CONSTRAINT fk_bs_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id)
 );
 
+
 COMMIT;
 
 -- 전체 데이터 조회 및 삭제
@@ -379,7 +380,22 @@ CREATE TABLE board_table (
 );
 
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, '잡담', 'user02', '테스트', '게시판 테스트');
+  VALUES(sequence_bd_number.NEXTVAL, 'notice', 'admin', '공지', '게시판 테스트');
+
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
+  VALUES(sequence_bd_number.NEXTVAL, 'free', 'user01', '자유', '게시판 테스트');
+  
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
+  VALUES(sequence_bd_number.NEXTVAL, 'info', 'user01', '정보', '게시판 테스트');
+
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
+  VALUES(sequence_bd_number.NEXTVAL, 'study', 'user01', '공부', '게시판 테스트');
+
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
+  VALUES(sequence_bd_number.NEXTVAL, 'project', 'user01', '플젝', '게시판 테스트');
+  
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
+  VALUES(sequence_bd_number.NEXTVAL, 'inquery', 'user01', '문의', '게시판 테스트');
 
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
 SELECT sequence_bd_number.NEXTVAL, bd_type, us_id, bd_title, bd_content FROM board_table;
@@ -391,8 +407,9 @@ ALTER TABLE board_table ADD CONSTRAINT fk_bd_us_id
 FOREIGN KEY (us_id) REFERENCES user_table(us_id);
 
 -- 시퀀스: 게시판 테이블의 게시판 번호 컬럼(bd_number)
+DROP SEQUENCE sequence_bd_number;
 CREATE SEQUENCE sequence_bd_number;
 
--- 전체 데이터 조회 및 삭제
-SELECT * FROM board_table;
+-- 전체 데이터 조회 및 삭제(768개 행 삽입)
+SELECT * FROM board_table WHERE bd_type = '';
 DELETE FROM board_table;

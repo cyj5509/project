@@ -134,28 +134,28 @@
 										<div class="box">
 											<div class="box-header with-border">
 												<h2 class="box-title mt-5"><b>
-													<c:choose>
-														<c:when test="${bd_type == 'notice'}">공지사항</c:when>
-														<c:when test="${bd_type == 'free'}">자유 게시판</c:when>
-														<c:when test="${bd_type == 'info'}">정보 공유</c:when>
-														<c:when test="${bd_type == 'study'}">스터디 모집</c:when>
-														<c:when test="${bd_type == 'project'}">프로젝트 모집</c:when>
-														<c:when test="${bd_type == 'inquery'}">Q&A(문의)</c:when>
-														<c:otherwise>전체 게시판</c:otherwise>
-													</c:choose>
-												</b></h2>
+														<c:choose>
+															<c:when test="${bd_type == 'notice'}">공지사항</c:when>
+															<c:when test="${bd_type == 'free'}">자유 게시판</c:when>
+															<c:when test="${bd_type == 'info'}">정보 공유</c:when>
+															<c:when test="${bd_type == 'study'}">스터디 모집</c:when>
+															<c:when test="${bd_type == 'project'}">프로젝트 모집</c:when>
+															<c:when test="${bd_type == 'inquery'}">Q&A(문의)</c:when>
+															<c:otherwise>전체 게시판</c:otherwise>
+														</c:choose>
+													</b></h2>
 											</div>
 											<div class="row" style="text-align: right;">
 												<div class="col-12">
-													<form action="/user/board/list" method="get">
+													<form action="/user/board/list/${bd_type}" method="get">
 														<select name="type">
 															<option selected>검색 종류 선택</option>
 															<option value="T" ${pageMaker.cri.type=='T' ? 'selected' : '' }>제목</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>내용</option>
-															<option value="W" ${pageMaker.cri.type=='W' ? 'selected' : '' }>작성자</option>
+															<option value="I" ${pageMaker.cri.type=='I' ? 'selected' : '' }>작성자</option>
 															<option value="TC" ${pageMaker.cri.type=='TC' ? 'selected' : '' }>제목+내용</option>
-															<option value="TW" ${pageMaker.cri.type=='TW' ? 'selected' : '' }>제목+작성자</option>
-															<option value="TWC" ${pageMaker.cri.type=='TWC' ? 'selected' : '' }>제목+작성자+내용</option>
+															<option value="TI" ${pageMaker.cri.type=='TI' ? 'selected' : '' }>제목+작성자</option>
+															<option value="TCI" ${pageMaker.cri.type=='TCI' ? 'selected' : '' }>제목+내용+작성자</option>
 														</select>
 														<input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
@@ -166,7 +166,7 @@
 													<!-- <form id="actionForm">의 용도 -->
 													<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용: action="/user/board/get" 
 												<!-- 2) 목록에서 제목을 클릭할 때 사용: action="/user/board/get" -->
-													<form id="actionForm" action="/user/board/list" method="get">
+													<form id="actionForm" action="/user/board/list/${bd_type}" method="get">
 														<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
 														<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
@@ -221,7 +221,8 @@
 																<!-- 맨 처음 표시 여부 -->
 																<c:if test="${pageMaker.foremost}">
 																	<li class="page-item">
-																		<a href="/user/board/list/${bd_type}?pageNum=1" class="page-link">처음으로</a>
+																		<a href="/user/board/list/${bd_type}?pageNum=1" class="page-link"
+																			data-action="first">처음</a>
 																	</li>
 																</c:if>
 
@@ -229,7 +230,7 @@
 																<c:if test="${pageMaker.prev}">
 																	<li class="page-item">
 																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.startPage - 1}"
-																			class="page-link">이전</a>
+																			class="page-link" data-action="prev">이전</a>
 																	</li>
 																</c:if>
 
@@ -247,14 +248,16 @@
 																<!-- 다음 표시 여부 -->
 																<c:if test="${pageMaker.next}">
 																	<li class="page-item">
-																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.endPage + 1}" class="page-link">다음</a>
+																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.endPage + 1}"
+																			class="page-link" data-action="next">다음</a>
 																	</li>
 																</c:if>
 
 																<!-- 맨 끝 표시 여부 -->
 																<c:if test="${pageMaker.rearmost}">
 																	<li class="page-item">
-																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.readEnd}" class="page-link">끝으로</a>
+																		<a href="/user/board/list/${bd_type}?pageNum=${pageMaker.readEnd}" class="page-link"
+																			data-action="last">끝</a>
 																	</li>
 																</c:if>
 															</ul>
@@ -315,7 +318,11 @@
 							});
 						});
 
-						// 2) 제목 클릭 시 이벤트 설정: 게시물 읽기
+						// // 2) 처음, 이전, 다음, 끝 버튼 클릭 시 동작되는 이벤트 설정
+						
+
+
+						// 3) 제목 클릭 시 이벤트 설정: 게시물 읽기
 						// <a class="move" href="#" data-bd_number="게시물 번호"></a>
 						const moves = document.getElementsByClassName("move");
 						Array.from(moves).forEach(function (move) {
