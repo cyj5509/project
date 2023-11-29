@@ -32,7 +32,7 @@
 	    SELECT /*+ INDEX_DESC(order_table pk_bs_od_number) */
     			ROWNUM rn, od_number, us_id, od_name, od_phone, od_postcode, od_addr_basic, od_addr_detail, od_total_price, od_pay_date, od_status, pm_status
 	    FROM
-    			order_table
+    			order_basic_table
 	    WHERE]]>
 		    <include refid="criteria"></include> 
 		    <![CDATA[
@@ -47,10 +47,78 @@
 	SELECT
 		COUNT(*)
 	FROM
-		order_table
+		order_basic_table
 	WHERE 
 		<include refid="criteria"></include>
 		od_number > 0
 </select>
+
+<!-- 주문상세 1 ─ resultType 사용 -->
+<select id="orderDetailInfo1" parameterType="Long" resultType="com.devday.domain.OrderDetailInfoVO">
+	SELECT
+		OD.od_number, OD.pd_number, OD.od_amount, P.pd_name, P.pd_price, OD.od_amount * P.pd_price AS od_total_price, P.pd_image_folder, P.pd_image
+	FROM
+		order_detail_table OD, product_table P
+	WHERE 
+		OD.pd_number = P.pd_number AND OD.od_number = #{od_number}
+</select>
+
+<!-- 주문상세 2 ─ resultType을 사용하지 않고 resultMap 사용 -->
+<select id="orderDetailInfo2" parameterType="Long" resultMap="orderDetailProductMap">
+	SELECT
+		OD.od_number, OD.pd_number, OD.od_amount, P.pd_name, P.pd_price, OD.od_amount * P.pd_price AS od_total_price, P.pd_image_folder, P.pd_image
+	FROM
+		order_detail_table OD, product_table P
+	WHERE 
+		OD.pd_number = P.pd_number AND OD.od_number = #{od_number}
+</select>
+
+<!-- 테이블의 컬럼명과 클래스의 필드명이 다른 경우, resultMap 또는 컬럼명을 별칭으로 일치시킨 뒤 resultType으로 처리 -->
+<!-- resultMap: 테이블의 컬럼명과 클래스의 필드명이 다를 경우 매핑하는 목적 -->
+
+<!-- OrderDetailProductVO 클래스를 나타내는 의미 -->
+<!-- 기존 클래스를 <collection>으로 표현 -->
+<resultMap type="com.devday.domain.OrderDetailProductVO" id="orderDetailProductMap">
+	<collection property="orderDetailVO" resultMap="orderDetailMap"></collection>
+	<collection property="productVO" resultMap="productMap"></collection>
+</resultMap>
+
+<!-- OrderDetailVO 필드에서 필요한 정보 저장 -->
+<!-- id는 기본키, result는 일반 필드 -->
+<resultMap type="com.devday.domain.OrderDetailVO" id="orderDetailMap">
+	<id property="od_number" column="od_number" />
+	<id property="pd_number" column="pd_number" />
+	<result property="od_amount" column="od_amount" />
+	<result property="od_price" column="od_price" />
+</resultMap>
+
+<!-- ProductVO 필드에서 필요한 정보 저장 -->
+<!-- id는 기본키, result는 일반 필드 -->
+<resultMap type="com.devday.domain.ProductVO" id="productMap">
+	<id property="pd_number" column="pd_number" />
+	<result property="cg_code" column="cg_code" />
+	<result property="pd_name" column="pd_name" />
+	<result property="pd_price" column="pd_price" />
+	<result property="pd_discount" column="pd_discount" />
+	<result property="pd_company" column="pd_company" />
+	<result property="pd_content" column="pd_content" />
+	<result property="pd_image_folder" column="pd_image_folder" />
+	<result property="pd_image" column="pd_image" />
+	<result property="pd_amount" column="pd_amount" />
+	<result property="pd_buy_status" column="pd_buy_status" />
+	<result property="pd_register_date" column="pd_register_date" />
+	<result property="pd_update_date" column="pd_update_date" />
+</resultMap>
+
+<resultMap type="com.devday.domain.OrderDetailProductVO" id="orderDetailProductMap">
+
+</resultMap>
+
+<delete id="order_product_delete" parameterType="map">
+	DELETE FROM
+		order_detail_table
+	WHERE
+		od_number = #{od_number} AND pd_number = #{pd_number} <!-- 복합키 설정 -->
+</delete>
 
 </mapper>

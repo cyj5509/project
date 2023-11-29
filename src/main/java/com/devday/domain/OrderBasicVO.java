@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 /*
-CREATE TABLE order_basic_table(
+CREATE TABLE order_basic_table (
     od_number         NUMBER CONSTRAINT pk_bs_od_number PRIMARY KEY,  -- 주문 번호
     us_id             VARCHAR2(15)          NOT NULL,                 -- 회원 아이디
     od_name           VARCHAR2(30)          NOT NULL,                 -- 주문자의 이름
@@ -13,7 +13,7 @@ CREATE TABLE order_basic_table(
     od_postcode       CHAR(5)               NOT NULL,                 -- 주문자의 우편번호
     od_addr_basic     VARCHAR2(50)          NOT NULL,                 -- 주문자의 기본 주소
     od_addr_detail    VARCHAR2(50)          NOT NULL,                 -- 주문자의 상세 주소
-    od_total_price    NUMBER                NOT NULL,                 -- 상품 전체 수량
+    od_total_price    NUMBER                NOT NULL,                 -- 전체 주문 금액
     od_pay_date       DATE DEFAULT sysdate  NOT NULL,                 -- 결제 일자
     od_status         VARCHAR2(20)          NOT NULL,                 -- 주문 상태
     pm_status         VARCHAR2(20)          NOT NULL,                 -- 결제 상태

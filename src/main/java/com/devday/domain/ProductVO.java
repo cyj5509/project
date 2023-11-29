@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 
 /*
-CREATE TABLE product_table(
+CREATE TABLE product_table (
     pd_number            NUMBER CONSTRAINT pk_pd_number PRIMARY KEY,  -- 상품 번호
     cg_code              NUMBER                NULL,                  -- 카테고리 코드(2차 이후)
     pd_name              VARCHAR2(50)          NOT NULL,              -- 상품 이름
@@ -17,7 +17,7 @@ CREATE TABLE product_table(
     pd_content           VARCHAR2(4000)        NOT NULL,              -- 상품 상세 내용
     pd_image_folder      VARCHAR2(50)          NOT NULL,              -- 상품 이미지 폴더명
     pd_image             VARCHAR2(100)         NOT NULL,              -- 상품 이미지
-    pd_amount            NUMBER                NOT NULL,              -- 상품 수량
+    pd_amount            NUMBER                NOT NULL,              -- 상품 수량(재고)
     pd_buy_status        CHAR(1)               NOT NULL,              -- 판매 여부
     pd_register_date     DATE DEFAULT sysdate  NOT NULL,              -- 등록 일자
     pd_update_date       DATE DEFAULT sysdate  NOT NULL,              -- 수정 일자
@@ -33,7 +33,7 @@ public class ProductVO {
 	private Integer pd_number; // 시퀀스 생성(사용자로부터 직접 입력받지 않음)
 	private Integer cg_code; // cg_code: 2차 카테고리 코드
 	private String pd_name;
-	private int pd_price;
+	private int pd_price; // od_price와 동일
 	private int pd_discount;
 
 	private String pd_company;

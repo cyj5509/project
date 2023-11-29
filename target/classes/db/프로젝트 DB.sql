@@ -209,14 +209,14 @@ DROP TABLE product_table;
 CREATE TABLE product_table (
     pd_number            NUMBER CONSTRAINT pk_pd_number PRIMARY KEY,  -- 상품 번호
     cg_code              NUMBER                NULL,                  -- 카테고리 코드(2차 이후)
-    pd_name              VARCHAR2(100)          NOT NULL,              -- 상품 이름
+    pd_name              VARCHAR2(100)         NOT NULL,              -- 상품 이름
     pd_price             NUMBER                NOT NULL,              -- 상품 개별 가격
     pd_discount          NUMBER                NOT NULL,              -- 상품 할인율
-    pd_company           VARCHAR2(100)          NOT NULL,              -- 상품 제조사(또는 출판사)
+    pd_company           VARCHAR2(100)         NOT NULL,              -- 상품 제조사(또는 출판사)
     pd_content           VARCHAR2(4000)        NOT NULL,              -- 상품 상세 내용
-    pd_image_folder      VARCHAR2(100)          NOT NULL,              -- 상품 이미지 폴더명
+    pd_image_folder      VARCHAR2(100)         NOT NULL,              -- 상품 이미지 폴더명
     pd_image             VARCHAR2(200)         NOT NULL,              -- 상품 이미지
-    pd_amount            NUMBER                NOT NULL,              -- 상품 수량
+    pd_amount            NUMBER                NOT NULL,              -- 상품 수량(재고)
     pd_buy_status        CHAR(1)               NOT NULL,              -- 판매 여부
     pd_register_date     DATE DEFAULT sysdate  NOT NULL,              -- 등록 일자
     pd_update_date       DATE DEFAULT sysdate  NOT NULL,              -- 수정 일자
@@ -270,7 +270,7 @@ CREATE TABLE order_basic_table (
     od_postcode       CHAR(5)               NOT NULL,                 -- 주문자의 우편번호
     od_addr_basic     VARCHAR2(50)          NOT NULL,                 -- 주문자의 기본 주소
     od_addr_detail    VARCHAR2(50)          NOT NULL,                 -- 주문자의 상세 주소
-    od_total_price    NUMBER                NOT NULL,                 -- 상품 전체 수량
+    od_total_price    NUMBER                NOT NULL,                 -- 전체 주문 금액
     od_pay_date       DATE DEFAULT sysdate  NOT NULL,                 -- 결제 일자
     od_status         VARCHAR2(20)          NOT NULL,                 -- 주문 상태
     pm_status         VARCHAR2(20)          NOT NULL,                 -- 결제 상태
@@ -292,8 +292,8 @@ DROP TABLE order_detail_table;
 CREATE TABLE order_detail_table (
     od_number     NUMBER    NOT NULL CONSTRAINT fk_dt_od_number REFERENCES order_basic_table(od_number),  -- 주문 번호
     pd_number     NUMBER    NOT NULL CONSTRAINT fk_dt_pd_number REFERENCES product_table(pd_number),      -- 상품 번호
-    od_amount     NUMBER    NOT NULL,                                                                     -- 개별 수량
-    od_price      NUMBER    NOT NULL,                                                                     -- 개별 가격
+    od_amount     NUMBER    NOT NULL,                                                                     -- 상품 개별 수량
+    od_price      NUMBER    NOT NULL,                                                                     -- 상품 개별 가격
     CONSTRAINT ck_dt_number PRIMARY KEY (od_number, pd_number)
 );
 
@@ -306,7 +306,29 @@ COMMIT;
 SELECT * FROM order_detail_table;
 DELETE FROM order_detail_table;
 
+-- 주문상세 정보: 주문상세 테이블, 상품 테이블
+-- JOIN: 1) 오라클 조인 2) ANSI-SQL 표준 조인
+-- OD.DT_PRICE는 P.PRO_PRICE와 동일
+-- 1) 오라클 조인
+SELECT OD.od_number, OD.pd_number, OD.od_amount, OD.od_price,
+P.pd_number, P.cg_code, P.pd_name, P.pd_price, P.pd_discount, P.pd_company,
+P.pd_content, P.pd_image_folder, P.pd_image, P.pd_amount, P.pd_buy_status, P.pd_register_date, P.pd_update_date
+FROM order_detail_table OD, product_table P
+WHERE OD.pd_number = P.pd_number
+AND OD.od_number = 선택 주문번호;
 
+-- 2) ANSI 조인
+SELECT OD.od_number, OD.pd_number, OD.od_amount, OD.od_price,
+P.pd_number, P.cg_code, P.pd_name, P.pd_price, P.pd_discount, P.pd_company,
+P.pd_content, P.pd_image_folder, P.pd_image, P.pd_amount, P.pd_buy_status, P.pd_register_date, P.pd_update_date
+FROM order_detail_table OD INNER JOIN product_table P
+ON OD.pd_number = P.pd_number
+WHERE OD.od_number = 선택 주문번호;
+
+SELECT OD.od_number, OD.pd_number, OD.od_amount, P.pd_number, P.pd_name, P.pd_price, P.pd_image_folder, P.pd_image
+FROM order_detail_table OD, product_table P
+WHERE OD.pd_number = P.pd_number
+AND OD.od_number = 선택 주문번호;
 
 -- 8. 결제 테이블: 카카오페이 및 무통장입금
 -- 기본키: 결제 코드 / 외래키: 없음

@@ -19,7 +19,7 @@
 					<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 					<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 					<!-- Handlebars(자바스크립트 템플릿 엔진): 서버에서 보내온 JSON 형태의 데이터를 사용하여 작업을 편하게 할 수 있는 특징 -->
-					<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+					<script src="/js/handlebars.js"></script>
 					<script id="reviewTemplate" type="text/x-handlebars-template">
 						<table class="table table-sm">
 							<thead>

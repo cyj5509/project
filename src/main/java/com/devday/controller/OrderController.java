@@ -146,7 +146,7 @@ public class OrderController {
 		return readyResponse;
 	}
 	
-	// 결제 승인 요청 작업 -> http://localhost:8080/user/order/orderComplete
+	// 결제 승인 요청 작업 -> http://localhost:8080/user/order/order_complete
 	@GetMapping("/orderApproval")
 	public String orderApproval(@RequestParam("pg_token") String pg_token, HttpSession session) {
 		
@@ -155,12 +155,13 @@ public class OrderController {
 		Long odr_code = (Long) session.getAttribute("odr_code");
 		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();;
 
-		ApproveResponse approveResponse = kakaoPayServiceImpl.payApprove(tid, odr_code, user_id, pg_token);
+		// ApproveResponse approveResponse = kakaoPayServiceImpl.payApprove(tid, odr_code, user_id, pg_token);
+		kakaoPayServiceImpl.payApprove(tid, odr_code, user_id, pg_token);
 
 		session.removeAttribute("tid");
 		session.removeAttribute("odr_code");
 		
-		return "redirect:/user/order/orderComplete";
+		return "redirect:/user/order/order_complete";
 	}
 	
 	// 결제 완료 페이지: 
