@@ -12,7 +12,7 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>데브데이</title>
+				<title>데브데이: 커뮤니티</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -20,57 +20,6 @@
 					<link rel="stylesheet" href="/css/header.css">
 
 					<style>
-						.bd-placeholder-img {
-							font-size: 1.125rem;
-							text-anchor: middle;
-							-webkit-user-select: none;
-							-moz-user-select: none;
-							-ms-user-select: none;
-							user-select: none;
-						}
-
-						@media (min-width: 768px) {
-							.bd-placeholder-img-lg {
-								font-size: 3.5rem;
-							}
-						}
-
-						.carousel-control-prev,
-						.carousel-control-next {
-							display: block;
-							top: 62.5%;
-							transform: translateY(-50%);
-						}
-
-						.carousel-control-prev {
-							left: 0;
-						}
-
-						.carousel-control-next {
-							right: 0;
-						}
-
-						.custom-btn {
-							border: 2px solid black;
-							background-color: rgba(192, 192, 192, 0.5);
-							color: black;
-							transition: background-color 0.3s ease;
-						}
-
-						.custom-btn:hover {
-							background-color: black;
-							color: white;
-						}
-
-						.carousel-item img {
-							opacity: 0.7;
-						}
-
-						.carousel-caption h2,
-						.carousel-caption p {
-							text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-						}
-
 						.box-title {
 							font-size: 40px;
 							margin-bottom: 20px;
@@ -81,7 +30,6 @@
 							padding: 20px;
 						}
 					</style>
-
 			</head>
 
 			<body>

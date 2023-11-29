@@ -21,7 +21,7 @@ public interface AdProductMapper {
 	// @Param(""): 파라미터가 2개 이상 사용되는 경우 해당 어노테이션 필수(Mapper에서만 쓰임)
 	void pd_checked_modify1(
 			@Param("pd_number") Integer pd_number, 
-			@Param("prd_price") Integer pd_price,
+			@Param("pd_price") Integer pd_price,
 			@Param("pd_buy_status") String pd_buy_status
 	);
 

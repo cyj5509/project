@@ -51,8 +51,8 @@ public class CartController {
 		// 클라이언트 ─ AJAX 방식으로 상품코드, 상품수량 2개 정보만 전송 -> data: {pro_num:
 		// $(this).data("pro_num"), cart_amount: 1}
 		// Object javax.servlet.http.HttpSession.getAttribute(String name)
-		String user_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
-		vo.setUs_id(user_id);
+		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		vo.setUs_id(us_id);
 
 		cartService.cart_add(vo);
 
@@ -65,11 +65,11 @@ public class CartController {
 	@GetMapping("/cart_list")
 	public void cart_list(HttpSession session, Model model) throws Exception {
 
-		String mbsp_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
 
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")
-		List<CartDTOList> cart_list = cartService.cart_list(mbsp_id);
+		List<CartDTOList> cart_list = cartService.cart_list(us_id);
 		
 		int cart_total_price = 0;
 
@@ -110,10 +110,10 @@ public class CartController {
 	
 	// 장바구니 수량 변경
 	@PostMapping("/cart_amount_change")
-	public ResponseEntity<String> cart_amount_change(Long cart_code, int cart_amount) throws Exception {
+	public ResponseEntity<String> cart_amount_change(Long ct_code, int ct_amount) throws Exception {
 		ResponseEntity<String> entity = null;
 		
-		cartService.cart_amount_change(cart_code, cart_amount);
+		cartService.cart_amount_change(ct_code, ct_amount);
 
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 		return entity;
@@ -121,10 +121,10 @@ public class CartController {
 	
 	// 장바구니 목록에서 개별 삭제(AJAX용)
 	@PostMapping("/cart_list_del")
-	public ResponseEntity<String> cart_list_del(Long cart_code) throws Exception {
+	public ResponseEntity<String> cart_list_del1(Long ct_code) throws Exception {
 		ResponseEntity<String> entity = null;
 				
-		cartService.cart_list_del(cart_code);
+		cartService.cart_list_del(ct_code);
 		
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 		return entity;
@@ -132,16 +132,16 @@ public class CartController {
 	
 	// 장바구니 목록에서 개별 삭제(Non-AJAX용)
 	@GetMapping("/cart_list_del")
-	public String cart_list_del2(Long cart_code) throws Exception {
+	public String cart_list_del2(Long ct_code) throws Exception {
 	
-		cartService.cart_list_del(cart_code);
+		cartService.cart_list_del(ct_code);
 		
 		return "redirect:/user/cart/cart_list";
 	}
 	
 	//장바구니 선택삭제
 	@PostMapping("/cart_sel_delete")
-	public ResponseEntity<String> cart_sel_delete(@RequestParam("cart_code_arr[]") List<Long> cart_code_arr) {
+	public ResponseEntity<String> cart_sel_delete(@RequestParam("cart_code_arr[]") List<Long> ct_code_arr) {
 		
 		ResponseEntity<String> entity = null;
 		
@@ -153,7 +153,7 @@ public class CartController {
 		*/
 		
 		//방법2. mybatis foreach : https://java119.tistory.com/85
-		cartService.cart_sel_delete(cart_code_arr);
+		cartService.cart_sel_delete(ct_code_arr);
 		
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 		

@@ -48,8 +48,10 @@ $(document).ready(function () {
     let cg_name = $(this).data("cg_name");
     // 한글이나 특수문자를 서버에 보낼 때 오류가 나는 경우 인코딩 과정에 의해 처리할 수 있다.: https://travelpark.tistory.com/30 
     // location.href = `/user/product/prd_list/${변수}`: 주소의 일부분이 파라미터 값으로 사용
-    location.href = `/user/product/prd_list?cg_code=${cg_code}&cg_name=${cg_name}`;
+    location.href = `/user/product/pd_list?cg_code=${cg_code}&cg_name=${cg_name}`;
   });
+
+});
 
   // // 햄버거 메뉴 클릭 이벤트
   // $('.hamburger-menu').on('click', function () {
@@ -62,5 +64,3 @@ $(document).ready(function () {
   //   let subMenu = $(this).find('.second-category');
   //   subMenu.css('display', subMenu.css('display') === 'block' ? 'none' : 'block');
   // });
-
-});

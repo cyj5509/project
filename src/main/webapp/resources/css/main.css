@@ -1,0 +1,35 @@
+@charset "UTF-8";
+
+.carousel-control-prev, .carousel-control-next {
+	display: block;
+	top: 62.5%;
+	transform: translateY(-50%);
+}
+
+.carousel-control-prev {
+	left: 0;
+}
+
+.carousel-control-next {
+	right: 0;
+}
+
+.custom-btn {
+	border: 2px solid black;
+	background-color: rgba(192, 192, 192, 0.5);
+	color: black;
+	transition: background-color 0.3s ease;
+}
+
+.custom-btn:hover {
+	background-color: black;
+	color: white;
+}
+
+.carousel-item img {
+	opacity: 0.7;
+}
+
+.carousel-caption h2, .carousel-caption p {
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}

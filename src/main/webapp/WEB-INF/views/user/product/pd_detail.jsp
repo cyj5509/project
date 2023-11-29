@@ -14,6 +14,9 @@
 				<title>Pricing example · Bootstrap v4.6</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/header.css">
+
 					<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 					<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
 					<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
@@ -27,7 +30,7 @@
 									<th scope="col">번호</th>
 									<th scope="col">리뷰내용</th>
 									<th scope="col">평점</th>
-									<th scope="col">날짜</th>th>
+									<th scope="col">날짜</th>
 									<th scope="col">비고</th>
 								</tr>
 							</thead>
@@ -92,7 +95,7 @@
 						<div class="container">
 							<div class="card-deck mb-3 text-center row">
 								<div class="col-md-6"> <!-- 상품 이미지 -->
-									<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="200"
+									<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="450"
 										src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
 										alt="">
 								</div>
@@ -212,16 +215,15 @@
 									$("button[name='btn_cart_add']").on("click", function () {
 										// console.log("장바구니");
 										$.ajax({
-											url: '/cart/cart_add', // url: '장바구니 추가 주소', 
+											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
 											type: 'post',
 											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-											data: { pd_number: $(this).data("pd_number"), cart_amount: $("#btn_quantity").val() }, // mbsp_id는 스프링에서 자체 처리
+											data: { pd_number: $(this).data("pd_number"), ct_amount: $("#btn_quantity").val() }, // mbsp_id는 스프링에서 자체 처리
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
-													alert("장바구니에 추가됨");
-													if (confirm("장바구니로 이동하시겠습니까?")) {
-														location.href = "/cart/cart_list"
+													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
+														location.href = "/user/cart/cart_list"
 													}
 												}
 											}
@@ -231,7 +233,7 @@
 									// 구매하기(주문)
 									$("button[name='btn_order']").on("click", function () {
 
-										let url = `/user/order/order_ready?pd_number=$(this).data("pd_number")&cart_amount=$("#btn_quantity").val()`;
+										let url = `/user/order/order_ready?pd_number=$(this).data("pd_number")&ct_amount=$("#btn_quantity").val()`;
 										location.href = url;
 									});
 
@@ -252,7 +254,7 @@
 									// 수량 변경 시
 									$("#btn_quantity").on("change", function () {
 										// parseInt(): 문자열을 정수로 변환(현재 작동에서는 정상 작동해서 불필요할 수 있음. 더하기 작업 등에 쓰임)
-										let tot_price = $("#unit_price").text() * $("#btn_quantity").val();
+										let tot_price = parseInt($("#unit_price").text() * $("#btn_quantity").val());
 
 										// 총 상품금액 표시
 										$("#tot_price").text(tot_price);

@@ -14,24 +14,9 @@
 				<title>Pricing example · Bootstrap v4.6</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
-
-					<style>
-						.bd-placeholder-img {
-							font-size: 1.125rem;
-							text-anchor: middle;
-							-webkit-user-select: none;
-							-moz-user-select: none;
-							-ms-user-select: none;
-							user-select: none;
-						}
-
-						@media (min-width : 768px) {
-							.bd-placeholder-img-lg {
-								font-size: 3.5rem;
-							}
-						}
-					</style>
-
+				
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/header.css">
 
 			</head>
 
@@ -144,16 +129,15 @@
 									$("button[name='btn_cart_add']").on("click", function () {
 										// console.log("장바구니");
 										$.ajax({
-											url: '/cart/cart_add', // url: '장바구니 추가 주소', 
+											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
 											type: 'post',
 											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-											data: { pd_number: $(this).data("pd_number"), cart_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+											data: { pd_number: $(this).data("pd_number"), ct_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
-													alert("장바구니에 추가됨");
-													if (confirm("장바구니로 이동하시겠습니까?")) {
-														location.href = "/cart/cart_list"
+													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
+														location.href = "/user/cart/cart_list"
 													}
 												}
 											}

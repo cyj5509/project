@@ -110,10 +110,6 @@
 	<result property="pd_update_date" column="pd_update_date" />
 </resultMap>
 
-<resultMap type="com.devday.domain.OrderDetailProductVO" id="orderDetailProductMap">
-
-</resultMap>
-
 <delete id="order_product_delete" parameterType="map">
 	DELETE FROM
 		order_detail_table

@@ -11,26 +11,13 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>Pricing example · Bootstrap v4.6</title>
+				<title>데브데이: 장바구니</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
-
-					<style>
-						.bd-placeholder-img {
-							font-size: 1.125rem;
-							text-anchor: middle;
-							-webkit-user-select: none;
-							-moz-user-select: none;
-							-ms-user-select: none;
-							user-select: none;
-						}
-
-						@media (min-width : 768px) {
-							.bd-placeholder-img-lg {
-								font-size: 3.5rem;
-							}
-						}
-					</style>
+				
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/header.css">
+					
 			</head>
 
 			<body>
@@ -57,20 +44,20 @@
 							<tbody style="text-align: center;">
 								<c:forEach items="${cart_list}" var="cartDTO">
 									<tr>
-										<td><input type="checkbox" name="cart_code" value="${cartDTO.cart_code}"></td>
+										<td><input type="checkbox" name="ct_code" value="${cartDTO.ct_code}"></td>
 										<td><img width="50%" height="50"
-												src="/user/product/imageDisplay?dateFolderName=${cartDTO.prd_up_folder}&fileName=${cartDTO.prd_img}"
+												src="/user/product/imageDisplay?dateFolderName=${cartDTO.pd_image_folder}&fileName=${cartDTO.pd_image}"
 												alt="">
 										</td>
-										<td>${cartDTO.prd_name}</td>
-										<td><span id="unitPrice">${cartDTO.prd_price}</span></td>
+										<td>${cartDTO.pd_name}</td>
+										<td><span id="unitPrice">${cartDTO.pd_price}</span></td>
 										<td>
-											<input type="number" name="cart_amount" value="${cartDTO.cart_amount}" style="width: 45px;">
+											<input type="number" name="ct_amount" value="${cartDTO.ct_amount}" style="width: 45px;">
 											<button type="button" name="btn_cart_amount_change" class="btn btn-info">변경</button>
 										</td>
-										<td><span class="unitTotalPrice" id="unitTotalPrice">${cartDTO.prd_price * cartDTO.cart_amount}</span></td>
+										<td><span class="unitTotalPrice" id="unitTotalPrice">${cartDTO.pd_price * cartDTO.ct_amount}</span></td>
 												<!-- button 태그 자체에 상품코드를 숨겨두거나 input 태그에 숨겨두는 등 방식은 다양함 -->
-												<!-- <td><input type="checkbox" name="cart_code" value="${cartDTO.cart_code}"></td>-->
+												<!-- <td><input type="checkbox" name="ct_code" value="${cartDTO.ct_code}"></td>-->
 										<td>
 											<button type="button" name="btn_ajax_cart_del" class="btn btn-danger">삭제 1(AJAX용)</button>
 											<button type="button" name="btn_nonAjax_cart_del" class="btn btn-danger">삭제 2(Non-AJAX용)</button>
@@ -113,20 +100,20 @@
 									// name='btn_cart_amount_change' 값 저장 팔요
 									let cur_btn_change = $(this);
 									// $(this).prev(): 이전 태그를 가져오는 방식 사용할 수도 있음
-									let cart_amount = $(this).parent().find("input[name='cart_amount']").val();
-									// console.log("수량", cart_amount)
-									let cart_code = $(this).parent().parent().find("input[name='cart_code']").val();
-									// console.log("장바구니 코드", cart_code);
+									let ct_amount = $(this).parent().find("input[name='ct_amount']").val();
+									// console.log("수량", ct_amount)
+									let ct_code = $(this).parent().parent().find("input[name='ct_code']").val();
+									// console.log("장바구니 코드", ct_code);
 
 									$.ajax({
 										url: '/user/cart/cart_amount_change',
 										type: 'post',
-										data: { cart_code: cart_code, cart_amount: cart_amount },
+										data: { ct_code: ct_code, ct_amount: ct_amount },
 										dataType: 'text',
 										success: function (result) {
 											if (result == 'success') {
 												
-												alert("수량변경이 되었습니다.");
+												alert("상품의 수량이 변경되었습니다.");
 												// 합계금액 계산작업
 												// 금액 = (판매가 - (판매가 * 할인율)) * 수량
 												let unitPrice = cur_btn_change.parent().parent().find("span#unitPrice").text();
@@ -134,7 +121,7 @@
 
 												// 장바구니 코드별 단위금액
 												let unitTotalPrice = cur_btn_change.parent().parent().find("span#unitTotalPrice");
-												unitTotalPrice.text((unitPrice - (unitPrice * unitDiscount)) * cart_amount); // text(): 입력 양식이 있는 경우(?)
+												unitTotalPrice.text((unitPrice - (unitPrice * unitDiscount)) * ct_amount); // text(): 입력 양식이 있는 경우(?)
 
 												// 전체 주문금액
 												fn_cart_sum_price();
@@ -149,18 +136,18 @@
 									if(!confirm("장바구니 상품을 삭제하겠습니까?")) return;
 									
 									let cur_btn_change = $(this); // 선택된 버튼 태그의 위치를 미리 참조
-									let cart_code = $(this).parent().parent().find("input[name='cart_code']").val();
+									let ct_code = $(this).parent().parent().find("input[name='ct_code']").val();
 									
-									// console.log("장바구니 코드", cart_code);
+									// console.log("장바구니 코드", ct_code);
 
 									$.ajax({
 										url: '/user/cart/cart_list_del',
 										type: 'post',
-										data: {cart_code: cart_code},
+										data: {ct_code: ct_code},
 										dataType: 'text',
 										success: function(result) {
 											if(result == 'success') {
-												alert("장바구니 상품이 삭제되었습니다.");
+												alert("상품이 정상적으로 삭제되었습니다.");
 
 												cur_btn_change.parent().parent().remove(); // 삭제된 장바구니 데이터행 제거
 
@@ -174,11 +161,14 @@
 								// 장바구니 삭제(Non-AJAX용)
 								$("button[name='btn_nonAjax_cart_del']").on("click", function() {
 
-									if(!confirm("장바구니 상품을 삭제하겠습니까?")) return;
+									if(!confirm("장바구니 상품을 삭제하겠습니까?")) {
+										// alert("상품이 정상적으로 삭제되었습니다.")
+										return;
+									}	
 
-									let cart_code = $(this).parent().parent().find("input[name='cart_code']").val();
+									let ct_code = $(this).parent().parent().find("input[name='ct_code']").val();
 									// location.href = "장바구니 삭제 주소";는 GET 방식
-									location.href = "/user/cart/cart_list_del?cart_code=" + cart_code;
+									location.href = "/user/cart/cart_list_del?ct_code=" + ct_code;
 								});
 								
 								// 주문하가

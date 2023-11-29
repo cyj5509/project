@@ -30,7 +30,7 @@ public class KakaoPayServiceImpl {
 	
 	private HttpHeaders getHeaderInfo() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "KakaoAK 54cf9b8056794f614543a8f274bdc935");
+		headers.set("Authorization", "KakaoAK f58b52a1cf9e61aa1c85502d886c93f6");
 		headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 		
 		return headers;
@@ -46,22 +46,22 @@ public class KakaoPayServiceImpl {
 	  	 - Content-type: application/x-www-form-urlencoded;charset=utf-8
 	*/
 	
-	public ReadyResponse payReady(Long odr_code, String mbsp_id, String itemName, int quantity, int totalAmount) {
+	public ReadyResponse payReady(Long od_number, String us_id, String item_name, int quantity, int total_amount) {
 	
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
 		
 		// 가맹점 코드 및 결제 상태별 redirect url 등은 일반적으로 외부화함
 		parameters.add("cid", "TC0ONETIME"); // 가맹점 코드, 10자	(TC0ONETIME: 테스트 결제)
-		parameters.add("partner_order_id", String.valueOf(odr_code)); // 가맹점 주문번호(쇼핑몰 상품 주문번호), 최대 100자	
-		parameters.add("partner_user_id", mbsp_id); // 가맹점 회원 id, 최대 100자	
-		parameters.add("item_name", itemName); // 상품명, 최대 100자 -> 예) A 상품 외 2건
+		parameters.add("partner_order_id", String.valueOf(od_number)); // 가맹점 주문번호(쇼핑몰 상품 주문번호), 최대 100자	
+		parameters.add("partner_user_id", us_id); // 가맹점 회원 id, 최대 100자	
+		parameters.add("item_name", item_name); // 상품명, 최대 100자 -> 예) A 상품 외 2건
 		parameters.add("quantity", String.valueOf(quantity)); // 상품 수량
-		parameters.add("total_amount", String.valueOf(totalAmount)); // 상품 총액
+		parameters.add("total_amount", String.valueOf(total_amount)); // 상품 총액
 		parameters.add("tax_free_amount", "0"); // 상품 비과세 금액
 		
-		parameters.add("approval_url", "http://localhost:8080/user/order/orderApproval"); // 결제 성공 시 redirect url, 최대 255자
-		parameters.add("cancel_url", "http://localhost:8080/user/order/orderCancel"); // 결제 취소 시 redirect url, 최대 255자
-		parameters.add("fail_url", "http://localhost:8080/user/order/orderFail"); // 결제 실패 시 redirect url, 최대 255자
+		parameters.add("approval_url", "http://localhost:8080/user/order/order_approval"); // 결제 성공 시 redirect url, 최대 255자
+		parameters.add("cancel_url", "http://localhost:8080/user/order/order_cancel"); // 결제 취소 시 redirect url, 최대 255자
+		parameters.add("fail_url", "http://localhost:8080/user/order/order_fail"); // 결제 실패 시 redirect url, 최대 255자
 		
 		// [참고] RestTemplate, MultiValueMap, HttpEntity 이용하여 외부 API 호출하기: https://jung-story.tistory.com/132
 		
@@ -89,15 +89,15 @@ public class KakaoPayServiceImpl {
 	  	 - Content-type: application/x-www-form-urlencoded;charset=utf-8
 	*/
 	
-	public ApproveResponse payApprove(String tid, Long odr_code, String mbsp_id, String pgToken) {
+	public ApproveResponse payApprove(String tid, Long od_number, String us_id, String pg_token) {
 		
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
 
 		parameters.add("cid", "TC0ONETIME"); // 가맹점 코드, 10자
 		parameters.add("tid", tid); // 결제 고유번호, 결제 준비 API 응답에 포함
-		parameters.add("partner_order_id", String.valueOf(odr_code)); // 가맹점 주문번호, 결제 준비 API 요청과 일치해야 함
-		parameters.add("partner_user_id", mbsp_id); // 가맹점 회원 id, 결제 준비 API 요청과 일치해야 함
-		parameters.add("pg_token", pgToken); // 결제승인 요청을 인증하는 토큰
+		parameters.add("partner_order_id", String.valueOf(od_number)); // 가맹점 주문번호, 결제 준비 API 요청과 일치해야 함
+		parameters.add("partner_user_id", us_id); // 가맹점 회원 id, 결제 준비 API 요청과 일치해야 함
+		parameters.add("pg_token", pg_token); // 결제승인 요청을 인증하는 토큰
 		
 		// 헤더와 파라미터 정보를 구성하는 작업
 		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<MultiValueMap<String,String>>(parameters, this.getHeaderInfo());
