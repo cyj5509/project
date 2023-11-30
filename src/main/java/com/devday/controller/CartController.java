@@ -159,4 +159,6 @@ public class CartController {
 		
 		return entity;
 	}
+	
+	// 장바구니 비우기는 사용자 아이디 가지고 날림
 }

@@ -131,6 +131,9 @@ desired effect
                             <input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
                             <input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
                             <input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+                            날짜 검색: <input type="date" name="start_date" value="${start_date}">
+                              ~
+                            <input type="date" name="end_date" value="${end_date}">
                             <button type="submit" class="btn btn-primary">검색</button>
                           </form>
                         </div>
@@ -322,6 +325,11 @@ desired effect
               // actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
               actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
+              // <input type="date" name="start_date" value="${start_date}">
+              // <input type="date" name="end_date" value="${end_date}">
+              actionForm.append('<input type="date" name="start_date" value="${start_date}">');
+              actionForm.append('<input type="date" name="end_date" value="${end_date}">');
+
               actionForm.submit(); // 페이지 이동 시 actionForm이 동작
             });
 
@@ -395,7 +403,20 @@ desired effect
               console.log("주문번호", od_number);
 
               let url = "/admin/order/order_detail_info2/" + od_number;
-              $("#order_detail_content").load(url)
+
+              // AJAX 기능을 요청 시 설정을 위한 메서드
+              $.ajaxSetup({
+                'headers': {
+                  'AJAX': 'true'
+                }
+              });
+
+              $("#order_detail_content").load(url, function(response, status, xhr) {
+                if(status == "error") {
+                  alert("관리자 로그인 페이지로 이동");
+                  location.href = "/admin/intro";
+                }
+              })
 
               // modal(): 부트스트랩 4.6 메서드(제이쿼리 메서드 아님)
               $("#order_detail_modal").modal('show');

@@ -14,10 +14,10 @@
 				<title>데브데이: 장바구니</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
-				
-				<!-- CSS 파일 링크 -->
-				<link rel="stylesheet" href="/css/header.css">
-					
+
+					<!-- CSS 파일 링크 -->
+					<link rel="stylesheet" href="/css/header.css">
+
 			</head>
 
 			<body>
@@ -55,9 +55,10 @@
 											<input type="number" name="ct_amount" value="${cartDTO.ct_amount}" style="width: 45px;">
 											<button type="button" name="btn_cart_amount_change" class="btn btn-info">변경</button>
 										</td>
-										<td><span class="unitTotalPrice" id="unitTotalPrice">${cartDTO.pd_price * cartDTO.ct_amount}</span></td>
-												<!-- button 태그 자체에 상품코드를 숨겨두거나 input 태그에 숨겨두는 등 방식은 다양함 -->
-												<!-- <td><input type="checkbox" name="ct_code" value="${cartDTO.ct_code}"></td>-->
+										<td><span class="unitTotalPrice" id="unitTotalPrice">${cartDTO.pd_price * cartDTO.ct_amount}</span>
+										</td>
+										<!-- button 태그 자체에 상품코드를 숨겨두거나 input 태그에 숨겨두는 등 방식은 다양함 -->
+										<!-- <td><input type="checkbox" name="ct_code" value="${cartDTO.ct_code}"></td>-->
 										<td>
 											<button type="button" name="btn_ajax_cart_del" class="btn btn-danger">삭제 1(AJAX용)</button>
 											<button type="button" name="btn_nonAjax_cart_del" class="btn btn-danger">삭제 2(Non-AJAX용)</button>
@@ -94,7 +95,7 @@
 						<script>
 							$(document).ready(function () {
 
-								// 장바구니 목록에서 변경 클릭 시(name="btn_cart_amount_change" 속성 이용)
+								// 장바구니 목록에서 수량 변경 클릭 시(name="btn_cart_amount_change" 속성 이용)
 								$("button[name='btn_cart_amount_change']").on("click", function () {
 
 									// name='btn_cart_amount_change' 값 저장 팔요
@@ -110,9 +111,14 @@
 										type: 'post',
 										data: { ct_code: ct_code, ct_amount: ct_amount },
 										dataType: 'text',
+										// url이 동작하기 전 먼저 동작
+										// 11월 30일 추가
+										beforeSend: function (xhr) {
+											xhr.setRequestHeader("AJAX", "true"); // String header = request.getHeader("AJAX");
+										},
 										success: function (result) {
 											if (result == 'success') {
-												
+
 												alert("상품의 수량이 변경되었습니다.");
 												// 합계금액 계산작업
 												// 금액 = (판매가 - (판매가 * 할인율)) * 수량
@@ -126,27 +132,37 @@
 												// 전체 주문금액
 												fn_cart_sum_price();
 											}
+										},
+										// 11월 30일 추가
+										error: function (xhr, status, error) {
+											alert(status); // response.sendError(400);
+											alert("로그인 페이지로 이동합니다.");
+											location.href = "/member/login";
 										}
 									});
 								});
 
 								// 장바구니 삭제(AJAX 사용)
-								$("button[name='btn_ajax_cart_del']").on("click", function() {
+								$("button[name='btn_ajax_cart_del']").on("click", function () {
 
-									if(!confirm("장바구니 상품을 삭제하겠습니까?")) return;
-									
+									if (!confirm("장바구니 상품을 삭제하겠습니까?")) return;
+
 									let cur_btn_change = $(this); // 선택된 버튼 태그의 위치를 미리 참조
 									let ct_code = $(this).parent().parent().find("input[name='ct_code']").val();
-									
+
 									// console.log("장바구니 코드", ct_code);
 
 									$.ajax({
 										url: '/user/cart/cart_list_del',
 										type: 'post',
-										data: {ct_code: ct_code},
+										data: { ct_code: ct_code },
 										dataType: 'text',
-										success: function(result) {
-											if(result == 'success') {
+										// 11월 30일 추가
+										beforeSend: function (xhr) {
+											xhr.setRequestHeader("AJAX", "true"); // String header = request.getHeader("AJAX");
+										},
+										success: function (result) {
+											if (result == 'success') {
 												alert("상품이 정상적으로 삭제되었습니다.");
 
 												cur_btn_change.parent().parent().remove(); // 삭제된 장바구니 데이터행 제거
@@ -154,25 +170,31 @@
 												// 전체 주문 금액
 												fn_cart_sum_price()
 											}
+										},
+										// 11월 30일 추가
+										error: function (xhr, status, error) {
+											alert(status); // response.sendError(400);
+											alert("로그인 페이지로 이동합니다.");
+											location.href = "/member/login";
 										}
 									});
 								});
 
 								// 장바구니 삭제(Non-AJAX용)
-								$("button[name='btn_nonAjax_cart_del']").on("click", function() {
+								$("button[name='btn_nonAjax_cart_del']").on("click", function () {
 
-									if(!confirm("장바구니 상품을 삭제하겠습니까?")) {
+									if (!confirm("장바구니 상품을 삭제하겠습니까?")) {
 										// alert("상품이 정상적으로 삭제되었습니다.")
 										return;
-									}	
+									}
 
 									let ct_code = $(this).parent().parent().find("input[name='ct_code']").val();
 									// location.href = "장바구니 삭제 주소";는 GET 방식
 									location.href = "/user/cart/cart_list_del?ct_code=" + ct_code;
 								});
-								
+
 								// 주문하가
-								$("button#btn_order").on("click", function() {
+								$("button#btn_order").on("click", function () {
 									// location.href = "주문하기 페이지 주소"
 									location.href = "/user/order/order_info"
 								});
@@ -182,10 +204,10 @@
 							// 장바구니 전체 주문 금액: 수량 변경, 삭제 등 중복되는 코드라서 바깥에 작
 							function fn_cart_sum_price() {
 								let sumPrice = 0;
-										$(".unitTotalPrice").each(function () {
-											sumPrice += Number($(this).text());
-										});
-										$("#cart_total_price").text(sumPrice);
+								$(".unitTotalPrice").each(function () {
+									sumPrice += Number($(this).text());
+								});
+								$("#cart_total_price").text(sumPrice);
 							}
 						</script>
 			</body>

@@ -9,9 +9,9 @@ import com.devday.dto.Criteria;
 
 public interface AdOrderService {
 
-	List<OrderBasicVO> order_list(Criteria cri);
+	List<OrderBasicVO> order_list(Criteria cri, String start_date, String end_date);
 	
-	int getTotalCount(Criteria cri);
+	int getTotalCount(Criteria cri, String start_date, String end_date);
 	
 	List<OrderDetailInfoVO> orderDetailInfo1(Long od_number);
 	

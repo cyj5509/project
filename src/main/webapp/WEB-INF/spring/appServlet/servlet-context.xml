@@ -38,8 +38,8 @@
 		<!-- 개별 파일: 1024 * 1024 * 2 bytes = 20MB -->
 		<beans:property name="maxUploadSizePerFile" value="2097152" />
 		<!-- 업로드 시 서버의 임시 폴더 경로 -->
-		<!-- <beans:property name="uploadTempDir" value="file:/C:/Dev/devtools/upload/temp" /> --> <!-- 학원용 -->
-		<beans:property name="uploadTempDir" value="file:/C:/Upload/temp" />
+		<beans:property name="uploadTempDir" value="file:/C:/Dev/devtools/upload/temp" /> <!-- 학원용 -->
+		<!-- <beans:property name="uploadTempDir" value="file:/C:/Upload/temp" /> -->
 		<!-- 업로드 시 서버 메모리 사용 크기 설정 -->
 		<beans:property name="maxInMemorySize" value="10485756" />
 	</beans:bean>
@@ -48,15 +48,57 @@
 	<!-- 다음과 같이 동작. String uploadPath = new String("C:\\Dev\\upload\\product") -->
 	<!-- 스프링부트에서는 pom.xml 말고는 설정과 관련된 xml 파일 없음 -->
 	<beans:bean id="uploadPath" class="java.lang.String">
-		<!-- <beans:constructor-arg value="C:\\Dev\\upload\\product\\" /> --> <!-- 학원용 -->
-		<beans:constructor-arg value="C:\\Upload\\product\\" />  
+		<beans:constructor-arg value="C:\\Dev\\upload\\product\\" /> <!-- 학원용 -->
+		<!-- <beans:constructor-arg value="C:\\Upload\\product\\" /> -->
 	</beans:bean>
 	
 	<!-- CKEditor에서 업로드되는 폴더 경로 설정 -->
 	<beans:bean id="uploadCKPath" class="java.lang.String">
-		<!-- <beans:constructor-arg value="C:\\Dev\\upload\\ckeditor\\" /> -->  <!-- 학원용 -->
-		<beans:constructor-arg value="C:\\Upload\\ckeditor\\" /> 
+		<beans:constructor-arg value="C:\\Dev\\upload\\ckeditor\\" /> <!-- 학원용 -->
+		<!-- <beans:constructor-arg value="C:\\Upload\\ckeditor\\" /> -->
 	</beans:bean>
+	
+	<!-- 인터셉터 설정 1 ─ 연습용 --> 
+	<beans:bean id="testInterceptor" class="com.devday.interceptor.TestInterceptor" />
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/test/testA"/>
+			<mapping path="/test/testB"/>
+			<beans:ref bean="testInterceptor"/>			
+		</interceptor>
+	</interceptors>
+	
+	
+	<!-- 인터셉터 설정 2 ─ 사용자 -->
+	<beans:bean id="userInterceptor" class="com.devday.interceptor.UserInterceptor" />
+	
+	<interceptors>
+		<interceptor>
+			<!-- <mapping path="/member/*"/>는 포함될 매핑 주소 -->
+			<!-- <exclude-mapping path=""/>는 제외될 매핑 주소 -->
+			<!-- 추가 작업 필요 -->
+			<mapping path="/member/my_page"/>
+			<mapping path="/user/cart/*"/>
+			<mapping path="/user/order/*"/>
+			<mapping path="/user/board/*"/>
+			<beans:ref bean="userInterceptor"/>
+		</interceptor>
+	</interceptors>	
+	
+	<!-- 인터셉터 설정 3 ─ 관리자 -->
+	<beans:bean id="adminInterceptor" class="com.devday.interceptor.AdminInterceptor" />
+	
+	<interceptors>
+		<interceptor>
+			<!-- 추가 작업 필요 -->
+			<mapping path="/admin/**"/> <!-- @RequestMapping("/admin/order/*") -->
+			<exclude-mapping path="/admin/intro"/>
+			<exclude-mapping path="/admin/admin_ok"/>
+			<beans:ref bean="adminInterceptor"/>
+		</interceptor>
+	</interceptors>
+	
 	
 	<context:component-scan base-package="com.devday.controller" />
 	

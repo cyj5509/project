@@ -38,8 +38,6 @@
 					<p class="lead"></p>
 				</div>
 
-				<%@include file="/WEB-INF/views/comm/category_menu.jsp" %>
-
 				<div id="myCarousel" class="carousel slide pointer-event" data-ride="carousel">
 					<ol class="carousel-indicators">
 						<li data-target="#myCarousel" data-slide-to="0" class=""></li>
@@ -53,7 +51,7 @@
 									style="width: 100%; height: auto; max-height: 475px;">
 								<div class="container">
 									<div class="carousel-caption">
-										<h2>개발자만을 위한 다양한 상품</h2>
+										<h2>개발자를 위한 다양한 상품</h2>
 										<p>IT와 관련된 서적을 포함한 여러 상품을 판매합니다!</p>
 										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/product/pd_list">더 알아보기</a></p>
 									</div>
@@ -64,7 +62,7 @@
 									style="width: 100%; height: auto; max-height: 475px;">
 								<div class="container">
 									<div class="carousel-caption">
-										<h2>개발자만을 위한 다양한 행사</h2>
+										<h2>개발자를 위한 다양한 행사</h2>
 										<p>각종 세미나, 컨퍼런스 등의 일정을 살펴볼 수 있습니다!</p>
 										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="#">더 알아보기</a></p>
 									</div>
@@ -75,7 +73,7 @@
 									style="width: 100%; height: auto; max-height: 475px;">
 								<div class="container">
 									<div class="carousel-caption">
-										<h2>개발자만을 위한 다양한 정보와 각종 모임</h2>
+										<h2>개발자를 위한 다양한 정보와 각종 모임</h2>
 										<p>스터디 등의 팀원을 모집하거나 여러 정보를 살펴볼 수 있습니다!</p>
 										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/board/list">더 알아보기</a></p>
 									</div>
@@ -100,8 +98,6 @@
 					</div>
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-						<!-- 카테고리 메뉴 자바스크립트 작업 소스-->
-						<script src="/js/category_menu.js"></script>
 
 		</body>
 

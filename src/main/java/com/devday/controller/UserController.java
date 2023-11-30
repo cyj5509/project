@@ -116,18 +116,28 @@ public class UserController {
 			// passwordEncoder.matches(rawPassword, encodedPassword)
 			// dto.getUs_pw()는 로그인 폼에 입력한 평문 비밀번호, db_vo.getUs_pw()는 DB에 저장된 암호화된 비밀번호
 			if (passwordEncoder.matches(dto.getUs_pw(), db_vo.getUs_pw())) {
+				// db_vo.setUs_pw(null); // 이후 비밀번호는 보안상 이렇게 처리할 수도 있음
+
 				// 사용자와 관리자의 로그인 상태, 즉 db_vo를 "loginStatus"라는 이름으로 저장
 				// void javax.servlet.http.HttpSession.setAttribute(String name, Object value)
 			    session.setAttribute("loginStatus", db_vo); // session.setAttribute(name, value)
+			    
+			    // 인증이 없는 상태에서 인증이 필요한 URI 요청 주소를 가지고 있을 때
+			    if (session.getAttribute("targetUrl") != null) {
+					// UserInterceptor -> getTargetUrl의 request.getSession().setAttribute("targetUrl", targetUrl);
+					url = (String) session.getAttribute("targetUrl");
+				} else {
+					url = "/"; // 메인 페이지 이동
+				}
+			    
 			    if (db_vo.getUs_status() == 1) {
-			        session.setAttribute("isAdmin", true); // 세션에 관리자 상태 설정(adm_check = 1)
+			        session.setAttribute("isAdmin", true); // 세션에 관리자 상태 설정(us_status = 1)
 			        log.info("관리자로 접속했습니다.");
 			    } else {
-			        session.setAttribute("isAdmin", false); // 세션에 사용자 상태 설정(adm_check = 0)
+			        session.setAttribute("isAdmin", false); // 세션에 사용자 상태 설정(us_status = 0)
 			        log.info("사용자로 접속했습니다.");
-			    }
+				}
 			    userService.loginTimeUpdate(dto.getUs_id()); // 접속일자 업데이트 관련 메서드 호출
-			    url = "/"; // 메인 페이지 이동
 			} else {
 				url = "/member/login"; // 로그인 페이지 이동
 				msg = "비밀번호가 일치하지 않습니다.";
@@ -155,28 +165,38 @@ public class UserController {
 
 	// 마이 페이지로의 이동 ─ 회원정보 조회 기능 담당
 	@GetMapping("/my_page")
-	public String myPage(HttpSession session, Model model) {
+	public void myPage(HttpSession session, Model model) {
 		
 		log.info("마이 페이지 진입");
 		
+		// [참고] 인터셉터 기능으로 인해 불필요해진 부분
+		/* 
 		// 로그인 상태 확인: session.getAttribute(name)
 	    if (session.getAttribute("loginStatus") == null) {
 	        // 로그인 상태가 아닌 경우 로그인 페이지로 이동(login.jsp)
 	        return "redirect:/member/login";
 	    }
+	    (기존 코드 ... )
+	    // 로그인 상태 -> 마이 페이지로 이동(myPage.jsp)
+	    return "member/my_page";
+	    */
 	   
 	    // Object javax.servlet.http.HttpSession.getAttribute(String name): MemberVO로의 형변환(casting) 필요
 	    String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
 		UserVO vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
 		model.addAttribute("vo", vo);
-		
-	    // 로그인 상태 -> 마이 페이지로 이동(myPage.jsp)
-	    return "member/my_page";
 	}
 	
 	// 회원수정 페이지 이동(회원수정 폼)
 	@GetMapping("/info/modify")
 	public void modify(HttpSession session, Model model) throws Exception {
+		
+		// 인터셉터를 사용하지 않을 경우 아래와 같은 코드를 중복 작성해야 함
+		/*
+		if(session.getAttribute("loginStatus") == null) {
+			// 로그인 페이지로 이동
+		}
+		*/
 		
 		log.info("회원수정 페이지 진입");
 
@@ -270,10 +290,10 @@ public class UserController {
 		ResponseEntity<UserVO> entity = null;
 
 	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(us_name, us_email); // 아이디 찾기용 정적 팩토리 메서드 호출
-	    UserVO memberVO = userService.findId(findInfoDTO); 
+	    UserVO us_vo = userService.findId(findInfoDTO); 
 	    
-	    if (memberVO != null) {
-	      entity = new ResponseEntity<>(memberVO, HttpStatus.OK);
+	    if (us_vo != null) {
+	      entity = new ResponseEntity<>(us_vo, HttpStatus.OK);
 	    }
 	    
 	    return entity;

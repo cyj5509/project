@@ -29,6 +29,18 @@ public class UsProductServiceImpl implements UsProductService {
 	}
 	
 	@Override
+	public List<ProductVO> pd_list_all(Criteria cri) {
+		
+		return userProductMapper.pd_list_all(cri);
+	}
+
+	@Override
+	public int getTotalCountAll() {
+		
+		return userProductMapper.getTotalCountAll();
+	}
+	
+	@Override
 	public ProductVO pd_detail(Integer pd_number) {
 
 		return userProductMapper.pd_detail(pd_number);

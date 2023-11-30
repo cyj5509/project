@@ -9,8 +9,10 @@ public interface UsProductService {
 
 	// 2차 카테고리별 상품 리스트(페이징 정보 사용, 검색 제외)
 	List<ProductVO> pd_list(Integer cg_code, Criteria cri);
-	
+	List<ProductVO> pd_list_all(Criteria cri);
+
 	int getTotalCount(Integer cg_code);
+	int getTotalCountAll();
 	
 	ProductVO pd_detail(Integer pd_number);
 }

@@ -20,12 +20,15 @@ public interface UsProductMapper {
   	ROWNUM <= #{cri.pageNum} * #{cri.amount} 
 	rn > (#{cri.pageNum} -1) * #{cri.amount}]]>
 	*/
-	List<ProductVO> pd_list(
-			@Param("cg_code") Integer cg_code, 
-			@Param("cri") Criteria cri
-	);
 	
+	// 특정 카테고리 상품 조회
+	List<ProductVO> pd_list(@Param("cg_code") Integer cg_code, 
+						   @Param("cri") Criteria cri);
 	int getTotalCount(Integer cg_code);
+
+	// 전체 상품 조회
+	List<ProductVO> pd_list_all(Criteria cri);
+	int getTotalCountAll();
 	
 	ProductVO pd_detail(Integer pd_number);
 }

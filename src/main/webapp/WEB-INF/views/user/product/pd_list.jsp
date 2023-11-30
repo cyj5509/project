@@ -26,7 +26,7 @@
 					<%@include file="/WEB-INF/views/comm/category_menu.jsp" %>
 
 						<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-							<p>2차 카테고리: ${cg_name}</p>
+							<!-- <p>2차 카테고리: ${cg_name}</p> -->
 						</div>
 
 						<div class="container">

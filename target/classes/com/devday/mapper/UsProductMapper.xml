@@ -35,6 +35,32 @@
 		cg_code = #{cg_code}
 </select>
 
+<!-- 파라미터가 하나이기 때문에 cri 명시 불필요 -->
+<select id="pd_list_all" resultType="com.devday.domain.ProductVO" parameterType="com.devday.dto.Criteria">
+	<![CDATA[
+	SELECT
+		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
+	FROM 
+	    (
+	    SELECT /*+ INDEX_DESC(product_table pk_pd_number) */
+    			ROWNUM rn, pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
+	    FROM
+    			product_table
+	    WHERE
+	    		ROWNUM <= #{pageNum} * #{amount} 
+	    )
+	WHERE
+		rn > (#{pageNum} -1) * #{amount}
+	]]>
+</select>
+
+<select id="getTotalCountAll" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		product_table
+</select>
+
 <select id="pd_detail" parameterType="Integer" resultType="com.devday.domain.ProductVO">
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
