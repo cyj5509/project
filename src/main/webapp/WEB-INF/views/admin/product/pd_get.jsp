@@ -69,7 +69,7 @@ desired effect
                   <div class="col-md-12">
                     <div class="box box-primary">
                       <div class="box-header with-border">
-                        <h3 class="box-title mt-5">Product Edit</h3>
+                        <h3 class="box-title mt-5">Product View</h3>
                         <form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
                           <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
                           <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
@@ -79,7 +79,7 @@ desired effect
                       </div>
 
                       <!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
-                      <form role="form" method="post" action="/admin/product/pd_edit" enctype="multipart/form-data">
+                      <form role="form" method="post" action="/admin/product/pd_get" enctype="multipart/form-data">
                         <!-- 절대 경로: /board/register와 동일 -->
                         <div class="box-body">
                           <div class="form-group row">
@@ -114,7 +114,6 @@ desired effect
                           <div class="form-group row">
                             <label for="pd_name" class="col-sm-2 col-form-label">상품명</label>
                             <div class="col-sm-4">
-                              
                               <input type="hidden" name="pd_number" value="${productVO.pd_number }">
                               <input type="text" class="form-control" name="pd_name" id="pd_name"
                                 value="${productVO.pd_name}" placeholder="상품명 입력..." />
@@ -144,7 +143,7 @@ desired effect
                             <div class="col-sm-4">
                               <input type="file" class="form-control" name="uploadFile" id="uploadFile"
                                 placeholder="작성자 입력..." />
-                              <!-- 상품 이미지 변경 시 기존 이미지 삭제를 위해 사용됨. 이미지 수정하지 않을 경우 그대로 DB 수정 -->
+                              <!-- 상품 이미지 변경 시 기존 이미지 삭제를 위해 사용됨 -->
                               <input type="hidden" name="pd_image_folder" value="${productVO.pd_image_folder }">
                               <input type="hidden" name="pd_image" value="${productVO.pd_image }">
                               <!-- name 속성은 실제로 사용하지 않는다, 즉, ProductVO의 pd_image와는 다른 용도이다. -->

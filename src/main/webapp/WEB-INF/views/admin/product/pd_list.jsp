@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<!DOCTYPE html>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-		<!-- JSTL Core 라이브러리 -->
+    <!-- pom.xml의 jstl 라이브러리 -->
 		<!--
 This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
@@ -167,7 +167,8 @@ desired effect
 																<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="num">
 																	<li class='page-item ${pageMaker.cri.pageNum == num ? "active" : "" }'
 																		aria-current="page">
-																		<a class="page-link movepage" href="${num}" data-page="${num}">${num}</a>
+																		<!--  href="${num}" data-page="${num}" 둘 중 하나 사용 -->
+																		<a class="page-link movepage" href="${num}">${num}</a>
 																		<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
 																	</li>
 																</c:forEach>
@@ -284,18 +285,26 @@ desired effect
 				<script>
 					$(document).ready(function () {
 
-						let actionForm = $("#actionForm");  // 액션폼 참조
+						let actionForm = $("#actionForm");  // 전역변수. 액션폼 참조
 
-						// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
+						// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정.  <a class="page-link movepage" href="${num}">${num}</a>
 						$(".movepage").on("click", function (e) {
 							e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
 							actionForm.attr("action", "/admin/product/pd_list");
-							// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
+							// actionForm.find("input[name='pageNum']").val(현재 선택한 페이지 번호);
 							actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
 							actionForm.submit(); // 페이지 이동 시 actionForm이 동작
 						});
+
+						// 상품 이미지 또는 상품명 클릭 시
+            $("a.move").on("click", function(e) {
+              e.preventDefault();
+
+              actionForm.attr("action", "/admin/product/pro_get");
+              actionForm.submit(); // 페이지 이동 시 actionForm이 동작
+            });
 
 						// 목록에서 제목행 체크박스 선택
 						let isCheck = true;
@@ -421,6 +430,7 @@ desired effect
 						$("button[name='btn_pro_edit']").on("click", function () {
 
 							// 수정 상품코드
+							// 체크박스에 숨겨둔 상품코드
 							// let 수정상품코드 = $(this).parent().parent().find("상품코드를 참조하는 태그").val()
 							// let 수정상품코드 = $(this).parent("tr").find("상품코드를 참조하는 태그").val(); -> 해당 작업 오류 발생
 							let pd_number = $(this).parent().parent().find("input[name='check']").val();

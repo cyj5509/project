@@ -23,6 +23,8 @@
 			<body>
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
+
+					<!-- 1차 카테고리 표시. GlobalControllerAdvice -->
 					<%@include file="/WEB-INF/views/comm/category_menu.jsp" %>
 
 						<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
@@ -106,7 +108,8 @@
 
 						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-							<!-- 카테고리 메뉴 자바스크립트 작업 소스-->
+							<!-- 카테고리 메뉴 자바스크립트 작업 소스. resource 폴더 참조 -->
+							<!-- JS 경로를 사용하려면, servlet-context.xml 파일에서 설정해야 한다. -->
 							<script src="/js/category_menu.js"></script>
 
 							<script>

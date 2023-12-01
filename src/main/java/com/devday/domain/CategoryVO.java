@@ -8,8 +8,8 @@ import lombok.ToString;
 
 /*
 CREATE TABLE category_table (
-    cg_code         NUMBER        CONSTRAINT pk_cg_code PRIMARY KEY,  -- 하위 카테고리 코드(2차 이후)
-    cg_parent_code  NUMBER        NULL,                               -- 상위 카테고리 코드(1차)
+    cg_code         NUMBER        CONSTRAINT pk_cg_code PRIMARY KEY,  -- 하위 카테고리 코드(1차 포함 2차 이후)
+    cg_parent_code  NUMBER        NULL,                               -- 상위 카테고리 코드(1차만 해당)
     cg_name         VARCHAR2(50)  NOT NULL,                           -- 카테고리 이름(범주)
     CONSTRAINT fk_cg_parent_code FOREIGN KEY(cg_parent_code) REFERENCES category_table(cg_code)
 );

@@ -82,6 +82,7 @@ desired effect
                             <div class="col-sm-3">
                               <select class="form-control" id="firstCategory">
                                 <option>1차 카테고리 선택</option>
+                                <!-- 1차 카테고리 표시. GlobalControllerAdvice -->
                                 <c:forEach items="${firstCategoryList}" var="categoryVO">
                                   <option value="${categoryVO.cg_code}">
                                     ${categoryVO.cg_name}

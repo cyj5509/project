@@ -172,7 +172,9 @@ public class AdProductController {
 	}
 
 	// 상품 리스트: 목록과 페이징
+	// 메서드의 파라미터를 스프링에서 객체를 자동으로 생성해준다.
 	// 테이블의 전체 데이터를 가져옴
+	// Model 파라미터는 AJAX 호출 시 사용하지 않음(단순 JSP에서 데이터 값을 이용할 때)
 	@GetMapping("/pd_list")
 	public void pd_list(Criteria cri, Model model) throws Exception {
 
@@ -182,6 +184,7 @@ public class AdProductController {
 		List<ProductVO> pd_list = adProductService.pd_list(cri);
 
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
+		// 스프링에서 처리하지 않으면 자바스크립트에서 처리할 수도 있다.
 		pd_list.forEach(vo -> {
 			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 		});
@@ -251,7 +254,7 @@ public class AdProductController {
 	}
 
 	// 상품수정 폼 페이지
-	@GetMapping("/pd_edit")
+	@GetMapping({"/pd_edit", "/pd_get"})
 	public void pd_edit(@ModelAttribute("cri") Criteria cri, 
 						Integer pd_number, Model model) throws Exception {
 
@@ -262,12 +265,12 @@ public class AdProductController {
 		// 요청 타겟에서 유효하지 않은 문자가 발견되었습니다. 유효한 문자들은 RFC 7230과 RFC 3986에 정의되어 있습니다.
 		productVO.setPd_image_folder(productVO.getPd_image_folder().replace("\\", "/")); // Escape Sequence 특수문자
 		
-		model.addAttribute("productVO", productVO);
+		model.addAttribute("productVO", productVO); // 2차 카테고리 코드
 
 		// 1차 전체 카테고리는 GlobalControllerAdvice 클래스 Model 참조
 
 		// 상품 카테고리에서 2차 카테고리를 이용한 1차 카테고리 정보를 참조
-		// productVO.getCg_code(): 상품 테이블에 있는 2차 카테고리 코드
+		// productVO.getCg_code(): 상품 테이블에 있는 2차 카테고리 코드의 부모인 1차 카테고리 정보를 가져오는 작업
 		// first_category 자체가 CategoryVO의 성격을 가짐
 		CategoryVO firstCategory = adCategoryService.get(productVO.getCg_code()); // 변수 설정 이유
 		model.addAttribute("first_category", firstCategory); // first_category: 하나

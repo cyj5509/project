@@ -14,7 +14,7 @@ import lombok.ToString;
 public class Criteria {
 
 	private int pageNum; // 선택된 페이지 번호를 저장할 필드
-	private int amount; // 페이지마다 출력할 게시물 개수
+	private int amount; // 페이지마다 출력할 게시물 개수. pro_list 메서드의 cri.setAmount(2);에 의해 10 -> 2 
 
 	private String type; // 검색 종류 -> T, C, W, TC, TW, TWC
 	private String keyword; // 검색어
@@ -26,8 +26,9 @@ public class Criteria {
 	}
 
 	public Criteria(int pageNum, int amount) {
-		this.pageNum = pageNum;
-		this.amount = amount;
+		this.pageNum = pageNum; // 1
+		this.amount = amount; // 10
+		// type, keyword는 null로 처리
 	}
 
 	// getType() 메서드 대신 boardMapper.xml에서 사용할 메서드

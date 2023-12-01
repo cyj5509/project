@@ -14,6 +14,7 @@
 			<ul class="nav justify-content-center" id="first_category">
 				<!-- items="${firstCategoryList}": 1차 카테고리 목록 전부(GlobalControllerAdvice 참고) -->
 				<!-- var="category": CategoryVO의 성격 -->
+				<!-- 1차 카테고리 표시. GlobalControllerAdvice -->
 				<c:forEach items="${firstCategoryList}" var="category">
 					<li class="nav-item">
 						<!-- 1차 카테고리 표시 -->

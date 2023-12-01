@@ -45,7 +45,8 @@ public class UserVO {
 	private Date us_join_date;
 	private Date us_update_date;
 	private Date us_last_login;
-	private Integer us_status;
+	private Integer us_status; // 회원 및 비회원 상태로 분리하여, 비회원 주문 또는 게시글 조회 등의 처리를 위함
+	// private boolean ad_check; // 관리자로 로그인한 경우 관리자 페이지 이동을 처리하기 위함
 	
 	// @ToString
 	/*
