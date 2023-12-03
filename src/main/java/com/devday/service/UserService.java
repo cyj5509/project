@@ -9,7 +9,7 @@ public interface UserService {
 	String idCheck(String us_id); // 아이디 중복검사 관련 메서드
 	
 	UserVO login(String us_id); // 로그인 관련 메서드
-	void loginTimeUpdate(String us_id); // 접속일자 업데이트 관련 메서드
+	void lastLoginTime(String us_id); // 접속일자 업데이트 관련 메서드
 	
 	UserVO findId(FindInfoDTO findInfoDTO); // 아이디 찾기 관련 메서드
     boolean isUserForId(String us_name, String us_email); // 아이디 찾기를 위한 사용자 존재 여부 확인

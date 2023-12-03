@@ -387,7 +387,7 @@
 										data: { authCode: authCode },
 										success: function (result) {
 											if (result == "success") { // 인증 성공 시
-												alert("회원 인증이 정상적으로 처리되었습니다..");
+												alert("회원 인증이 정상적으로 처리되었습니다.");
 												isConfirmAuth = true;
 											} else if (result == "fail") { // 인증 실패 시
 												alert("인증에 실패하였습니다. 다시 확인해 주세요.");

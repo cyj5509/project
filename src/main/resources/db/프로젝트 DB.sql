@@ -25,7 +25,8 @@ CREATE TABLE user_table (
     us_join_date     DATE   DEFAULT sysdate   NOT NULL, -- 가입 일자
     us_update_date   DATE   DEFAULT sysdate   NOT NULL, -- 수정 일자
     us_last_login    DATE   DEFAULT sysdate   NOT NULL, -- 접속 일자
-    us_status        NUMBER DEFAULT 0         NOT NULL, -- 사용자 상태(사용자: 0, 관리자: 1)
+    us_status        NUMBER DEFAULT 0         NOT NULL, -- 회원 vs. 비회원(회원: 0, 비회원: 1)
+    ad_check         NUMBER DEFAULT 0         NOT NULL, -- 사용자 vs. 관리자(사용자: 0, 관리자: 1)
     CONSTRAINT pk_us_id PRIMARY KEY(us_id)
 );
 
@@ -34,17 +35,20 @@ CREATE TABLE user_table (
 
 -- 관리자 계정 활성화
 INSERT INTO
-    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status) 
-VALUES 
-    ('admin', '1234', 'admin', 'admin', 'admin', 'admin', 'admin', 'admin', 9999999, sysdate, sysdate, sysdate, 1);
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status, ad_check) VALUES 
+    ('admin', '$2a$10$dQFCMr0udCI865eG6SoIcOaNr3Y/dgBX.R4qf6rX5KA3jciSnnNjG', 'admin', 'admin', 'admin', 'admin', 'admin', 'admin', 9999999, sysdate, sysdate, sysdate, 0, 1);
 
-UPDATE user_table SET us_status = 1 WHERE us_id = 'admin';
+UPDATE user_table SET ad_check = 1 WHERE us_id = 'admin';
 
 -- 사용자 계정 활성화
 INSERT INTO
-    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status) 
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status, ad_check) 
 VALUES 
-    ('user01', '1234', '홍길동', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0);
+    ('user01', '$2a$10$dQFCMr0udCI865eG6SoIcOaNr3Y/dgBX.R4qf6rX5KA3jciSnnNjG', '홍길동', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0, 0);
+INSERT INTO
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status, ad_check) 
+VALUES 
+    ('user02', '$2a$10$dQFCMr0udCI865eG6SoIcOaNr3Y/dgBX.R4qf6rX5KA3jciSnnNjG', '강감찬', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0, 0);
 
 COMMIT;
 
@@ -79,8 +83,8 @@ DELETE FROM admin_table;
 -- 기본키: 하위 카테고리 코드(2차 이후) / 외래키: 상위 카테고리 코드(1차)
 DROP TABLE category_table;
 CREATE TABLE category_table (
-    cg_code         NUMBER        CONSTRAINT pk_cg_code PRIMARY KEY,  -- 하위 카테고리 코드(1차 포함 2차 이후)
-    cg_parent_code  NUMBER        NULL,                               -- 상위 카테고리 코드(1차만 해당)
+    cg_code         NUMBER        CONSTRAINT pk_cg_code PRIMARY KEY,  -- 하위 카테고리 코드(2차 이후)
+    cg_parent_code  NUMBER        NULL,                               -- 상위 카테고리 코드(1차)
     cg_name         VARCHAR2(50)  NOT NULL,                           -- 카테고리 이름(범주)
     CONSTRAINT fk_cg_parent_code FOREIGN KEY(cg_parent_code) REFERENCES category_table(cg_code)
 );
@@ -215,7 +219,7 @@ CREATE TABLE product_table (
     pd_company           VARCHAR2(100)         NOT NULL,              -- 상품 제조사(또는 출판사)
     pd_content           VARCHAR2(4000)        NOT NULL,              -- 상품 상세 내용
     pd_image_folder      VARCHAR2(100)         NOT NULL,              -- 상품 이미지 폴더명
-    pd_image             VARCHAR2(200)         NOT NULL,              -- 상품 이미지
+    pd_image             VARCHAR2(400)         NOT NULL,              -- 상품 이미지
     pd_amount            NUMBER                NOT NULL,              -- 상품 수량(재고)
     pd_buy_status        CHAR(1)               NOT NULL,              -- 판매 여부
     pd_register_date     DATE DEFAULT sysdate  NOT NULL,              -- 등록 일자
@@ -224,6 +228,7 @@ CREATE TABLE product_table (
 );
 
 -- 시퀀스: 상품 테이블의 상품 번호 컬럼(pd_number)
+DROP SEQUENCE sequence_pd_number;
 CREATE SEQUENCE sequence_pd_number;
 
 COMMIT;

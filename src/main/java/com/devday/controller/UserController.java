@@ -1,5 +1,10 @@
 package com.devday.controller;
 
+import java.util.UUID;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -27,72 +32,55 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class UserController {
 
-	private final UserService userService; // MemberService 인터페이스 implementsMemberServiceImpl 클래스
+	private final UserService userService; 
+	private final PasswordEncoder passwordEncoder; // [참고] security 폴더의 spring-security.xml 
 	
-	// spring-security.xml의 <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
-	private final PasswordEncoder passwordEncoder; // PasswordEncoder 인터페이스 implements BCryptPasswordEncoder 클래스
-	
-	// 회원가입 페이지 이동(회원가입 폼)
+	// 회원가입 페이지 이동 ─ 회원가입 폼
 	@GetMapping("/join")
 	public void join() {
-
+		
 		log.info("회원가입 페이지 진입"); 
 	}
 
 	// 회원가입 기능 구현
 	@PostMapping("/join")
-	public String join(UserVO vo, RedirectAttributes rttr) throws Exception { 
+	public String join(UserVO us_vo, RedirectAttributes rttr) throws Exception { 
 		
-		log.info("회원 정보: " + vo); // MemberVO의 @ToString 메서드 호출
-		log.info("암호화 전 비밀번호: " + vo.getUs_pw());
+		log.info("암호화 처리 전 회원정보: " + us_vo);
+		log.info("암호화 처리 전 비밀번호: " + us_vo.getUs_pw());
 		
-		// 비밀번호 암호화 처리
-		vo.setUs_pw(passwordEncoder.encode(vo.getUs_pw())); // passwordEncoder.encode(rawPassword)
-		log.info("암호화 후 비밀번호: " + vo.getUs_pw());
-
-		userService.join(vo); // 회원가입 관련 메서드 호출
+		us_vo.setUs_pw(passwordEncoder.encode(us_vo.getUs_pw())); // 비밀번호 암호화 처리
+		userService.join(us_vo); // 회원가입 관련 메서드 호출
+		
+		log.info("암호화 처리 후 회원정보: " + us_vo);
+		log.info("암호화 처리 후 비밀번호: " + us_vo.getUs_pw());
 		
 		// 회원가입 후 환영인사
-		String msg = "환영합니다! " + vo.getUs_id() + " 님, 회원가입이 완료되었습니다.";
-		rttr.addFlashAttribute("msg", msg);
+		String msg = "환영합니다! " + us_vo.getUs_id() + "님, 회원가입이 완료되었습니다.";
+		rttr.addFlashAttribute("msg", msg); // 리디렉션되는 페이지에서 일회성으로 사용
 		
 		return "redirect:/member/login"; // 로그인 페이지로 이동
 	}
 
-	// 아이디 중복검사 기능 구현
+	// ID 중복 검사 기능 구현(해당 페이지 불필요)
 	@GetMapping("/idCheck")
-	// class HttpEntity<T> -> class ResponseEntity<T> extends HttpEntity<T>
-	// @RequestParam("us_id") String us_id: join.jsp의 name="us_id" & data: { us_id: }
 	public ResponseEntity<String> idCheck(@RequestParam("us_id") String us_id) throws Exception {
 
-		// ResponseEntity<String> entity = new ResponseEntity<>(idUse, HttpStatus.OK);
 		ResponseEntity<String> entity = null; 
 		
-		log.info("ID 중복검사: " + us_id);
+		log.info("입력된 아이디: " + us_id);
 		
 		// userService.idCheck(us_id): 아이디 중복검사 관련 메서드 호출
-		// idCheck(us_id) != null ? "no" : "yes" -> 아이디가 이미 존재하면 no, 존재하지 않으면 yes 
+		// 아이디가 이미 존재하면 no, 존재하지 않으면 yes를 반환
 		String idUse = userService.idCheck(us_id) != null ? "no" : "yes";
-		/*
-		// 조건문을 사용할 경우(기존 방식)
-	
-		String idUse = "";
-		if (userService.idCheck(us_id) != null) {
-			idUse = "no"; 
-		} else { 
-			idUse = "yes";
-		}
-		*/
-		log.info("ID 사용가능: " + idUse);
+		log.info("아이디 사용 가능: " + idUse);
 		
-
-		// new ResponseEntity<>(body, [headers], status): 해당 클래스의 인스턴스 생성 및 생성자 호출(초기화)
-		entity = new ResponseEntity<>(idUse, HttpStatus.OK); // HTTP 상태 코드(200)
+		entity = new ResponseEntity<>(idUse, HttpStatus.OK); // HTTP 상태 코드 200
 		
-		return entity; // AJAX에서 idUse는 result로 사용(서버 -> 클라이언트)
+		return entity; // AJAX 요청 시 idUse는 success 콜백 함수에서 result로 사용
 	}
 
-	// 로그인 페이지 이동(로그인 폼)
+	// 로그인 페이지 이동 ─ 로그인 폼
 	@GetMapping("/login")
 	public void login() {
 
@@ -101,69 +89,92 @@ public class UserController {
 
 	// 로그인 기능 구현
 	@PostMapping("/login")
-	public String login(LoginDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
+	public String login(LoginDTO lo_dto, HttpSession session, 
+					    HttpServletResponse res, RedirectAttributes rttr) throws Exception {
 
-		log.info("로그인 정보: " + dto); // LoginDTO의 @ToString 메서드 호출
+		log.info("로그인 정보: " + lo_dto); // 로그인 페이지에서 로그인 버튼 클릭 시 동작
 
-		// userService.login(dto.getUs_id()): 로그인 관련 메서드 호출
-		// DB에서 LoginDTO에 제공된 아이디로 사용자 정보 조회(암호화된 비밀번호 포함)
-		UserVO db_vo = userService.login(dto.getUs_id());
+		// userService.login(lo_dto.getUs_id()): 로그인 관련 메서드 호출
+		UserVO us_vo = userService.login(lo_dto.getUs_id());
 
 		String url = "";
 		String msg = "";
-		
-		if (db_vo != null) {
-			// passwordEncoder.matches(rawPassword, encodedPassword)
-			// dto.getUs_pw()는 로그인 폼에 입력한 평문 비밀번호, db_vo.getUs_pw()는 DB에 저장된 암호화된 비밀번호
-			if (passwordEncoder.matches(dto.getUs_pw(), db_vo.getUs_pw())) {
-				// db_vo.setUs_pw(null); // 이후 비밀번호는 보안상 이렇게 처리할 수도 있음
 
-				// 사용자와 관리자의 로그인 상태, 즉 db_vo를 "loginStatus"라는 이름으로 저장
-				// void javax.servlet.http.HttpSession.setAttribute(String name, Object value)
-			    session.setAttribute("loginStatus", db_vo); // session.setAttribute(name, value)
-			    
-			    // 인증이 없는 상태에서 인증이 필요한 URI 요청 주소를 가지고 있을 때
-			    if (session.getAttribute("targetUrl") != null) {
-					// UserInterceptor -> getTargetUrl의 request.getSession().setAttribute("targetUrl", targetUrl);
-					url = (String) session.getAttribute("targetUrl");
-				} else {
-					url = "/"; // 메인 페이지 이동
-				}
-			    
-			    if (db_vo.getUs_status() == 1) {
-			        session.setAttribute("isAdmin", true); // 세션에 관리자 상태 설정(us_status = 1)
-			        log.info("관리자로 접속했습니다.");
-			    } else {
-			        session.setAttribute("isAdmin", false); // 세션에 사용자 상태 설정(us_status = 0)
-			        log.info("사용자로 접속했습니다.");
-				}
-			    userService.loginTimeUpdate(dto.getUs_id()); // 접속일자 업데이트 관련 메서드 호출
-			} else {
-				url = "/member/login"; // 로그인 페이지 이동
-				msg = "비밀번호가 일치하지 않습니다.";
-				rttr.addFlashAttribute("msg", msg); 
+		// 아이디를 조건으로 한 데이터가 있으면서 평문 비밀번호와 암호화된 비밀번호가 같은 경우
+		if (us_vo != null && passwordEncoder.matches(lo_dto.getUs_pw(), us_vo.getUs_pw())) {
+			userService.lastLoginTime(lo_dto.getUs_id()); // 최근 접속 일자 관련 메서드 호출
+
+			// 세션에 us_vo를 "userStatus"라는 이름으로 저장
+			session.setAttribute("userStatus", us_vo);
+
+			// 로그인 상태 유지를 위한 쿠키 설정
+			if (lo_dto.isRememberLogin()) {
+				String unique_token = UUID.randomUUID().toString(); // UUID를 이용한 고유 토큰 생성				
+				Cookie login_cookie = new Cookie("remember_login", unique_token);
+				login_cookie.setMaxAge(60 * 60 * 24 * 30); // 유효기간 30일
+				login_cookie.setHttpOnly(true); // JavaScript 접근 방지
+				// id_cookie.setSecure(true); // HTTPS를 통해서만 쿠키 전송
+				res.addCookie(login_cookie);
 			}
+			// 아이디 저장을 위한 쿠키 설정
+			if (lo_dto.isRememberId()) {
+				// log.info("로그인 아이디: " + lo_dto.getUs_id());
+				Cookie id_cookie = new Cookie("remember_id", lo_dto.getUs_id());
+				id_cookie.setMaxAge(60 * 60 * 24 * 365); // 유효기간 365일(1년)
+				// id_cookie.setSecure(true); // HTTPS를 통해서만 쿠키 전송
+				res.addCookie(id_cookie);
+			}
+
+			if (session.getAttribute("targetUrl") != null) {
+				// 로그인이 필요한 주소 요청 시 "targetUrl"라는 이름을 가져와 url에 할당
+				url = (String) session.getAttribute("targetUrl"); // [참고] UserInterceptor의 getTargetUrl
+			} else {
+				// 로그인을 필요로 하는 것이 아닌 단순 로그인 시 메인 페이지 이동
+				url = "/"; 
+			}
+			// 관리자인 경우 ad_check = 1, 사용자인 경우 ad_check = 0
+			if (us_vo.getAd_check() == 1) {
+				// true를 "isAdmin"이라는 이름으로 저장(로그인 시 관리자 페이지 표시 O)
+				session.setAttribute("isAdmin", true);
+				log.info("관리자로 접속했습니다.");
+			} else {
+				// false를 "isAdmin"이라는 이름으로 저장(로그인 시 관리자 페이지 표시 X)
+				session.setAttribute("isAdmin", false);
+				log.info("사용자로 접속했습니다.");
+			}
+
+		} else if (!passwordEncoder.matches(lo_dto.getUs_pw(), us_vo.getUs_pw())) {
+			// 로그인 실패 1: 평문 비밀번호와 암호화된 비밀번호가 일치하지 않은 경우
+			url = "/member/login"; // 로그인 실패로 다시 로그인 페이지 이동
+			msg = "비밀번호가 일치하지 않습니다.";
+			rttr.addFlashAttribute("msg", msg);
 		} else {
-			// 아이디가 존재하지 않거나 빈 칸으로 둔 경우
-			url = "/member/login"; // 로그인 페이지 이동
+			// 로그인 실패 2: 아이디가 존재하지 않거나 입력란을 빈 칸으로 둔 경우
+			url = "/member/login"; // 로그인 실패로 다시 로그인 페이지 이동
 			msg = "아이디를 다시 입력해주세요.";
 			rttr.addFlashAttribute("msg", msg);
 		}
 
-		return "redirect:" + url; // 메인 페이지 또는 로그인 페이지(login.jsp) 이동
+		return "redirect:" + url; // 로그인 또는 메인 페이지 및 해당 페이지 이동
 	}
 
-	// 로그아웃 기능 구현(페이지 불필요)
+	// 로그아웃 기능 구현(해당 페이지 불필요)
 	@GetMapping("/logout")
-	public String logout(HttpSession session) {
+	public String logout(HttpSession session, HttpServletResponse res) {
 		
 		log.info("로그아웃 요청");
+		
 		session.invalidate(); // 사용자 세션 무효화
+		
+		// "로그인 상태 유지" 쿠키 삭제("아이디 저장" 쿠키는 삭제하지 않음)
+	    Cookie login_cookie = new Cookie("remember_login", null);
+	    login_cookie.setMaxAge(0); // 유효기간 즉시 만료
+	    res.addCookie(login_cookie);
 
 		return "redirect:/member/login"; // 로그아웃 시 다시 로그인 페이지 이동
 	}
 
-	// 마이 페이지로의 이동 ─ 회원정보 조회 기능 담당
+	// 마이 페이지로의 이동 ─ 마이 페이지 폼(회원정보 조회 기능 담당)
 	@GetMapping("/my_page")
 	public void myPage(HttpSession session, Model model) {
 		

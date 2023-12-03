@@ -211,7 +211,7 @@
 							$("#btnConfirmAuth").click(function () {
 
 								if ($("#authCode").val() == "") {
-									alert("인증코드를 입력하세요.");
+									alert("메일로 발송된 인증번호를 입력해 주세요.");
 									$("#authCode").focus();
 									return;
 								}
@@ -224,7 +224,7 @@
 									data: { authCode: $("#authCode").val() },
 									success: function (result) {
 										if (result == "success") {
-											alert("정상적으로 인증되었습니다.");
+											alert("회원 인증이 정상적으로 처리되었습니다.");
 											isConfirmAuth = true;
 										} else if (result == "fail") {
 											alert("인증에 실패하였습니다. 다시 확인바랍니다..");

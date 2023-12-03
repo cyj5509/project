@@ -5,7 +5,7 @@
 
 <mapper namespace="com.devday.mapper.UserMapper">
 
-<!-- 회원가입: 나머지 컬럼들은 Default로 설정한 값들이 있어 따로 기입하지 않아도 됨 -->
+<!-- 회원가입: 해당 컬럼 제외한 나머지 컬럼들은 Default로 설정한 값들로 저장 -->
 <insert id="join" parameterType="com.devday.domain.UserVO">
 	INSERT INTO 
 		user_table (
@@ -30,8 +30,8 @@
 		)
 </insert>
 
-<!-- 아이디 중복검사: String us_id -> parameterType="String" -->
-<!-- resultType="int" 또는 "Integer"일 경우, SELECT COUNT(*) FROM user_table WHERE us_id = #{us_id} -->
+<!-- 아이디 중복 검사 -->
+<!-- resultType="int" 또는 "Integer"일 경우, 'SELECT COUNT(*) ~'의 형태로 작성 -->
 <select id="idCheck" parameterType="String" resultType="String">
 	SELECT
 		us_id
@@ -41,7 +41,7 @@
 		us_id = #{us_id}
 </select>
 
-<!-- 로그인: 관리자/사용자를 구분 짓기 위해 select문에 us_status(회원 상태) 컬럼 추가 -->
+<!-- 로그인: 사용자/관리자를 구분하기 위해 select문에 'ad_check' 컬럼 추가 -->
 <select id="login" parameterType="String" resultType="com.devday.domain.UserVO">
 	select 
 		us_id, 
@@ -56,16 +56,17 @@
 		us_join_date, 
 		us_update_date,
 		us_last_login,
-		us_status
+		us_status,
+		ad_check
 	from 
 		user_table 
 	where 
 		us_id = #{us_id}
 </select>
 
-<!-- 접속일자 업데이트: 로그인 관련 메서드 내에서 사용 -->
+<!-- 최근 접속 일자: 로그인 관련 메서드 내에서 사용 -->
 <!-- sysdate로 갱신 필요(us_lastlogin DATE DEFAULT sysdate NOT NULL) -->
-<update id="loginTimeUpdate" parameterType="String">
+<update id="lastLoginTime" parameterType="String">
 	UPDATE
 		user_table
 	SET

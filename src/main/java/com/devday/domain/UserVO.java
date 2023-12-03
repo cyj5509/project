@@ -20,7 +20,8 @@ CREATE TABLE user_table (
     us_join_date     DATE   DEFAULT sysdate   NOT NULL, -- 가입 일자
     us_update_date   DATE   DEFAULT sysdate   NOT NULL, -- 수정 일자
     us_last_login    DATE   DEFAULT sysdate   NOT NULL, -- 접속 일자
-    us_status        NUMBER DEFAULT 0         NOT NULL, -- 사용자 상태(사용자: 0, 관리자: 1)
+    us_status        NUMBER DEFAULT 0         NOT NULL, -- 회원 vs. 비회원(회원: 0, 비회원: 1)
+    ad_check         NUMBER DEFAULT 0         NOT NULL, -- 사용자 vs. 관리자(사용자: 0, 관리자: 1)
     CONSTRAINT pk_us_id PRIMARY KEY(us_id)
 );
 */
@@ -30,11 +31,11 @@ CREATE TABLE user_table (
 @ToString
 public class UserVO {
 	
-	// 로그인을 위한 식별 정보
+	// 로그인 정보
 	private String us_id; 
-	private String us_pw; // 암호화된 비밀번호
+	private String us_pw; // 암호화 처리된 비밀번호
 	
-	// 회원 정보(개인 정보)
+	// 회원 정보
 	private String us_name;
 	private String us_phone;
 	private String us_email;
@@ -45,19 +46,6 @@ public class UserVO {
 	private Date us_join_date;
 	private Date us_update_date;
 	private Date us_last_login;
-	private Integer us_status; // 회원 및 비회원 상태로 분리하여, 비회원 주문 또는 게시글 조회 등의 처리를 위함
-	// private boolean ad_check; // 관리자로 로그인한 경우 관리자 페이지 이동을 처리하기 위함
-	
-	// @ToString
-	/*
-	@Override
-	public String toString() {
-		return "UserVO [us_id=" + us_id + ", us_pw=" + us_pw + ", us_name=" + us_name + ", us_phone=" + us_phone
-				+ ", us_email=" + us_email + ", us_postcode=" + us_postcode + ", us_addr_basic=" + us_addr_basic
-				+ ", us_addr_detail=" + us_addr_detail + ", us_point=" + us_point + ", us_join_date=" + us_join_date
-				+ ", us_update_date=" + us_update_date + ", us_last_login=" + us_last_login + ", us_status=" + us_status
-				+ "]";
-	}
-	*/
-
+	private Integer us_status; // 비회원 주문 또는 게시글 조회 등의 처리를 위함
+	private Integer ad_check; // 관리자로 로그인한 경우 관리자 페이지 이동 등의 처리를 위함
 }

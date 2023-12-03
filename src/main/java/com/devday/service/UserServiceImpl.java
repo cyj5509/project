@@ -48,9 +48,9 @@ public class UserServiceImpl implements UserService {
 	
 	// 접속일자 업데이트 관련 메서드
 	@Override
-	public void loginTimeUpdate(String us_id) {
+	public void lastLoginTime(String us_id) {
 
-		userMapper.loginTimeUpdate(us_id);
+		userMapper.lastLoginTime(us_id);
 	}
 	
 	// 아이디 찾기 관련 메서드
