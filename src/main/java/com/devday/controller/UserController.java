@@ -62,7 +62,7 @@ public class UserController {
 		return "redirect:/member/login"; // 로그인 페이지로 이동
 	}
 
-	// ID 중복 검사 기능 구현(해당 페이지 불필요)
+	// ID 중복 검사 기능 구현(관련 페이지 불필요)
 	@GetMapping("/idCheck")
 	public ResponseEntity<String> idCheck(@RequestParam("us_id") String us_id) throws Exception {
 
@@ -89,8 +89,8 @@ public class UserController {
 
 	// 로그인 기능 구현
 	@PostMapping("/login")
-	public String login(LoginDTO lo_dto, HttpSession session, 
-					    HttpServletResponse res, RedirectAttributes rttr) throws Exception {
+	public String login(LoginDTO lo_dto, HttpSession session, HttpServletRequest request, 
+					    HttpServletResponse response, RedirectAttributes rttr) throws Exception {
 
 		log.info("로그인 정보: " + lo_dto); // 로그인 페이지에서 로그인 버튼 클릭 시 동작
 
@@ -107,23 +107,15 @@ public class UserController {
 			// 세션에 us_vo를 "userStatus"라는 이름으로 저장
 			session.setAttribute("userStatus", us_vo);
 
-			// 로그인 상태 유지를 위한 쿠키 설정
-			if (lo_dto.isRememberLogin()) {
-				String unique_token = UUID.randomUUID().toString(); // UUID를 이용한 고유 토큰 생성				
-				Cookie login_cookie = new Cookie("remember_login", unique_token);
-				login_cookie.setMaxAge(60 * 60 * 24 * 30); // 유효기간 30일
-				login_cookie.setHttpOnly(true); // JavaScript 접근 방지
-				// id_cookie.setSecure(true); // HTTPS를 통해서만 쿠키 전송
-				res.addCookie(login_cookie);
-			}
-			// 아이디 저장을 위한 쿠키 설정
-			if (lo_dto.isRememberId()) {
-				// log.info("로그인 아이디: " + lo_dto.getUs_id());
-				Cookie id_cookie = new Cookie("remember_id", lo_dto.getUs_id());
-				id_cookie.setMaxAge(60 * 60 * 24 * 365); // 유효기간 365일(1년)
-				// id_cookie.setSecure(true); // HTTPS를 통해서만 쿠키 전송
-				res.addCookie(id_cookie);
-			}
+			// 12월 4일 추가 기능 구현 중인데 동작을 안한다 후
+			// 아이디 저장 기능이 선택된 경우, 쿠키에 사용자 아이디 저장
+	        if (lo_dto.isRememberId()) {
+	            Cookie cookie = new Cookie("remember_id", lo_dto.getUs_id());
+	            cookie.setMaxAge(60 * 60 * 24 * 365); // 쿠키 유효기간 365일(1년)로 설정
+	            // id_cookie.setSecure(true); // HTTPS를 통해서만 쿠키 전송
+	            cookie.setPath("/"); // 쿠키의 경로를 모든 경로로 설정
+	            response.addCookie(cookie);
+	        }
 
 			if (session.getAttribute("targetUrl") != null) {
 				// 로그인이 필요한 주소 요청 시 "targetUrl"라는 이름을 가져와 url에 할당
@@ -158,7 +150,7 @@ public class UserController {
 		return "redirect:" + url; // 로그인 또는 메인 페이지 및 해당 페이지 이동
 	}
 
-	// 로그아웃 기능 구현(해당 페이지 불필요)
+	// 로그아웃 기능 구현(관련 페이지 불필요)
 	@GetMapping("/logout")
 	public String logout(HttpSession session, HttpServletResponse res) {
 		
@@ -166,10 +158,7 @@ public class UserController {
 		
 		session.invalidate(); // 사용자 세션 무효화
 		
-		// "로그인 상태 유지" 쿠키 삭제("아이디 저장" 쿠키는 삭제하지 않음)
-	    Cookie login_cookie = new Cookie("remember_login", null);
-	    login_cookie.setMaxAge(0); // 유효기간 즉시 만료
-	    res.addCookie(login_cookie);
+		// 로그인 상태 유지 관련 쿠키 삭제(아이디 저장 관련 쿠키는 삭제하지 않음)
 
 		return "redirect:/member/login"; // 로그아웃 시 다시 로그인 페이지 이동
 	}

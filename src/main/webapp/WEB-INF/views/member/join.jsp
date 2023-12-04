@@ -58,8 +58,7 @@
 										<div class="form-group row">
 											<label for="us_pw1" class="col-2">비밀번호</label>
 											<div class="col-4">
-												<input type="password" class="form-control" name="us_pw" id="us_pw1"
-													placeholder="비밀번호를 입력해주세요">
+												<input type="password" class="form-control" name="us_pw" id="us_pw1" placeholder="비밀번호를 입력해주세요">
 											</div>
 											<label for="us_pw2" class="col-2">비밀번호 확인</label>
 											<div class="col-4">
@@ -143,122 +142,122 @@
 			</div>
 
 			<%@include file="/WEB-INF/views/comm/footer.jsp" %>
-			<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
-			<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
+					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-					<script>
+						<script>
 
-						$(document).ready(function () {
+							$(document).ready(function () {
 
-							let useIDCheck = false; // 아이디 중복 사용 유무 확인
+								let useIDCheck = false; // 아이디 중복 사용 유무 확인
 
-							// JS 문법: document.getElementById("idCheck");
-							$("#idCheck").click(function () {
-								// alert("아이디 중복 확인");
-								if ($("#us_id").val() == "") {
-									alert("아이디가 입력되지 않았습니다.");
-									$("#us_id").focus();
-									return;
-								}
-
-								// 아이디 중복 검사 기능 구현
-								$.ajax({
-									url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
-									type: 'get', // get or post
-									dataType: 'text', // <String>
-									data: { us_id: $("#us_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
-									success: function (result) { // success: function (매개변수명) { 
-										if (result == "yes") {
-											$('.us_id_yes').css("display", "inline-block");
-											$('.us_id_no').css("display", "none");
-											useIDCheck = true; // let useIDCheck = false;
-										} else {
-											$('.us_id_no').css("display", "inline-block");
-											$('.us_id_yes').css("display", "none");
-											useIDCheck = false; 
-											// $("#us_id").val()는 GETTER, $("#us_id").val("")는 SETTER
-											$("#us_id").val(""); // 아이디 텍스트 박스의 값을 지움
-											$("#us_id").focus(); // 포커스 기능
-										}
+								// JS 문법: document.getElementById("idCheck");
+								$("#idCheck").click(function () {
+									// alert("아이디 중복 확인");
+									if ($("#us_id").val() == "") {
+										alert("아이디가 입력되지 않았습니다.");
+										$("#us_id").focus();
+										return;
 									}
-								});
-							});
 
-							// 메일 인증 요청
-							$("#mailAuth").click(function () {
-								if ($("#us_email").val() == "") {
-									alert("이메일을 입력하세요");
-									$("#us_email").focus();
-									return;
-								}
-
-								$.ajax({
-									url: '/email/authCode', // @GetMapping("/authCode")
-									type: 'get',
-									dataType: 'text', // 스프링에서 보내는 데이터의 타입 ─ <String> -> "success" -> text
-									data: { receiverMail: $("#us_email").val() }, // EmailDTO ─ private String receiverMail;
-									success: function (result) {
-										if (result == "success") {
-											alert("인증 메일이 발송되었습니다. 메일 확인 바랍니다.")
+									// 아이디 중복 검사 기능 구현
+									$.ajax({
+										url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
+										type: 'get', // get or post
+										dataType: 'text', // <String>
+										data: { us_id: $("#us_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
+										success: function (result) { // success: function (매개변수명) { 
+											if (result == "yes") {
+												$('.us_id_yes').css("display", "inline-block");
+												$('.us_id_no').css("display", "none");
+												useIDCheck = true; // let useIDCheck = false;
+											} else {
+												$('.us_id_no').css("display", "inline-block");
+												$('.us_id_yes').css("display", "none");
+												useIDCheck = false;
+												// $("#us_id").val()는 GETTER, $("#us_id").val("")는 SETTER
+												$("#us_id").val(""); // 아이디 텍스트 박스의 값을 지움
+												$("#us_id").focus(); // 포커스 기능
+											}
 										}
-									}
+									});
 								});
-							});
 
-							let isConfirmAuth = false; // 메일 인증을 하지 않은 상태
+								// 메일 인증 요청
+								$("#mailAuth").click(function () {
+									if ($("#us_email").val() == "") {
+										alert("이메일을 입력하세요");
+										$("#us_email").focus();
+										return;
+									}
 
-							// 인증 확인: <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증 확인</button>
-							$("#btnConfirmAuth").click(function () {
-
-								if ($("#authCode").val() == "") {
-									alert("메일로 발송된 인증번호를 입력해 주세요.");
-									$("#authCode").focus();
-									return;
-								}
-
-								// 인증확인 요청
-								$.ajax({
-									url: '/email/confirmAuthCode',
-									type: 'get',
-									dataType: 'text', // / 스프링에서 보내는 데이터의 타입 ─ <String>
-									data: { authCode: $("#authCode").val() },
-									success: function (result) {
-										if (result == "success") {
-											alert("회원 인증이 정상적으로 처리되었습니다.");
-											isConfirmAuth = true;
-										} else if (result == "fail") {
-											alert("인증에 실패하였습니다. 다시 확인바랍니다..");
-											$("#authCode").val("");
-											isConfirmAuth = false;
-										} else if (result == "request") { // 세션 종료 시(기본 30분)
-											alert("메일 인증 요청을 다시 해주세요.");
-											$("#authCode").val("");
-											isConfirmAuth = false;
+									$.ajax({
+										url: '/email/authCode', // @GetMapping("/authCode")
+										type: 'get',
+										dataType: 'text', // 스프링에서 보내는 데이터의 타입 ─ <String> -> "success" -> text
+										data: { receiverMail: $("#us_email").val() }, // EmailDTO ─ private String receiverMail;
+										success: function (result) {
+											if (result == "success") {
+												alert("인증 메일이 발송되었습니다. 메일 확인 바랍니다.")
+											}
 										}
-									}
+									});
 								});
+
+								let isConfirmAuth = false; // 메일 인증을 하지 않은 상태
+
+								// 인증 확인: <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증 확인</button>
+								$("#btnConfirmAuth").click(function () {
+
+									if ($("#authCode").val() == "") {
+										alert("메일로 발송된 인증번호를 입력해 주세요.");
+										$("#authCode").focus();
+										return;
+									}
+
+									// 인증확인 요청
+									$.ajax({
+										url: '/email/confirmAuthCode',
+										type: 'get',
+										dataType: 'text', // / 스프링에서 보내는 데이터의 타입 ─ <String>
+										data: { authCode: $("#authCode").val() },
+										success: function (result) {
+											if (result == "success") {
+												alert("회원 인증이 정상적으로 처리되었습니다.");
+												isConfirmAuth = true;
+											} else if (result == "fail") {
+												alert("인증에 실패하였습니다. 다시 확인바랍니다..");
+												$("#authCode").val("");
+												isConfirmAuth = false;
+											} else if (result == "request") { // 세션 종료 시(기본 30분)
+												alert("메일 인증 요청을 다시 해주세요.");
+												$("#authCode").val("");
+												isConfirmAuth = false;
+											}
+										}
+									});
+								});
+
+								let joinForm = $("#joinForm"); // form 태그 참조: <form role="form" id="joinForm" method="post" action="/member/join">
+								// 회원가입 버튼 클릭 시 동작
+								$("#btnJoin").click(function () {
+
+									// 회원가입 유효성 검사(JS 이용)
+									if (!useIDCheck) {
+										alert("아이디 중복 체크바랍니다.");
+										return;
+									}
+									if (!isConfirmAuth) {
+										alert("메일 인증 확인바랍니다.");
+										return;
+									}
+
+									// 폼 전송 작업(스프링 작업 이후)
+									joinForm.submit(); // let joinForm = $("#joinForm");
+								})
+
 							});
-
-							let joinForm = $("#joinForm"); // form 태그 참조: <form role="form" id="joinForm" method="post" action="/member/join">
-							// 회원가입 버튼 클릭 시 동작
-							$("#btnJoin").click(function () {
-
-								// 회원가입 유효성 검사(JS 이용)
-								if (!useIDCheck) {
-									alert("아이디 중복 체크바랍니다.");
-									return;
-								}
-								if (!isConfirmAuth) {
-									alert("메일 인증 확인바랍니다.");
-									return;
-								}
-
-								// 폼 전송 작업(스프링 작업 이후)
-								joinForm.submit(); // let joinForm = $("#joinForm");
-							})
-
-						});
-					</script>
+						</script>
 
 	</body>
 
