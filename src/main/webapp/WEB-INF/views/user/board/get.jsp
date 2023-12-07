@@ -52,8 +52,8 @@
 												<div class="form-group row">
 													<label for="us_id" class="col-2">작성자</label>
 													<div class="col-4">
-														<input type="text" class="form-control" name="us_id" id="us_id"
-															value="${sessionScope.loginStatus.us_id}" readonly>
+														<input type="text" class="form-control" name="us_id" id="us_id" value="${boardVO.us_id}"
+															readonly>
 													</div>
 													<label for="bd_register_date" class="col-2">작성일</label>
 													<div class="col-4">
@@ -70,14 +70,15 @@
 													</div>
 													<label for="bd_type" class="col-2">카테고리</label>
 													<div class="col-4">
-														<select class="form-control" name="bd_type" id="bd_type" readonly>
+														<select class="form-control" name="bd_type" id="bd_type">
 															<option value="notice" ${boardVO.bd_type=='notice' ? 'selected' : '' }
 																style="display: none;">공지사항</option>
 															<option value="free" ${boardVO.bd_type=='free' ? 'selected' : '' }>자유 게시판</option>
 															<option value="info" ${boardVO.bd_type=='info' ? 'selected' : '' }>정보 공유</option>
 															<option value="study" ${boardVO.bd_type=='study' ? 'selected' : '' }>스터디원 모집</option>
 															<option value="project" ${boardVO.bd_type=='project' ? 'selected' : '' }>플젝팀원 모집</option>
-															<option value="inquery" ${boardVO.bd_type=='inquery' ? 'selected' : '' }>Q&A(문의)</option>
+															<option value="inquery" ${boardVO.bd_type=='inquery' ? 'selected' : '' }>Q&#38;A(문의)
+															</option>
 														</select>
 													</div>
 												</div>
@@ -99,8 +100,10 @@
 													<input type="hidden" name="bd_number" id="bd_number" value="${boardVO.bd_number}" />
 													<!-- <input type="hidden" name="bd_type" id="bd_type" value="${boardVO.bd_type}" /> -->
 												</form>
-												<button type="button" id="btn_modify" class="btn btn-primary">수정</button>
-												<button type="button" id="btn_delete" class="btn btn-primary">삭제</button>
+												<c:if test="${sessionScope.userStatus.us_id == boardVO.us_id}">
+													<button type="button" id="btn_modify" class="btn btn-primary">수정</button>
+													<button type="button" id="btn_delete" class="btn btn-primary">삭제</button>
+												</c:if>
 												<button type="button" id="btn_list" class="btn btn-primary">목록</button>
 											</div>
 
@@ -124,8 +127,10 @@
 
 						// 수정 버튼 클릭
 						// document.getElementById("btn_modify").addEventListener("click", 함수명);
-						document.getElementById("btn_modify").addEventListener("click", fn_modify);
-
+						let btn_modify = document.getElementById("btn_modify");
+						if (btn_modify) {
+							btn_modify.addEventListener("click", fn_modify); // 함수의 괄호는 제외
+						}
 						function fn_modify() {
 							console.log("수정 버튼 클릭");
 							// alert('수정');
@@ -135,8 +140,10 @@
 						}
 
 						// 삭제 버튼 클릭
-						document.getElementById("btn_delete").addEventListener("click", fn_delete); // 괄호는 제외
-
+						let btn_delete = document.getElementById("btn_delete");
+						if (btn_delete) {
+							btn_delete.addEventListener("click", fn_delete); // 함수의 괄호는 제외
+						}
 						function fn_delete() {
 							console.log("삭제 버튼 클릭");
 							if (!confirm("게시물을 삭제하시겠습니까?")) return;
@@ -147,7 +154,8 @@
 						}
 
 						// 리스트 클릭
-						document.getElementById("btn_list").addEventListener("click", fn_list); // 괄호는 제외
+						// c:if 태그에 의해 수정 및 삭제 버튼이 존재하지 않는 경우, 목록 버튼에 영향을 주어 에러 발생 
+						document.getElementById("btn_list").addEventListener("click", fn_list); // 함수의 괄호는 제외
 
 						function fn_list() {
 							console.log("목록 버튼 클릭");
@@ -155,6 +163,7 @@
 							curListInfo.submit();
 						}
 					</script>
+
 			</body>
 
 			</html>

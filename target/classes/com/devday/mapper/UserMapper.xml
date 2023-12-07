@@ -41,9 +41,9 @@
 		us_id = #{us_id}
 </select>
 
-<!-- 로그인: 사용자/관리자를 구분하기 위해 select문에 'ad_check' 컬럼 추가 -->
+<!-- 일반적인 로그인: 사용자/관리자를 구분하기 위해 select문에 'ad_check' 컬럼 추가 -->
 <select id="login" parameterType="String" resultType="com.devday.domain.UserVO">
-	select 
+	SELECT 
 		us_id, 
 		us_pw, 
 		us_name, 
@@ -57,10 +57,12 @@
 		us_update_date,
 		us_last_login,
 		us_status,
-		ad_check
-	from 
+		ad_check,
+		us_login_token,
+		tk_expiry_date
+	FROM 
 		user_table 
-	where 
+	WHERE
 		us_id = #{us_id}
 </select>
 
@@ -74,6 +76,41 @@
 	WHERE
 		us_id = #{us_id}
 </update>
+
+<!-- 로그인 유지 -->
+<update id="updateUserToken" parameterType="com.devday.domain.UserVO">
+	UPDATE
+		user_table
+	SET
+		us_login_token = #{us_login_token}, tk_expiry_date = #{tk_expiry_date} 
+	WHERE
+		us_id = #{us_id}	
+</update>
+
+<!-- 자동 로그인 처리 -->
+<select id="getUserByToken" resultType="com.devday.domain.UserVO" parameterType="String">
+	SELECT
+		us_id, 
+		us_pw, 
+		us_name, 
+		us_phone, 
+		us_email, 
+		us_postcode, 
+		us_addr_basic, 
+		us_addr_detail, 
+		us_point, 
+		us_join_date, 
+		us_update_date,
+		us_last_login,
+		us_status,
+		ad_check,
+		us_login_token,
+		tk_expiry_date
+	FROM
+		user_table
+	WHERE
+		us_login_token = #{us_login_token}
+</select> 
 
 <!-- 아이디 찾기: 이름과 이메일을 이용한 찾기 -->
 <select id="findId" parameterType="com.devday.dto.FindInfoDTO" resultType="com.devday.domain.UserVO">

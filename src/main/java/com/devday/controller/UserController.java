@@ -1,7 +1,5 @@
 package com.devday.controller;
 
-import java.util.UUID;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,41 +80,40 @@ public class UserController {
 
 	// 로그인 페이지 이동 ─ 로그인 폼
 	@GetMapping("/login")
-	public void login() {
+	public void login(HttpServletRequest request, Model model) {
 
 		log.info("로그인 페이지 진입");
+		
+		// 쿠키에서 remember_id 값을 읽어옵니다.
+		String remember_id = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("remember_id".equals(cookie.getName())) {
+					remember_id = cookie.getValue();
+					break;
+				}
+			}
+		}
+	    model.addAttribute("remember_id", remember_id);
 	}
 
 	// 로그인 기능 구현
 	@PostMapping("/login")
-	public String login(LoginDTO lo_dto, HttpSession session, HttpServletRequest request, 
-					    HttpServletResponse response, RedirectAttributes rttr) throws Exception {
+	public String login(LoginDTO lo_dto,  HttpSession session, 
+						HttpServletResponse response, RedirectAttributes rttr, Model model) throws Exception {
 
-		log.info("로그인 정보: " + lo_dto); // 로그인 페이지에서 로그인 버튼 클릭 시 동작
-
-		// userService.login(lo_dto.getUs_id()): 로그인 관련 메서드 호출
-		UserVO us_vo = userService.login(lo_dto.getUs_id());
-
+		log.info("컨트롤러 ─ 로그인 정보: " + lo_dto); // 로그인 페이지에서 로그인 버튼 클릭 시 동작
+		
+		UserVO us_vo = userService.enhancedLogin(lo_dto, response);
+		
 		String url = "";
 		String msg = "";
 
-		// 아이디를 조건으로 한 데이터가 있으면서 평문 비밀번호와 암호화된 비밀번호가 같은 경우
-		if (us_vo != null && passwordEncoder.matches(lo_dto.getUs_pw(), us_vo.getUs_pw())) {
-			userService.lastLoginTime(lo_dto.getUs_id()); // 최근 접속 일자 관련 메서드 호출
-
+		if (us_vo != null) {
 			// 세션에 us_vo를 "userStatus"라는 이름으로 저장
 			session.setAttribute("userStatus", us_vo);
-
-			// 12월 4일 추가 기능 구현 중인데 동작을 안한다 후
-			// 아이디 저장 기능이 선택된 경우, 쿠키에 사용자 아이디 저장
-	        if (lo_dto.isRememberId()) {
-	            Cookie cookie = new Cookie("remember_id", lo_dto.getUs_id());
-	            cookie.setMaxAge(60 * 60 * 24 * 365); // 쿠키 유효기간 365일(1년)로 설정
-	            // id_cookie.setSecure(true); // HTTPS를 통해서만 쿠키 전송
-	            cookie.setPath("/"); // 쿠키의 경로를 모든 경로로 설정
-	            response.addCookie(cookie);
-	        }
-
+	        
 			if (session.getAttribute("targetUrl") != null) {
 				// 로그인이 필요한 주소 요청 시 "targetUrl"라는 이름을 가져와 url에 할당
 				url = (String) session.getAttribute("targetUrl"); // [참고] UserInterceptor의 getTargetUrl
@@ -134,16 +131,10 @@ public class UserController {
 				session.setAttribute("isAdmin", false);
 				log.info("사용자로 접속했습니다.");
 			}
-
-		} else if (!passwordEncoder.matches(lo_dto.getUs_pw(), us_vo.getUs_pw())) {
-			// 로그인 실패 1: 평문 비밀번호와 암호화된 비밀번호가 일치하지 않은 경우
-			url = "/member/login"; // 로그인 실패로 다시 로그인 페이지 이동
-			msg = "비밀번호가 일치하지 않습니다.";
-			rttr.addFlashAttribute("msg", msg);
 		} else {
-			// 로그인 실패 2: 아이디가 존재하지 않거나 입력란을 빈 칸으로 둔 경우
+			// 로그인 실패: 아이디 부존재, 비밀번호 불일치, 입력란을 빈 칸으로 둔 경우
 			url = "/member/login"; // 로그인 실패로 다시 로그인 페이지 이동
-			msg = "아이디를 다시 입력해주세요.";
+			msg = "아이디 또는 비밀번호가 일치하지 않습니다. 다시 입력해 주세요.";
 			rttr.addFlashAttribute("msg", msg);
 		}
 
@@ -152,14 +143,25 @@ public class UserController {
 
 	// 로그아웃 기능 구현(관련 페이지 불필요)
 	@GetMapping("/logout")
-	public String logout(HttpSession session, HttpServletResponse res) {
+	public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		
 		log.info("로그아웃 요청");
 		
 		session.invalidate(); // 사용자 세션 무효화
 		
 		// 로그인 상태 유지 관련 쿠키 삭제(아이디 저장 관련 쿠키는 삭제하지 않음)
-
+		Cookie[] cookies = request.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if ("loginToken".equals(cookie.getName())) {
+	                cookie.setValue(null);
+	                cookie.setMaxAge(0); // 쿠키 삭제
+	                cookie.setPath("/"); // 쿠키 경로 설정
+	                response.addCookie(cookie);
+	            }
+	        }
+	    }
+		
 		return "redirect:/member/login"; // 로그아웃 시 다시 로그인 페이지 이동
 	}
 
@@ -172,7 +174,7 @@ public class UserController {
 		// [참고] 인터셉터 기능으로 인해 불필요해진 부분
 		/* 
 		// 로그인 상태 확인: session.getAttribute(name)
-	    if (session.getAttribute("loginStatus") == null) {
+	    if (session.getAttribute("userStatus") == null) {
 	        // 로그인 상태가 아닌 경우 로그인 페이지로 이동(login.jsp)
 	        return "redirect:/member/login";
 	    }
@@ -182,9 +184,9 @@ public class UserController {
 	    */
 	   
 	    // Object javax.servlet.http.HttpSession.getAttribute(String name): MemberVO로의 형변환(casting) 필요
-	    String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
-		UserVO vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
-		model.addAttribute("vo", vo);
+	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
+		UserVO us_vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
+		model.addAttribute("us_vo", us_vo);
 	}
 	
 	// 회원수정 페이지 이동(회원수정 폼)
@@ -193,7 +195,7 @@ public class UserController {
 		
 		// 인터셉터를 사용하지 않을 경우 아래와 같은 코드를 중복 작성해야 함
 		/*
-		if(session.getAttribute("loginStatus") == null) {
+		if(session.getAttribute("userStatus") == null) {
 			// 로그인 페이지로 이동
 		}
 		*/
@@ -201,7 +203,7 @@ public class UserController {
 		log.info("회원수정 페이지 진입");
 
 		// Object javax.servlet.http.HttpSession.getAttribute(String name): MemberVO로의 형변환(casting) 필요
-	    String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		UserVO vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
 		model.addAttribute("vo", vo);
 	}
@@ -211,11 +213,11 @@ public class UserController {
 	public String modifyInfo(UserVO vo, HttpSession session, RedirectAttributes rttr) throws Exception {
 
 		// Object javax.servlet.http.HttpSession.getAttribute(String name): MemberVO로의 형변환(casting) 필요
-		UserVO db_vo = (UserVO) session.getAttribute("loginStatus");
+		UserVO db_vo = (UserVO) session.getAttribute("userStatus");
 		String us_id = db_vo.getUs_id();
 		
 		// 로그인된 사용자의 ID를 'vo' 객체에 설정
-		vo.setUs_id(us_id); // String us_id = ((MemberVO) session.getAttribute("loginStatus")).getUs_id();
+		vo.setUs_id(us_id); // String us_id = ((MemberVO) session.getAttribute("userStatus")).getUs_id();
 		
 		log.info("수정 전 회원정보: " + db_vo); // db_vo: 세션에 현재 로그인된 사용자의 정보
 		
@@ -224,7 +226,7 @@ public class UserController {
 
 		// 세션 정보를 최신 상태로 업데이트(수정된 정보를 활용할 경우)
 		// db_vo.setUs_email(vo.getUs_email());
-		session.setAttribute("loginStatus", vo);
+		session.setAttribute("userStatus", vo);
 
 		rttr.addFlashAttribute("msg", "modify"); // 리디렉션되는 메인 페이지(main.jsp)에서 사용
 

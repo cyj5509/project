@@ -378,7 +378,7 @@
 									// 사용자 정의 Helper(핸들바의 함수 정의)
 									Handlebars.registerHelper("authControlView", function (us_id, rv_number, rv_score) {
 										let str = "";
-										let login_id = '${sessionScope.loginStatus.us_id}';
+										let login_id = '${sessionScope.userStatus.us_id}';
 
 										// 로그인한 사용자와 상품후기 등록 사용자의 동일 여부 체크
 										if (login_id == us_id) {

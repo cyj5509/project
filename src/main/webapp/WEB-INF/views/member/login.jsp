@@ -36,10 +36,11 @@
 					<div class="box box-primary login-box">
 						<div class="box-header with-border">
 							<h3 class="box-title login-title">로그인</h3>
-							<form role="form" method="post" action="/member/login">
+							<form role="form" id="loginForm" method="post" action="/member/login">
 								<div class="box-body">
 									<div class="form-group">
-										<input type="text" class="form-control" name="us_id" id="us_id" placeholder="아이디">
+										<input type="text" class="form-control" name="us_id" id="us_id" value="${remember_id}"
+											placeholder="아이디">
 									</div>
 									<div class="form-group">
 										<input type="password" class="form-control" name="us_pw" id="us_pw" placeholder="비밀번호">
@@ -49,12 +50,10 @@
 								<div class="box-footer">
 									<div class="form-group row">
 										<div class="col-6">
-											<input type="checkbox" name="isRememberId" id="idSaveCheck" value="true" checked="checked" /> 아이디
-											저장
+											<input type="checkbox" name="rememberId" id="rememberId" value="true" /> 아이디 저장
 										</div>
 										<div class="col-6">
-											<input type="checkbox" name="isRememberLogin" value="true" />
-											로그인 유지
+											<input type="checkbox" name="rememberLogin" id="rememberLogin" value="true" /> 로그인 유지
 										</div>
 									</div>
 									<button type="submit" class="btn btn-primary login-btn" id="btn_login">로그인</button>
@@ -76,6 +75,29 @@
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 						<script>
+							// 페이지 로드 시 체크박스 상태 복원
+							document.addEventListener('DOMContentLoaded', function () {
+								reCheckboxState('rememberId');
+							});
+
+							// 로그인 폼 제출 시 체크박스 상태 저장
+							document.getElementById('loginForm').addEventListener('submit', function () {
+								checkboxState('rememberId');
+							});
+
+							// 체크박스 상태를 로컬 스토리지에 저장
+							function checkboxState(rememberId) {
+								let checkbox = document.getElementById(rememberId);
+								localStorage.setItem(rememberId, checkbox.checked);
+							}
+
+							// 로컬 스토리지에서 체크박스 상태를 복원
+							function reCheckboxState(rememberId) {
+								let checkbox = document.getElementById(rememberId);
+								let checked = localStorage.getItem(rememberId) == 'true';
+								checkbox.checked = checked;
+							}
+
 							document.getElementById('linkFindId').addEventListener('click',
 								function () {
 									sessionStorage.setItem('activeSection', 'findId');

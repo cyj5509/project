@@ -23,6 +23,7 @@ CREATE TABLE board_table (
     bd_register_date  DATE    DEFAULT sysdate,          -- 등록 일자
     bd_update_date    DATE    DEFAULT sysdate,          -- 수정 일자
     bd_view_count     NUMBER  DEFAULT 0,                -- 조회수
+    bd_guest_pw       VARCHAR2(60)            NOT NULL, -- 비회원 비밀번호
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
 */	
@@ -34,4 +35,5 @@ CREATE TABLE board_table (
 	private Date bd_register_date;
 	private Date bd_update_date;
 	private int bd_view_count;
+	private String bd_guest_pw;
 }

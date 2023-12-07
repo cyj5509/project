@@ -52,10 +52,19 @@
 													<form role="form" id="registerForm" method="post" action="/user/board/register"> <!-- 절대 경로: /user/board/register와 동일 -->
 														<div class="box-body">
 															<div class="form-group row">
-																<label for="us_id" class="col-2">작성자</label>
+																<label for="us_id_guest" class="col-2">작성자</label>
 																<div class="col-4">
-																	<input type="text" class="form-control" name="us_id" id="us_id"
-																		value="${sessionScope.loginStatus.us_id}" readonly="readonly">
+																	<c:choose>
+																		<c:when test="${not empty sessionScope.userStatus}">
+																			<%-- 로그인한 사용자의 경우 --%>
+																				<input type="text" class="form-control" name="us_id" id="us_id_member" value="${sessionScope.userStatus.us_id}"
+																					readonly>
+																		</c:when>
+																		<c:otherwise>
+																			<%-- 비회원의 경우 --%>
+																				<input type="text" class="form-control" name="us_id" id="us_id_guest" placeholder="guest">
+																		</c:otherwise>
+																	</c:choose>
 																</div>
 																<label for="bd_register_date" class="col-2">작성일</label>
 																<div class="col-4">
@@ -83,6 +92,18 @@
 																	</select>
 																</div>
 															</div>
+															<div class="form-group row">
+																<c:if test="${empty sessionScope.userStatus}">
+																	<label for="guest_pw1" class="col-2">PW</label>
+																	<div class="col-4">
+																		<input type="password" class="form-control" name="bd_guest_pw" id="guest_pw1" placeholder="비밀번호를 입력하세요.">
+																	</div>
+																	<label for="guest_pw2" class="col-2">PW 확인</label>
+																	<div class="col-4">
+																		<input type="password" class="form-control" name="bd_guest_pw" id="guest_pw2" placeholder="비밀번호를 다시 입력하세요.">
+																	</div>
+																</c:if>
+															</div>
 															<div class="form-group">
 																<label for="bd_content">내용</label>
 																<input type="text" class="form-control" name="bd_content" id="bd_content"
@@ -91,7 +112,6 @@
 														</div>
 														<!-- <input type="hidden" name="bd_type" id="bd_type" value="${boardVO.bd_type}" /> -->
 														<div class="box-footer">
-
 															<button type="button" id="btn_register" class="btn btn-primary">등록</button>
 															<button type="button" id="btn_list" class="btn btn-primary">취소</button>
 														</div>
@@ -118,18 +138,29 @@
 								let bd_title = $("#bd_title").val();
 								let bd_type = $("#bd_type").val();
 								let bd_content = $("#bd_content").val();
+								let guest_pw1 = $("#guest_pw1").val();
+								let guest_pw2 = $("#guest_pw2").val();
 
 								if(bd_title == "") {
-									alert("제목을 입력해주세요.")
+									alert("제목을 입력해 주세요.")
 									$("#bd_title").focus();
 									return;
 								}
 								if(bd_type == "total") {
-									alert("카테고리를 선택해주세요.");
+									alert("카테고리를 선택해 주세요.");
+									return;
+								}
+								if(guest_pw1 == "" || guest_pw2 == "") {
+									alert("비밀번호가 입력되지 않았습니다.");
+									return;
+								}
+								if(guest_pw1 != guest_pw2) {
+									alert("비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
+									$("#guest_pw2").focus();
 									return;
 								}
 								if(bd_content == "") {
-									alert("내용을 입력해주세요.");
+									alert("내용을 입력해 주세요.");
 									$("#bd_content").focus();
 									return;
 								}

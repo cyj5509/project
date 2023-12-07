@@ -1,5 +1,8 @@
 package com.devday.interceptor;
 
+import java.io.IOException;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -7,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.devday.domain.UserVO;
+import com.devday.service.UserServiceImpl;
 
 // 인터셉터 기능을 적용하기 위한 준비
 // 1. 인터셉터 클래스를 생성 후 HandlerInterceptorAdapter 추상 클래스를 상속한다.
@@ -17,32 +21,50 @@ import com.devday.domain.UserVO;
 
 public class UserInterceptor extends HandlerInterceptorAdapter {
 
+	private final UserServiceImpl userServiceImpl;
+	
+	public UserInterceptor(UserServiceImpl userServiceImpl) {
+		this.userServiceImpl = userServiceImpl;
+	}
+	
 	// postHandle, afterCompletion 메서드 제외
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		boolean result = false;
-		
+		// boolean result = false;
+
 		// 현재 클라이언트의 세션을 통한 인증 상태에 대해 확인 작업을 할 수 있다.
 		HttpSession session = request.getSession();
-		UserVO user = (UserVO) session.getAttribute("loginStatus");
-		
-		if (user == null) {
-			// 인증 정보가 없는 경우로 컨트롤러 미진행
-			result = false; // 세션(loginStatus) 정보가 부존재(로그인 X)
-			if (isAjaxRequest(request)) {
-				response.sendError(400); // 클라이언트 AJAX의 error 콜백 함수에서 사용
-			} else {
-				getTargetUrl(request); // 이전 페이지에 대한 정보를 가지고 있음
-				response.sendRedirect("/member/login"); // response.sendRedirect(location);
-			}   
-		} else {
-			// 인증 정보가 있는 경우로 컨트롤러 진행
-			result = true; // 세션(loginStatus) 정보가 존재(로그인 O)
+		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
+
+		if (us_vo == null) {
+			// 사용자 정보가 없는 경우로 쿠키에서 로그인 토큰 탐색(컨트롤러 미진행)
+			Cookie[] cookies = request.getCookies();
+			String loginToken = null;
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if ("loginToken".equals(cookie.getName())) {
+						loginToken = cookie.getValue();
+						break;
+					}
+				}
+			}
+			if (loginToken != null) {
+				// 데이터베이스에서 해당 토큰과 일치하는 사용자 정보를 조회합니다.
+				UserVO us_token = userServiceImpl.getUserByToken(loginToken);
+				if (us_token != null) {
+					// 유효한 토큰이면 세션에 사용자 정보를 설정합니다.
+					session.setAttribute("userStatus", us_token);
+					return true;
+				}
+			}
+			// 로그인 토큰이 없거나 유효하지 않은 경우 로그인 페이지로 리디렉션합니다.
+			redirectUnauthAccess(request, response); // return super.preHandle(request, response, handler);
+			return false;
 		}
-		
-		return result; // return super.preHandle(request, response, handler);
+
+		return true;
 	}
 	
 	// 인증되지 않은 상태에서 사용자가 요청한 URL을 저장하고, 로그인 후 URL로 리디렉션 작업
@@ -76,4 +98,12 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
 		return isAjax;
 	}
 	
+	private void redirectUnauthAccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		if (isAjaxRequest(request)) {
+			response.sendError(400); // 클라이언트 AJAX의 error 콜백 함수에서 사용
+		} else {
+			getTargetUrl(request); // 이전 페이지에 대한 정보를 가지고 있음
+			response.sendRedirect("/member/login"); // response.sendRedirect(location);
+		}   
+	}
 }

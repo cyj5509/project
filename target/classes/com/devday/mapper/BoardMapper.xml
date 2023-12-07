@@ -8,9 +8,9 @@
 <!-- 글 쓰기 저장 ─ parameterType="" -->
 <insert id="register" parameterType="com.devday.domain.BoardVO">
 	INSERT INTO 
-   		board_table (bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date)
+   		board_table (bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_guest_pw)
 	VALUES
-		(sequence_bd_number.NEXTVAL, #{bd_type}, #{us_id}, #{bd_title}, #{bd_content}, sysdate)
+		(sequence_bd_number.NEXTVAL, #{bd_type}, #{us_id}, #{bd_title}, #{bd_content}, sysdate, #{bd_guest_pw})
 </insert>
 
 <!-- 전체 목록(여러 개) ─ resultType="" -->
@@ -90,7 +90,7 @@
 <!-- 하나의 게시물 읽기 또는 글 수정 폼 -->
 <select id="get" resultType="com.devday.domain.BoardVO" parameterType="Long">
 	SELECT
-		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count 
+		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_pw
 	FROM
 		board_table
 	WHERE
@@ -116,6 +116,7 @@
 		bd_content = #{bd_content},
 		bd_update_date = sysdate,
 		bd_type = #{bd_type}
+		bd_guest_pw = #{bd_guest_pw}
 	WHERE
 		bd_number = #{bd_number}
 </update>

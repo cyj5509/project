@@ -22,6 +22,8 @@ CREATE TABLE user_table (
     us_last_login    DATE   DEFAULT sysdate   NOT NULL, -- 접속 일자
     us_status        NUMBER DEFAULT 0         NOT NULL, -- 회원 vs. 비회원(회원: 0, 비회원: 1)
     ad_check         NUMBER DEFAULT 0         NOT NULL, -- 사용자 vs. 관리자(사용자: 0, 관리자: 1)
+    us_login_token   VARCHAR2(250),                     -- 로그인 토큰(NULL 허용)
+    tk_expiry_date   DATE,                              -- 토큰 만료일(NULL 허용)
     CONSTRAINT pk_us_id PRIMARY KEY(us_id)
 );
 */
@@ -46,6 +48,10 @@ public class UserVO {
 	private Date us_join_date;
 	private Date us_update_date;
 	private Date us_last_login;
-	private Integer us_status; // 비회원 주문 또는 게시글 조회 등의 처리를 위함
+	private Integer us_status; // 비회원 주문 또는 게시글 작성 등의 처리를 위함
 	private Integer ad_check; // 관리자로 로그인한 경우 관리자 페이지 이동 등의 처리를 위함
+	
+	// 로그인 유지를 위한 필드: 서버 재시작 시 로그인 유지 정상 작동하지 않음 
+	private String us_login_token; // 로그인 토큰
+	private Date tk_expiry_date; // 토큰 만료일
 }

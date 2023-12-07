@@ -27,11 +27,19 @@ CREATE TABLE user_table (
     us_last_login    DATE   DEFAULT sysdate   NOT NULL, -- 접속 일자
     us_status        NUMBER DEFAULT 0         NOT NULL, -- 회원 vs. 비회원(회원: 0, 비회원: 1)
     ad_check         NUMBER DEFAULT 0         NOT NULL, -- 사용자 vs. 관리자(사용자: 0, 관리자: 1)
+    us_login_token   VARCHAR2(250),                     -- 로그인 토큰(NULL 허용)
+    tk_expiry_date   DATE,                              -- 토큰 유효 기간(NULL 허용)
     CONSTRAINT pk_us_id PRIMARY KEY(us_id)
 );
 
 -- 다른 PK 설정 방법
 -- ALTER TABLE user_table ADD CONSTRAINT user_pk PRIMARY KEY (user_id);
+
+ALTER TABLE user_table
+ADD (
+    us_login_token VARCHAR2(250),  -- 로그인 토큰(NULL 허용)
+    tk_expiry_date DATE            -- 토큰 만료일(NULL 허용)
+);
 
 -- 관리자 계정 활성화
 INSERT INTO
@@ -49,6 +57,18 @@ INSERT INTO
     user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status, ad_check) 
 VALUES 
     ('user02', '$2a$10$dQFCMr0udCI865eG6SoIcOaNr3Y/dgBX.R4qf6rX5KA3jciSnnNjG', '강감찬', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0, 0);
+INSERT INTO
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status, ad_check) 
+VALUES 
+    ('user03', '$2a$10$dQFCMr0udCI865eG6SoIcOaNr3Y/dgBX.R4qf6rX5KA3jciSnnNjG', '이순신', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0, 0);
+INSERT INTO
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status, ad_check) 
+VALUES 
+    ('user04', '$2a$10$dQFCMr0udCI865eG6SoIcOaNr3Y/dgBX.R4qf6rX5KA3jciSnnNjG', '김좌진', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0, 0);
+INSERT INTO
+    user_table (us_id, us_pw, us_name, us_phone, us_email, us_postcode, us_addr_basic, us_addr_detail, us_point, us_join_date, us_update_date, us_last_login, us_status, ad_check) 
+VALUES 
+    ('user05', '$2a$10$dQFCMr0udCI865eG6SoIcOaNr3Y/dgBX.R4qf6rX5KA3jciSnnNjG', '안중근', '010-1234-5678', 'cyj5509@naver.com', '12345', '서울특별시 노원구 상계로 64', '화랑빌딩 7F 이젠 아카데미', 0, sysdate, sysdate, sysdate, 0, 0);
 
 COMMIT;
 
@@ -248,11 +268,12 @@ CREATE TABLE cart_table(
     us_id       VARCHAR2(15)  NOT NULL,  -- 회원 아이디
     ct_amount   NUMBER        NOT NULL,  -- 장바구니 수량
     CONSTRAINT pk_ct_code PRIMARY KEY(ct_code),
-    CONSTRAINT fk_ct_pd_number FOREIGN KEY(pd_number) REFERENCES product_table(pd_number),
-    CONSTRAINT fk_ct_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id)
+    CONSTRAINT fk_ct_pd_number FOREIGN KEY(pd_number) REFERENCES product_table(pd_number)
+    -- CONSTRAINT fk_ct_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id)
 );
 
 -- 시퀀스: 장바구니 테이블의 카테고리 코드 컬럼(ct_code)
+DROP SEQUENCE sequence_ct_code;
 CREATE SEQUENCE sequence_ct_code;
 
 COMMIT;
@@ -278,10 +299,9 @@ CREATE TABLE order_basic_table (
     od_total_price    NUMBER                NOT NULL,                 -- 전체 주문 금액
     od_pay_date       DATE DEFAULT sysdate  NOT NULL,                 -- 결제 일자
     od_status         VARCHAR2(20)          NOT NULL,                 -- 주문 상태
-    pm_status         VARCHAR2(20)          NOT NULL,                 -- 결제 상태
-    CONSTRAINT fk_bs_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id)
+    pm_status         VARCHAR2(20)          NOT NULL                  -- 결제 상태
+    -- CONSTRAINT fk_bs_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id)
 );
-
 
 COMMIT;
 
@@ -303,6 +323,7 @@ CREATE TABLE order_detail_table (
 );
 
 -- 시퀀스: 주문 테이블(상세)의 주문 번호 컬럼(od_number)
+DROP SEQUENCE sequence_od_number;
 CREATE SEQUENCE sequence_od_number;
 
 COMMIT;
@@ -353,6 +374,7 @@ CREATE TABLE payment_table (
 );
 
 -- 시퀀스: 결제 테이블의 결제 코드 컬럼(pm_number)
+DROP SEQUENCE sequence_pm_number;
 CREATE SEQUENCE sequence_pm_number;
 
 COMMIT;
@@ -373,7 +395,7 @@ CREATE TABLE review_table (
     rv_content        VARCHAR2(200)         NOT NULL, -- 리뷰 내용
     rv_score          NUMBER                NOT NULL, -- 리뷰 평점
     rv_register_date  DATE DEFAULT sysdate  NOT NULL, -- 등록 일자
-    CONSTRAINT fk_rv_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id),
+    -- CONSTRAINT fk_rv_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id),
     CONSTRAINT fk_rv_pd_number FOREIGN KEY(pd_number) REFERENCES product_table(pd_number)
 );
 
@@ -381,6 +403,7 @@ CREATE TABLE review_table (
 ALTER TABLE review_table ADD CONSTRAINT pk_rv_number PRIMARY KEY(rv_number);
 
 -- 시퀀스: 리뷰 테이블의 리뷰 번호 컬럼(rv_number)
+DROP SEQUENCE sequence_rv_number;
 CREATE SEQUENCE sequence_rv_number;
 
 COMMIT;
@@ -413,16 +436,16 @@ INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
   VALUES(sequence_bd_number.NEXTVAL, 'free', 'user01', '자유', '게시판 테스트');
   
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'info', 'user01', '정보', '게시판 테스트');
+  VALUES(sequence_bd_number.NEXTVAL, 'info', 'user02', '정보', '게시판 테스트');
 
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'study', 'user01', '공부', '게시판 테스트');
+  VALUES(sequence_bd_number.NEXTVAL, 'study', 'user03', '공부', '게시판 테스트');
 
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'project', 'user01', '플젝', '게시판 테스트');
+  VALUES(sequence_bd_number.NEXTVAL, 'project', 'user04', '플젝', '게시판 테스트');
   
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'inquery', 'user01', '문의', '게시판 테스트');
+  VALUES(sequence_bd_number.NEXTVAL, 'inquery', 'user05', '문의', '게시판 테스트');
 
 INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
 SELECT sequence_bd_number.NEXTVAL, bd_type, us_id, bd_title, bd_content FROM board_table;
@@ -437,6 +460,6 @@ FOREIGN KEY (us_id) REFERENCES user_table(us_id);
 DROP SEQUENCE sequence_bd_number;
 CREATE SEQUENCE sequence_bd_number;
 
--- 전체 데이터 조회 및 삭제(768개 행 삽입)
-SELECT * FROM board_table WHERE bd_type = '';
+-- 전체 데이터 조회 및 삭제(384개 행 삽입)
+SELECT * FROM board_table;
 DELETE FROM board_table;

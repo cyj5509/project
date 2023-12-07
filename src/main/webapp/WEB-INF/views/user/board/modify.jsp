@@ -56,7 +56,7 @@
 														<label for="us_id" class="col-2">작성자</label>
 														<div class="col-4">
 															<input type="text" class="form-control" name="us_id" id="us_id"
-																value="${sessionScope.loginStatus.us_id}" readonly="readonly">
+																value="${sessionScope.userStatus.us_id}" readonly="readonly">
 														</div>
 														<label for="bd_register_date" class="col-2">수정일</label>
 														<div class="col-4">

@@ -191,21 +191,22 @@
 														</tr>
 														<!-- BoardController에서 작성한 이름과 동일한 이름을 items로 작성 -->
 														<!-- 목록이 출력되는 부분 -->
-														<c:forEach items="${list}" var="board">
+														<c:forEach items="${list}" var="boardVO">
 															<tr style="text-align: center;">
-																<td>${board.bd_number}</td>
-																<th class="capitalize">${board.bd_type}</th>
-																<!-- <td><a class="move" href="#" data-bd_number="${board.bd_number}" data-bd_type="${board.bd_type}">${board.bd_title}</a> -->
-																<td><a class="move" href="#" data-bd_number="${board.bd_number}">${board.bd_title}</a>
+																<td>${boardVO.bd_number}</td>
+																<th class="capitalize">${boardVO.bd_type}</th>
+																<!-- <td><a class="move" href="#" data-bd_number="${boardVO.bd_number}" data-bd_type="${boardVO.bd_type}">${boardVO.bd_title}</a> -->
+																<td><a class="move" href="#"
+																		data-bd_number="${boardVO.bd_number}">${boardVO.bd_title}</a>
 																</td> <!-- 클래스명 move는 제목과 관련 -->
-																<td> ${board.us_id}</td>
+																<td> ${boardVO.us_id}</td>
 																<td>
-																	<fmt:formatDate value="${board.bd_register_date}" pattern="yy.MM.dd." />
+																	<fmt:formatDate value="${boardVO.bd_register_date}" pattern="yy.MM.dd." />
 																</td>
 																<td>
-																	<fmt:formatDate value="${board.bd_update_date}" pattern="yy.MM.dd." />
+																	<fmt:formatDate value="${boardVO.bd_update_date}" pattern="yy.MM.dd." />
 																</td>
-																<td>${board.bd_view_count}</td>
+																<td>${boardVO.bd_view_count}</td>
 															</tr>
 														</c:forEach>
 													</tbody>
@@ -264,20 +265,20 @@
 														</nav>
 													</div>
 													<div class="col-2" style="text-align: right;">
-														<c:if test="${sessionScope.loginStatus != null}">
-															<%-- 공지사항 게시판의 경우, 관리자만 글쓰기 버튼 보임 --%>
-																<c:if test="${bd_type == 'notice'}">
-																	<c:if test="${sessionScope.isAdmin}">
-																		<a class="btn btn-primary" href="/user/board/register/notice" role="button">글쓰기</a>
-																	</c:if>
+
+														<%-- 공지사항 게시판의 경우, 관리자만 글쓰기 버튼 보임 --%>
+															<c:if test="${bd_type == 'notice'}">
+																<c:if test="${sessionScope.isAdmin}">
+																	<a class="btn btn-primary" href="/user/board/register/notice" role="button">글쓰기</a>
+																</c:if>
+															</c:if>
+
+															<%-- 나머지는 관리자 포함한 회원 및 비회원 모두 보임 --%>
+																<c:if test="${bd_type != 'notice'}">
+																	<a class="btn btn-primary" href="/user/board/register/${bd_type}"
+																		role="button">글쓰기</a>
 																</c:if>
 
-																<%-- 그 외 게시판은 로그인한 사용자만 글쓰기 버튼 보임 --%>
-																	<c:if test="${bd_type != 'notice'}">
-																		<a class="btn btn-primary" href="/user/board/register/${bd_type}"
-																			role="button">글쓰기</a>
-																	</c:if>
-														</c:if>
 													</div>
 												</div>
 
@@ -319,7 +320,7 @@
 						});
 
 						// // 2) 처음, 이전, 다음, 끝 버튼 클릭 시 동작되는 이벤트 설정
-						
+
 
 
 						// 3) 제목 클릭 시 이벤트 설정: 게시물 읽기
@@ -346,15 +347,6 @@
 								newNumber.setAttribute("id", "bd_number");
 								newNumber.setAttribute("value", bd_number); // bd_number는 변수명
 								actionForm.appendChild(newNumber);
-
-								// actionForm.append("<input type='hidden' name='bd_type' value='" + bd_type + "'>");
-								// HTML DOM 문법
-								// const newType = document.createElement("input");
-								// newType.setAttribute("type", "hidden");
-								// newType.setAttribute("name", "bd_type");
-								// newType.setAttribute("id", "bd_type");
-								// newType.setAttribute("value", bd_type); // bd_type은 변수명
-								// actionForm.appendChild(newType);
 
 								actionForm.setAttribute("action", "/user/board/get/${bd_type}"); // /user/board/list -> /user/board/get 전송
 								actionForm.submit();
