@@ -8,7 +8,7 @@ import lombok.Data;
 CREATE TABLE payment_table (
     pm_number               NUMBER CONSTRAINT pk_pm_code PRIMARY KEY, -- 결제 번호
     od_number               NUMBER NOT NULL,                          -- 주문 번호
-    us_id                   VARCHAR2(50) NOT NULL,                    -- 사용자 아이디
+    us_id                   VARCHAR2(40) NOT NULL,                    -- 사용자 아이디
     pm_method               VARCHAR2(50) NOT NULL,                    -- 결제 방식
     pm_complete_date        DATE DEFAULT sysdate NULL,                -- 결제 완료 일자
     pm_total_price          NUMBER NOT NULL,                          -- 결제 금액

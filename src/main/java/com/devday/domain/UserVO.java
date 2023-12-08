@@ -8,7 +8,7 @@ import lombok.ToString;
 
 /*
 CREATE TABLE user_table (
-    us_id            VARCHAR2(15),                      -- 사용자 아이디
+    us_id            VARCHAR2(40),                      -- 사용자 아이디
     us_pw            VARCHAR2(60)             NOT NULL, -- 사용자 비밀번호
     us_name          VARCHAR2(30)             NOT NULL, -- 사용자 이름
     us_phone         VARCHAR2(15)             NOT NULL, -- 사용자 전화번호
@@ -52,6 +52,6 @@ public class UserVO {
 	private Integer ad_check; // 관리자로 로그인한 경우 관리자 페이지 이동 등의 처리를 위함
 	
 	// 로그인 유지를 위한 필드: 서버 재시작 시 로그인 유지 정상 작동하지 않음 
-	private String us_login_token; // 로그인 토큰
-	private Date tk_expiry_date; // 토큰 만료일
+	private String us_login_token; 
+	private Date tk_expiry_date;
 }

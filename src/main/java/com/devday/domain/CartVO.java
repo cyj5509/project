@@ -8,7 +8,7 @@ import lombok.ToString;
 CREATE TABLE cart_table(
     ct_code     NUMBER,                  -- 장바구니 코드
     pd_number   NUMBER        NOT NULL,  -- 상품 번호
-    us_id       VARCHAR2(15)  NOT NULL,  -- 회원 아이디
+    us_id       VARCHAR2(40)  NOT NULL,  -- 회원 아이디
     ct_amount   NUMBER        NOT NULL,  -- 장바구니 수량
     CONSTRAINT pk_ct_code PRIMARY KEY(ct_code),
     CONSTRAINT fk_ct_pd_number FOREIGN KEY(pd_number) REFERENCES product_table(pd_number),

@@ -7,7 +7,7 @@ import lombok.Data;
 /*
 CREATE TABLE order_basic_table (
     od_number         NUMBER CONSTRAINT pk_bs_od_number PRIMARY KEY,  -- 주문 번호
-    us_id             VARCHAR2(15)          NOT NULL,                 -- 회원 아이디
+    us_id             VARCHAR2(40)          NOT NULL,                 -- 회원 아이디
     od_name           VARCHAR2(30)          NOT NULL,                 -- 주문자의 이름
     od_phone          VARCHAR2(20)          NOT NULL,                 -- 주문자의 전화번호
     od_postcode       CHAR(5)               NOT NULL,                 -- 주문자의 우편번호

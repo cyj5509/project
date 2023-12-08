@@ -16,14 +16,15 @@ public class BoardVO {
 /*
 CREATE TABLE board_table (
     bd_number         NUMBER,                           -- 게시물 번호
-    bd_type           VARCHAR2(40)            NOT NULL, -- 게시물 구분(타입)
-    us_id             VARCHAR2(15)            NOT NULL, -- 사용자 아이디
+    bd_type           VARCHAR2(40)            NOT NULL, -- 게시물 구분
+    us_id             VARCHAR2(40),                     -- 사용자 아이디(NULL 허용)
     bd_title          VARCHAR2(100)           NOT NULL, -- 게시물 제목
     bd_content        VARCHAR2(4000)          NOT NULL, -- 게시물 내용
     bd_register_date  DATE    DEFAULT sysdate,          -- 등록 일자
     bd_update_date    DATE    DEFAULT sysdate,          -- 수정 일자
     bd_view_count     NUMBER  DEFAULT 0,                -- 조회수
-    bd_guest_pw       VARCHAR2(60)            NOT NULL, -- 비회원 비밀번호
+    bd_guest_nickname VARCHAR2(40)                      -- 비회원 닉네임(NULL 허용)
+    bd_guest_pw       VARCHAR2(60)                      -- 비회원 비밀번호(NULL 허용)
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
 */	
@@ -35,5 +36,8 @@ CREATE TABLE board_table (
 	private Date bd_register_date;
 	private Date bd_update_date;
 	private int bd_view_count;
+	
+	// 비회원 관리를 위한 필드
+	private String bd_guest_nickname;
 	private String bd_guest_pw;
 }

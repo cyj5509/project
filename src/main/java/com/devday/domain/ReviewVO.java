@@ -20,7 +20,7 @@ import lombok.Data;
 /*
 CREATE TABLE review_table (
 	    rv_number         NUMBER,                         -- 리뷰 번호
-	    us_id             VARCHAR2(15)          NOT NULL, -- 사용자 아이디
+	    us_id             VARCHAR2(40)          NOT NULL, -- 사용자 아이디
 	    pd_number         NUMBER                NOT NULL, -- 상품 번호
 	    rv_content        VARCHAR2(200)         NOT NULL, -- 리뷰 내용
 	    rv_score          NUMBER                NOT NULL, -- 리뷰 평점

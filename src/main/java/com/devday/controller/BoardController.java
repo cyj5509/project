@@ -33,10 +33,11 @@ public class BoardController {
 	private final BoardService boardService;
 	private final PasswordEncoder passwordEncoder; // [참고] security 폴더의 spring-security.xml
 	
+	// 게시물 등록 페이지 이동 - 게시물 등록 폼
 	@GetMapping("/register/{bd_type}")
 	public String register(@PathVariable("bd_type") String bd_type, Model model) {
 		
-		log.info("called register...");
+		log.info("게시물 등록 페이지 진입");
 		
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBd_type(bd_type);
@@ -47,6 +48,7 @@ public class BoardController {
 		return "/user/board/register";
 	}
 	
+	// 게시물 등록 기능 구현
 	@PostMapping("/register")
 	public String register(@ModelAttribute("boardVO") BoardVO boardVO,
 						  @RequestParam(value="bd_guest_pw", required = false) String bd_guest_pw, HttpSession session) {
@@ -73,8 +75,11 @@ public class BoardController {
 		return "redirect:/user/board/list" + "/" + boardVO.getBd_type();  
 	}
 	
+	// 게시물 목록 페이지 이동 ─ 게시물 목록 폼
 	@GetMapping(value = {"/list", "/list/{bd_type}"})
 	public String list(@PathVariable(value = "bd_type", required = false) String bd_type, Criteria cri, Model model) {
+		
+		log.info("게시물 목록 페이지 진입");
 		
 		// bd_type이 null이거나 빈 문자열인 경우, 전체 게시판("total")로 설정
 		if (bd_type == null || bd_type == "") {
@@ -105,11 +110,13 @@ public class BoardController {
 		return "/user/board/list"; // JSP 페이지 경로
 	}
 	
-	
+	// 게시물 조회 페이지 이동 ─ 게시물 조회 폼
 	@GetMapping("/get/{bd_type}") 
 	public String get(@PathVariable("bd_type") String bd_type, 
 					  @RequestParam("bd_number") Long bd_number, 
 				      @ModelAttribute("cri") Criteria cri, Model model) {
+		
+		log.info("게시물 조회 페이지 진입");
 		
 		log.info("게시물 번호: " + bd_number);
 		log.info("페이징과 검색 정보: " + cri);
@@ -121,10 +128,13 @@ public class BoardController {
 		return "/user/board/get"; // JSP 페이지 경로
 	}
 	
+	// 게시물 수정 페이지 이동 ─ 게시물 수정 폼
 	@GetMapping("/modify/{bd_type}") 
 	public String modify(@PathVariable("bd_type") String bd_type, 
 						@RequestParam("bd_number") Long bd_number, 
 						@ModelAttribute("cri") Criteria cri, Model model) {
+		
+		log.info("게시물 수정 페이지 진입");
 		
 		log.info("게시물 번호: " + bd_number);
 		log.info("페이징과 검색 정보: " + cri);
@@ -136,6 +146,7 @@ public class BoardController {
 		return "/user/board/modify"; // JSP 페이지 경로
 	}
 	
+	// 게시물 수정 기능 구현
 	@PostMapping("/modify")
 	public String modify(BoardVO boardVO, Criteria cri, RedirectAttributes rttr,
 						@RequestParam(value="bd_guest_pw", required=false) String bd_guest_pw) {
@@ -164,6 +175,7 @@ public class BoardController {
 		return "redirect:/user/board/list" + "/" + boardVO.getBd_type() + cri.getListLink();
 	}
 	
+	// 게시물 삭제 기능 구현(관련 페이지 불필요)
 	@GetMapping("/delete/{bd_type}")
 	public String delete(@PathVariable("bd_type") String bd_type, @RequestParam("bd_number") Long bd_number,
 					    @RequestParam(value = "bd_guest_pw", required = false) String bd_guest_pw,
