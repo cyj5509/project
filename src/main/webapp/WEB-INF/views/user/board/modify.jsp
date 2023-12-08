@@ -98,6 +98,15 @@
 													<button type="button" id="btn_list" class="btn btn-primary">취소</button>
 													<input type="hidden" name="bd_number" id="bd_number" value="${boardVO.bd_number}" />
 													<!-- <input type="hidden" name="bd_type" id="bd_type" value="${boardVO.bd_type}" /> -->
+													<c:if test="${empty sessionScope.userStatus}">
+														<div class="form-group row" style="text-align: right;">
+															<label for="guest_pw" class="col-2">비밀번호</label>
+															<div class="col-4">
+																<input type="password" class="form-control" name="guest_pw" id="guest_pw"
+																	placeholder="비밀번호를 입력하세요.">
+															</div>
+														</div>
+													</c:if>
 												</div>
 											</form>
 										</div>
@@ -122,19 +131,26 @@
 								let bd_title = $("#bd_title").val();
 								let bd_type = $("#bd_type").val();
 								let bd_content = $("#bd_content").val();
+								let guest_pw = $("#guest_pw").val();
 
 								if (bd_title == "") {
-									alert("제목을 입력해주세요.")
+									alert("제목을 입력해 주세요.")
 									$("#bd_title").focus();
 									return;
 								}
 								if (bd_type == "total") {
-									alert("카테고리를 선택해주세요.");
+									alert("카테고리를 선택해 주세요.");
 									return;
 								}
 								if (bd_content == "") {
-									alert("내용을 입력해주세요.");
+									alert("내용을 입력해 주세요.");
 									$("#bd_content").focus();
+									return;
+								}
+								// 비회원 게시물 수정 시 비밀번호 확인
+								if ($("#guest_pw").length > 0 && guest_pw === "") {
+									alert("비회원이 작성한 게시물의 경우 비밀번호를 입력해야 합니다.");
+									$("#guest_pw").focus();
 									return;
 								}
 								modifyForm.submit();
