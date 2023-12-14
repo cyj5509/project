@@ -5,13 +5,23 @@
  
 <mapper namespace="com.devday.mapper.BoardMapper">
 
-<!-- 글 쓰기 저장 ─ parameterType="" -->
+<!-- 게시글 등록 -->
 <insert id="register" parameterType="com.devday.domain.BoardVO">
 	INSERT INTO 
    		board_table (bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_guest_nickname, bd_guest_pw)
 	VALUES
 		(sequence_bd_number.NEXTVAL, #{bd_type}, #{us_id}, #{bd_title}, #{bd_content}, sysdate, #{bd_guest_nickname}, #{bd_guest_pw})
 </insert>
+
+<!-- 게시글 조회 또는 수정 -->
+<select id="get" resultType="com.devday.domain.BoardVO" parameterType="Long">
+	SELECT
+		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_pw
+	FROM
+		board_table
+	WHERE
+		bd_number = #{bd_number}
+</select>
 
 <!-- 전체 목록(여러 개) ─ resultType="" -->
 <select id="getList" resultType="com.devday.domain.BoardVO">
@@ -55,7 +65,7 @@
 	FROM 
 		(
 	    SELECT /*+ INDEX_DESC(board_table pk_bd_number) */
-	    		ROWNUM rn, bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
+	    		ROWNUM rn, bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
 	    FROM
 	    		board_table 
 	    WHERE
@@ -87,15 +97,7 @@
 		<include refid="criteria"></include> bd_number > 0
 </select>
 
-<!-- 하나의 게시물 읽기 또는 글 수정 폼 -->
-<select id="get" resultType="com.devday.domain.BoardVO" parameterType="Long">
-	SELECT
-		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_pw
-	FROM
-		board_table
-	WHERE
-		bd_number = #{bd_number}
-</select>
+
 
 <!-- 조회수 증가 -->
 <update id="readCount" parameterType="Long">

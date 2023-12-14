@@ -35,7 +35,7 @@ public class UserVO {
 	
 	// 로그인 정보
 	private String us_id; 
-	private String us_pw; // 암호화 처리된 비밀번호
+	private String us_pw; // 회원가입 시 암호화 처리될 비밀번호
 	
 	// 회원 정보
 	private String us_name;
@@ -48,10 +48,10 @@ public class UserVO {
 	private Date us_join_date;
 	private Date us_update_date;
 	private Date us_last_login;
-	private Integer us_status; // 비회원 주문 또는 게시글 작성 등의 처리를 위함
-	private Integer ad_check; // 관리자로 로그인한 경우 관리자 페이지 이동 등의 처리를 위함
+	private Integer us_status; // 비회원 게시글 작성 등의 처리(회원: 0, 비회원: 1)
+	private Integer ad_check; // 관리자 로그인 시 메뉴 활성화(사용자: 0, 관리자: 1)
 	
-	// 로그인 유지를 위한 필드: 서버 재시작 시 로그인 유지 정상 작동하지 않음 
+	// 로그인 유지를 위한 필드: 서버 재시작 시 해당 기능 정상 작동하지는 않음 
 	private String us_login_token; 
 	private Date tk_expiry_date;
 }

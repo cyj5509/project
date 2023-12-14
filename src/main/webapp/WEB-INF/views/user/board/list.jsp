@@ -17,60 +17,10 @@
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
 					<!-- CSS 파일 링크 -->
-					<link rel="stylesheet" href="/css/header.css">
+					<link rel="stylesheet" href="/css/common/header.css">
+					<link rel="stylesheet" href="/css/user/board/main_text.css">
 
 					<style>
-						.bd-placeholder-img {
-							font-size: 1.125rem;
-							text-anchor: middle;
-							-webkit-user-select: none;
-							-moz-user-select: none;
-							-ms-user-select: none;
-							user-select: none;
-						}
-
-						@media (min-width: 768px) {
-							.bd-placeholder-img-lg {
-								font-size: 3.5rem;
-							}
-						}
-
-						.carousel-control-prev,
-						.carousel-control-next {
-							display: block;
-							top: 62.5%;
-							transform: translateY(-50%);
-						}
-
-						.carousel-control-prev {
-							left: 0;
-						}
-
-						.carousel-control-next {
-							right: 0;
-						}
-
-						.custom-btn {
-							border: 2px solid black;
-							background-color: rgba(192, 192, 192, 0.5);
-							color: black;
-							transition: background-color 0.3s ease;
-						}
-
-						.custom-btn:hover {
-							background-color: black;
-							color: white;
-						}
-
-						.carousel-item img {
-							opacity: 0.7;
-						}
-
-						.carousel-caption h2,
-						.carousel-caption p {
-							text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-						}
-
 						.horizontal-menu {
 							list-style-type: none;
 							padding: 0;
@@ -95,18 +45,15 @@
 						.capitalize {
 							text-transform: capitalize;
 						}
-
-						.box-title {
-							font-size: 40px;
-							margin-bottom: 20px;
-						}
-
-						.box-body {
-							font-size: 20px;
-							padding: 20px;
-						}
 					</style>
 
+					<script>
+						// 게시물 수정 및 삭제 시 정상적으로 작업이 완료되면 동작(modify 및 delete 메서드)
+						let msg = '${msg}';
+						if (msg != "") {
+							alert(msg);
+						}
+					</script>
 			</head>
 
 			<body>
@@ -199,12 +146,21 @@
 																<td><a class="move" href="#"
 																		data-bd_number="${boardVO.bd_number}">${boardVO.bd_title}</a>
 																</td> <!-- 클래스명 move는 제목과 관련 -->
-																<td> ${boardVO.us_id}</td>
 																<td>
-																	<fmt:formatDate value="${boardVO.bd_register_date}" pattern="yy.MM.dd." />
+																	<c:choose>
+																		<c:when test="${not empty boardVO.us_id}">
+																			${boardVO.us_id}
+																		</c:when>
+																		<c:otherwise>
+																			${boardVO.bd_guest_nickname}
+																		</c:otherwise>
+																	</c:choose>
 																</td>
 																<td>
-																	<fmt:formatDate value="${boardVO.bd_update_date}" pattern="yy.MM.dd." />
+																	<fmt:formatDate value="${boardVO.bd_register_date}" pattern="yy-MM-dd" />
+																</td>
+																<td>
+																	<fmt:formatDate value="${boardVO.bd_update_date}" pattern="yy-MM-dd" />
 																</td>
 																<td>${boardVO.bd_view_count}</td>
 															</tr>
@@ -273,7 +229,7 @@
 																</c:if>
 															</c:if>
 
-															<%-- 나머지는 관리자 포함한 회원 및 비회원 모두 보임 --%>
+															<%-- 나머지는 비회원 포함 모두에게 글쓰기 버튼 보임 --%>
 																<c:if test="${bd_type != 'notice'}">
 																	<a class="btn btn-primary" href="/user/board/register/${bd_type}"
 																		role="button">글쓰기</a>
@@ -281,21 +237,17 @@
 
 													</div>
 												</div>
-
-
 											</div>
 										</div>
 									</div>
 								</div>
+								<footer class="footer mt-auto py-3">
+									<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+										<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+								</footer>
 							</section>
-							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div>
 					</main>
-
-					<footer class="footer mt-auto py-3">
-						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
-					</footer>
-
 
 					<script>
 

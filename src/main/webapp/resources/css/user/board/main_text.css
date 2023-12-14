@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+.box-title {
+	font-size: 40px;
+	margin-bottom: 20px;
+}
+
+.box-body {
+	font-size: 20px;
+	padding: 20px;
+}

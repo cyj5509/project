@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.BoardVO;
+import com.devday.dto.BoardDTO;
 import com.devday.dto.Criteria;
 import com.devday.dto.PageDTO;
 import com.devday.service.BoardService;
@@ -31,57 +32,56 @@ import lombok.extern.log4j.Log4j;
 public class BoardController {
 	
 	private final BoardService boardService;
-	private final PasswordEncoder passwordEncoder; // [참고] security 폴더의 spring-security.xml
+	private final PasswordEncoder passwordEncoder; // 비회원 관련 암호화 처리를 위함(security 폴더 내 spring-security.xml) 
 	
-	// 게시물 등록 페이지 이동 - 게시물 등록 폼
-	@GetMapping("/register/{bd_type}")
-	public String register(@PathVariable("bd_type") String bd_type, Model model) {
+	// 게시물 등록 페이지 이동(게시물 등록 폼)
+	@GetMapping(value = {"/register", "/register/{bd_type}"})
+	public String register(@PathVariable(value = "bd_type", required = false) String bd_type, Model model) {
 		
 		log.info("게시물 등록 페이지 진입");
 		
-		BoardVO boardVO = new BoardVO();
-		boardVO.setBd_type(bd_type);
-		boardVO.setBd_register_date(new Date());
+		// 게시물 구분이 null이거나 빈 문자열인 경우, 전체 게시판으로 설정
+		if (bd_type == null || bd_type == "") {
+			bd_type = "total";
+		}
 		
-		model.addAttribute("boardVO", boardVO);
+		BoardVO bd_vo = new BoardVO();
+		bd_vo.setBd_type(bd_type);
+		bd_vo.setBd_register_date(new Date());
+		
+		model.addAttribute("bd_vo", bd_vo);
 		
 		return "/user/board/register";
 	}
 	
 	// 게시물 등록 기능 구현
 	@PostMapping("/register")
-	public String register(@ModelAttribute("boardVO") BoardVO boardVO,
-						  @RequestParam(value="bd_guest_pw", required = false) String bd_guest_pw, HttpSession session) {
+	public String register(@ModelAttribute("bd_vo") BoardVO bd_vo, HttpSession session) {
 	
-		log.info("게시판 입력 데이터: " + boardVO);
-		log.info("게시판 종류: " + boardVO.getBd_type());		
+		log.info("게시물 등록 데이터: " + bd_vo);
+		log.info("구분: " + bd_vo.getBd_type());		
 		
-	    // 비회원 게시글 작성 시 비밀번호 암호화 처리
-	    if (bd_guest_pw != null && !bd_guest_pw.isEmpty()) {
-	    		String guest_pw = passwordEncoder.encode(bd_guest_pw); // 암호화된 비밀번호 ─ 서버용(DB 저장)
-	        boardVO.setBd_guest_pw(guest_pw); // 암호화된 비밀번호로 필드값 설정
-	    }
-		
-	    // 로그인 체크
+	    // 로그인 체크 - 비회원 처리 로직
 	    if (session.getAttribute("userStatus") == null) {
-	        // 비회원 처리: 회원 아이디가 비어 있으면 'guest'로 설정
-	        if (boardVO.getUs_id() == null || boardVO.getUs_id().isEmpty()) {
-	            boardVO.setUs_id("guest");
-	        }
-	    }
+	    		bd_vo.setUs_id(""); // 비회원인 경우 us_id를 빈 문자열로 설정
+			// 비회원 비밀번호 처리: 비밀번호가 제공된 경우 암호화 
+			if (bd_vo.getBd_guest_pw() != null && !bd_vo.getBd_guest_pw().isEmpty()) {
+		    		String guest_pw = bd_vo.getBd_guest_pw(); 
+		    		bd_vo.setBd_guest_pw(passwordEncoder.encode(guest_pw)); // 암호화된 비밀번호로 설정
+		    }
+        }
+		boardService.register(bd_vo); // 게시물 등록 관련 메서드 호출
 		
-		boardService.register(boardVO);
-		
-		return "redirect:/user/board/list" + "/" + boardVO.getBd_type();  
+		return "redirect:/user/board/list" + "/" + bd_vo.getBd_type();  
 	}
 	
-	// 게시물 목록 페이지 이동 ─ 게시물 목록 폼
+	// 게시물 목록 페이지 이동(게시물 목록 폼)
 	@GetMapping(value = {"/list", "/list/{bd_type}"})
 	public String list(@PathVariable(value = "bd_type", required = false) String bd_type, Criteria cri, Model model) {
 		
 		log.info("게시물 목록 페이지 진입");
 		
-		// bd_type이 null이거나 빈 문자열인 경우, 전체 게시판("total")로 설정
+		// 게시물 구분이 null이거나 빈 문자열인 경우, 전체 게시판으로 설정
 		if (bd_type == null || bd_type == "") {
 			bd_type = "total";
 		}
@@ -91,7 +91,7 @@ public class BoardController {
 		boardVO.setBd_type(bd_type);
 		
 		List<BoardVO> list = boardService.getListWithPaging(cri, bd_type);
-		log.info("게시판 타입: " + bd_type); 
+		log.info("게시판 구분: " + bd_type); 
 		log.info("타입별 목록: " + list); 
 		
 		model.addAttribute("list", list);
@@ -110,104 +110,114 @@ public class BoardController {
 		return "/user/board/list"; // JSP 페이지 경로
 	}
 	
-	// 게시물 조회 페이지 이동 ─ 게시물 조회 폼
-	@GetMapping("/get/{bd_type}") 
-	public String get(@PathVariable("bd_type") String bd_type, 
-					  @RequestParam("bd_number") Long bd_number, 
-				      @ModelAttribute("cri") Criteria cri, Model model) {
-		
+	// 게시물 조회 페이지 이동(게시물 조회 폼)
+	@GetMapping(value = "/get/{bd_type}")
+	public String getModify(@PathVariable(value = "bd_type", required = false) String bd_type,
+						    @RequestParam("bd_number") Long bd_number, 
+							@ModelAttribute("cri") Criteria cri, Model model) {
+
 		log.info("게시물 조회 페이지 진입");
-		
-		log.info("게시물 번호: " + bd_number);
-		log.info("페이징과 검색 정보: " + cri);
-		
-		BoardVO boardVO = boardService.get(bd_number);
-		
-		model.addAttribute("boardVO", boardVO);
-		
-		return "/user/board/get"; // JSP 페이지 경로
+		log.info("조회한 게시물 번호: " + bd_number);
+		log.info("조회한 페이징 및 검색 정보: " + cri);
+
+		BoardVO bd_vo = boardService.get(bd_number);
+		model.addAttribute("bd_vo", bd_vo);
+
+		return "/user/board/get";
 	}
-	
-	// 게시물 수정 페이지 이동 ─ 게시물 수정 폼
-	@GetMapping("/modify/{bd_type}") 
-	public String modify(@PathVariable("bd_type") String bd_type, 
-						@RequestParam("bd_number") Long bd_number, 
-						@ModelAttribute("cri") Criteria cri, Model model) {
-		
+
+	// 게시물 수정 페이지 이동(게시물 수정 폼)
+	@GetMapping(value = "/modify/{bd_type}")
+	public String modify(@PathVariable(value = "bd_type", required = false) String bd_type,
+						 @RequestParam("bd_number") Long bd_number, 
+						 @ModelAttribute("cri") Criteria cri, Model model) {
+
 		log.info("게시물 수정 페이지 진입");
-		
-		log.info("게시물 번호: " + bd_number);
-		log.info("페이징과 검색 정보: " + cri);
-		
-		BoardVO boardVO = boardService.get(bd_number);
-		
-		model.addAttribute("boardVO", boardVO);
-		
-		return "/user/board/modify"; // JSP 페이지 경로
+		log.info("수정할 게시물 번호: " + bd_number);
+		log.info("수정할 페이징 및 검색 정보: " + cri);
+
+		BoardVO bd_vo = boardService.get(bd_number);
+		model.addAttribute("bd_vo", bd_vo);
+
+		return "/user/board/modify";
 	}
 	
 	// 게시물 수정 기능 구현
 	@PostMapping("/modify")
-	public String modify(BoardVO boardVO, Criteria cri, RedirectAttributes rttr,
-						@RequestParam(value="bd_guest_pw", required=false) String bd_guest_pw) {
+	public String modify(BoardVO bd_vo, Criteria cri, HttpSession session, RedirectAttributes rttr) {
 		
-		log.info("수정 데이터: " + boardVO);
-		log.info("Criteria: " + cri);
+		log.info("게시물 수정 데이터: " + bd_vo);
+		log.info("게시물 수정 권한 유무: " + session.getAttribute("isAuthorized"));
 		
-		// DTO로 처리할 방법 강구해볼 것
-		BoardVO existingBoard = boardService.get(boardVO.getBd_number());
-		if (existingBoard != null) {
-			// 비회원이 작성한 게시글인 경우 비밀번호 확인
-			if ("guest".equals(existingBoard.getUs_id())) {
-				if (bd_guest_pw == null || !passwordEncoder.matches(bd_guest_pw, existingBoard.getBd_guest_pw())) {
-					rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-					return "redirect:/user/board/modify/" + existingBoard.getBd_type();
-				}
-			}
-			boardService.modify(boardVO);
+		// 수정 권한 확인
+	    if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
+	        rttr.addFlashAttribute("msg", "게시물을 수정할 권한이 없습니다.");
+	        return "redirect:/user/board/get/" + bd_vo.getBd_type() + "?bd_number=" + bd_vo.getBd_number();
+	    }
 
-			// 검색과 페이지 정보를 이동주소(/board/list)의 파라미터로 사용하기 위한 작업
-			rttr.addAttribute("pageNum", cri.getPageNum());
-			rttr.addAttribute("amount", cri.getAmount());
-			rttr.addAttribute("type", cri.getType());
-			rttr.addAttribute("keyword", cri.getKeyword());
-		}
-		return "redirect:/user/board/list" + "/" + boardVO.getBd_type() + cri.getListLink();
+		boardService.modify(bd_vo); // 게시물 수정 관련 메서드 호출
+		session.removeAttribute("isAuthorized"); // isAuthorized라는 특정 세션 속성 삭제
+		
+		// 페이징과 검색 정보를 쿼리 스트링으로 사용하기 위한 작업을 cri.getListLink()으로 대체함
+		/*
+		rttr.addAttribute("pageNum", cri.getPageNum());
+		rttr.addAttribute("amount", cri.getAmount());
+		rttr.addAttribute("type", cri.getType());	
+		rttr.addAttribute("keyword", cri.getKeyword());	
+		*/
+		rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물이 정상적으로 수정되었습니다.");
+		
+		return "redirect:/user/board/list" + "/" + bd_vo.getBd_type() + cri.getListLink();
 	}
 	
 	// 게시물 삭제 기능 구현(관련 페이지 불필요)
-	@GetMapping("/delete/{bd_type}")
-	public String delete(@PathVariable("bd_type") String bd_type, @RequestParam("bd_number") Long bd_number,
-					    @RequestParam(value = "bd_guest_pw", required = false) String bd_guest_pw,
-					    Criteria cri, RedirectAttributes rttr) {
+	@GetMapping(value = "/delete/{bd_type}")
+	public String delete(@PathVariable(value = "bd_type", required = false) String bd_type, 
+						BoardVO bd_vo, Criteria cri, HttpSession session, RedirectAttributes rttr) {
 
-		log.info("삭제할 게시판: " + bd_type);
-		log.info("삭제할 번호: " + bd_number);
-		// log.info("Criteria: " + cri);
+		log.info("게시물 삭제 데이터: " + bd_vo);
+		log.info("게시물 삭제 권한 유무: " + session.getAttribute("isAuthorized"));
+		
+		// 삭제 권한 확인
+	    if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
+	        rttr.addFlashAttribute("msg", "게시물을 삭제할 권한이 없습니다.");
+	        return "redirect:/user/board/get/" + bd_type + "?bd_number=" + bd_vo.getBd_number();
+	    }
+		
+	    boardService.delete(bd_vo.getBd_number());
+	    session.removeAttribute("isAuthorized"); // isAuthorized라는 특정 세션 속성 삭제
+		
+	    // 페이징과 검색 정보를 쿼리 스트링으로 사용하기 위한 작업을 cri.getListLink()으로 대체함
+ 		/*
+ 		rttr.addAttribute("pageNum", cri.getPageNum());
+ 		rttr.addAttribute("amount", cri.getAmount());
+ 		rttr.addAttribute("type", cri.getType());	
+ 		rttr.addAttribute("keyword", cri.getKeyword());	
+ 		*/
+	    rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물이 정상적으로 삭제되었습니다.");
+		return "redirect:/user/board/list/" + bd_type + cri.getListLink();
+	}
+	
+	@PostMapping("/checkPw")
+	public String checkPw(Long bd_number, String bd_guest_pw, String action, HttpSession session, RedirectAttributes rttr) {
+	    BoardVO boardVO = boardService.get(bd_number);
+	    if (boardVO != null && passwordEncoder.matches(bd_guest_pw, boardVO.getBd_guest_pw())) {
+	        // 비밀번호 확인 성공, 세션에 권한 설정
+	        session.setAttribute("isAuthorized", true);
 
-		BoardVO existingBoard = boardService.get(bd_number);
-		if (existingBoard != null) {
-			// 비회원이 작성한 게시글인 경우 비밀번호 확인
-			if ("guest".equals(existingBoard.getUs_id())) {
-				if (bd_guest_pw == null || !passwordEncoder.matches(bd_guest_pw, existingBoard.getBd_guest_pw())) {
-					rttr.addFlashAttribute("message", "Invalid password");
-					return "redirect:/user/board/list/" + bd_type + "?pageNum=" + cri.getPageNum() + "&amount="
-							+ cri.getAmount() + "&type=" + cri.getType() + "&keyword=" + cri.getKeyword();
-				}
-			}
+	        String bd_type = boardVO.getBd_type() != null ? boardVO.getBd_type() : "total";
 
-			boardService.delete(bd_number);
-
-			// 검색과 페이지 정보를 이동주소(/board/list)의 파라미터로 사용하기 위한 작업
-			rttr.addAttribute("pageNum", cri.getPageNum());
-			rttr.addAttribute("amount", cri.getAmount());
-			rttr.addAttribute("type", cri.getType());
-			rttr.addAttribute("keyword", cri.getKeyword());
-
-			BoardVO boardVO = new BoardVO();
-			boardVO.setBd_type(bd_type);
-		}
-		return "redirect:/user/board/list" + "/" + bd_type;
+	        // 액션에 따라 다른 리다이렉션 처리
+	        if ("modify".equals(action)) {
+	            return "redirect:/user/board/modify/" + bd_type + "?bd_number=" + bd_number;
+	        } else if ("delete".equals(action)) {
+	            return "redirect:/user/board/delete/" + bd_type + "?bd_number=" + bd_number;
+	        }
+	    } else {
+	        rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
+	        return "redirect:/user/board/get/" + (boardVO != null ? boardVO.getBd_type() : "total") + "?bd_number=" + bd_number;
+	    }
+	    return "redirect:/user/board/list/" + (boardVO != null ? boardVO.getBd_type() : "total");
 	}
 	
 }

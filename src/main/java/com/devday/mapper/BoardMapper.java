@@ -10,15 +10,11 @@ import com.devday.dto.Criteria;
 
 public interface BoardMapper {
 
-	// 추상 메서드
 	// 특별하지 않으면 INSERT, UPDATE, DELETE의 리턴값은 void
 
-	// 글 쓰기 저장
-	// 메서드명과 xml 파일의 id="register" 일치 -> <insert id="register"></insert>
-	void register(BoardVO board);
-
-	// 하나의 게시물 읽기 또는 글 수정 폼: BoardVO
-	BoardVO get(Long bd_number);
+	// 게시글 등록, 조회 및 수정 관련 메서드
+	void register(BoardVO board); // 게시글 등록(INSERT 문)
+	BoardVO get(Long bd_number); // 게시물 조회 및 수정(SELECT 문)
 
 	// 전체 목록(여러 개): List<BoardVO> 리턴값
 	List<BoardVO> getList();

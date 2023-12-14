@@ -172,18 +172,16 @@ public class UserController {
 		log.info("마이 페이지 진입");
 		
 		// [참고] 인터셉터 기능으로 인해 불필요해진 부분
+		// 인터셉터를 사용하지 않을 경우 아래와 같은 코드를 중복 작성
 		/* 
-		// 로그인 상태 확인: session.getAttribute(name)
+		// 로그인 상태 확인
 	    if (session.getAttribute("userStatus") == null) {
-	        // 로그인 상태가 아닌 경우 로그인 페이지로 이동(login.jsp)
-	        return "redirect:/member/login";
+	        return "redirect:/member/login"; // 비로그인 상태의 경우 로그인 페이지로 이동(login.jsp)
 	    }
-	    (기존 코드 ... )
-	    // 로그인 상태 -> 마이 페이지로 이동(myPage.jsp)
-	    return "member/my_page";
+	    (기존 코드...)
+	    return "member/my_page"; // 로그인 상태 -> 마이 페이지로 이동(my_page.jsp)
 	    */
 	   
-	    // Object javax.servlet.http.HttpSession.getAttribute(String name): MemberVO로의 형변환(casting) 필요
 	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		UserVO us_vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
 		model.addAttribute("us_vo", us_vo);
@@ -193,16 +191,8 @@ public class UserController {
 	@GetMapping("/info/modify")
 	public void modify(HttpSession session, Model model) throws Exception {
 		
-		// 인터셉터를 사용하지 않을 경우 아래와 같은 코드를 중복 작성해야 함
-		/*
-		if(session.getAttribute("userStatus") == null) {
-			// 로그인 페이지로 이동
-		}
-		*/
-		
 		log.info("회원수정 페이지 진입");
-
-		// Object javax.servlet.http.HttpSession.getAttribute(String name): MemberVO로의 형변환(casting) 필요
+		
 	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		UserVO vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
 		model.addAttribute("vo", vo);
@@ -212,7 +202,6 @@ public class UserController {
 	@PostMapping("/modify_info")
 	public String modifyInfo(UserVO vo, HttpSession session, RedirectAttributes rttr) throws Exception {
 
-		// Object javax.servlet.http.HttpSession.getAttribute(String name): MemberVO로의 형변환(casting) 필요
 		UserVO db_vo = (UserVO) session.getAttribute("userStatus");
 		String us_id = db_vo.getUs_id();
 		
@@ -259,7 +248,7 @@ public class UserController {
 			if (passwordEncoder.matches(dto.getUs_pw(), db_vo.getUs_pw())) {
 				userService.delete(dto.getUs_id()); // 회원탈퇴 관련 메서드 호출
 				url = "/"; // 메인 페이지 이동
-				session.invalidate(); // 세션 무효화
+				session.invalidate(); //  전체 세션 무효화
 				rttr.addFlashAttribute("msg", "delete");
 			} else {
 				url = "/member/deleteInfo"; // 회원인증 페이지 이동

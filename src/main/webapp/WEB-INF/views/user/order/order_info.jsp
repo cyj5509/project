@@ -17,8 +17,8 @@
 					<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
 					<!-- CSS 파일 링크 -->
-					<link rel="stylesheet" href="/css/header.css">
-
+					<link rel="stylesheet" href="/css/common/header.css">
+					
 				</head>
 
 				<body>

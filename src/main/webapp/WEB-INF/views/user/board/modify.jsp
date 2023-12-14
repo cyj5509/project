@@ -16,19 +16,8 @@
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
 					<!-- CSS 파일 링크 -->
-					<link rel="stylesheet" href="/css/header.css">
-
-					<style>
-						.box-title {
-							font-size: 40px;
-							margin-bottom: 20px;
-						}
-
-						.box-body {
-							font-size: 20px;
-							padding: 20px;
-						}
-					</style>
+					<link rel="stylesheet" href="/css/common/header.css">
+					<link rel="stylesheet" href="/css/user/board/main_text.css">
 
 			</head>
 
@@ -55,13 +44,21 @@
 													<div class="form-group row">
 														<label for="us_id" class="col-2">작성자</label>
 														<div class="col-4">
-															<input type="text" class="form-control" name="us_id" id="us_id"
-																value="${sessionScope.userStatus.us_id}" readonly="readonly">
+															<c:choose>
+																<c:when test="${not empty bd_vo.us_id}">
+																	<input type="text" class="form-control" name="us_id" id="us_id" value="${bd_vo.us_id}"
+																		readonly="readonly">
+																</c:when>
+																<c:otherwise>
+																	<input type="text" class="form-control" name="bd_guest_nickname" id="bd_guest_nickname"
+																		value="${bd_vo.bd_guest_nickname}" readonly="readonly">
+																</c:otherwise>
+															</c:choose>
 														</div>
 														<label for="bd_register_date" class="col-2">수정일</label>
 														<div class="col-4">
 															<input type="text" class="form-control" id="bd_register_date"
-																value='<fmt:formatDate value="${boardVO.bd_update_date}" pattern="yyyy년 MM월 dd일" />'
+																value='<fmt:formatDate value="${bd_vo.bd_update_date}" pattern="yyyy년 MM월 dd일" />'
 																readonly="readonly">
 														</div>
 													</div>
@@ -69,20 +66,20 @@
 														<label for="bd_title" class="col-2">제목</label>
 														<div class="col-4">
 															<input type="text" class="form-control" name="bd_title" id="bd_title"
-																value="${boardVO.bd_title}">
+																value="${bd_vo.bd_title}">
 														</div>
 														<label for="bd_type" class="col-2">카테고리</label>
 														<div class="col-4">
 															<select class="form-control" name="bd_type" id="bd_type">
 																<option value="total">--- 카테고리 선택 ---</option>
-																<option value="notice" ${boardVO.bd_type=='notice' ? 'selected' : '' }
+																<option value="notice" ${bd_vo.bd_type=='notice' ? 'selected' : '' }
 																	style="display: none;">공지사항</option>
-																<option value="free" ${boardVO.bd_type=='free' ? 'selected' : '' }>자유 게시판</option>
-																<option value="info" ${boardVO.bd_type=='info' ? 'selected' : '' }>정보 공유</option>
-																<option value="study" ${boardVO.bd_type=='study' ? 'selected' : '' }>스터디원 모집</option>
-																<option value="project" ${boardVO.bd_type=='project' ? 'selected' : '' }>플젝팀원 모집
+																<option value="free" ${bd_vo.bd_type=='free' ? 'selected' : '' }>자유 게시판</option>
+																<option value="info" ${bd_vo.bd_type=='info' ? 'selected' : '' }>정보 공유</option>
+																<option value="study" ${bd_vo.bd_type=='study' ? 'selected' : '' }>스터디원 모집</option>
+																<option value="project" ${bd_vo.bd_type=='project' ? 'selected' : '' }>플젝팀원 모집
 																</option>
-																<option value="inquery" ${boardVO.bd_type=='inquery' ? 'selected' : '' }>Q&A(문의)
+																<option value="inquery" ${bd_vo.bd_type=='inquery' ? 'selected' : '' }>Q&A(문의)
 																</option>
 															</select>
 														</div>
@@ -90,37 +87,30 @@
 													<div class="form-group">
 														<label for="bd_content">내용</label>
 														<input type="text" class="form-control" name="bd_content" id="bd_content"
-															value="${boardVO.bd_content}" style="height: 500px; width: 100%;">
+															value="${bd_vo.bd_content}" style="height: 500px; width: 100%;">
 													</div>
 												</div>
 												<div class="box-footer">
-													<button type="button" id="btn_save" class="btn btn-primary">저장</button>
-													<button type="button" id="btn_list" class="btn btn-primary">취소</button>
-													<input type="hidden" name="bd_number" id="bd_number" value="${boardVO.bd_number}" />
-													<!-- <input type="hidden" name="bd_type" id="bd_type" value="${boardVO.bd_type}" /> -->
-													<c:if test="${empty sessionScope.userStatus}">
-														<div class="form-group row" style="text-align: right;">
-															<label for="guest_pw" class="col-2">비밀번호</label>
-															<div class="col-4">
-																<input type="password" class="form-control" name="guest_pw" id="guest_pw"
-																	placeholder="비밀번호를 입력하세요.">
-															</div>
-														</div>
-													</c:if>
+													<div class="form-group row">
+														<div class="col-6" style="text-align: right;">
+															<button type="button" id="btn_save" class="btn btn-primary">저장</button>
+															<button type="button" id="btn_list" class="btn btn-primary">취소</button>
+															<input type="hidden" name="bd_number" id="bd_number" value="${bd_vo.bd_number}" />
+															<!-- <input type="hidden" name="bd_type" id="bd_type" value="${bd_vo.bd_type}" /> -->
+														</div>												
+													</div>
 												</div>
 											</form>
 										</div>
 									</div>
 								</div>
+								<footer class="footer mt-auto py-3">
+									<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+										<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+								</footer>
 							</section>
 						</div>
 					</main>
-
-					<footer class="footer mt-auto py-3">
-						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
-							<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
-					</footer>
-
 
 					<script>
 						$(document).ready(function () {
@@ -131,7 +121,6 @@
 								let bd_title = $("#bd_title").val();
 								let bd_type = $("#bd_type").val();
 								let bd_content = $("#bd_content").val();
-								let guest_pw = $("#guest_pw").val();
 
 								if (bd_title == "") {
 									alert("제목을 입력해 주세요.")
@@ -145,12 +134,6 @@
 								if (bd_content == "") {
 									alert("내용을 입력해 주세요.");
 									$("#bd_content").focus();
-									return;
-								}
-								// 비회원 게시물 수정 시 비밀번호 확인
-								if ($("#guest_pw").length > 0 && guest_pw === "") {
-									alert("비회원이 작성한 게시물의 경우 비밀번호를 입력해야 합니다.");
-									$("#guest_pw").focus();
 									return;
 								}
 								modifyForm.submit();

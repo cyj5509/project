@@ -11,7 +11,7 @@
                         <a href="/member/join" class="nav-item">회원가입</a>
                     </c:if>
                     <c:if test="${sessionScope.userStatus != null}">
-                        <a href="/member/logout" class="nav-item">로그아웃(${sessionScope.userStatus.us_id} 님)</a>
+                        <a href="/member/logout" class="nav-item">로그아웃(${sessionScope.userStatus.us_id}님)</a>
                     </c:if>
                     <a href="/member/my_page" class="nav-item">마이페이지</a>
                     <a href="/user/cart/cart_list" class="nav-item">장바구니</a>

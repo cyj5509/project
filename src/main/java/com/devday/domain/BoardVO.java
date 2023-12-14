@@ -28,6 +28,7 @@ CREATE TABLE board_table (
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
 */	
+	// 회원 및 비회원 공통 필드
 	private Long bd_number;
 	private String bd_type;
 	private String us_id;
@@ -37,7 +38,7 @@ CREATE TABLE board_table (
 	private Date bd_update_date;
 	private int bd_view_count;
 	
-	// 비회원 관리를 위한 필드
+	// 비회원 관리 전용 필드
 	private String bd_guest_nickname;
 	private String bd_guest_pw;
 }

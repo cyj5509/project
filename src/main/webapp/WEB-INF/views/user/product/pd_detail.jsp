@@ -14,8 +14,9 @@
 				<title>Pricing example · Bootstrap v4.6</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
+				
 				<!-- CSS 파일 링크 -->
-				<link rel="stylesheet" href="/css/header.css">
+				<link rel="stylesheet" href="/css/common/header.css">
 
 					<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 					<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
