@@ -114,12 +114,12 @@
 													<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용: action="/user/board/get" 
 												<!-- 2) 목록에서 제목을 클릭할 때 사용: action="/user/board/get" -->
 													<form id="actionForm" action="/user/board/list/${bd_type}" method="get">
+														<!-- <input type="hidden" name="bd_type" id="bd_type" /> -->
+														<input type="hidden" name="bd_number" id="bd_number" />
 														<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
 														<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
 														<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
-														<input type="hidden" name="bd_number" id="bd_number" />
-														<!-- <input type="hidden" name="bd_type" id="bd_type" /> -->
 													</form>
 												</div>
 											</div>
@@ -221,20 +221,17 @@
 														</nav>
 													</div>
 													<div class="col-2" style="text-align: right;">
-
-														<%-- 공지사항 게시판의 경우, 관리자만 글쓰기 버튼 보임 --%>
-															<c:if test="${bd_type == 'notice'}">
+														<c:if test="${bd_type == 'notice'}">
+															<%-- 공지사항 게시판의 경우, 관리자만 글쓰기 버튼 보임 --%>
 																<c:if test="${sessionScope.isAdmin}">
 																	<a class="btn btn-primary" href="/user/board/register/notice" role="button">글쓰기</a>
 																</c:if>
-															</c:if>
-
+														</c:if>													
+														<c:if test="${bd_type != 'notice'}">
 															<%-- 나머지는 비회원 포함 모두에게 글쓰기 버튼 보임 --%>
-																<c:if test="${bd_type != 'notice'}">
-																	<a class="btn btn-primary" href="/user/board/register/${bd_type}"
-																		role="button">글쓰기</a>
-																</c:if>
-
+																<a class="btn btn-primary" href="/user/board/register/${bd_type}" role="button">글쓰기</a>
+														</c:if>
+													
 													</div>
 												</div>
 											</div>
@@ -272,8 +269,6 @@
 						});
 
 						// // 2) 처음, 이전, 다음, 끝 버튼 클릭 시 동작되는 이벤트 설정
-
-
 
 						// 3) 제목 클릭 시 이벤트 설정: 게시물 읽기
 						// <a class="move" href="#" data-bd_number="게시물 번호"></a>

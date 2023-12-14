@@ -97,32 +97,44 @@
 											<!-- HTML 요소에 데이터 속성 추가 -->
 											<div class="box-footer" data-isGuestPost="${bd_vo.us_id == null || bd_vo.us_id eq ''}">
 												<!-- BoardController의 @ModelAttribute("cri") Criteria cri -->
-												<!-- Modify, Delete, List 버튼 클릭 시 아래 form 태그를 전송-->
+												<!-- 회원이 Modify, Delete, List 버튼 클릭 시 아래 form 태그를 전송-->
 												<form id="curListInfo" action="" method="get">
+													<!-- <input type="hidden" name="bd_type" id="bd_type" value="${bd_vo.bd_type}" /> -->
 													<input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
 													<input type="hidden" name="amount" id="amount" value="${cri.amount}" />
 													<input type="hidden" name="type" id="type" value="${cri.type}" />
 													<input type="hidden" name="keyword" id="keyword" value="${cri.keyword}" />
 													<input type="hidden" name="bd_number" id="bd_number" value="${bd_vo.bd_number}" />
-													<!-- <input type="hidden" name="bd_type" id="bd_type" value="${bd_vo.bd_type}" /> -->
 												</form>
+												<div style="display: flex; align-items: center;">
 												<c:choose>
 													<c:when
 														test="${sessionScope.userStatus != null && sessionScope.userStatus.us_id == bd_vo.us_id}">
 														<!-- 로그인한 회원이 작성한 게시물일 경우 -->
-														<button type="button" id="btn_modify" class="btn btn-primary">수정</button>
-														<button type="button" id="btn_delete" class="btn btn-primary">삭제</button>
+														<button type="button" id="btn_modify" class="btn btn-primary" style="margin-right: 7.5px;">수정</button>
+														<button type="button" id="btn_delete" class="btn btn-danger" style="margin-right: 7.5px;">삭제</button>
 													</c:when>
 													<c:when
 														test="${bd_vo.us_id == null && bd_vo.bd_guest_nickname != null && !empty bd_vo.bd_guest_nickname}">
 														<!-- 비회원이 작성한 게시물일 경우 -->
-														<button type="button" id="btn_modify" class="btn btn-primary">수정</button>
-														<button type="button" id="btn_delete" class="btn btn-primary">삭제</button>
+														<button type="button" id="btn_modify" class="btn btn-primary" style="margin-right: 7.5px;">수정</button>
+														<button type="button" id="btn_delete" class="btn btn-danger" style="margin-right: 7.5px;">삭제</button>
 													</c:when>
 												</c:choose>
-												<button type="button" id="btn_list" class="btn btn-primary">목록</button>
+												<button type="button" id="btn_list" class="btn btn-success">목록</button>
+												<!-- 비밀번호 입력 모달 (초기에는 숨겨져 있음) -->
+												<div id="passwordModal" style="display:none; margin-left: auto;">
+													<form id="passwordForm" method="post" action="/user/board/checkPw">
+															<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
+															<input type="hidden" id="formAction" name="action" value=""> <!-- 수정 또는 삭제 -->
+															<label for="bd_guest_pw">비밀번호:&nbsp;</label>
+															<input type="password" id="bd_guest_pw" name="bd_guest_pw">
+															<button type="submit">확인</button>
+															<button type="button" onclick="closePasswordModal()">취소</button>
+													</form>
+												</div>
 											</div>
-
+											</div>
 										</div>
 									</div>
 								</div>
@@ -142,6 +154,17 @@
 						// <form id="curListInfo" action="" method="get">를 참조
 						let curListInfo = document.getElementById("curListInfo");
 
+						// 모달을 보여주는 함수
+						function showPasswordModal(action) {
+								document.getElementById('formAction').value = action;
+								document.getElementById('passwordModal').style.display = 'block';
+						}
+
+						// 모달을 닫는 함수
+						function closePasswordModal() {
+								document.getElementById('passwordModal').style.display = 'none';
+						}
+
 						// 수정 버튼 클릭
 						// document.getElementById("btn_modify").addEventListener("click", 함수명);
 						let btn_modify = document.getElementById("btn_modify");
@@ -153,35 +176,7 @@
 
 							// 비회원 게시물인 경우
 							if (isGuestPost) {
-								let password = prompt("게시물 수정을 위해 작성했던 비밀번호를 입력하세요.");
-								if (password != null && password != "") {
-									// 서버로 비밀번호 전송 및 확인 요청
-									let form = document.createElement("form");
-									form.method = "post";
-									form.action = "/user/board/checkPw";
-
-									let inputNumber = document.createElement("input");
-									inputNumber.type = "hidden";
-									inputNumber.name = "bd_number";
-									inputNumber.value = "${bd_vo.bd_number}";
-
-									let inputPassword = document.createElement("input");
-									inputPassword.type = "hidden";
-									inputPassword.name = "bd_guest_pw";
-									inputPassword.value = password;
-
-									let inputAction = document.createElement("input");
-									inputAction.type = "hidden";
-									inputAction.name = "action";
-									inputAction.value = "modify"; // 'modify' 또는 'delete'로 설정
-
-									form.appendChild(inputNumber);
-									form.appendChild(inputPassword);
-									form.appendChild(inputAction);
-
-									document.body.appendChild(form);
-									form.submit();
-								}
+								showPasswordModal('modify');
 							} else {
 								// 회원 게시물의 경우 기존 로직 실행
 								curListInfo.setAttribute("action", "/user/board/modify/${bd_vo.bd_type}");
@@ -199,29 +194,7 @@
 
 							// 비회원 게시물인 경우
 							if (isGuestPost) {
-								let password = prompt("게시물 삭제를 위해 작성했던 비밀번호를 입력하세요.");
-								if (password != null && password != "") {
-									// 서버로 비밀번호 전송 및 확인 요청
-									let form = document.createElement("form");
-									form.method = "post";
-									form.action = "/user/board/checkPw";
-
-									let inputNumber = document.createElement("input");
-									inputNumber.type = "hidden";
-									inputNumber.name = "bd_number";
-									inputNumber.value = "${bd_vo.bd_number}";
-
-									let inputPassword = document.createElement("input");
-									inputPassword.type = "hidden";
-									inputPassword.name = "bd_guest_pw";
-									inputPassword.value = password;
-
-									form.appendChild(inputNumber);
-									form.appendChild(inputPassword);
-
-									document.body.appendChild(form);
-									form.submit();
-								}
+								showPasswordModal('delete');
 							} else {
 								// 회원 게시물의 경우
 								if (!confirm("게시물을 삭제하시겠습니까?")) return;
@@ -230,13 +203,12 @@
 							}
 						}
 
-
 						// 리스트 클릭
 						// c:if 태그에 의해 수정 및 삭제 버튼이 존재하지 않는 경우, 목록 버튼에 영향을 주어 에러 발생 
 						document.getElementById("btn_list").addEventListener("click", fn_list); // 함수의 괄호는 제외
-
 						function fn_list() {
 							console.log("목록 버튼 클릭");
+							document.getElementById("bd_number").remove();
 							curListInfo.setAttribute("action", "/user/board/list/${bd_vo.bd_type}"); // /user/board/list -> /user/board/get 전송
 							curListInfo.submit();
 						}

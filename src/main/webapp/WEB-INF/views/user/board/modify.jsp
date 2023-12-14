@@ -50,8 +50,8 @@
 																		readonly="readonly">
 																</c:when>
 																<c:otherwise>
-																	<input type="text" class="form-control" name="bd_guest_nickname" id="bd_guest_nickname"
-																		value="${bd_vo.bd_guest_nickname}" readonly="readonly">
+																	<input type="text" class="form-control" name="bd_guest_nickname"
+																		id="bd_guest_nickname" value="${bd_vo.bd_guest_nickname}" readonly="readonly">
 																</c:otherwise>
 															</c:choose>
 														</div>
@@ -91,13 +91,13 @@
 													</div>
 												</div>
 												<div class="box-footer">
-													<div class="form-group row">
-														<div class="col-6" style="text-align: right;">
-															<button type="button" id="btn_save" class="btn btn-primary">저장</button>
-															<button type="button" id="btn_list" class="btn btn-primary">취소</button>
+													<div class="form-group">
+														<div style="text-align: center;">
 															<input type="hidden" name="bd_number" id="bd_number" value="${bd_vo.bd_number}" />
 															<!-- <input type="hidden" name="bd_type" id="bd_type" value="${bd_vo.bd_type}" /> -->
-														</div>												
+															<button type="button" id="btn_save" class="btn btn-primary">저장</button>
+															<button type="button" id="btn_list" class="btn btn-primary">취소</button>
+														</div>
 													</div>
 												</div>
 											</form>

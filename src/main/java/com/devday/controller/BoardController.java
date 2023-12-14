@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.BoardVO;
-import com.devday.dto.BoardDTO;
+import com.devday.domain.UserVO;
 import com.devday.dto.Criteria;
 import com.devday.dto.PageDTO;
 import com.devday.service.BoardService;
+import com.devday.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -36,7 +37,8 @@ public class BoardController {
 	
 	// 게시물 등록 페이지 이동(게시물 등록 폼)
 	@GetMapping(value = {"/register", "/register/{bd_type}"})
-	public String register(@PathVariable(value = "bd_type", required = false) String bd_type, Model model) {
+	public String register(@PathVariable(value = "bd_type", required = false) String bd_type, 
+						  Model model) {
 		
 		log.info("게시물 등록 페이지 진입");
 		
@@ -111,10 +113,10 @@ public class BoardController {
 	}
 	
 	// 게시물 조회 페이지 이동(게시물 조회 폼)
-	@GetMapping(value = "/get/{bd_type}")
-	public String getModify(@PathVariable(value = "bd_type", required = false) String bd_type,
-						    @RequestParam("bd_number") Long bd_number, 
-							@ModelAttribute("cri") Criteria cri, Model model) {
+	@GetMapping(value = {"/get", "/get/{bd_type}"})
+	public String get(@PathVariable(value = "bd_type", required = false) String bd_type,
+			         @RequestParam("bd_number") Long bd_number, 
+			         @ModelAttribute("cri") Criteria cri, Model model) {
 
 		log.info("게시물 조회 페이지 진입");
 		log.info("조회한 게시물 번호: " + bd_number);
@@ -129,8 +131,8 @@ public class BoardController {
 	// 게시물 수정 페이지 이동(게시물 수정 폼)
 	@GetMapping(value = "/modify/{bd_type}")
 	public String modify(@PathVariable(value = "bd_type", required = false) String bd_type,
-						 @RequestParam("bd_number") Long bd_number, 
-						 @ModelAttribute("cri") Criteria cri, Model model) {
+						@RequestParam("bd_number") Long bd_number, 
+						@ModelAttribute("cri") Criteria cri, Model model) {
 
 		log.info("게시물 수정 페이지 진입");
 		log.info("수정할 게시물 번호: " + bd_number);
@@ -150,9 +152,19 @@ public class BoardController {
 		log.info("게시물 수정 권한 유무: " + session.getAttribute("isAuthorized"));
 		
 		// 수정 권한 확인
-	    if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
-	        rttr.addFlashAttribute("msg", "게시물을 수정할 권한이 없습니다.");
-	        return "redirect:/user/board/get/" + bd_vo.getBd_type() + "?bd_number=" + bd_vo.getBd_number();
+		if (session.getAttribute("userStatus") != null) {
+		    // 회원 로그인 상태
+		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
+		    BoardVO db_vo = boardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
+		    // 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
+		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
+		        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 수정할 권한이 없습니다.");
+		        return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
+		    }
+		} else if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
+			// 비회원이거나 수정 권한이 없는 경우
+			rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 수정할 권한이 없습니다.");
+	        return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
 	    }
 
 		boardService.modify(bd_vo); // 게시물 수정 관련 메서드 호출
@@ -167,7 +179,7 @@ public class BoardController {
 		*/
 		rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물이 정상적으로 수정되었습니다.");
 		
-		return "redirect:/user/board/list" + "/" + bd_vo.getBd_type() + cri.getListLink();
+		return "redirect:/user/board/list/" + bd_vo.getBd_type() + cri.getListLink();
 	}
 	
 	// 게시물 삭제 기능 구현(관련 페이지 불필요)
@@ -179,9 +191,20 @@ public class BoardController {
 		log.info("게시물 삭제 권한 유무: " + session.getAttribute("isAuthorized"));
 		
 		// 삭제 권한 확인
-	    if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
-	        rttr.addFlashAttribute("msg", "게시물을 삭제할 권한이 없습니다.");
-	        return "redirect:/user/board/get/" + bd_type + "?bd_number=" + bd_vo.getBd_number();
+		if (session.getAttribute("userStatus") != null) {
+		    // 회원 로그인 상태
+		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
+		    BoardVO db_vo = boardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
+
+		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
+			    	// 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
+		        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 삭제할 권한이 없습니다.");
+		        return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
+		    }
+		} else if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
+			// 비회원이거나 수정 권한이 없는 경우
+	        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 삭제할 권한이 없습니다.");
+	        return "redirect:/user/board/get/" + bd_type + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
 	    }
 		
 	    boardService.delete(bd_vo.getBd_number());
@@ -199,7 +222,7 @@ public class BoardController {
 	}
 	
 	@PostMapping("/checkPw")
-	public String checkPw(Long bd_number, String bd_guest_pw, String action, HttpSession session, RedirectAttributes rttr) {
+	public String checkPw(Long bd_number, String bd_guest_pw, String action, Criteria cri, HttpSession session, RedirectAttributes rttr) {
 	    BoardVO boardVO = boardService.get(bd_number);
 	    if (boardVO != null && passwordEncoder.matches(bd_guest_pw, boardVO.getBd_guest_pw())) {
 	        // 비밀번호 확인 성공, 세션에 권한 설정
@@ -209,13 +232,13 @@ public class BoardController {
 
 	        // 액션에 따라 다른 리다이렉션 처리
 	        if ("modify".equals(action)) {
-	            return "redirect:/user/board/modify/" + bd_type + "?bd_number=" + bd_number;
+	            return "redirect:/user/board/modify/" + bd_type + cri.getListLink() + "&bd_number=" + bd_number;
 	        } else if ("delete".equals(action)) {
-	            return "redirect:/user/board/delete/" + bd_type + "?bd_number=" + bd_number;
+	            return "redirect:/user/board/delete/" + bd_type +  cri.getListLink() + "&bd_number=" + bd_number;
 	        }
 	    } else {
 	        rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-	        return "redirect:/user/board/get/" + (boardVO != null ? boardVO.getBd_type() : "total") + "?bd_number=" + bd_number;
+	        return "redirect:/user/board/get/" + (boardVO != null ? boardVO.getBd_type() : "total") + cri.getListLink() + "&bd_number=" + bd_number;
 	    }
 	    return "redirect:/user/board/list/" + (boardVO != null ? boardVO.getBd_type() : "total");
 	}

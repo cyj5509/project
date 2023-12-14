@@ -114,10 +114,10 @@
 	UPDATE
 		board_table
 	SET
+		bd_type = #{bd_type},
 		bd_title = #{bd_title},
 		bd_content = #{bd_content},
-		bd_update_date = sysdate,
-		bd_type = #{bd_type}
+		bd_update_date = sysdate
 	WHERE
 		bd_number = #{bd_number}
 </update>

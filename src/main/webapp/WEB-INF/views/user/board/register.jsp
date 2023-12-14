@@ -53,14 +53,16 @@
 																<%-- 비회원의 경우, 작성자명은 guest 또는 닉네임 --%>
 																	<label for="bd_guest_nickname" class="col-2">작성자</label>
 																	<div class="col-4">
-																		<input type="text" class="form-control" name="bd_guest_nickname" id="bd_guest_nickname" placeholder="guest">
+																		<input type="text" class="form-control" name="bd_guest_nickname"
+																			id="bd_guest_nickname" placeholder="guest">
 																	</div>
 															</c:otherwise>
 														</c:choose>
 														<label for="bd_register_date" class="col-2">작성일</label>
 														<div class="col-4">
 															<input type="text" class="form-control" id="bd_register_date"
-																value='<fmt:formatDate value="${bd_vo.bd_register_date}" pattern="yyyy년 MM월 dd일" />' readonly="readonly">
+																value='<fmt:formatDate value="${bd_vo.bd_register_date}" pattern="yyyy년 MM월 dd일" />'
+																readonly="readonly">
 														</div>
 													</div>
 													<div class="form-group row">
@@ -108,10 +110,14 @@
 														</div>
 													</c:if>
 												</div>
-												<!-- <input type="hidden" name="bd_type" id="bd_type" value="${bd_vo.bd_type}" /> -->
 												<div class="box-footer">
-													<button type="button" id="btn_register" class="btn btn-primary">등록</button>
-													<button type="button" id="btn_list" class="btn btn-primary">취소</button>
+													<div class="form-group">
+														<div style="text-align: center;">
+															<!-- <input type="hidden" name="bd_type" id="bd_type" value="${bd_vo.bd_type}" /> -->
+															<button type="button" id="btn_register" class="btn btn-primary">등록</button>
+															<button type="button" id="btn_list" class="btn btn-primary">취소</button>
+														</div>
+													</div>
 												</div>
 											</form>
 										</div>
@@ -152,7 +158,7 @@
 									$("#bd_content").focus();
 									return;
 								}
-								 // 비회원 닉네임이 비어 있는 경우 'guest'로 설정
+								// 비회원 닉네임이 비어 있는 경우 'guest'로 설정
 								if (guest_nickname.trim() === '') {
 									$("#bd_guest_nickname").val('guest');
 								}
