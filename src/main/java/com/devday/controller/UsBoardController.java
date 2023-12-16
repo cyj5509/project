@@ -1,27 +1,43 @@
 package com.devday.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.BoardVO;
 import com.devday.domain.UserVO;
+import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
 import com.devday.dto.PageDTO;
-import com.devday.service.BoardService;
-import com.devday.service.UserService;
+import com.devday.exception.AlreadyVoteException;
+import com.devday.service.UsBoardService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -30,10 +46,14 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/user/board/*")	
 @RequiredArgsConstructor
 @Log4j 	
-public class BoardController {
+public class UsBoardController {
 	
-	private final BoardService boardService;
+	private final UsBoardService usBoardService;
 	private final PasswordEncoder passwordEncoder; // 비회원 관련 암호화 처리를 위함(security 폴더 내 spring-security.xml) 
+	
+	// CKEditor에서 사용되는 업로드 폴더 경로
+	@Resource(name = "uploadBoardCKPath")
+	private String uploadBoardCKPath;
 	
 	// 게시물 등록 페이지 이동(게시물 등록 폼)
 	@GetMapping(value = {"/register", "/register/{bd_type}"})
@@ -58,7 +78,7 @@ public class BoardController {
 	
 	// 게시물 등록 기능 구현
 	@PostMapping("/register")
-	public String register(@ModelAttribute("bd_vo") BoardVO bd_vo, HttpSession session) {
+	public String register(@ModelAttribute("bd_vo") BoardVO bd_vo, HttpSession session, RedirectAttributes rttr) {
 	
 		log.info("게시물 등록 데이터: " + bd_vo);
 		log.info("구분: " + bd_vo.getBd_type());		
@@ -66,14 +86,20 @@ public class BoardController {
 	    // 로그인 체크 - 비회원 처리 로직
 	    if (session.getAttribute("userStatus") == null) {
 	    		bd_vo.setUs_id(""); // 비회원인 경우 us_id를 빈 문자열로 설정
+	    		
+	    		// 비회원 닉네임 처리: 닉네임이 제공되지 않은 경우 기본값 설정
+            if (bd_vo.getBd_guest_nickname() == null || bd_vo.getBd_guest_nickname().trim().isEmpty()) {
+                bd_vo.setBd_guest_nickname("guest"); // 기본값으로 'guest' 설정
+            }
 			// 비회원 비밀번호 처리: 비밀번호가 제공된 경우 암호화 
 			if (bd_vo.getBd_guest_pw() != null && !bd_vo.getBd_guest_pw().isEmpty()) {
 		    		String guest_pw = bd_vo.getBd_guest_pw(); 
 		    		bd_vo.setBd_guest_pw(passwordEncoder.encode(guest_pw)); // 암호화된 비밀번호로 설정
 		    }
         }
-		boardService.register(bd_vo); // 게시물 등록 관련 메서드 호출
+		usBoardService.register(bd_vo); // 게시물 등록 관련 메서드 호출
 		
+		rttr.addFlashAttribute("msg", "게시물이 정상적으로 등록되었습니다.");
 		return "redirect:/user/board/list" + "/" + bd_vo.getBd_type();  
 	}
 	
@@ -92,13 +118,13 @@ public class BoardController {
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBd_type(bd_type);
 		
-		List<BoardVO> list = boardService.getListWithPaging(cri, bd_type);
+		List<BoardVO> list = usBoardService.getListWithPaging(cri, bd_type);
 		log.info("게시판 구분: " + bd_type); 
 		log.info("타입별 목록: " + list); 
 		
 		model.addAttribute("list", list);
 		
-		int total = boardService.getTotalCount(cri, bd_type);
+		int total = usBoardService.getTotalCount(cri, bd_type);
 		
 		model.addAttribute("bd_type", bd_type);
 		
@@ -107,7 +133,7 @@ public class BoardController {
 		
 		// log.info("데이터 총 개수: " + total);
 		// log.info("페이징 정보: " + pageDTO);
-		// log.info("게시판 분류: " + boardService.getListType(bd_type));
+		// log.info("게시판 분류: " + usBoardService.getListType(bd_type));
 		
 		return "/user/board/list"; // JSP 페이지 경로
 	}
@@ -122,12 +148,54 @@ public class BoardController {
 		log.info("조회한 게시물 번호: " + bd_number);
 		log.info("조회한 페이징 및 검색 정보: " + cri);
 
-		BoardVO bd_vo = boardService.get(bd_number);
+		BoardVO bd_vo = usBoardService.get(bd_number); // 게시물 조회 관련 메서드 호출(조회 증가 처리 포함)
 		model.addAttribute("bd_vo", bd_vo);
 
 		return "/user/board/get";
 	}
 
+	@PostMapping("/like_action")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> likeAction(HttpSession session, @RequestParam("bd_number") Long bd_number,
+														@CookieValue(value = "session_id", required = false) String session_id,
+	                                                     @RequestParam("actionType") String actionType) {
+		
+		ResponseEntity<Map<String, Object>> entity = null;
+		Map<String, Object> map = new HashMap<>();
+
+		// String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
+		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
+		String us_id = (us_vo != null) ? us_vo.getUs_id() : null;
+		
+		try {
+			VoteVO voteVO = new VoteVO();
+	        voteVO.setUs_id(us_id);
+	        voteVO.setSession_id(session_id);
+	        voteVO.setBd_number(bd_number);
+	        voteVO.setVt_type(actionType);
+	        
+	        usBoardService.insertVote(voteVO); // 투표 처리 및 추천/비추천 수 업데이트
+	        BoardVO bd_vo = usBoardService.get(bd_number); // 최신 게시물 데이터 가져오기
+
+			map.put("status", "success");
+			map.put("likes", bd_vo.getBd_like_count());
+			map.put("dislikes", bd_vo.getBd_dislike_count());
+			entity = new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
+			
+		} catch (AlreadyVoteException e) {
+	        map.put("status", "alreadyVote");
+	        map.put("message", "추천 및 비추천은 1일 1회만 가능합니다."); // 최종 사용자용 메시지
+	        entity = new ResponseEntity<>(map, HttpStatus.BAD_REQUEST); // HTTP 상태 코드 400
+	    } catch (Exception e) {
+			e.printStackTrace();
+			map.put("status", "fail");
+			map.put("message", e.getMessage());
+			entity = new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드 500
+		}
+		
+		return entity;
+	}
+	
 	// 게시물 수정 페이지 이동(게시물 수정 폼)
 	@GetMapping(value = "/modify/{bd_type}")
 	public String modify(@PathVariable(value = "bd_type", required = false) String bd_type,
@@ -138,7 +206,7 @@ public class BoardController {
 		log.info("수정할 게시물 번호: " + bd_number);
 		log.info("수정할 페이징 및 검색 정보: " + cri);
 
-		BoardVO bd_vo = boardService.get(bd_number);
+		BoardVO bd_vo = usBoardService.get(bd_number);
 		model.addAttribute("bd_vo", bd_vo);
 
 		return "/user/board/modify";
@@ -155,7 +223,7 @@ public class BoardController {
 		if (session.getAttribute("userStatus") != null) {
 		    // 회원 로그인 상태
 		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
-		    BoardVO db_vo = boardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
+		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
 		    // 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
 		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
 		        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 수정할 권한이 없습니다.");
@@ -167,7 +235,7 @@ public class BoardController {
 	        return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
 	    }
 
-		boardService.modify(bd_vo); // 게시물 수정 관련 메서드 호출
+		usBoardService.modify(bd_vo); // 게시물 수정 관련 메서드 호출
 		session.removeAttribute("isAuthorized"); // isAuthorized라는 특정 세션 속성 삭제
 		
 		// 페이징과 검색 정보를 쿼리 스트링으로 사용하기 위한 작업을 cri.getListLink()으로 대체함
@@ -194,7 +262,7 @@ public class BoardController {
 		if (session.getAttribute("userStatus") != null) {
 		    // 회원 로그인 상태
 		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
-		    BoardVO db_vo = boardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
+		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
 
 		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
 			    	// 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
@@ -207,7 +275,7 @@ public class BoardController {
 	        return "redirect:/user/board/get/" + bd_type + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
 	    }
 		
-	    boardService.delete(bd_vo.getBd_number());
+	    usBoardService.delete(bd_vo.getBd_number()); // 게시물 삭제 관련 메서드 호출
 	    session.removeAttribute("isAuthorized"); // isAuthorized라는 특정 세션 속성 삭제
 		
 	    // 페이징과 검색 정보를 쿼리 스트링으로 사용하기 위한 작업을 cri.getListLink()으로 대체함
@@ -223,7 +291,7 @@ public class BoardController {
 	
 	@PostMapping("/checkPw")
 	public String checkPw(Long bd_number, String bd_guest_pw, String action, Criteria cri, HttpSession session, RedirectAttributes rttr) {
-	    BoardVO boardVO = boardService.get(bd_number);
+	    BoardVO boardVO = usBoardService.get(bd_number);
 	    if (boardVO != null && passwordEncoder.matches(bd_guest_pw, boardVO.getBd_guest_pw())) {
 	        // 비밀번호 확인 성공, 세션에 권한 설정
 	        session.setAttribute("isAuthorized", true);
@@ -243,4 +311,39 @@ public class BoardController {
 	    return "redirect:/user/board/list/" + (boardVO != null ? boardVO.getBd_type() : "total");
 	}
 	
+	@PostMapping("/imageUpload")
+	public void imageUpload(HttpServletRequest request, HttpServletResponse response, MultipartFile upload) {
+
+		// 클라이언트에게 보내는 응답 설정
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8");
+
+		try {
+			// 1) 파일 업로드 작업
+			String fileName = upload.getOriginalFilename(); // 클라이언트에서 전송한 파일 이름
+			// String uniqueFileName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileName);
+			// 파일 이름에 현재 시간을 밀리초 단위로 추가 (예: myfile_1234567890.jpg)
+	        String uniqueFileName = FilenameUtils.getBaseName(fileName) + "_" +
+	                                System.currentTimeMillis() + "." +
+	                                FilenameUtils.getExtension(fileName);
+			String ckUploadPath = uploadBoardCKPath + File.separator + uniqueFileName;
+
+			log.info("CKEditor 파일 경로: " + ckUploadPath);
+
+			// try-with-resources를 사용하여 자동 리소스 관리
+	        try (OutputStream outputStream = new FileOutputStream(new File(ckUploadPath))) { // 0KB 파일 생성
+	            byte[] bytes = upload.getBytes(); // 업로드한 파일을 byte 배열로 읽어들임
+	            outputStream.write(bytes); // 출력 스트림 작업
+	            outputStream.flush();
+	        }
+
+	        try (PrintWriter printWriter = response.getWriter()) {
+	            String fileUrl = "/ckupload/board/" + uniqueFileName;
+	            printWriter.println("{\"filename\":\"" + uniqueFileName + "\", \"uploaded\":1, \"url\":\"" + fileUrl + "\"}");
+	            printWriter.flush();
+	        }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

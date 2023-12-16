@@ -8,7 +8,7 @@ public interface UserMapper {
 	// [1] 회원가입 및 아이디 중복검사 관련 메서드
 	void join(UserVO vo); // 회원가입(INSERT 문)
 	// 아이디 중복검사의 경우, 반환 타입을 int 또는 Integer로 처리할 수도 있음
-	String idCheck(String us_id); // 아이디 중복검사(SELECT 문)
+	String id_check(String us_id); // 아이디 중복검사(SELECT 문)
 
 	// [2] 로그인 및 최근 접속 일자 관련 메서드
 	UserVO login(String us_id); // 일반적인 로그인(SELECT 문)

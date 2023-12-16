@@ -52,8 +52,8 @@ public class AdProductController {
 	private String uploadPath;
 
 	// CKEditor에서 사용되는 업로드 폴더 경로
-	@Resource(name = "uploadCKPath")
-	private String uploadCKPath;
+	@Resource(name = "uploadProductCKPath")
+	private String uploadProductCKPath;
 
 	// 상품등록 폼
 	@GetMapping("/pd_insert")
@@ -122,7 +122,7 @@ public class AdProductController {
 		*/
 		// 클라이언트에게 보내는 응답 설정
 		response.setCharacterEncoding("utf-8");
-		response.setContentType("/text/html; charset=utf-8");
+		response.setContentType("text/html; charset=utf-8");
 
 		try {
 
@@ -130,7 +130,7 @@ public class AdProductController {
 			String fileName = upload.getOriginalFilename(); // 클라이언트에서 전송한 파일 이름
 			byte[] bytes = upload.getBytes(); // 업로드한 파일을 byte 배열로 읽어들임
 
-			String ckUploadPath = uploadCKPath + fileName;
+			String ckUploadPath = uploadProductCKPath + fileName;
 
 			log.info("CKEditor 파일 경로: " + ckUploadPath);
 
@@ -151,9 +151,9 @@ public class AdProductController {
 			 */
 
 			// CKEditor에서 업로드된 파일 경로를 보내줄 때 매핑 주소와 파일명이 포함
-			String fileUrl = "/ckupload/" + fileName;
+			String fileUrl = "/ckupload/product/" + fileName;
 			// {"filename":"abc.gif", "uploaded":1, "url":"/upload/abc.gif"}
-			printWriter.println("{\"filename\":\"" + fileName + "\", \"uploaded\":1,\"url\":\"" + fileUrl + "\"}");
+			printWriter.println("{\"filename\":\"" + fileName + "\", \"uploaded\":1, \"url\":\"" + fileUrl + "\"}");
 			printWriter.flush();
 
 		} catch (Exception e) {

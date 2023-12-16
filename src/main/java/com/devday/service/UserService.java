@@ -9,7 +9,7 @@ import com.devday.dto.LoginDTO;
 public interface UserService {
 
 	void join(UserVO vo); // 회원가입 관련 메서드 
-	String idCheck(String us_id); // 아이디 중복검사 관련 메서드
+	String id_check(String us_id); // 아이디 중복검사 관련 메서드
 	
 	UserVO login(String us_id); // 일반적인 로그인 관련 메서드(SELECT 문)
 	void lastLoginTime(String us_id); //  최근 접속 일자 관련 메서드(UPDATE 문)

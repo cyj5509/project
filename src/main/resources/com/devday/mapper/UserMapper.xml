@@ -34,7 +34,7 @@
 
 <!-- 아이디 중복 검사 쿼리 -->
 <!-- resultType="int" 또는 "Integer"일 경우, 'SELECT COUNT(*) FROM ~'의 형태로 작성 -->
-<select id="idCheck" parameterType="String" resultType="String">
+<select id="id_check" parameterType="String" resultType="String">
 	SELECT
 		us_id
 	FROM

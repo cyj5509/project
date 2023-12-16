@@ -61,16 +61,16 @@ public class UserController {
 	}
 
 	// ID 중복 검사 기능 구현(관련 페이지 불필요)
-	@GetMapping("/idCheck")
-	public ResponseEntity<String> idCheck(@RequestParam("us_id") String us_id) throws Exception {
+	@GetMapping("/id_check")
+	public ResponseEntity<String> id_check(@RequestParam("us_id") String us_id) throws Exception {
 
 		ResponseEntity<String> entity = null; 
 		
 		log.info("입력된 아이디: " + us_id);
 		
-		// userService.idCheck(us_id): 아이디 중복검사 관련 메서드 호출
+		// userService.id_check(us_id): 아이디 중복검사 관련 메서드 호출
 		// 아이디가 이미 존재하면 no, 존재하지 않으면 yes를 반환
-		String idUse = userService.idCheck(us_id) != null ? "no" : "yes";
+		String idUse = userService.id_check(us_id) != null ? "no" : "yes";
 		log.info("아이디 사용 가능: " + idUse);
 		
 		entity = new ResponseEntity<>(idUse, HttpStatus.OK); // HTTP 상태 코드 200
@@ -84,9 +84,9 @@ public class UserController {
 
 		log.info("로그인 페이지 진입");
 		
-		// 쿠키에서 remember_id 값을 읽어옵니다.
-		String remember_id = null;
+		// 쿠키에서 remember_id 값을 확인하는 로직
 		Cookie[] cookies = request.getCookies();
+		String remember_id = null;
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if ("remember_id".equals(cookie.getName())) {
@@ -111,6 +111,13 @@ public class UserController {
 		String msg = "";
 
 		if (us_vo != null) {
+			// 기존에 발급된 session_id 쿠키 제거(HomeController 참고)
+		    Cookie cookie = new Cookie("session_id", null);
+		    cookie.setMaxAge(0); // 쿠키 유효기간 0으로 설정(즉시 만료)
+		    cookie.setPath("/"); // 웹사이트의 모든 경로에서 쿠키 사용
+		    cookie.setHttpOnly(true); // 보안 설정(JavaScript 접근 방지)
+		    response.addCookie(cookie); // 쿠키를 응답에 추가하여 클라이언트에 전송
+			
 			// 세션에 us_vo를 "userStatus"라는 이름으로 저장
 			session.setAttribute("userStatus", us_vo);
 	        
@@ -147,7 +154,7 @@ public class UserController {
 		
 		log.info("로그아웃 요청");
 		
-		session.invalidate(); // 사용자 세션 무효화
+		session.invalidate(); // 세션 무효화(사용자 및 관리자 전체)
 		
 		// 로그인 상태 유지 관련 쿠키 삭제(아이디 저장 관련 쿠키는 삭제하지 않음)
 		Cookie[] cookies = request.getCookies();
@@ -284,7 +291,7 @@ public class UserController {
 	    UserVO us_vo = userService.findId(findInfoDTO); 
 	    
 	    if (us_vo != null) {
-	      entity = new ResponseEntity<>(us_vo, HttpStatus.OK);
+	      entity = new ResponseEntity<>(us_vo, HttpStatus.OK); // HTTP 상태 코드 200
 	    }
 	    
 	    return entity;
@@ -303,13 +310,13 @@ public class UserController {
 		// 1단계 ─ 아이디 확인: 우선적 처리를 위해 2단계에서 처리될 이름과 이메일이 null인 경우 진행
 		if (us_name == null && us_email == null) {
 			// 아이디 존재 유무 확인
-			if (userService.idCheck(us_id) != null) {
+			if (userService.id_check(us_id) != null) {
 				log.info("존재하는 아이디: " + us_id);
 				session.setAttribute("us_id", us_id); // 세션에 아이디 저장
-				entity = new ResponseEntity<>("yes", HttpStatus.OK);
+				entity = new ResponseEntity<>("yes", HttpStatus.OK); // HTTP 상태 코드 200 
 			} else { 
 				log.info("존재하지 않는 아이디: " + us_id);
-				entity = new ResponseEntity<>("no", HttpStatus.OK); // 
+				entity = new ResponseEntity<>("no", HttpStatus.OK); // HTTP 상태 코드 200  
 			}
 		} else {
 			// 2단계 ─ 이름과 이메일 확인

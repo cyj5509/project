@@ -37,9 +37,9 @@ public class UserServiceImpl implements UserService {
 	
 	// 아이디 중복검사 관련 메서드
 	@Override
-	public String idCheck(String us_id) {
+	public String id_check(String us_id) {
 		
-		return userMapper.idCheck(us_id);
+		return userMapper.id_check(us_id);
 	}
 	
 	// 일반적인 로그인 관련 메서드(SELECT 문)
@@ -71,15 +71,15 @@ public class UserServiceImpl implements UserService {
 	        if (lo_dto.isRememberId()) {
 	            Cookie cookie = new Cookie("remember_id", lo_dto.getUs_id());
 	            cookie.setMaxAge(60 * 60 * 24 * 365); // 쿠키 유효기간 365일(1년)로 설정
-	            cookie.setPath("/"); // 쿠키 경로 설정
-	            cookie.setHttpOnly(true); // JavaScript 접근 방지
+	            cookie.setPath("/"); // 웹사이트의 모든 경로에서 쿠키 사용
+	            cookie.setHttpOnly(true); // 보안 설정(JavaScript 접근 방지)
 	            response.addCookie(cookie);
 	        } else {
 	            // 아이디 저장 기능이 선택되지 않은 경우, 쿠키 삭제
 	            Cookie cookie = new Cookie("remember_id", null);
 	            cookie.setMaxAge(0); // 쿠키 삭제
-	            cookie.setPath("/"); // 쿠키 경로 설정
-	            cookie.setHttpOnly(true); // JavaScript 접근 방지
+	            cookie.setPath("/"); // 웹사이트의 모든 경로에서 쿠키 사용
+	            cookie.setHttpOnly(true); // 보안 설정(JavaScript 접근 방지)
 	            response.addCookie(cookie);
 	        }
 	        

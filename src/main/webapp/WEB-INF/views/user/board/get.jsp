@@ -20,6 +20,23 @@
 					<link rel="stylesheet" href="/css/common/header.css">
 					<link rel="stylesheet" href="/css/user/board/main_text.css">
 
+					<style>
+						input[readonly],
+						.readonly-div {
+							background-color: white !important;
+						}
+
+						.likeCount:hover {
+							background-color: lightblue;
+							color: white;
+						}
+
+						.dislikeCount:hover {
+							background-color: lightcoral;
+							color: white;
+						}
+					</style>
+
 					<script>
 						// 비회원 게시물 수정 및 삭제 시 비밀번호가 불일치하면 동작(checkPw 메서드)
 						let msg = '${msg}';
@@ -89,8 +106,22 @@
 												</div>
 												<div class="form-group">
 													<label for="bd_content">내용</label>
-													<input type="text" class="form-control" name="bd_content" value="${bd_vo.bd_content}"
-														style="height: 500px; width: 100%;" readonly>
+													<div class="form-control readonly-div" style="height: 500px; width: 100%; overflow-y: auto;"
+														readonly>
+														${bd_vo.bd_content}
+													</div>
+												</div>
+												<div class="form-group" style="text-align: center;">
+													<button class="likeCount" id="btn_like" data-bd_number="${bd_vo.bd_number}">
+														좋아요!
+													</button>
+													<button class="dislikeCount" id="btn_dislike" data-bd_number="${bd_vo.bd_number}">
+														싫어요!
+													</button>
+													<div>
+														추천: <span id="likes">${bd_vo.bd_like_count}</span>
+														/ 비추천: <span id="dislikes">${bd_vo.bd_dislike_count}</span>
+													</div>
 												</div>
 											</div>
 											<br />
@@ -107,33 +138,38 @@
 													<input type="hidden" name="bd_number" id="bd_number" value="${bd_vo.bd_number}" />
 												</form>
 												<div style="display: flex; align-items: center;">
-												<c:choose>
-													<c:when
-														test="${sessionScope.userStatus != null && sessionScope.userStatus.us_id == bd_vo.us_id}">
-														<!-- 로그인한 회원이 작성한 게시물일 경우 -->
-														<button type="button" id="btn_modify" class="btn btn-primary" style="margin-right: 7.5px;">수정</button>
-														<button type="button" id="btn_delete" class="btn btn-danger" style="margin-right: 7.5px;">삭제</button>
-													</c:when>
-													<c:when
-														test="${bd_vo.us_id == null && bd_vo.bd_guest_nickname != null && !empty bd_vo.bd_guest_nickname}">
-														<!-- 비회원이 작성한 게시물일 경우 -->
-														<button type="button" id="btn_modify" class="btn btn-primary" style="margin-right: 7.5px;">수정</button>
-														<button type="button" id="btn_delete" class="btn btn-danger" style="margin-right: 7.5px;">삭제</button>
-													</c:when>
-												</c:choose>
-												<button type="button" id="btn_list" class="btn btn-success">목록</button>
-												<!-- 비밀번호 입력 모달 (초기에는 숨겨져 있음) -->
-												<div id="passwordModal" style="display:none; margin-left: auto;">
-													<form id="passwordForm" method="post" action="/user/board/checkPw">
+													<c:choose>
+														<c:when
+															test="${sessionScope.userStatus != null && sessionScope.userStatus.us_id == bd_vo.us_id}">
+															<!-- 로그인한 회원이 작성한 게시물일 경우 -->
+															<button type="button" id="btn_modify" class="btn btn-primary"
+																style="margin-right: 7.5px;">수정</button>
+															<button type="button" id="btn_delete" class="btn btn-danger"
+																style="margin-right: 7.5px;">삭제</button>
+														</c:when>
+														<c:when
+															test="${bd_vo.us_id == null && bd_vo.bd_guest_nickname != null && !empty bd_vo.bd_guest_nickname}">
+															<!-- 비회원이 작성한 게시물일 경우 -->
+															<button type="button" id="btn_modify" class="btn btn-primary"
+																style="margin-right: 7.5px;">수정</button>
+															<button type="button" id="btn_delete" class="btn btn-danger"
+																style="margin-right: 7.5px;">삭제</button>
+														</c:when>
+													</c:choose>
+													<button type="button" id="btn_list" class="btn btn-success">목록</button>
+													<!-- 비밀번호 입력 모달 (초기에는 숨겨져 있음) -->
+													<div id="passwordModal" style="display:none; margin-left: auto;">
+														<form id="passwordForm" method="post" action="/user/board/checkPw">
+															<span style="color: red; font-size: 14px;">* 비밀번호 입력 필요</span>
 															<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
-															<input type="hidden" id="formAction" name="action" value=""> <!-- 수정 또는 삭제 -->
-															<label for="bd_guest_pw">비밀번호:&nbsp;</label>
-															<input type="password" id="bd_guest_pw" name="bd_guest_pw">
+															<input type="hidden" id="formAction" name="action" value=""> <!-- value="는 수정 또는 삭제 -->
+															<label for="bd_guest_pw"></label>
+															<input type="password" id="bd_guest_pw" name="bd_guest_pw" placeholder="비밀번호를 입력하세요.">
 															<button type="submit">확인</button>
 															<button type="button" onclick="closePasswordModal()">취소</button>
-													</form>
+														</form>
+													</div>
 												</div>
-											</div>
 											</div>
 										</div>
 									</div>
@@ -146,24 +182,69 @@
 						</div>
 					</main>
 
+					<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
 					<script>
+
+						// lodash 라이브러리의 debounce 함수 사용(함수 표현식 형태는 호이스팅 불가)
+						const debouncedLikeAction = _.debounce(function (bd_number, actionType) {
+							// 버튼 비활성화
+							$('#btn_like').prop('disabled', true);
+							$('#btn_dislike').prop('disabled', true);
+
+							$.ajax({
+								url: '/user/board/like_action',
+								type: 'POST',
+								data: {
+									bd_number: bd_number,
+									actionType: actionType,
+								},
+								success: function (response) {
+									// 버튼 활성화
+									$('#btn_like').prop('disabled', false);
+									$('#btn_dislike').prop('disabled', false);
+
+									if (response.status == 'success') {
+										// 하루 중 처음 투표하는 경우
+										$('#likes').text(response.likes);
+										$('#dislikes').text(response.dislikes);
+									} else if (response.status == 'alreadyVote') {
+										// 하루 중 이미 투표한 경우
+										alert(response.message);
+									} else if (response.status == 'fail') {
+										// 오류 메시지 처리
+										console.error('Error:', response.message);
+									} 
+								}
+							});
+						}, 1000); // 1000ms(1초) 동안 연속 클릭 방지
+
+						// 좋아요! 버튼 클릭 시 동작
+						document.getElementById('btn_like').addEventListener('click', function () {
+							let bd_number = this.getAttribute('data-bd_number');
+							debouncedLikeAction(bd_number, 'like');
+						});
+
+						// 싫어요! 버튼 클릭 시 동작
+						document.getElementById('btn_dislike').addEventListener('click', function () {
+							let bd_number = this.getAttribute('data-bd_number');
+							debouncedLikeAction(bd_number, 'dislike');
+						});
+
+						// 비밀번호 입력 모달을 보여주는 함수
+						function showPasswordModal(action) {
+							document.getElementById('formAction').value = action;
+							document.getElementById('passwordModal').style.display = 'block';
+						}
+
+						// 비밀번호 입력 모달을 닫는 함수
+						function closePasswordModal() {
+							document.getElementById('passwordModal').style.display = 'none';
+						}
 
 						// HTML 요소에서 데이터 속성 값을 읽기
 						let isGuestPost = document.querySelector('.box-footer').getAttribute('data-isGuestPost') == 'true';
-
-						// <form id="curListInfo" action="" method="get">를 참조
-						let curListInfo = document.getElementById("curListInfo");
-
-						// 모달을 보여주는 함수
-						function showPasswordModal(action) {
-								document.getElementById('formAction').value = action;
-								document.getElementById('passwordModal').style.display = 'block';
-						}
-
-						// 모달을 닫는 함수
-						function closePasswordModal() {
-								document.getElementById('passwordModal').style.display = 'none';
-						}
+						let curListInfo = document.getElementById("curListInfo"); // <form id="curListInfo" action="" method="get">를 참조
 
 						// 수정 버튼 클릭
 						// document.getElementById("btn_modify").addEventListener("click", 함수명);

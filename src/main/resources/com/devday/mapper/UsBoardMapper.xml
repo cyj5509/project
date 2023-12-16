@@ -3,20 +3,37 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
-<mapper namespace="com.devday.mapper.BoardMapper">
+<mapper namespace="com.devday.mapper.UsBoardMapper">
 
 <!-- 게시글 등록 -->
 <insert id="register" parameterType="com.devday.domain.BoardVO">
 	INSERT INTO 
    		board_table (bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_guest_nickname, bd_guest_pw)
 	VALUES
-		(sequence_bd_number.NEXTVAL, #{bd_type}, #{us_id}, #{bd_title}, #{bd_content}, sysdate, #{bd_guest_nickname}, #{bd_guest_pw})
+		(sequence_bd_number.NEXTVAL, #{bd_type}, #{us_id}, #{bd_title}, #{bd_content}, sysdate, 
+		<choose>
+             <when test="bd_guest_nickname != null and bd_guest_nickname != ''">
+                 #{bd_guest_nickname}
+             </when>
+             <otherwise>
+                 NULL
+             </otherwise>
+         </choose>,
+         <choose>
+             <when test="bd_guest_pw != null and bd_guest_pw != ''">
+                 #{bd_guest_pw}
+             </when>
+             <otherwise>
+                 NULL
+             </otherwise>
+         </choose>
+         )
 </insert>
 
 <!-- 게시글 조회 또는 수정 -->
 <select id="get" resultType="com.devday.domain.BoardVO" parameterType="Long">
 	SELECT
-		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_pw
+		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_nickname, bd_guest_pw, bd_like_count, bd_dislike_count  
 	FROM
 		board_table
 	WHERE
@@ -26,7 +43,7 @@
 <!-- 전체 목록(여러 개) ─ resultType="" -->
 <select id="getList" resultType="com.devday.domain.BoardVO">
 	SELECT
-		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
+		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_nickname, bd_like_count, bd_dislike_count 
 	FROM
 		board_table
 	ORDER BY
@@ -61,11 +78,11 @@
 <select id="getListWithPaging" resultType="com.devday.domain.BoardVO" parameterType="map">
 	<![CDATA[
 	SELECT
-		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
+		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_like_count, bd_dislike_count
 	FROM 
 		(
 	    SELECT /*+ INDEX_DESC(board_table pk_bd_number) */
-	    		ROWNUM rn, bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
+	    		ROWNUM rn, bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_like_count, bd_dislike_count
 	    FROM
 	    		board_table 
 	    WHERE
@@ -107,6 +124,55 @@
 		bd_view_count = bd_view_count + 1
 	WHERE
 		bd_number = #{bd_number}
+</update>
+
+<!-- parameterType과 관련하여 별칭 사용(mybatis-config.xml 참고) -->
+<insert id="insertVote" parameterType="VoteVO">
+    INSERT INTO
+    		vote_table (vt_number, us_id, session_id, bd_number, vt_type, vt_date)
+    VALUES (
+    		sequence_vt_number.NEXTVAL, 
+    		#{us_id}, 
+    		#{session_id}, 
+    		#{bd_number}, 
+    		#{vt_type}, 
+    		CURRENT_DATE
+    	)
+</insert>
+
+<select id="voteCheck" resultType="int" parameterType="map">
+    SELECT
+        COUNT(*)
+    FROM 
+        vote_table
+    WHERE 
+        bd_number = #{bd_number}
+	    AND 
+	        vt_date = CURRENT_DATE
+	    AND (
+	        (#{us_id} IS NOT NULL AND us_id = #{us_id}) OR
+	        (#{us_id} IS NULL AND session_id = #{session_id})
+	    )
+</select>
+
+<!-- 추천 증가 -->
+<update id="increaseLike" parameterType="Long">
+    UPDATE
+    		board_table
+    SET 
+    		bd_like_count = bd_like_count + 1
+    WHERE
+    		bd_number = #{bd_number}
+</update>
+
+<!-- 비추천 증가 -->
+<update id="increaseDislike" parameterType="Long">
+    UPDATE
+    		board_table
+    SET
+    		bd_dislike_count = bd_dislike_count + 1
+    WHERE
+    		bd_number = #{bd_number}
 </update>
 
 <!-- 글 수정하기 -->

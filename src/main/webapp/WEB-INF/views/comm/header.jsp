@@ -31,7 +31,7 @@
                     <!-- 환영인사 및 최근 접속시간 -->
                     <div class="header-info-section">
                         <c:if test="${sessionScope.userStatus != null}">
-                            <c:if test="${sessionScope.isAdmin}">
+                            <c:if test="${sessionScope.isAdmin == true || not empty sessionScope.adminStatus}">
                                 <a href="/admin/ad_menu" class="admin-section">[Admin]</a>
                             </c:if>
                             <b>최근 접속 일자:

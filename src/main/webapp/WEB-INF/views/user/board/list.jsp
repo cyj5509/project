@@ -48,6 +48,7 @@
 					</style>
 
 					<script>
+						// 게시물 등록 시
 						// 게시물 수정 및 삭제 시 정상적으로 작업이 완료되면 동작(modify 및 delete 메서드)
 						let msg = '${msg}';
 						if (msg != "") {
