@@ -19,21 +19,12 @@
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
 					<link rel="stylesheet" href="/css/user/board/main_text.css">
+					<link rel="stylesheet" href="/css/user/board/pw_modal.css">
 
 					<style>
 						input[readonly],
 						.readonly-div {
 							background-color: white !important;
-						}
-
-						.likeCount:hover {
-							background-color: lightblue;
-							color: white;
-						}
-
-						.dislikeCount:hover {
-							background-color: lightcoral;
-							color: white;
 						}
 					</style>
 
@@ -158,17 +149,26 @@
 													</c:choose>
 													<button type="button" id="btn_list" class="btn btn-success">목록</button>
 													<!-- 비밀번호 입력 모달 (초기에는 숨겨져 있음) -->
-													<div id="passwordModal" style="display:none; margin-left: auto;">
-														<form id="passwordForm" method="post" action="/user/board/checkPw">
-															<span style="color: red; font-size: 14px;">* 비밀번호 입력 필요</span>
-															<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
-															<input type="hidden" id="formAction" name="action" value=""> <!-- value="는 수정 또는 삭제 -->
-															<label for="bd_guest_pw"></label>
-															<input type="password" id="bd_guest_pw" name="bd_guest_pw" placeholder="비밀번호를 입력하세요.">
-															<button type="submit">확인</button>
-															<button type="button" onclick="closePasswordModal()">취소</button>
-														</form>
-													</div>
+													<div id="passwordModal" class="modal" style="display:none;">
+														<div class="modal-content">
+																<div class="modal-header">
+																		<span>* 비밀번호 입력 필요</span>
+																		<span class="close-button" onclick="closePasswordModal()">&times;</span>
+																</div>
+																<div class="modal-body">
+																		<form id="passwordForm" method="post" action="/user/board/checkPw">
+																				<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
+																				<input type="hidden" id="formAction" name="action" value="">
+																				<input type="password" id="bd_guest_pw" name="bd_guest_pw" placeholder="비밀번호를 입력하세요.">
+																		</form>
+																</div>
+																<div class="modal-footer">
+																		<button type="submit" form="passwordForm">확인</button>
+																		<button type="button" onclick="closePasswordModal()">취소</button>
+																</div>
+														</div>
+												</div>
+
 												</div>
 											</div>
 										</div>
@@ -182,7 +182,9 @@
 						</div>
 					</main>
 
+					<!-- JS 파일 링크 -->
 					<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+					<script src="/js/user/board/pw_modal.js"></script>
 
 					<script>
 
@@ -214,7 +216,7 @@
 									} else if (response.status == 'fail') {
 										// 오류 메시지 처리
 										console.error('Error:', response.message);
-									} 
+									}
 								}
 							});
 						}, 1000); // 1000ms(1초) 동안 연속 클릭 방지
