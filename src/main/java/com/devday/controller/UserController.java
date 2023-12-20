@@ -111,13 +111,6 @@ public class UserController {
 		String msg = "";
 
 		if (us_vo != null) {
-			// 기존에 발급된 session_id 쿠키 제거(HomeController 참고)
-		    Cookie cookie = new Cookie("session_id", null);
-		    cookie.setMaxAge(0); // 쿠키 유효기간 0으로 설정(즉시 만료)
-		    cookie.setPath("/"); // 웹사이트의 모든 경로에서 쿠키 사용
-		    cookie.setHttpOnly(true); // 보안 설정(JavaScript 접근 방지)
-		    response.addCookie(cookie); // 쿠키를 응답에 추가하여 클라이언트에 전송
-			
 			// 세션에 us_vo를 "userStatus"라는 이름으로 저장
 			session.setAttribute("userStatus", us_vo);
 	        

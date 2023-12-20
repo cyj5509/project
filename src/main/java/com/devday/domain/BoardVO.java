@@ -2,16 +2,9 @@ package com.devday.domain;
 
 import java.util.Date;
 
-// import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-// @Data
-@Getter
-@Setter
-@ToString
-public class BoardVO {
 
 /*
 CREATE TABLE board_table (
@@ -29,7 +22,13 @@ CREATE TABLE board_table (
     bd_dislike_count  NUMBER  DEFAULT 0,                  -- 비추천 수
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
-*/	
+*/
+
+@Getter
+@Setter
+@ToString
+public class BoardVO {
+
 	// 회원 및 비회원 공통 필드
 	private Long bd_number;
 	private String us_id; // 회원 아이디

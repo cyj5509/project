@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,7 +37,7 @@ import com.devday.domain.UserVO;
 import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
 import com.devday.dto.PageDTO;
-import com.devday.exception.AlreadyVoteException;
+import com.devday.dto.VoteResultDTO;
 import com.devday.service.UsBoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -148,7 +149,7 @@ public class UsBoardController {
 		log.info("조회한 게시물 번호: " + bd_number);
 		log.info("조회한 페이징 및 검색 정보: " + cri);
 
-		BoardVO bd_vo = usBoardService.get(bd_number); // 게시물 조회 관련 메서드 호출(조회 증가 처리 포함)
+		BoardVO bd_vo = usBoardService.get(bd_number, true); // 게시물 조회 관련 메서드 호출(조회 증가 처리 포함)
 		model.addAttribute("bd_vo", bd_vo);
 
 		return "/user/board/get";
@@ -157,43 +158,57 @@ public class UsBoardController {
 	@PostMapping("/like_action")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> likeAction(HttpSession session, @RequestParam("bd_number") Long bd_number,
-														@CookieValue(value = "session_id", required = false) String session_id,
+														 @CookieValue("non_us_id") String non_us_id,
 	                                                     @RequestParam("actionType") String actionType) {
 		
-		ResponseEntity<Map<String, Object>> entity = null;
 		Map<String, Object> map = new HashMap<>();
 
-		// String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
 		String us_id = (us_vo != null) ? us_vo.getUs_id() : null;
 		
-		try {
-			VoteVO voteVO = new VoteVO();
-	        voteVO.setUs_id(us_id);
-	        voteVO.setSession_id(session_id);
-	        voteVO.setBd_number(bd_number);
-	        voteVO.setVt_type(actionType);
+			VoteVO vt_vo = new VoteVO();
+			
+			vt_vo.setUs_id(us_id);
+			vt_vo.setNon_us_id(non_us_id);
+			vt_vo.setBd_number(bd_number);
+			vt_vo.setVt_status(actionType);
 	        
-	        usBoardService.insertVote(voteVO); // 투표 처리 및 추천/비추천 수 업데이트
-	        BoardVO bd_vo = usBoardService.get(bd_number); // 최신 게시물 데이터 가져오기
-
-			map.put("status", "success");
+			VoteResultDTO vt_dto = usBoardService.insertVote(vt_vo); // 투표 처리(추가, 취소, 변경)	        
+	        BoardVO bd_vo = usBoardService.get(bd_number, false); // 최신 게시물 데이터 가져오기
+	        
+			map.put("status", vt_dto.isStatus() ? "success" : "error");
+			map.put("actionType", actionType);
 			map.put("likes", bd_vo.getBd_like_count());
 			map.put("dislikes", bd_vo.getBd_dislike_count());
-			entity = new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
+			map.put("message", vt_dto.getMessage());
+			map.put("voteAction", vt_dto.getAction());
 			
-		} catch (AlreadyVoteException e) {
-	        map.put("status", "alreadyVote");
-	        map.put("message", "추천 및 비추천은 1일 1회만 가능합니다."); // 최종 사용자용 메시지
-	        entity = new ResponseEntity<>(map, HttpStatus.BAD_REQUEST); // HTTP 상태 코드 400
-	    } catch (Exception e) {
-			e.printStackTrace();
-			map.put("status", "fail");
-			map.put("message", e.getMessage());
-			entity = new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드 500
-		}
+			return new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
+	}
+	
+	@GetMapping("/getCurrentVoteStatus")
+	@ResponseBody
+	public String getCurrentVoteStatus(@RequestParam("bd_number") Long bd_number, HttpSession session, 
+									   HttpServletRequest request) {
+	    // 세션 및 쿠키에서 사용자 정보 가져오기
+		String us_id = null;
+		String non_us_id = null;
+		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
 		
-		return entity;
+	    if (us_vo != null) {
+	        us_id = us_vo.getUs_id();
+	    }
+		
+	    Cookie[] cookies = request.getCookies();
+	    if (cookies != null) {
+	    	for (Cookie cookie : cookies) {
+	    		if ("non_us_id".equals(cookie.getName())) {
+	    			non_us_id = cookie.getValue(); // 쿠키 값 가져오기
+	    		}
+	    	}
+	    }		 
+	    
+	    return usBoardService.getCurrentVoteStatus(bd_number, us_id, non_us_id);
 	}
 	
 	// 게시물 수정 페이지 이동(게시물 수정 폼)
@@ -206,7 +221,7 @@ public class UsBoardController {
 		log.info("수정할 게시물 번호: " + bd_number);
 		log.info("수정할 페이징 및 검색 정보: " + cri);
 
-		BoardVO bd_vo = usBoardService.get(bd_number);
+		BoardVO bd_vo = usBoardService.get(bd_number, false);
 		model.addAttribute("bd_vo", bd_vo);
 
 		return "/user/board/modify";
@@ -223,7 +238,7 @@ public class UsBoardController {
 		if (session.getAttribute("userStatus") != null) {
 		    // 회원 로그인 상태
 		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
-		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
+		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number(), false); // 수정하려는 게시물 정보
 		    // 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
 		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
 		        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 수정할 권한이 없습니다.");
@@ -262,7 +277,7 @@ public class UsBoardController {
 		if (session.getAttribute("userStatus") != null) {
 		    // 회원 로그인 상태
 		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
-		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number()); // 수정하려는 게시물 정보
+		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number(), false); // 수정하려는 게시물 정보
 
 		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
 			    	// 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
@@ -291,7 +306,7 @@ public class UsBoardController {
 	
 	@PostMapping("/checkPw")
 	public String checkPw(Long bd_number, String bd_guest_pw, String action, Criteria cri, HttpSession session, RedirectAttributes rttr) {
-	    BoardVO boardVO = usBoardService.get(bd_number);
+	    BoardVO boardVO = usBoardService.get(bd_number, false);
 	    if (boardVO != null && passwordEncoder.matches(bd_guest_pw, boardVO.getBd_guest_pw())) {
 	        // 비밀번호 확인 성공, 세션에 권한 설정
 	        session.setAttribute("isAuthorized", true);

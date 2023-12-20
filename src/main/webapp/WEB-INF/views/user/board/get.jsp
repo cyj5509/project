@@ -22,9 +22,14 @@
 					<link rel="stylesheet" href="/css/user/board/pw_modal.css">
 
 					<style>
-						input[readonly],
-						.readonly-div {
-							background-color: white !important;
+						.like-active {
+							color: white;
+							background-color: blue;
+						}
+
+						.dislike-active {
+							color: white;
+							background-color: red;
 						}
 					</style>
 
@@ -101,12 +106,14 @@
 														readonly>
 														${bd_vo.bd_content}
 													</div>
-												</div>
+												</div><br />
 												<div class="form-group" style="text-align: center;">
-													<button class="likeCount" id="btn_like" data-bd_number="${bd_vo.bd_number}">
+													<button class="likeCount btn_vote" id="btn_like" data-bd_number="${bd_vo.bd_number}"
+														data-vt_status="like">
 														좋아요!
 													</button>
-													<button class="dislikeCount" id="btn_dislike" data-bd_number="${bd_vo.bd_number}">
+													<button class="dislikeCount btn_vote" id="btn_dislike" data-bd_number="${bd_vo.bd_number}"
+														data-vt_status="dislike">
 														싫어요!
 													</button>
 													<div>
@@ -148,26 +155,27 @@
 														</c:when>
 													</c:choose>
 													<button type="button" id="btn_list" class="btn btn-success">목록</button>
-													<!-- 비밀번호 입력 모달 (초기에는 숨겨져 있음) -->
-													<div id="passwordModal" class="modal" style="display:none;">
-														<div class="modal-content">
-																<div class="modal-header">
-																		<span>* 비밀번호 입력 필요</span>
-																		<span class="close-button" onclick="closePasswordModal()">&times;</span>
-																</div>
-																<div class="modal-body">
-																		<form id="passwordForm" method="post" action="/user/board/checkPw">
-																				<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
-																				<input type="hidden" id="formAction" name="action" value="">
-																				<input type="password" id="bd_guest_pw" name="bd_guest_pw" placeholder="비밀번호를 입력하세요.">
-																		</form>
-																</div>
-																<div class="modal-footer">
-																		<button type="submit" form="passwordForm">확인</button>
-																		<button type="button" onclick="closePasswordModal()">취소</button>
-																</div>
+													<!-- 비밀번호 입력 모달(초기에는 숨겨져 있음) -->
+													<div id="passwordModal" class="pw-modal" style="display:none;">
+														<div class="pw-modal-content">
+															<div class="pw-modal-header">
+																<span id="pwModalMessage1"></span>
+																<span class="pw-close-button" onclick="closePasswordModal()">&times;</span>
+															</div>
+															<div class="pw-modal-body">
+																<form id="passwordForm" method="post" action="/user/board/checkPw">
+																	<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
+																	<input type="hidden" id="formAction" name="action" value="">
+																	<input type="password" id="bd_guest_pw" name="bd_guest_pw" placeholder="비밀번호를 입력하세요.">
+																</form>
+																<p id="pwModalMessage2"></p>
+															</div>
+															<div class="pw-modal-footer">
+																<button type="submit" form="passwordForm">확인</button>
+																<button type="button" onclick="closePasswordModal()">취소</button>
+															</div>
 														</div>
-												</div>
+													</div>
 
 												</div>
 											</div>
@@ -179,6 +187,26 @@
 										<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 								</footer>
 							</section>
+							<!-- 투표 변경/취소 모달 -->
+							<div class="modal fade" id="voteChangeModal" tabindex="-1" role="dialog"
+								aria-labelledby="voteChangeModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="voteChangeModalLabel"></h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body"></div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-primary" id="btn_change">변경</button>
+											<button type="button" class="btn btn-danger" id="btn_cancel">취소</button>
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</main>
 
@@ -186,61 +214,39 @@
 					<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 					<script src="/js/user/board/pw_modal.js"></script>
 
+					<!-- 기존 순수 자바스크립트 로직 -->
 					<script>
-
-						// lodash 라이브러리의 debounce 함수 사용(함수 표현식 형태는 호이스팅 불가)
-						const debouncedLikeAction = _.debounce(function (bd_number, actionType) {
-							// 버튼 비활성화
-							$('#btn_like').prop('disabled', true);
-							$('#btn_dislike').prop('disabled', true);
-
-							$.ajax({
-								url: '/user/board/like_action',
-								type: 'POST',
-								data: {
-									bd_number: bd_number,
-									actionType: actionType,
-								},
-								success: function (response) {
-									// 버튼 활성화
-									$('#btn_like').prop('disabled', false);
-									$('#btn_dislike').prop('disabled', false);
-
-									if (response.status == 'success') {
-										// 하루 중 처음 투표하는 경우
-										$('#likes').text(response.likes);
-										$('#dislikes').text(response.dislikes);
-									} else if (response.status == 'alreadyVote') {
-										// 하루 중 이미 투표한 경우
-										alert(response.message);
-									} else if (response.status == 'fail') {
-										// 오류 메시지 처리
-										console.error('Error:', response.message);
-									}
-								}
-							});
-						}, 1000); // 1000ms(1초) 동안 연속 클릭 방지
-
-						// 좋아요! 버튼 클릭 시 동작
-						document.getElementById('btn_like').addEventListener('click', function () {
-							let bd_number = this.getAttribute('data-bd_number');
-							debouncedLikeAction(bd_number, 'like');
-						});
-
-						// 싫어요! 버튼 클릭 시 동작
-						document.getElementById('btn_dislike').addEventListener('click', function () {
-							let bd_number = this.getAttribute('data-bd_number');
-							debouncedLikeAction(bd_number, 'dislike');
-						});
 
 						// 비밀번호 입력 모달을 보여주는 함수
 						function showPasswordModal(action) {
+							let pwModalMessage1 = document.getElementById('pwModalMessage1'); // <span id="pwModalMessage1"></span>
+							let pwModalMessage2 = document.getElementById('pwModalMessage2');// <p id="pwModalMessage2"></p>
+
+							if (action == 'modify') {
+								// 수정 버튼 클릭 시 동작
+								pwModalMessage1.textContent = '[비회원/수정]';
+								pwModalMessage2.textContent = '* 게시물 수정 시 비밀번호 입력'
+							} else if (action == 'delete') {
+								// 삭제 버튼 클릭 시 동작
+								pwModalMessage1.textContent = '[비회원/삭제]';
+								pwModalMessage2.textContent = '* 게시물 삭제 시 비밀번호 입력'
+							}
+
 							document.getElementById('formAction').value = action;
 							document.getElementById('passwordModal').style.display = 'block';
 						}
 
 						// 비밀번호 입력 모달을 닫는 함수
 						function closePasswordModal() {
+							let modalContent = document.getElementById('passwordModal').querySelector('.modal-content');
+							// 모달 컨텐츠 위치 초기화
+							modalContent.style.top = "50%";
+							modalContent.style.left = "50%";
+							modalContent.style.transform = "translate(-50%, -50%)";
+
+							// 비밀번호 입력 필드 초기화
+							document.getElementById('bd_guest_pw').value = '';
+							// 모달 숨기기
 							document.getElementById('passwordModal').style.display = 'none';
 						}
 
@@ -261,11 +267,27 @@
 							if (isGuestPost) {
 								showPasswordModal('modify');
 							} else {
+
 								// 회원 게시물의 경우 기존 로직 실행
 								curListInfo.setAttribute("action", "/user/board/modify/${bd_vo.bd_type}");
 								curListInfo.submit();
 							}
 						}
+
+						// 비밀번호 입력 폼에 대한 이벤트 핸들러 추가
+						document.getElementById('passwordForm').onsubmit = function () {
+							// 비회원 게시물인 경우에만 삭제 확인을 진행
+							if (isGuestPost && document.getElementById('formAction').value == 'delete') {
+								let isConfirmed = confirm("게시물을 정말로 삭제하시겠습니까?");
+								if (!isConfirmed) {
+									// 사용자가 '취소'를 선택한 경우, 모달창 닫기
+									closePasswordModal();
+									return false; // 폼 제출 중단
+								}
+								return true; // '확인'을 선택한 경우, 폼 제출 진행
+							}
+							return true; // 회원 게시물이거나, 수정 작업인 경우 폼 제출 진행
+						};
 
 						// 삭제 버튼 클릭
 						let btn_delete = document.getElementById("btn_delete");
@@ -280,7 +302,7 @@
 								showPasswordModal('delete');
 							} else {
 								// 회원 게시물의 경우
-								if (!confirm("게시물을 삭제하시겠습니까?")) return;
+								if (!confirm("게시물을 정말로 삭제하시겠습니까?")) return;
 								curListInfo.setAttribute("action", "/user/board/delete/${bd_vo.bd_type}");
 								curListInfo.submit();
 							}
@@ -295,6 +317,144 @@
 							curListInfo.setAttribute("action", "/user/board/list/${bd_vo.bd_type}"); // /user/board/list -> /user/board/get 전송
 							curListInfo.submit();
 						}
+					</script>
+
+					<!-- jQuery 기반 추가 스크립트 -->
+					<script>
+						$(document).ready(function () {
+
+							// 전역변수
+							let bd_number = null; // 게시물 번호
+							let currentType = null; // 현재 사용자의 투표 타입
+
+							// lodash 라이브러리의 debounce 함수 사용(함수 표현식 형태는 호이스팅 불가)
+							const debouncedAction = _.debounce(function (bd_number, actionType) {
+								// '좋아요/싫어요' 버튼 비활성화
+								$('#btn_like').prop('disabled', true);
+								$('#btn_dislike').prop('disabled', true);
+
+								$.ajax({
+									url: '/user/board/like_action',
+									type: 'POST',
+									data: {
+										bd_number: bd_number,
+										actionType: actionType,
+									},
+									dataType: 'json', //JSON 형식의 응답(map)
+									success: handleLikeDislikeAction // 응답 처리 함수(참조), 소괄호 없음
+								});
+							}, 1000); // 1초(1000ms) 동안 연속 클릭 방지
+
+							// 추천 및 비추천 액션 처리 함수
+							function handleLikeDislikeAction(response) {
+								// '좋아요/싫어요' 버튼 활성화
+								$('#btn_like').prop('disabled', false);
+								$('#btn_dislike').prop('disabled', false);
+
+								let showModal = false;
+
+								if (response.status == 'success') {
+									// 투표 성공 처리
+									updateButtonState(response.actionType, response.likes, response.dislikes);
+									currentType = response.actionType; // 투표 상태 업데이트
+									// 투표 변경 또는 취소 처리(모달)
+									if (response.voteAction === 'change' || response.voteAction === 'cancel') {
+										showVoteModal(response.voteAction, response.message);
+									}
+								} else {
+									// 투표 실패 또는 에러 처리
+									console.error("투표 처리 중 오류 발생");
+								}
+							}
+
+							// 모달 표시 함수
+							function showVoteModal(bd_number, action, message) {
+								let modalTitle = action == 'change' ? '[선택 변경]' : '[선택 취소]';
+								$('#btn_change').toggle(action === 'change'); // 변경 버튼 표시/숨김
+								$('#btn_cancel').toggle(action === 'cancel'); // 취소 버튼 표시/숨김
+
+								$('#voteChangeModal').find('.modal-title').text(modalTitle);
+								$('#voteChangeModal').find('.modal-body').text(message);
+
+								// 변경 및 취소 버튼에 대한 이벤트 핸들러 설정
+								$('#btn_change').off("click").on("click", function () {
+									handleVoteAction(bd_number, action === 'change' ? (currentType === 'like' ? 'dislike' : 'like') : currentType);
+								});
+								$('#btn_cancel').off("click").on("click", function () {
+									handleVoteAction(bd_number, null);
+								});
+
+								$('#voteChangeModal').modal('show');
+							}
+
+							// 현재 투표 상태를 확인하고 버튼 스타일을 업데이트하는 함수
+							function checkAndApplyVoteStatus() {
+								$.ajax({
+									url: '/user/board/getCurrentVoteStatus',
+									type: 'GET',
+									data: { bd_number: bd_number },
+									dataType: 'json',
+									success: updateButtonStyle // 버튼 스타일 업데이트  
+								});
+							}
+
+							function updateButtonStyle(voteStatus) {
+								if (voteStatus === 'like') {
+									$('#btn_like').toggleClass('like-active');
+									$('#btn_dislike').removeClass('dislike-active');
+								} else if (voteStatus === 'dislike') {
+									$('#btn_dislike').toggleClass('dislike-active');
+									$('#btn_like').removeClass('like-active');
+								}
+							}
+
+							// 현재 투표 상태 확인 및 버튼 스타일 적용
+							checkAndApplyVoteStatus();
+
+							// 버튼 활성화/비활성화 처리 함수
+							function updateButtonState(actionType, likes, dislikes) {
+								if (actionType == 'like') {
+									$('#btn_like').toggleClass('like-active');
+									$('#btn_dislike').removeClass('dislike-active');
+								} else if (actionType == 'dislike') {
+									$('#btn_dislike').toggleClass('dislike-active');
+									$('#btn_like').removeClass('like-active');
+								}
+
+								// 추천 및 비추천 수 업데이트
+								$('#likes').text(likes);
+								$('#dislikes').text(dislikes);
+							}
+
+							// '좋아요/싫어요' 버튼 클릭 이벤트
+							// 기존에 등록된 모든 이벤트 핸들러 제거 후 새로운 이벤트 핸들러 추가
+							$('.btn_vote').off("click").on("click", function () {
+								// "Maximum call stack size exceeded" 오류
+								// 클릭된 버튼의 게시물 번호와 투표 타입 저장
+								bd_number = $(this).data('bd_number');
+								let attemptType = $(this).data('vt_status');
+
+								// 서버 요청 대신 사용자의 투표 의도를 처리(모달 표시, 사용자 확인 등)
+								// 현재 투표 상태와 클릭된 버튼의 투표 타입에 따라 모달 표시 결정
+								/*
+								if (currentType === attemptType) {
+									// 이미 선택된 상태이므로 '취소' 모달 표시
+									showVoteModal(bd_number, 'cancel', "기존 선택을 취소하시겠습니까?");
+								} else {
+									// 다른 상태로 변경하는 경우 '변경' 모달 표시
+									showVoteModal(bd_number, 'change', "기존 선택을 변경하시겠습니까?");
+								}
+								*/
+							});
+
+							// 투표 변경 및 취소 로직을 실행하는 함수(함수 선언식 형태는 호이스팅 가능)
+							function handleVoteAction(bd_number, voteType) {
+
+								debouncedAction(bd_number, voteType); // 실제 투표 처리
+								$('#voteChangeModal').modal('hide'); // 모달 닫기
+							}
+
+						}); // ready-end
 					</script>
 
 			</body>

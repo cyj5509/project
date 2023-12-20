@@ -107,7 +107,7 @@
 															</div>
 														</div>
 														<div class="form-group">
-															<p style="color: red; font-size: 14px;">* 비회원이 작성한 게시물의 경우 비밀번호 입력 필요</p>
+															<p style="color: red; font-size: 14px;">* 비회원인 경우 비밀번호 입력 필요</p>
 														</div>
 													</c:if>
 												</div>

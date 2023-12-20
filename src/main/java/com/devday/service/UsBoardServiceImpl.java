@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.devday.domain.BoardVO;
 import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
-import com.devday.exception.AlreadyVoteException;
+import com.devday.dto.VoteResultDTO;
 import com.devday.mapper.UsBoardMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -29,48 +29,77 @@ public class UsBoardServiceImpl implements UsBoardService {
 
 	@Override
 	@Transactional
-	public BoardVO get(Long bd_number) {
+	public BoardVO get(Long bd_number, boolean increaseReadCount) {
 
-		usBoardMapper.readCount(bd_number); // usBoardService 인터페이스에 부존재
+		if (increaseReadCount) {
+			usBoardMapper.readCount(bd_number); // usBoardService 인터페이스에 부존재
+		}
 
 		return usBoardMapper.get(bd_number);
 	}
 
 	@Override
-	public boolean voteCheck(Long bd_number, String us_id, String session_id, String actionType) {
+	public boolean checkVote(Long bd_number, String us_id, String non_us_id) {
+		
 	    Map<String, Object> map = new HashMap<>();
 	    map.put("bd_number", bd_number);
 	    map.put("us_id", us_id);
-	    map.put("session_id", session_id);
-	    map.put("vt_type", actionType);
+	    map.put("non_us_id", non_us_id);
 
-	    int count = usBoardMapper.voteCheck(map);
+	    int count = usBoardMapper.checkVote(map);
 	    return count > 0;
 	}
 	
 	@Override
-	@Transactional
-	public void insertVote(VoteVO vt_vo) {
-		// 이미 투표했는지 확인
-		boolean alreadyVote = voteCheck(vt_vo.getBd_number(), vt_vo.getUs_id(), vt_vo.getSession_id(),
-				vt_vo.getVt_type());
-
-		if (alreadyVote) {
-			throw new AlreadyVoteException("오늘 투표 완료"); // 개발자(관리자)용 메시지
-		} else {
-			// 아직 투표하지 않았다면 투표 정보 삽입
-			usBoardMapper.insertVote(vt_vo);
-
-			// 투표 후 게시물의 추천/비추천 수 업데이트
-			if ("like".equals(vt_vo.getVt_type())) {
-				usBoardMapper.increaseLike(vt_vo.getBd_number());
-			} else {
-				usBoardMapper.increaseDislike(vt_vo.getBd_number());
-			}
-			get(vt_vo.getBd_number());
-		}
-	}
+	public String getCurrentVoteStatus(Long bd_number, String us_id, String non_us_id) {
 		
+		Map<String, Object> map = new HashMap<>();
+	    map.put("bd_number", bd_number);
+	    map.put("us_id", us_id);
+	    map.put("non_us_id", non_us_id);
+		
+		return usBoardMapper.getCurrentVoteStatus(map);
+	}
+	
+	@Override
+	@Transactional
+	public VoteResultDTO insertVote(VoteVO vt_vo) {
+		// 투표 여부 확인
+		boolean alreadyVote = checkVote(vt_vo.getBd_number(), vt_vo.getUs_id(), vt_vo.getNon_us_id());
+		String currentStatus = alreadyVote ? getCurrentVoteStatus(vt_vo.getBd_number(), vt_vo.getUs_id(), vt_vo.getNon_us_id()) : null;
+
+		if (!alreadyVote) {
+			// 기존에 투표하지 않은 경우 새로운 투표 추가
+			usBoardMapper.insertVote(vt_vo);
+			updateCount(vt_vo.getBd_number(), vt_vo.getVt_status(), true); // 추천 또는 비추천 수 증가
+			return new VoteResultDTO(true, "선택은 1일 1회만 가능하지만 변경/수정 시 버튼을 클릭해 주세요.", "success");
+		} else if (alreadyVote && vt_vo.getVt_status().equals(currentStatus)) {
+			// 같은 상태로 다시 투표하는 경우(투표 취소)
+			usBoardMapper.cancelVote(vt_vo);
+			updateCount(vt_vo.getBd_number(), currentStatus, false); // 추천 또는 비추천 수 감소
+	        return new VoteResultDTO(true, "기존 선택을 취소하시겠습니까?", "cancel");
+		} else if (alreadyVote && !vt_vo.getVt_status().equals(currentStatus)) {
+			// 다른 상태로 다시 투표하는 경우(투표 변경)
+			usBoardMapper.changeVote(vt_vo);
+			updateCount(vt_vo.getBd_number(), currentStatus, false); // 이전 카운트 감소
+			updateCount(vt_vo.getBd_number(), vt_vo.getVt_status(), true); // 새 카운트 증가
+	        return new VoteResultDTO(true, "기존 선택을 변경하시겠습니까?", "change");
+		}
+		 return new VoteResultDTO(false, "처리 중 오류가 발생했습니다. 다시 시도해 주세요.", "error");
+	}
+	
+	// insertVote 메서드 내에서 사용(일관성 등을 위해 재정의), boolean increase는 true/false 직접 제어
+	@Override 
+	public void updateCount(Long bd_number, String vt_status, boolean increase) {
+	    if ("like".equals(vt_status)) {
+	        if (increase) usBoardMapper.increaseLike(bd_number); // 추천 수 증가
+	        else usBoardMapper.decreaseLike(bd_number); // 추천 수 감소
+	    } else if ("dislike".equals(vt_status)) {
+	        if (increase) usBoardMapper.increaseDislike(bd_number); // 비추천 수 증가
+	        else usBoardMapper.decreaseDislike(bd_number); // 비추천 수 감소
+	    }
+	}
+	
 	@Override
 	public List<BoardVO> getList() {
 

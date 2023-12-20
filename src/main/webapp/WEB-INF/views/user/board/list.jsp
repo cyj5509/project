@@ -43,7 +43,7 @@
 						}
 
 						.capitalize {
-							text-transform: capitalize;
+							text-transform: capitalize; /* 첫 번째 글자 대문자 변환 */
 						}
 					</style>
 

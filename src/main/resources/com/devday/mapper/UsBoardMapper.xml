@@ -115,7 +115,6 @@
 </select>
 
 
-
 <!-- 조회수 증가 -->
 <update id="readCount" parameterType="Long">
 	UPDATE
@@ -129,18 +128,19 @@
 <!-- parameterType과 관련하여 별칭 사용(mybatis-config.xml 참고) -->
 <insert id="insertVote" parameterType="VoteVO">
     INSERT INTO
-    		vote_table (vt_number, us_id, session_id, bd_number, vt_type, vt_date)
+    		vote_table (vt_number, us_id, non_us_id, bd_number, vt_status, vt_register_date)
     VALUES (
     		sequence_vt_number.NEXTVAL, 
     		#{us_id}, 
-    		#{session_id}, 
+    		#{non_us_id}, 
     		#{bd_number}, 
-    		#{vt_type}, 
-    		CURRENT_DATE
+    		#{vt_status}, 
+    		TRUNC(SYSDATE) <!-- 날짜 부분만 반환(시간 부분 제거) -->
     	)
 </insert>
 
-<select id="voteCheck" resultType="int" parameterType="map">
+<!-- 투표 여부 확인: 특정 게시물, 특정 사용자, 특정 날짜 -->
+<select id="checkVote" resultType="int" parameterType="map">
     SELECT
         COUNT(*)
     FROM 
@@ -148,34 +148,100 @@
     WHERE 
         bd_number = #{bd_number}
 	    AND 
-	        vt_date = CURRENT_DATE
+	        TRUNC(vt_register_date) = TRUNC(SYSDATE)
 	    AND (
 	        (#{us_id} IS NOT NULL AND us_id = #{us_id}) OR
-	        (#{us_id} IS NULL AND session_id = #{session_id})
+	        (#{us_id} IS NULL AND non_us_id = #{non_us_id})
 	    )
 </select>
 
-<!-- 추천 증가 -->
+<!-- 투표 상태 확인: 특정 게시물, 특정 사용자, 특정 날짜 -->
+<select id="getCurrentVoteStatus" resultType="String" parameterType="map">
+    SELECT
+        vt_status
+    FROM 
+        vote_table
+    WHERE 
+        bd_number = #{bd_number}
+        AND
+        	TRUNC(vt_register_date) = TRUNC(SYSDATE)
+        AND (
+            (#{us_id} IS NOT NULL AND us_id = #{us_id}) OR
+            (#{us_id} IS NULL AND non_us_id = #{non_us_id})
+        )
+</select>
+
+<!-- 투표 취소: 같은 상태로 다시 투표하는 경우 -->
+<update id="cancelVote" parameterType="VoteVO">
+    UPDATE
+    	vote_table
+    SET
+    	vt_status = NULL  <!-- 또는 'none'-->
+    WHERE
+    	bd_number = #{bd_number}
+      	AND 
+      		TRUNC(vt_register_date) = TRUNC(SYSDATE)
+    	AND 
+    		(us_id = #{us_id} OR 
+            (#{us_id} IS NULL AND non_us_id = #{non_us_id}))
+</update>
+
+<!-- 투표 변경: 다른 상태로 다시 투표하는 경우 -->
+<update id="changeVote" parameterType="VoteVO">
+    UPDATE
+    	vote_table
+    SET
+    	vt_status = #{vt_status}
+    WHERE
+    	bd_number = #{bd_number}
+      	AND 
+      		TRUNC(vt_register_date) = TRUNC(SYSDATE)
+      	AND 
+      		(us_id = #{us_id} OR 
+            (#{us_id} IS NULL AND non_us_id = #{non_us_id}))
+</update>
+
+<!-- 추천 수 증가 -->
 <update id="increaseLike" parameterType="Long">
     UPDATE
-    		board_table
+    	board_table
     SET 
-    		bd_like_count = bd_like_count + 1
+    	bd_like_count = bd_like_count + 1
     WHERE
-    		bd_number = #{bd_number}
+    	bd_number = #{bd_number}
 </update>
 
-<!-- 비추천 증가 -->
+<!-- 비추천 수 증가 -->
 <update id="increaseDislike" parameterType="Long">
     UPDATE
-    		board_table
+   		board_table
     SET
-    		bd_dislike_count = bd_dislike_count + 1
+   		bd_dislike_count = bd_dislike_count + 1
     WHERE
-    		bd_number = #{bd_number}
+   		bd_number = #{bd_number}
 </update>
 
-<!-- 글 수정하기 -->
+<!-- 추천 수 감소 -->
+<update id="decreaseLike" parameterType="Long">
+    UPDATE
+        board_table
+    SET
+        bd_like_count = bd_like_count - 1
+    WHERE
+        bd_number = #{bd_number} AND bd_like_count > 0
+</update>
+
+<!-- 비추천 수 감소 -->
+<update id="decreaseDislike" parameterType="Long">
+    UPDATE
+        board_table
+    SET
+        bd_dislike_count = bd_dislike_count - 1
+    WHERE
+        bd_number = #{bd_number} AND bd_dislike_count > 0
+</update>
+
+<!-- 게시물 수정 -->
 <update id="modify" parameterType="com.devday.domain.BoardVO">
 	UPDATE
 		board_table
@@ -188,7 +254,7 @@
 		bd_number = #{bd_number}
 </update>
 
-<!-- 글 삭제하기 -->
+<!-- 게시물 삭제 -->
 <delete id="delete" parameterType="Long">
 	DELETE FROM
 		board_table
