@@ -72,20 +72,20 @@ public class UsBoardServiceImpl implements UsBoardService {
 			// 기존에 투표하지 않은 경우 새로운 투표 추가
 			usBoardMapper.insertVote(vt_vo);
 			updateCount(vt_vo.getBd_number(), vt_vo.getVt_status(), true); // 추천 또는 비추천 수 증가
-			return new VoteResultDTO(true, "선택은 1일 1회만 가능하지만 변경/수정 시 버튼을 클릭해 주세요.", "success");
+			return new VoteResultDTO(true);
 		} else if (alreadyVote && vt_vo.getVt_status().equals(currentStatus)) {
 			// 같은 상태로 다시 투표하는 경우(투표 취소)
 			usBoardMapper.cancelVote(vt_vo);
 			updateCount(vt_vo.getBd_number(), currentStatus, false); // 추천 또는 비추천 수 감소
-	        return new VoteResultDTO(true, "기존 선택을 취소하시겠습니까?", "cancel");
+	        return new VoteResultDTO(true);
 		} else if (alreadyVote && !vt_vo.getVt_status().equals(currentStatus)) {
 			// 다른 상태로 다시 투표하는 경우(투표 변경)
 			usBoardMapper.changeVote(vt_vo);
 			updateCount(vt_vo.getBd_number(), currentStatus, false); // 이전 카운트 감소
 			updateCount(vt_vo.getBd_number(), vt_vo.getVt_status(), true); // 새 카운트 증가
-	        return new VoteResultDTO(true, "기존 선택을 변경하시겠습니까?", "change");
+	        return new VoteResultDTO(true);
 		}
-		 return new VoteResultDTO(false, "처리 중 오류가 발생했습니다. 다시 시도해 주세요.", "error");
+		 return new VoteResultDTO(false);
 	}
 	
 	// insertVote 메서드 내에서 사용(일관성 등을 위해 재정의), boolean increase는 true/false 직접 제어

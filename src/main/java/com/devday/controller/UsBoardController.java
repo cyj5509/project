@@ -155,7 +155,7 @@ public class UsBoardController {
 		return "/user/board/get";
 	}
 
-	@PostMapping("/like_action")
+	@PostMapping("/likeAction")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> likeAction(HttpSession session, @RequestParam("bd_number") Long bd_number,
 														 @CookieValue("non_us_id") String non_us_id,
@@ -180,8 +180,6 @@ public class UsBoardController {
 			map.put("actionType", actionType);
 			map.put("likes", bd_vo.getBd_like_count());
 			map.put("dislikes", bd_vo.getBd_dislike_count());
-			map.put("message", vt_dto.getMessage());
-			map.put("voteAction", vt_dto.getAction());
 			
 			return new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
 	}
@@ -208,7 +206,9 @@ public class UsBoardController {
 	    	}
 	    }		 
 	    
-	    return usBoardService.getCurrentVoteStatus(bd_number, us_id, non_us_id);
+	    String voteStatus = usBoardService.getCurrentVoteStatus(bd_number, us_id, non_us_id);
+	    
+	    return voteStatus;
 	}
 	
 	// 게시물 수정 페이지 이동(게시물 수정 폼)

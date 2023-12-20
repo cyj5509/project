@@ -11,8 +11,5 @@ import lombok.ToString;
 @AllArgsConstructor
 public class VoteResultDTO {
 
-	private boolean status; // 투표의 결과
-	private String message; 
-    private String action; // 투표의 종류
-
+	private boolean status; // 투표의 결과 
 }

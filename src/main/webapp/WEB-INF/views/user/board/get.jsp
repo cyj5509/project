@@ -42,7 +42,7 @@
 					</script>
 			</head>
 
-			<body>
+			<body data-bd_number="${bd_vo.bd_number}">
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 
@@ -108,12 +108,10 @@
 													</div>
 												</div><br />
 												<div class="form-group" style="text-align: center;">
-													<button class="likeCount btn_vote" id="btn_like" data-bd_number="${bd_vo.bd_number}"
-														data-vt_status="like">
+													<button class="likeCount btn_vote" id="btn_like" data-vt_status="like">
 														좋아요!
 													</button>
-													<button class="dislikeCount btn_vote" id="btn_dislike" data-bd_number="${bd_vo.bd_number}"
-														data-vt_status="dislike">
+													<button class="dislikeCount btn_vote" id="btn_dislike" data-vt_status="dislike">
 														싫어요!
 													</button>
 													<div>
@@ -155,7 +153,7 @@
 														</c:when>
 													</c:choose>
 													<button type="button" id="btn_list" class="btn btn-success">목록</button>
-													<!-- 비밀번호 입력 모달(초기에는 숨겨져 있음) -->
+													<!-- 비밀번호 입력 커스텀 모달(초기에는 숨겨져 있음) -->
 													<div id="passwordModal" class="pw-modal" style="display:none;">
 														<div class="pw-modal-content">
 															<div class="pw-modal-header">
@@ -176,7 +174,6 @@
 															</div>
 														</div>
 													</div>
-
 												</div>
 											</div>
 										</div>
@@ -187,9 +184,9 @@
 										<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 								</footer>
 							</section>
-							<!-- 투표 변경/취소 모달 -->
-							<div class="modal fade" id="voteChangeModal" tabindex="-1" role="dialog"
-								aria-labelledby="voteChangeModalLabel" aria-hidden="true">
+							<!-- 투표 변경/취소 부트스트랩 모달 -->
+							<div class="modal fade" id="voteChangeModal" tabindex="-1" aria-labelledby="voteChangeModalLabel"
+								aria-hidden="true" data-backdrop="static" data-keyboard="false">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
@@ -324,7 +321,8 @@
 						$(document).ready(function () {
 
 							// 전역변수
-							let bd_number = null; // 게시물 번호
+							let bd_number = $('body').data('bd_number'); // 게시물 번호
+							console.log("게시물 번호:", bd_number);
 							let currentType = null; // 현재 사용자의 투표 타입
 
 							// lodash 라이브러리의 debounce 함수 사용(함수 표현식 형태는 호이스팅 불가)
@@ -334,7 +332,7 @@
 								$('#btn_dislike').prop('disabled', true);
 
 								$.ajax({
-									url: '/user/board/like_action',
+									url: '/user/board/likeAction',
 									type: 'POST',
 									data: {
 										bd_number: bd_number,
@@ -351,24 +349,20 @@
 								$('#btn_like').prop('disabled', false);
 								$('#btn_dislike').prop('disabled', false);
 
-								let showModal = false;
-
 								if (response.status == 'success') {
 									// 투표 성공 처리
+									// alert("선택은 1일 1회만 가능하지만 변경/수정 시 해당 버튼을 클릭해 주세요.");
 									updateButtonState(response.actionType, response.likes, response.dislikes);
 									currentType = response.actionType; // 투표 상태 업데이트
-									// 투표 변경 또는 취소 처리(모달)
-									if (response.voteAction === 'change' || response.voteAction === 'cancel') {
-										showVoteModal(response.voteAction, response.message);
-									}
 								} else {
 									// 투표 실패 또는 에러 처리
-									console.error("투표 처리 중 오류 발생");
+									console.error("처리 중 오류가 발생했습니다.");
 								}
 							}
 
 							// 모달 표시 함수
-							function showVoteModal(bd_number, action, message) {
+							function showVoteModal(action, message) {
+								// 모달 설정 코드
 								let modalTitle = action == 'change' ? '[선택 변경]' : '[선택 취소]';
 								$('#btn_change').toggle(action === 'change'); // 변경 버튼 표시/숨김
 								$('#btn_cancel').toggle(action === 'cancel'); // 취소 버튼 표시/숨김
@@ -376,16 +370,38 @@
 								$('#voteChangeModal').find('.modal-title').text(modalTitle);
 								$('#voteChangeModal').find('.modal-body').text(message);
 
-								// 변경 및 취소 버튼에 대한 이벤트 핸들러 설정
+								// '변경' 버튼 클릭 이벤트
 								$('#btn_change').off("click").on("click", function () {
+									// 서버에 투표 변경 요청
 									handleVoteAction(bd_number, action === 'change' ? (currentType === 'like' ? 'dislike' : 'like') : currentType);
 								});
+
+								// '취소' 버튼 클릭 이벤트
 								$('#btn_cancel').off("click").on("click", function () {
+									if (currentType === 'like') {
+										$('#btn_like').removeClass('like-active');
+									} else if (currentType === 'dislike') {
+										$('#btn_dislike').removeClass('dislike-active');
+									}
+									// 현재 투표 상태 초기화
+									currentType = null;
+
+									// 서버에 투표 취소 요청
 									handleVoteAction(bd_number, null);
 								});
 
 								$('#voteChangeModal').modal('show');
 							}
+
+							// 투표 변경 및 취소 로직을 실행하는 함수(함수 선언식 형태는 호이스팅 가능)
+							function handleVoteAction(bd_number, voteType) {
+
+								debouncedAction(bd_number, voteType); // 실제 투표 처리
+								$('#voteChangeModal').modal('hide'); // 모달 닫기
+							}
+
+							// 현재 투표 상태 확인 및 버튼 스타일 적용
+							checkAndApplyVoteStatus();
 
 							// 현재 투표 상태를 확인하고 버튼 스타일을 업데이트하는 함수
 							function checkAndApplyVoteStatus() {
@@ -393,8 +409,13 @@
 									url: '/user/board/getCurrentVoteStatus',
 									type: 'GET',
 									data: { bd_number: bd_number },
-									dataType: 'json',
-									success: updateButtonStyle // 버튼 스타일 업데이트  
+									dataType: 'text',
+									success: function (voteStatus) {
+										updateButtonStyle(voteStatus);
+										if (voteStatus === 'like' || voteStatus === 'dislike') {
+											currentType = voteStatus; // 유효한 투표 상태인 경우에만 현재 투표 상태 업데이트
+										}
+									}
 								});
 							}
 
@@ -407,9 +428,6 @@
 									$('#btn_like').removeClass('like-active');
 								}
 							}
-
-							// 현재 투표 상태 확인 및 버튼 스타일 적용
-							checkAndApplyVoteStatus();
 
 							// 버튼 활성화/비활성화 처리 함수
 							function updateButtonState(actionType, likes, dislikes) {
@@ -430,29 +448,21 @@
 							// 기존에 등록된 모든 이벤트 핸들러 제거 후 새로운 이벤트 핸들러 추가
 							$('.btn_vote').off("click").on("click", function () {
 								// "Maximum call stack size exceeded" 오류
-								// 클릭된 버튼의 게시물 번호와 투표 타입 저장
-								bd_number = $(this).data('bd_number');
+								// 클릭된 버튼의 투표 타입 저장
 								let attemptType = $(this).data('vt_status');
 
-								// 서버 요청 대신 사용자의 투표 의도를 처리(모달 표시, 사용자 확인 등)
-								// 현재 투표 상태와 클릭된 버튼의 투표 타입에 따라 모달 표시 결정
-								/*
-								if (currentType === attemptType) {
-									// 이미 선택된 상태이므로 '취소' 모달 표시
-									showVoteModal(bd_number, 'cancel', "기존 선택을 취소하시겠습니까?");
+								// 사용자의 현재 투표 상태와 클릭된 버튼의 투표 타입에 따라 서버 요청
+								if (currentType == null) {
+									// 처음 투표하는 경우 - 즉시 서버 요청
+									debouncedAction(bd_number, attemptType);
+								} else if (currentType == attemptType) {
+									// 이미 같은 타입으로 투표한 경우 - '취소' 모달 표시
+									showVoteModal('cancel', '기존 선택을 취소하시겠습니까?');
 								} else {
-									// 다른 상태로 변경하는 경우 '변경' 모달 표시
-									showVoteModal(bd_number, 'change', "기존 선택을 변경하시겠습니까?");
+									// 다른 타입으로 변경하는 경우 - '변경' 모달 표시
+									showVoteModal('change', '기존 선택을 변경하시겠습니까?');
 								}
-								*/
 							});
-
-							// 투표 변경 및 취소 로직을 실행하는 함수(함수 선언식 형태는 호이스팅 가능)
-							function handleVoteAction(bd_number, voteType) {
-
-								debouncedAction(bd_number, voteType); // 실제 투표 처리
-								$('#voteChangeModal').modal('hide'); // 모달 닫기
-							}
 
 						}); // ready-end
 					</script>
