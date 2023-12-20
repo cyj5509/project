@@ -351,7 +351,7 @@
 
 								if (response.status == 'success') {
 									// 투표 성공 처리
-									// alert("선택은 1일 1회만 가능하지만 변경/수정 시 해당 버튼을 클릭해 주세요.");
+									alert("선택은 1일 1회만 가능합니다(변경/수정 시 해당 버튼 클릭).");
 									updateButtonState(response.actionType, response.likes, response.dislikes);
 									currentType = response.actionType; // 투표 상태 업데이트
 								} else {
@@ -378,6 +378,7 @@
 
 								// '취소' 버튼 클릭 이벤트
 								$('#btn_cancel').off("click").on("click", function () {
+
 									if (currentType === 'like') {
 										$('#btn_like').removeClass('like-active');
 									} else if (currentType === 'dislike') {
@@ -412,8 +413,10 @@
 									dataType: 'text',
 									success: function (voteStatus) {
 										updateButtonStyle(voteStatus);
-										if (voteStatus === 'like' || voteStatus === 'dislike') {
+										if (voteStatus == 'like' || voteStatus == 'dislike') {
 											currentType = voteStatus; // 유효한 투표 상태인 경우에만 현재 투표 상태 업데이트
+										} else if (voteStatus == null) {
+											currentType = null; // 유효하지 않은 투표 상태인 경우 현재 투표 상태 초기화
 										}
 									}
 								});
@@ -458,7 +461,7 @@
 								} else if (currentType == attemptType) {
 									// 이미 같은 타입으로 투표한 경우 - '취소' 모달 표시
 									showVoteModal('cancel', '기존 선택을 취소하시겠습니까?');
-								} else {
+								} else if (currentType != attemptType) {
 									// 다른 타입으로 변경하는 경우 - '변경' 모달 표시
 									showVoteModal('change', '기존 선택을 변경하시겠습니까?');
 								}
