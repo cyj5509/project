@@ -31,32 +31,9 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model, HttpServletRequest request, HttpServletResponse response) {
 
-		// 쿠키에서 session_id 값을 확인하는 로직(게시판에서의 추천 및 비추천 작업)
-		Cookie[] cookies = request.getCookies();
-		String non_us_id = null;
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if ("non_us_id".equals(cookie.getName())) {
-					non_us_id = cookie.getValue();
-					break;
-				}
-			}
-		}
 		// 파라미터로 HttpSession 대신 HttpServletRequest로 세션 가져오기
-		HttpSession session = request.getSession();
+		// HttpSession session = request.getSession();
 
-		// 로그인하지 않은 사용자(비회원)만 새로운 쿠키 생성
-		if (session.getAttribute("userStatus") == null && non_us_id == null) {
-
-			non_us_id = UUID.randomUUID().toString();
-			Cookie cookie = new Cookie("non_us_id", non_us_id);
-			cookie.setMaxAge(60 * 60 * 24); // 쿠키 유효기간 24시간(1일) 설정
-			cookie.setPath("/"); // 웹사이트의 모든 경로에서 쿠키 사용
-			cookie.setHttpOnly(true); // 보안 설정(JavaScript 접근 방지)
-			// cookie.setSecure(true); // HTTPS를 통해서만 전송
-			response.addCookie(cookie); // 쿠키를 응답에 추가하여 클라이언트에 전송
-
-		}
 		// 기존 로직 유지
 		logger.info("Welcome home! The client locale is {}.", locale);
 

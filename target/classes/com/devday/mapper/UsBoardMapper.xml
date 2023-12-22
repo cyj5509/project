@@ -125,21 +125,21 @@
 		bd_number = #{bd_number}
 </update>
 
+<!-- 추천/비추천 처리 -->
 <!-- parameterType과 관련하여 별칭 사용(mybatis-config.xml 참고) -->
 <insert id="insertVote" parameterType="VoteVO">
     INSERT INTO
-    		vote_table (vt_number, us_id, non_us_id, bd_number, vt_status, vt_register_date)
+    		vote_table (vt_number, us_id, bd_number, vt_status, vt_register_date)
     VALUES (
     		sequence_vt_number.NEXTVAL, 
     		#{us_id}, 
-    		#{non_us_id}, 
     		#{bd_number}, 
     		#{vt_status}, 
     		TRUNC(SYSDATE) <!-- 날짜 부분만 반환(시간 부분 제거) -->
     	)
 </insert>
 
-<!-- 투표 여부 확인: 특정 게시물, 특정 사용자, 특정 날짜 -->
+<!-- 추천/비추천 여부 확인: 특정 게시물, 특정 사용자, 이전 날짜 -->
 <select id="checkVote" resultType="int" parameterType="map">
     SELECT
         COUNT(*)
@@ -148,30 +148,55 @@
     WHERE 
         bd_number = #{bd_number}
 	    AND 
-	        TRUNC(vt_register_date) = TRUNC(SYSDATE)
+	    	<![CDATA[ TRUNC(SYSDATE) > TRUNC(vt_register_date)]]>
 	    AND (
-	        (#{us_id} IS NOT NULL AND us_id = #{us_id}) OR
-	        (#{us_id} IS NULL AND non_us_id = #{non_us_id})
-	    )
-</select>
-
-<!-- 투표 상태 확인: 특정 게시물, 특정 사용자, 특정 날짜 -->
-<select id="getCurrentVoteStatus" resultType="String" parameterType="map">
-    SELECT
-        vt_status
-    FROM 
-        vote_table
-    WHERE 
-        bd_number = #{bd_number}
-        AND
-        	TRUNC(vt_register_date) = TRUNC(SYSDATE)
-        AND (
-            (#{us_id} IS NOT NULL AND us_id = #{us_id}) OR
-            (#{us_id} IS NULL AND non_us_id = #{non_us_id})
+        	us_id IS NULL OR
+        	us_id = #{us_id}
         )
 </select>
 
-<!-- 투표 취소: 같은 상태로 다시 투표하는 경우 -->
+<!-- 추천/비추천 상태 확인: 특정 게시물, 특정 사용자, 동일 날짜 -->
+<select id="getCurrentVoteStatus" resultType="String" parameterType="map">
+	SELECT 
+		'Member' as UserType, vt_status
+	FROM (
+		SELECT
+			vt_status
+	    FROM
+	    	vote_table
+	    WHERE
+	    	bd_number = #{bd_number}
+	    	AND 
+	    		us_id = #{us_id}
+	    	AND
+	    		TRUNC(vt_register_date) = TRUNC(SYSDATE)
+	    ORDER BY
+	    	vt_register_date DESC
+	)
+	WHERE
+		ROWNUM = 1
+	UNION ALL <!-- UNION ALL은 UNION과 달리 중복을 제거하지 않음 -->
+	SELECT
+		'NonMember' as UserType, vt_status
+	FROM (
+	    SELECT 
+	    	vt_status
+	    FROM 
+	    	vote_table
+	    WHERE 
+	    	bd_number = #{bd_number}
+	    	AND 
+	    		us_id IS NULL
+	    	AND 
+	    		TRUNC(vt_register_date) = TRUNC(SYSDATE)
+	    ORDER BY 
+	    	vt_register_date DESC
+	)
+	WHERE 
+		ROWNUM = 1;
+</select>
+
+<!-- 추천/비추천 상태 취소: 같은 상태로 다시 선택하는 경우 -->
 <update id="cancelVote" parameterType="VoteVO">
     UPDATE
     	vote_table
@@ -181,12 +206,13 @@
     	bd_number = #{bd_number}
       	AND 
       		TRUNC(vt_register_date) = TRUNC(SYSDATE)
-    	AND 
-    		(us_id = #{us_id} OR 
-            (#{us_id} IS NULL AND non_us_id = #{non_us_id}))
+    	AND (
+        	us_id IS NULL OR
+        	us_id = #{us_id}
+        )
 </update>
 
-<!-- 투표 변경: 다른 상태로 다시 투표하는 경우 -->
+<!-- 추천/비추천 상태 변경: 다른 상태로 다시 투표하는 경우 -->
 <update id="changeVote" parameterType="VoteVO">
     UPDATE
     	vote_table
@@ -196,9 +222,10 @@
     	bd_number = #{bd_number}
       	AND 
       		TRUNC(vt_register_date) = TRUNC(SYSDATE)
-      	AND 
-      		(us_id = #{us_id} OR 
-            (#{us_id} IS NULL AND non_us_id = #{non_us_id}))
+      	AND (
+        	us_id IS NULL OR
+        	us_id = #{us_id}
+        )
 </update>
 
 <!-- 추천 수 증가 -->
@@ -249,7 +276,7 @@
 		bd_type = #{bd_type},
 		bd_title = #{bd_title},
 		bd_content = #{bd_content},
-		bd_update_date = sysdate
+		bd_update_date = SYSDATE
 	WHERE
 		bd_number = #{bd_number}
 </update>

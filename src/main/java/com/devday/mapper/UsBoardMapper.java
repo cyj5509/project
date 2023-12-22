@@ -19,7 +19,7 @@ public interface UsBoardMapper {
 	void readCount(Long bd_number); // 조회 수 증가(UPDATE 문)
 	
 	int checkVote(Map<String, Object> map);
-	String getCurrentVoteStatus(Map<String, Object> map);
+	List<Map<String, String>> getCurrentVoteStatus(Map<String, Object> map);
 	void insertVote(VoteVO vt_vo);
 	
 	void cancelVote(VoteVO vt_vo); // 투표 취소: 같은 상태로 다시 투표하는 경우(UPDATE 문)

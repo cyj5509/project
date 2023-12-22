@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -120,6 +118,7 @@ public class UsBoardController {
 		boardVO.setBd_type(bd_type);
 		
 		List<BoardVO> list = usBoardService.getListWithPaging(cri, bd_type);
+		
 		log.info("게시판 구분: " + bd_type); 
 		log.info("타입별 목록: " + list); 
 		
@@ -142,8 +141,8 @@ public class UsBoardController {
 	// 게시물 조회 페이지 이동(게시물 조회 폼)
 	@GetMapping(value = {"/get", "/get/{bd_type}"})
 	public String get(@PathVariable(value = "bd_type", required = false) String bd_type,
-			         @RequestParam("bd_number") Long bd_number, 
-			         @ModelAttribute("cri") Criteria cri, Model model) {
+			          @RequestParam("bd_number") Long bd_number, 
+			          @ModelAttribute("cri") Criteria cri, Model model) {
 
 		log.info("게시물 조회 페이지 진입");
 		log.info("조회한 게시물 번호: " + bd_number);
@@ -157,57 +156,49 @@ public class UsBoardController {
 
 	@PostMapping("/likeAction")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> likeAction(HttpSession session, @RequestParam("bd_number") Long bd_number,
-														 @CookieValue("non_us_id") String non_us_id,
-	                                                     @RequestParam("actionType") String actionType) {
-		
+	public ResponseEntity<Map<String, Object>> likeAction(HttpSession session,
+														  @RequestParam("bd_number") Long bd_number, 
+														  @RequestParam("actionType") String actionType) {
+
 		Map<String, Object> map = new HashMap<>();
 
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
 		String us_id = (us_vo != null) ? us_vo.getUs_id() : null;
+
+		VoteVO vt_vo = new VoteVO();
 		
-			VoteVO vt_vo = new VoteVO();
-			
-			vt_vo.setUs_id(us_id);
-			vt_vo.setNon_us_id(non_us_id);
-			vt_vo.setBd_number(bd_number);
-			vt_vo.setVt_status(actionType);
-	        
-			VoteResultDTO vt_dto = usBoardService.insertVote(vt_vo); // 투표 처리(추가, 취소, 변경)	        
-	        BoardVO bd_vo = usBoardService.get(bd_number, false); // 최신 게시물 데이터 가져오기
-	        
-			map.put("status", vt_dto.isStatus() ? "success" : "error");
-			map.put("actionType", actionType);
-			map.put("likes", bd_vo.getBd_like_count());
-			map.put("dislikes", bd_vo.getBd_dislike_count());
-			
-			return new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
+		vt_vo.setUs_id(us_id);
+		vt_vo.setBd_number(bd_number);
+		vt_vo.setVt_status(actionType);
+
+		log.info("게시물 투표 데이터: " + vt_vo);
+		
+		VoteResultDTO vt_dto = usBoardService.insertVote(vt_vo); // 투표 처리(추가, 취소, 변경)
+		BoardVO bd_vo = usBoardService.get(bd_number, false); // 최신 게시물 데이터 가져오기
+
+		map.put("status", vt_dto.isStatus() ? "success" : "error");
+		map.put("actionType", actionType);
+		map.put("likes", bd_vo.getBd_like_count());
+		map.put("dislikes", bd_vo.getBd_dislike_count());
+
+		return new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
 	}
 	
 	@GetMapping("/getCurrentVoteStatus")
 	@ResponseBody
-	public String getCurrentVoteStatus(@RequestParam("bd_number") Long bd_number, HttpSession session, 
-									   HttpServletRequest request) {
-	    // 세션 및 쿠키에서 사용자 정보 가져오기
+	public Map<String, String> getCurrentVoteStatus(@RequestParam("bd_number") Long bd_number, 
+									   HttpSession session, HttpServletRequest request) {
+		
+	    // 세션에서 사용자 정보 가져오기
 		String us_id = null;
-		String non_us_id = null;
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
 		
 	    if (us_vo != null) {
 	        us_id = us_vo.getUs_id();
-	    }
-		
-	    Cookie[] cookies = request.getCookies();
-	    if (cookies != null) {
-	    	for (Cookie cookie : cookies) {
-	    		if ("non_us_id".equals(cookie.getName())) {
-	    			non_us_id = cookie.getValue(); // 쿠키 값 가져오기
-	    		}
-	    	}
-	    }		 
+	    }  
 	    
-	    String voteStatus = usBoardService.getCurrentVoteStatus(bd_number, us_id, non_us_id);
-	    
+	    // 현재 투표 상태를 Map 형태로 반환
+	    Map<String, String> voteStatus = usBoardService.getCurrentVoteStatus(bd_number, us_id);
 	    return voteStatus;
 	}
 	

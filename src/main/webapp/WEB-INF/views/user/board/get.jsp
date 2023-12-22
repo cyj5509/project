@@ -22,6 +22,10 @@
 					<link rel="stylesheet" href="/css/user/board/pw_modal.css">
 
 					<style>
+						.choiceNotice {
+							font-size: 14px;
+						}
+
 						.like-active {
 							color: white;
 							background-color: blue;
@@ -117,6 +121,9 @@
 													<div>
 														추천: <span id="likes">${bd_vo.bd_like_count}</span>
 														/ 비추천: <span id="dislikes">${bd_vo.bd_dislike_count}</span>
+													</div>
+													<div>
+														<p class="choiceNotice">&#42; 1일 1회 선택 가능&#40;변경&#47;취소 시 해당 버튼 클릭&#41;</p>
 													</div>
 												</div>
 											</div>
@@ -351,7 +358,7 @@
 
 								if (response.status == 'success') {
 									// 투표 성공 처리
-									alert("선택은 1일 1회만 가능합니다(변경/수정 시 해당 버튼 클릭).");
+									// 객체 접근법으로서 점 표기법(Dot Notation)을 사용하여 고정된 속성 이름에 접근
 									updateButtonState(response.actionType, response.likes, response.dislikes);
 									currentType = response.actionType; // 투표 상태 업데이트
 								} else {
@@ -406,13 +413,17 @@
 
 							// 현재 투표 상태를 확인하고 버튼 스타일을 업데이트하는 함수
 							function checkAndApplyVoteStatus() {
+								let us_id = $('#us_id').val();
 								$.ajax({
 									url: '/user/board/getCurrentVoteStatus',
 									type: 'GET',
 									data: { bd_number: bd_number },
-									dataType: 'text',
-									success: function (voteStatus) {
-										updateButtonStyle(voteStatus);
+									dataType: 'json', // JSON 형식의 응답
+									success: function (response) {
+										// 객체 접근법으로서 대괄호 표기법(Bracket Notation)을 사용하여 동적으로 속성에 접근
+										let userType = us_id ? 'Member' : 'NonMember';
+										let voteStatus = response[userType]; // 서버로부터 반환된 JSON 응답에서 userType에 해당하는 투표 상태 추출
+										updateButtonStylehe(voteStatus);
 										if (voteStatus == 'like' || voteStatus == 'dislike') {
 											currentType = voteStatus; // 유효한 투표 상태인 경우에만 현재 투표 상태 업데이트
 										} else if (voteStatus == null) {
