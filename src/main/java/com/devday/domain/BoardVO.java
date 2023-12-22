@@ -15,11 +15,9 @@ CREATE TABLE board_table (
     bd_content        VARCHAR2(4000)            NOT NULL, -- 게시물 내용
     bd_register_date  DATE    DEFAULT sysdate   NOT NULL, -- 등록 일자
     bd_update_date    DATE    DEFAULT sysdate   NOT NULL, -- 수정 일자
-    bd_view_count     NUMBER  DEFAULT 0,                  -- 조회수
+    bd_view_count     NUMBER  DEFAULT 0,                  -- 조회 수
     bd_guest_nickname VARCHAR2(40),                       -- 비회원 닉네임(NULL 허용)
     bd_guest_pw       VARCHAR2(60),                       -- 비회원 비밀번호(NULL 허용)
-    bd_like_count     NUMBER  DEFAULT 0,                  -- 추천 수
-    bd_dislike_count  NUMBER  DEFAULT 0,                  -- 비추천 수
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
 */
@@ -42,8 +40,4 @@ public class BoardVO {
 	// 비회원 전용 필드
 	private String bd_guest_nickname;
 	private String bd_guest_pw;
-	
-	// 추천 및 비추천 필드
-	private int bd_like_count;
-	private int bd_dislike_count;
 }

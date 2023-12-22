@@ -119,8 +119,8 @@
 														싫어요!
 													</button>
 													<div>
-														추천: <span id="likes">${bd_vo.bd_like_count}</span>
-														/ 비추천: <span id="dislikes">${bd_vo.bd_dislike_count}</span>
+														추천: <span id="likes">${vt_vo.vt_like_count}</span>
+														/ 비추천: <span id="dislikes">${vt_vo.vt_dislike_count}</span>
 													</div>
 													<div>
 														<p class="choiceNotice">&#42; 1일 1회 선택 가능&#40;변경&#47;취소 시 해당 버튼 클릭&#41;</p>
@@ -330,7 +330,7 @@
 							// 전역변수
 							let bd_number = $('body').data('bd_number'); // 게시물 번호
 							console.log("게시물 번호:", bd_number);
-							let currentType = null; // 현재 사용자의 투표 타입
+							let currentType = 'none'; // 현재 사용자의 투표 타입
 
 							// lodash 라이브러리의 debounce 함수 사용(함수 표현식 형태는 호이스팅 불가)
 							const debouncedAction = _.debounce(function (bd_number, actionType) {
@@ -356,7 +356,9 @@
 								$('#btn_like').prop('disabled', false);
 								$('#btn_dislike').prop('disabled', false);
 
-								if (response.status == 'success') {
+								console.log(response);
+
+								if (response.result == 'success') {
 									// 투표 성공 처리
 									// 객체 접근법으로서 점 표기법(Dot Notation)을 사용하여 고정된 속성 이름에 접근
 									updateButtonState(response.actionType, response.likes, response.dislikes);
@@ -379,23 +381,24 @@
 
 								// '변경' 버튼 클릭 이벤트
 								$('#btn_change').off("click").on("click", function () {
+									console.log("변경 버튼 클릭");
 									// 서버에 투표 변경 요청
 									handleVoteAction(bd_number, action === 'change' ? (currentType === 'like' ? 'dislike' : 'like') : currentType);
 								});
 
 								// '취소' 버튼 클릭 이벤트
 								$('#btn_cancel').off("click").on("click", function () {
-
+									console.log("취소 버튼 클릭");
 									if (currentType === 'like') {
 										$('#btn_like').removeClass('like-active');
 									} else if (currentType === 'dislike') {
 										$('#btn_dislike').removeClass('dislike-active');
 									}
 									// 현재 투표 상태 초기화
-									currentType = null;
+									currentType = 'none';
 
 									// 서버에 투표 취소 요청
-									handleVoteAction(bd_number, null);
+									handleVoteAction(bd_number, currentType);
 								});
 
 								$('#voteChangeModal').modal('show');
@@ -423,17 +426,22 @@
 										// 객체 접근법으로서 대괄호 표기법(Bracket Notation)을 사용하여 동적으로 속성에 접근
 										let userType = us_id ? 'Member' : 'NonMember';
 										let voteStatus = response[userType]; // 서버로부터 반환된 JSON 응답에서 userType에 해당하는 투표 상태 추출
-										updateButtonStylehe(voteStatus);
+
+										updateButtonStyle(voteStatus); // 버튼 스타일 업데이트 함수
+										
 										if (voteStatus == 'like' || voteStatus == 'dislike') {
 											currentType = voteStatus; // 유효한 투표 상태인 경우에만 현재 투표 상태 업데이트
-										} else if (voteStatus == null) {
-											currentType = null; // 유효하지 않은 투표 상태인 경우 현재 투표 상태 초기화
+										} else {
+											currentType = 'none'; // 유효하지 않은 투표 상태인 경우 현재 투표 상태 초기화
 										}
 									}
 								});
 							}
-
+							
+							// 버튼 스타일 업데이트 함수
 							function updateButtonStyle(voteStatus) {
+
+								console.log("업데이트 버튼 실행");
 								if (voteStatus === 'like') {
 									$('#btn_like').toggleClass('like-active');
 									$('#btn_dislike').removeClass('dislike-active');
@@ -466,7 +474,7 @@
 								let attemptType = $(this).data('vt_status');
 
 								// 사용자의 현재 투표 상태와 클릭된 버튼의 투표 타입에 따라 서버 요청
-								if (currentType == null) {
+								if (currentType == 'none') {
 									// 처음 투표하는 경우 - 즉시 서버 요청
 									debouncedAction(bd_number, attemptType);
 								} else if (currentType == attemptType) {

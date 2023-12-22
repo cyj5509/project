@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.devday.domain.BoardVO;
+import com.devday.domain.BoardVoteVO;
 import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
 
@@ -17,6 +18,7 @@ public interface UsBoardMapper {
 	void register(BoardVO board); // 게시글 등록(INSERT 문)
 	BoardVO get(Long bd_number); // 게시물 조회 및 수정(SELECT 문)
 	void readCount(Long bd_number); // 조회 수 증가(UPDATE 문)
+	BoardVoteVO getVoteAction(Long bd_number); // 추천/비추천 수 조회(SELECT 문)
 	
 	int checkVote(Map<String, Object> map);
 	List<Map<String, String>> getCurrentVoteStatus(Map<String, Object> map);

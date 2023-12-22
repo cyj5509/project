@@ -8,15 +8,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devday.domain.BoardVO;
+import com.devday.domain.BoardVoteVO;
 import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
 import com.devday.dto.VoteResultDTO;
 import com.devday.mapper.UsBoardMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 
 @Service
 @RequiredArgsConstructor
+@Log4j
 public class UsBoardServiceImpl implements UsBoardService {
 
 	private final UsBoardMapper usBoardMapper;
@@ -30,12 +33,19 @@ public class UsBoardServiceImpl implements UsBoardService {
 	@Override
 	@Transactional
 	public BoardVO get(Long bd_number, boolean increaseReadCount) {
-
+		
+		// 게시물 조회 페이지에서만 true, 나머지는 false로 처리 
 		if (increaseReadCount) {
 			usBoardMapper.readCount(bd_number); // usBoardService 인터페이스에 부존재
 		}
 
 		return usBoardMapper.get(bd_number);
+	}
+	
+	@Override
+	public BoardVoteVO getVoteAction(Long bd_number) {
+
+		return usBoardMapper.getVoteAction(bd_number);
 	}
 
 	@Override
@@ -59,16 +69,24 @@ public class UsBoardServiceImpl implements UsBoardService {
 		
 		// 쿼리 실행 결과를 List로 받음. 각 Map은 회원/비회원의 투표 상태를 담고 있음
 	    List<Map<String, String>> voteStatusList = usBoardMapper.getCurrentVoteStatus(params);
-		
+	    
 		// 회원 및 비회원의 투표 상태를 저장할 Map 생성
 		Map<String, String> statusMap = new HashMap<>();
 		for (Map<String, String> status : voteStatusList) {
-			// 리스트를 순회하면서 각 Map에서 'UserType'(Member/NonMember)과 'vt_status'의 쌍을 저장
-			statusMap.put(status.get("UserType"), status.get("vt_status"));
+			log.info("반환 컬럼명(키): " + status.keySet()); // [vt_status, userType]: 쿼리 결과로 반환된 Map의 모든 컬럼명(키)  
+			// 리스트를 순회한 각 Map에서 'userType'을 키로, 'vt_status'을 값으로 한 쌍을 저장
+			// 컬럼명을 별칭으로 지정해주지 않는 한 대문자로 반환하므로 원칙상 대문자로 사용
+			String userType = status.get("userType");
+			String voteStatus = status.get("vt_status");
+			log.info("사용자 유형: " + userType + ", 투표 유형: " + voteStatus);
+			
+			statusMap.put(userType, voteStatus);
 		}
+		
 		// 회원과 비회원의 투표 상태를 포함한 Map 반환
 		return statusMap; // {"Member": "like", "NonMember": "like"}와 같은 9가지 경우 중 하나 반환 
 	}
+	// 생략 예정? 아직 투표하지 않은 경우, vt_status를 "none"으로 저장하여 JSON 변환 시 null 키 방지
 	
 	@Override
 	@Transactional
@@ -76,6 +94,7 @@ public class UsBoardServiceImpl implements UsBoardService {
 		
 		// 회원 및 비회원의 투표 상태를 포함한 Map을 가져옴
 	    Map<String, String> voteStatusMap = getCurrentVoteStatus(vt_vo.getBd_number(), vt_vo.getUs_id());
+	    
 		// 현재 사용자의 투표 상태 확인
 	    String currentStatus = voteStatusMap.get(vt_vo.getUs_id() != null ? "Member" : "NonMember");
 		boolean alreadyVoteToday = currentStatus != null;
@@ -94,7 +113,7 @@ public class UsBoardServiceImpl implements UsBoardService {
 				// 같은 상태로 다시 투표하는 경우(투표 취소)
 				usBoardMapper.cancelVote(vt_vo);
 				updateCount(vt_vo.getBd_number(), currentStatus, false); // 추천/비추천 수 감소
-			} else  {
+			} else {
 				// 다른 상태로 다시 투표하는 경우(투표 변경)
 				usBoardMapper.changeVote(vt_vo);
 				updateCount(vt_vo.getBd_number(), currentStatus, false); // 이전 카운트 감소
@@ -109,9 +128,11 @@ public class UsBoardServiceImpl implements UsBoardService {
 	@Override 
 	public void updateCount(Long bd_number, String vt_status, boolean increase) {
 	    if ("like".equals(vt_status)) {
+	    	// "좋아요"를 선택한 경우
 	        if (increase) usBoardMapper.increaseLike(bd_number); // 추천 수 증가
 	        else usBoardMapper.decreaseLike(bd_number); // 추천 수 감소
 	    } else if ("dislike".equals(vt_status)) {
+	    	// "싫어요"를 선택한 경우
 	        if (increase) usBoardMapper.increaseDislike(bd_number); // 비추천 수 증가
 	        else usBoardMapper.decreaseDislike(bd_number); // 비추천 수 감소
 	    }

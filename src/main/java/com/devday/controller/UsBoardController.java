@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.BoardVO;
+import com.devday.domain.BoardVoteVO;
 import com.devday.domain.UserVO;
 import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
@@ -141,8 +142,8 @@ public class UsBoardController {
 	// 게시물 조회 페이지 이동(게시물 조회 폼)
 	@GetMapping(value = {"/get", "/get/{bd_type}"})
 	public String get(@PathVariable(value = "bd_type", required = false) String bd_type,
-			          @RequestParam("bd_number") Long bd_number, 
-			          @ModelAttribute("cri") Criteria cri, Model model) {
+			          @RequestParam("bd_number") Long bd_number, Model model,
+			          @ModelAttribute("cri") Criteria cri,  @ModelAttribute("vt_vo") VoteVO vt_vo) {
 
 		log.info("게시물 조회 페이지 진입");
 		log.info("조회한 게시물 번호: " + bd_number);
@@ -174,12 +175,13 @@ public class UsBoardController {
 		log.info("게시물 투표 데이터: " + vt_vo);
 		
 		VoteResultDTO vt_dto = usBoardService.insertVote(vt_vo); // 투표 처리(추가, 취소, 변경)
-		BoardVO bd_vo = usBoardService.get(bd_number, false); // 최신 게시물 데이터 가져오기
+		BoardVoteVO bv_vo = usBoardService.getVoteAction(bd_number); // 최신 게시물 데이터 중 추천/비추천 수 가져오기
 
-		map.put("status", vt_dto.isStatus() ? "success" : "error");
+		map.put("result", vt_dto.isVoteResult() ? "success" : "error");
 		map.put("actionType", actionType);
-		map.put("likes", bd_vo.getBd_like_count());
-		map.put("dislikes", bd_vo.getBd_dislike_count());
+
+		map.put("likes", ((VoteVO) bv_vo.getVoteVO()).getVt_like_count());
+		map.put("dislikes", ((VoteVO) bv_vo.getVoteVO()).getVt_dislike_count());
 
 		return new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
 	}
@@ -199,6 +201,7 @@ public class UsBoardController {
 	    
 	    // 현재 투표 상태를 Map 형태로 반환
 	    Map<String, String> voteStatus = usBoardService.getCurrentVoteStatus(bd_number, us_id);
+	    log.info("컨트롤러 레이어 결과: " + voteStatus);
 	    return voteStatus;
 	}
 	

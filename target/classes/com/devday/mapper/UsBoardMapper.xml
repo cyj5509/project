@@ -10,7 +10,7 @@
 	INSERT INTO 
    		board_table (bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_guest_nickname, bd_guest_pw)
 	VALUES
-		(sequence_bd_number.NEXTVAL, #{bd_type}, #{us_id}, #{bd_title}, #{bd_content}, sysdate, 
+		(sequence_bd_number.NEXTVAL, #{bd_type}, #{us_id}, #{bd_title}, #{bd_content}, SYSDATE, 
 		<choose>
              <when test="bd_guest_nickname != null and bd_guest_nickname != ''">
                  #{bd_guest_nickname}
@@ -33,7 +33,7 @@
 <!-- 게시글 조회 또는 수정 -->
 <select id="get" resultType="com.devday.domain.BoardVO" parameterType="Long">
 	SELECT
-		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_nickname, bd_guest_pw, bd_like_count, bd_dislike_count  
+		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_nickname, bd_guest_pw 
 	FROM
 		board_table
 	WHERE
@@ -43,7 +43,7 @@
 <!-- 전체 목록(여러 개) ─ resultType="" -->
 <select id="getList" resultType="com.devday.domain.BoardVO">
 	SELECT
-		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_nickname, bd_like_count, bd_dislike_count 
+		bd_number, bd_type, us_id, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_guest_nickname
 	FROM
 		board_table
 	ORDER BY
@@ -78,11 +78,11 @@
 <select id="getListWithPaging" resultType="com.devday.domain.BoardVO" parameterType="map">
 	<![CDATA[
 	SELECT
-		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_like_count, bd_dislike_count
+		bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
 	FROM 
 		(
 	    SELECT /*+ INDEX_DESC(board_table pk_bd_number) */
-	    		ROWNUM rn, bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count, bd_like_count, bd_dislike_count
+	    		ROWNUM rn, bd_number, bd_type, us_id, bd_guest_nickname, bd_title, bd_content, bd_register_date, bd_update_date, bd_view_count
 	    FROM
 	    		board_table 
 	    WHERE
@@ -125,17 +125,68 @@
 		bd_number = #{bd_number}
 </update>
 
+<!-- 추천/비추천 수 조회: LEFT JOIN으로 처리, resultMap의 값은 id와 일치해야 함 -->
+<select id="getVoteAction" resultMap="BoardVoteMap" parameterType="Long">
+	<!-- 1. ANSI 표준 조인(Standard Join) -->
+    SELECT
+        b.*, <!-- 게시판 테이블의 모든 컬럼 -->
+        v.vt_like_count, v.vt_dislike_count
+    FROM
+        board_table b
+    RIGHT JOIN
+        vote_table v 
+    ON 
+    	b.bd_number = v.bd_number
+    WHERE
+        b.bd_number = #{bd_number}
+    <!-- 2. 오라클 조인(Oracle Join) --> 
+	<!--
+	SELECT
+        b.*,
+        v.vt_status, v.vt_like_count, v.vt_dislike_count 
+	FROM
+    	board_table b, vote_table v
+	WHERE
+   		b.bd_number = v.bd_number(+)
+	AND
+    	b.bd_number = #{bd_number};   
+    -->      
+</select>
+
+<!-- 독립된 하나의 게시물에 대해 다수의 투표 정보가 들어 있어 아래와 같이 처리 -->
+<!-- <association>은 일대일 또는 일대다의 경우, <collection>은 다대일의 경우 -->
+<resultMap id="BoardVoteMap" type="BoardVoteVO">
+    <collection property="boardVO" ofType="BoardVO"> <!-- javaType 대신 별도의 resultMap 생성해도 처리 가능 -->
+        <!-- BoardVO 매핑을 위한 필드 선언 -->
+        <id property="bd_number" column="bd_number" />
+        <result property="bd_type" column="bd_type" />
+        <result property="us_id" column="us_id" />
+        <result property="bd_title" column="bd_title" />
+        <result property="bd_content" column="bd_content" />
+        <result property="bd_register_date" column="bd_register_date" />
+        <result property="bd_update_date" column="bd_update_date" />
+        <result property="bd_view_count" column="bd_view_count" />
+        <result property="bd_guest_nickname" column="bd_guest_nickname" />
+        <result property="bd_guest_pw" column="bd_guest_pw" />
+    </collection>
+    <collection property="voteVO" ofType="VoteVO"> <!-- ofType 대신 별도의 resultMap 생성해도 처리 가능 -->
+        <!-- VoteVO 매핑을 위한 필드 선언 -->
+        <result property="vt_like_count" column="vt_like_count" />
+        <result property="vt_dislike_count" column="vt_dislike_count" />        
+    </collection>
+</resultMap>
+
+
 <!-- 추천/비추천 처리 -->
 <!-- parameterType과 관련하여 별칭 사용(mybatis-config.xml 참고) -->
 <insert id="insertVote" parameterType="VoteVO">
     INSERT INTO
-    		vote_table (vt_number, us_id, bd_number, vt_status, vt_register_date)
+    		vote_table (vt_number, us_id, bd_number, vt_status)
     VALUES (
     		sequence_vt_number.NEXTVAL, 
     		#{us_id}, 
     		#{bd_number}, 
-    		#{vt_status}, 
-    		TRUNC(SYSDATE) <!-- 날짜 부분만 반환(시간 부분 제거) -->
+    		#{vt_status}
     	)
 </insert>
 
@@ -147,8 +198,10 @@
         vote_table
     WHERE 
         bd_number = #{bd_number}
-	    AND 
-	    	<![CDATA[ TRUNC(SYSDATE) > TRUNC(vt_register_date)]]>
+	    AND <!-- 날짜 부분만 반환(시간 부분 제거) -->
+	    	<![CDATA[
+	    		TRUNC(SYSDATE) > TRUNC(vt_register_date) 
+	    	]]>
 	    AND (
         	us_id IS NULL OR
         	us_id = #{us_id}
@@ -156,9 +209,9 @@
 </select>
 
 <!-- 추천/비추천 상태 확인: 특정 게시물, 특정 사용자, 동일 날짜 -->
-<select id="getCurrentVoteStatus" resultType="String" parameterType="map">
+<select id="getCurrentVoteStatus" resultType="map" parameterType="map">
 	SELECT 
-		'Member' as UserType, vt_status
+		'Member' as "userType", vt_status as "vt_status" <!-- 별칭이 아닌 이상 반환 컬럼명은 대문자 -->
 	FROM (
 		SELECT
 			vt_status
@@ -168,8 +221,6 @@
 	    	bd_number = #{bd_number}
 	    	AND 
 	    		us_id = #{us_id}
-	    	AND
-	    		TRUNC(vt_register_date) = TRUNC(SYSDATE)
 	    ORDER BY
 	    	vt_register_date DESC
 	)
@@ -177,7 +228,7 @@
 		ROWNUM = 1
 	UNION ALL <!-- UNION ALL은 UNION과 달리 중복을 제거하지 않음 -->
 	SELECT
-		'NonMember' as UserType, vt_status
+		'NonMember' as "userType", vt_status as "vt_status"
 	FROM (
 	    SELECT 
 	    	vt_status
@@ -187,13 +238,11 @@
 	    	bd_number = #{bd_number}
 	    	AND 
 	    		us_id IS NULL
-	    	AND 
-	    		TRUNC(vt_register_date) = TRUNC(SYSDATE)
 	    ORDER BY 
 	    	vt_register_date DESC
 	)
 	WHERE 
-		ROWNUM = 1;
+		ROWNUM = 1
 </select>
 
 <!-- 추천/비추천 상태 취소: 같은 상태로 다시 선택하는 경우 -->
@@ -201,7 +250,7 @@
     UPDATE
     	vote_table
     SET
-    	vt_status = NULL  <!-- 또는 'none'-->
+    	vt_status = 'none'  <!-- 회원 또는 비회원이 선택하지 않은 경우-->
     WHERE
     	bd_number = #{bd_number}
       	AND 
@@ -231,9 +280,9 @@
 <!-- 추천 수 증가 -->
 <update id="increaseLike" parameterType="Long">
     UPDATE
-    	board_table
+    	vote_table
     SET 
-    	bd_like_count = bd_like_count + 1
+    	vt_like_count = vt_like_count + 1
     WHERE
     	bd_number = #{bd_number}
 </update>
@@ -241,9 +290,9 @@
 <!-- 비추천 수 증가 -->
 <update id="increaseDislike" parameterType="Long">
     UPDATE
-   		board_table
+   		vote_table
     SET
-   		bd_dislike_count = bd_dislike_count + 1
+   		vt_dislike_count = vt_dislike_count + 1
     WHERE
    		bd_number = #{bd_number}
 </update>
@@ -251,21 +300,21 @@
 <!-- 추천 수 감소 -->
 <update id="decreaseLike" parameterType="Long">
     UPDATE
-        board_table
+        vote_table
     SET
-        bd_like_count = bd_like_count - 1
+        vt_like_count = vt_like_count - 1
     WHERE
-        bd_number = #{bd_number} AND bd_like_count > 0
+        bd_number = #{bd_number} AND vt_like_count > 0
 </update>
 
 <!-- 비추천 수 감소 -->
 <update id="decreaseDislike" parameterType="Long">
     UPDATE
-        board_table
+        vote_table
     SET
-        bd_dislike_count = bd_dislike_count - 1
+        vt_dislike_count = vt_dislike_count - 1
     WHERE
-        bd_number = #{bd_number} AND bd_dislike_count > 0
+        bd_number = #{bd_number} AND vt_dislike_count > 0
 </update>
 
 <!-- 게시물 수정 -->
