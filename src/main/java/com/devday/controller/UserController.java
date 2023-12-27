@@ -61,8 +61,8 @@ public class UserController {
 	}
 
 	// ID 중복 검사 기능 구현(관련 페이지 불필요)
-	@GetMapping("/id_check")
-	public ResponseEntity<String> id_check(@RequestParam("us_id") String us_id) throws Exception {
+	@GetMapping("/idCheck")
+	public ResponseEntity<String> idCheck(@RequestParam("us_id") String us_id) throws Exception {
 
 		ResponseEntity<String> entity = null; 
 		

@@ -44,7 +44,7 @@ public class OrderController {
 		log.info("주문 정보 페이지 진입");
 		
 		// 주문 정보
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")
@@ -81,7 +81,7 @@ public class OrderController {
 	@GetMapping("/order_ready")
 	public String order_ready(CartVO ct_vo, HttpSession session) throws Exception {
 
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		ct_vo.setUs_id(us_id);
 
 		cartService.cart_add(ct_vo);
@@ -108,7 +108,7 @@ public class OrderController {
 		log.info("주문정보: " + ob_vo);
 		log.info("결제정보: " + pm_vo);
 		
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();;
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();;
 		ob_vo.setUs_id(us_id); // 아이디 값 할당(설정)
 		
 
@@ -157,7 +157,7 @@ public class OrderController {
 		// 2) Kakao Pay 결제 승인 요청 작업
 		String tid = (String) session.getAttribute("tid");
 		Long od_number = (Long) session.getAttribute("od_number");
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();;
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();;
 
 		// ApproveResponse approveResponse = kakaoPayServiceImpl.payApprove(tid, od_number, us_id, pg_token);
 		kakaoPayServiceImpl.payApprove(tid, od_number, us_id, pg_token);
@@ -187,7 +187,7 @@ public class OrderController {
 		
 		ResponseEntity<String> entity = null;
 		
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		ob_vo.setUs_id(us_id); // 아이디 값 할당(설정)
 		
 		// 시퀀스를 주문번호로 사용: 동일한 주문번호 값이 사용

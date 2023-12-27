@@ -284,11 +284,11 @@
 												$("input[name='us_id']").val(memberVO.us_id)
 												$("#confirmSection").hide();
 												$("#showIdSection").show();
-												let joinDate = new Date(memberVO.us_joindate);
+												let joinDate = new Date(memberVO.us_join_date);
 												let formatDate = joinDate.getFullYear() + '년 ' +
 													(joinDate.getMonth() + 1) + '월 ' + // getMonth()는 0부터 시작
 													joinDate.getDate() + '일';
-												$("input[name='us_joindate']").val(formatDate);
+												$("input[name='us_join_date']").val(formatDate);
 											} else {
 												// 사용자가 존재하지 않는 경우의 처리
 												alert("해당 정보로 등록된 사용자가 없습니다.");
@@ -364,7 +364,7 @@
 										success: function (result) {
 											if (result == "success") {
 												alert("인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.")
-											} else if (result == "request") {
+											} else {
 												alert("이름이나 이메일이 잘못 입력되었습니다. 확인 후 다시 입력해 주세요."); // 에러 처리
 											}
 										}

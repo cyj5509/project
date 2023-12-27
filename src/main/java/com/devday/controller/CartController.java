@@ -51,7 +51,7 @@ public class CartController {
 		// 클라이언트 ─ AJAX 방식으로 상품코드, 상품수량 2개 정보만 전송 -> data: {pro_num:
 		// $(this).data("pro_num"), cart_amount: 1}
 		// Object javax.servlet.http.HttpSession.getAttribute(String name)
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		vo.setUs_id(us_id);
 
 		cartService.cart_add(vo);
@@ -65,7 +65,7 @@ public class CartController {
 	@GetMapping("/cart_list")
 	public void cart_list(HttpSession session, Model model) throws Exception {
 
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")

@@ -43,7 +43,7 @@ public class ReviewController {
 		
 		log.info("리뷰: " + vo);
 		
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		vo.setUs_id(us_id);
 		
 		ResponseEntity<String> entity = null;
@@ -62,7 +62,7 @@ public class ReviewController {
 
 		log.info("리뷰 수정: " + vo);
 
-		String us_id = ((UserVO) session.getAttribute("loginStatus")).getUs_id();
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		vo.setUs_id(us_id);
 
 		ResponseEntity<String> entity = null;

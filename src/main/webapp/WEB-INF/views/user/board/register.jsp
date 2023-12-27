@@ -54,7 +54,7 @@
 																	<label for="bd_guest_nickname" class="col-2">작성자</label>
 																	<div class="col-4">
 																		<input type="text" class="form-control" name="bd_guest_nickname"
-																			id="bd_guest_nickname" placeholder="닉네임 입력(미입력 시 guest)">
+																			id="bd_guest_nickname" placeholder="닉네임(미입력 시 guest)">
 																	</div>
 															</c:otherwise>
 														</c:choose>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.devday.mapper.VoteMapper">
+
+<!-- 추천/비추천 처리 -->
+<!-- parameterType과 관련하여 별칭 사용(mybatis-config.xml 참고) -->
+<insert id="insertVote" parameterType="VoteVO">
+    INSERT INTO
+    		vote_table (vt_number, us_id, bd_number, vt_status)
+    VALUES (
+    		sequence_vt_number.NEXTVAL, 
+    		#{us_id}, 
+    		#{bd_number}, 
+    		#{vt_status}
+    	)
+</insert>
+
+<!-- 특정 게시물과 사용자에 대한 오늘 날짜 투표 데이터 존재 여부 확인 -->
+<select id="checkVote" resultType="int" parameterType="map">
+    SELECT
+        COUNT(*)
+    FROM
+        vote_table
+    WHERE
+        bd_number = #{bd_number}
+        AND 
+        	TRUNC(vt_register_date) = TRUNC(SYSDATE) 
+        AND us_id = #{us_id} 
+</select>
+
+<!-- 최신 투표 상태 조회 -->
+<select id="getCurrentVoteStatus" resultType="String" parameterType="map">
+	 SELECT 
+        vt_status
+    FROM (
+    	SELECT 
+        	vt_status 
+        FROM 
+        	vote_table 
+        WHERE 
+        	bd_number = #{bd_number} 
+        	AND us_id = #{us_id} 
+        ORDER BY 
+        	vt_register_date DESC
+	)
+    WHERE 
+    	ROWNUM = 1
+</select>
+
+<!-- 투표 취소 시 기존 투표 기록 삭제(같은 상태로 다시 선택하는 경우) -->
+<delete id="cancelVote" parameterType="VoteVO">
+    DELETE FROM 
+    	vote_table 
+    WHERE 
+    	bd_number = #{bd_number} 
+    	AND 
+    		TRUNC(vt_register_date) = TRUNC(SYSDATE)
+    	AND us_id = #{us_id} 
+</delete>
+
+
+<!-- 추천/비추천 상태 변경: 다른 상태로 다시 투표하는 경우 -->
+<update id="changeVote" parameterType="VoteVO">
+    UPDATE
+    	vote_table
+    SET
+    	vt_status = #{vt_status}
+    WHERE
+    	bd_number = #{bd_number}
+      	AND 
+      		TRUNC(vt_register_date) = TRUNC(SYSDATE)
+      	AND us_id = #{us_id} 
+</update>
+
+<!-- 특정 게시물의 추천/비추천 수 집계 -->
+<select id="countVoteStatus" resultType="map" parameterType="Long">
+    SELECT 
+        vt_status as "vt_status", COUNT(*) as "count"
+    FROM 
+        vote_table
+    WHERE 
+        bd_number = #{bd_number}
+    GROUP BY 
+        vt_status
+</select>
+
+</mapper>
