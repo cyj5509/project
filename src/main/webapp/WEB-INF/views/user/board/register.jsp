@@ -74,7 +74,8 @@
 														<label for="bd_type" class="col-2">카테고리</label>
 														<div class="col-4">
 															<select class="form-control" name="bd_type" id="bd_type">
-																<option value="total">--- 카테고리 선택 ---</option>
+																<option value="total" ${bd_vo.bd_type=='total' ? 'selected' : '' }>--- 카테고리 선택 ---
+																</option>
 																<c:if test="${sessionScope.userStatus.ad_check == 1}">
 																	<option value="notice" ${bd_vo.bd_type=='notice' ? 'selected' : '' }>공지사항</option>
 																</c:if>
@@ -137,7 +138,7 @@
 
 					<script>
 						$(document).ready(function () {
-							
+
 							let registerForm = $("#registerForm");
 
 							// ckeditor 환경설정. 자바스크립트 Ojbect문법
@@ -173,7 +174,7 @@
 
 								let bd_content = CKEDITOR.instances.bd_content.getData();
 								if (bd_content.trim() == '') {
-								// CKEditor 인스턴스에서 데이터 가져오기
+									// CKEditor 인스턴스에서 데이터 가져오기
 									alert("내용을 입력해 주세요.");
 									CKEDITOR.instances.bd_content.focus();
 									return;
@@ -181,8 +182,8 @@
 
 								let guest_nickname = $("#bd_guest_nickname").val();
 								if (!guest_nickname || guest_nickname.trim() === '') {
-										// 비회원 닉네임이 비어 있는 경우 'guest'(기본값)로 설정
-										$("#bd_guest_nickname").val('guest'); 
+									// 비회원 닉네임이 비어 있는 경우 'guest'(기본값)로 설정
+									$("#bd_guest_nickname").val('guest');
 								}
 
 								let guest_pw1 = $("#guest_pw1").val();
