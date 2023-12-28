@@ -385,10 +385,6 @@
 									updateButtonState(response.actionType);
 									updateVoteCounts(response.likes, response.dislikes)
 								} 
-								// else if (response.result === 'alreadyVoted') {
-								// 	// 사용자가 이미 투표한 경우
-								// 	alert("이미 선택하셨습니다. 내일 다시 시도해 주세요.");
-								// }
 							}
 
 							// 버튼 활성화/비활성화 처리 함수
@@ -431,14 +427,12 @@
 								// '취소' 버튼 클릭 이벤트
 								$('#btn_cancel').off("click").on("click", function () {
 									console.log("취소 버튼 클릭");
-									// 버튼 스타일 초기화
-									$('#btn_like').removeClass('like-active');
-									$('#btn_dislike').removeClass('dislike-active');
-
+									
 									// 현재 투표 상태가 null이 아니면 취소 요청
 									if (currentType) {
 										handleVoteAction(bd_number, currentType);  // 취소하려는 투표 유형
 										currentType = null;  // 현재 투표 상태 초기화
+										updateButtonState(null); // 버튼 스타일 초기화
 									}
 								});
 
@@ -464,17 +458,6 @@
 										currentType = data.voteStatus;
 										updateButtonState(data.voteStatus);
 										updateVoteCounts(data.like, data.dislike);
-									},
-									error: function (xhr, status, error) {
-										// 버튼 활성화
-										$('#btn_like').prop('disabled', false);
-										$('#btn_dislike').prop('disabled', false);
-										// 401 Unauthorized 상태 처리
-										if (xhr.status === 401) {
-											alert("로그인이 필요한 기능입니다.");
-										} else {
-											alert("오류가 발생했습니다: " + error);
-										}
 									}
 								});
 							}

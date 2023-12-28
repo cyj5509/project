@@ -39,7 +39,8 @@ public class VoteController {
 		Map<String, Object> map = new HashMap<>();
 		
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
-		if (us_vo == null) { // 비회원인 경우
+		if (us_vo == null) { 
+			// 비회원인 경우 처리
 	        map.put("result", "unauthorized"); // 비회원 접근 오류 메시지
 	        return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED); // HTTP 상태 코드 401
 	    }
@@ -88,12 +89,13 @@ public class VoteController {
 	    // 세션에서 사용자 정보 가져오기
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
 		
-	    if (us_vo == null) {
-	    	// 비회원인 경우 처리
-	    	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	    } 
-	    
-	    String us_id = us_vo.getUs_id();
+		String us_id = null;
+		
+		// 세션에 사용자 정보가 없는 경우 비회원을 나타냄(us_id = null)
+		if (us_vo != null) {
+			// 세션에 사용자 정보가 있는 경우
+			us_id = us_vo.getUs_id();
+		}
 	    
 	    // 현재 투표 상태와 수를 가져오는 로직
 	    String voteStatus = voteService.getCurrentVoteStatus(bd_number, us_id);
