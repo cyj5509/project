@@ -1,17 +1,12 @@
 package com.devday.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devday.domain.BoardVO;
-import com.devday.domain.BoardVoteVO;
-import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
-import com.devday.dto.VoteResultDTO;
 import com.devday.mapper.UsBoardMapper;
 
 import lombok.RequiredArgsConstructor;

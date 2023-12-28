@@ -59,45 +59,41 @@ public class VoteServiceImpl implements VoteService {
 	    String currentStatus  = getCurrentVoteStatus(vt_vo.getBd_number(), vt_vo.getUs_id());	   	    
 	    log.info("저장된 타입: " + currentStatus);
 
-	    // 이전 날짜 투표 여부 확인
+	    // 오늘 날짜 투표 여부 확인
 		boolean alreadyVotePrev = checkVote(vt_vo.getBd_number(), vt_vo.getUs_id());
 		
 		String actionType = vt_vo.getVt_status(); // actionType을 투표 상태로 설정
 		log.info("선택한 타입: " + actionType);
-		
-		boolean isVoteChanged = false; // 추가, 취소, 변경 처리가 아닌 경우
-		
+
+		boolean isVoteChange = false; // 추가, 취소, 변경 처리가 아닌 경우
+
 		if (!alreadyVotePrev && currentStatus == null) {
-			// 투표 추가: 이전에 투표한 기록이 없고 취소 등으로 현재 투표 상태도 없는 경우
+			// 투표 추가: 이전에 투표한 기록이 없고 취소 등으로 현재 상태도 없는 경우
 			voteMapper.insertVote(vt_vo);
-			isVoteChanged = true;
+			isVoteChange = true;
 		} else if (alreadyVotePrev && currentStatus != null) {
-			// 투표 취소 및 변경: 이전에 투표한 기록이 있고 현재 투표 상태도 존재하는 경우
-			if (actionType.equals(currentStatus)) {
+			// 투표 취소 및 변경: 이전에 투표한 기록이 있고 현재 상태도 존재하는 경우
+			if ("none".equals(actionType)) {
 				// 같은 상태로 다시 투표하는 경우(투표 취소)
 				voteMapper.cancelVote(vt_vo);
-				isVoteChanged = true;
+				isVoteChange = false;
 			} else if (!actionType.equals(currentStatus)) {
 				// 다른 상태로 다시 투표하는 경우(투표 변경)
 				voteMapper.changeVote(vt_vo);
-				isVoteChanged = true;
+				isVoteChange = true;
 			}
 		}
+
+		// 취소/변경/추가 여부에 관계없이 집계 데이터 업데이트
+		Map<String, Integer> counts = countVoteStatus(vt_vo.getBd_number()); // 집계 관련 메서드 호출
+		log.info("counts 반환 컬럼: " + counts.keySet());
+
+		// getOrDefault는 키에 해당하는 값, 값이 없는 경우 기본값 설정(get은 키에 해당하는 값만 해당)
+		int likesCount = counts.getOrDefault("like", 0);
+		int dislikesCount = counts.getOrDefault("dislike", 0);
+		boolean voteResult = isVoteChange;
 		
-		// 집계 데이터 업데이트
-		if (isVoteChanged) {
-			Map<String, Integer> counts = countVoteStatus(vt_vo.getBd_number()); // 집계 메서드 호출
-			log.info("counts 반환 컬럼: " + counts.keySet());
-
-			// getOrDefault는 키에 해당하는 값, 값이 없는 경우 기본값 설정(get은 키에 해당하는 값만 해당)
-			int likesCount = counts.getOrDefault("like", 0);
-			int dislikesCount = counts.getOrDefault("dislike", 0);
-
-			return new VoteResultDTO(true, likesCount, dislikesCount);
-		} else {
-	        // 변경이 없으면 기존 카운트를 유지하고 false 반환
-	        return new VoteResultDTO(false, 0, 0); // 현재 상태에 따라 투표 결과 반환
-	    }
+		return new VoteResultDTO(voteResult, likesCount, dislikesCount);
 	}
 	
 	@Override

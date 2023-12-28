@@ -41,22 +41,19 @@ public class VoteController {
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
 		if (us_vo == null) { 
 			// 비회원인 경우 처리
-	        map.put("result", "unauthorized"); // 비회원 접근 오류 메시지
+	        map.put("msg", "비회원은 해당 기능을 사용할 수 없습니다."); // 비회원 접근 오류 메시지
 	        return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED); // HTTP 상태 코드 401
 	    }
 		
 		// 사용자가 로그인한 상태
 		String us_id = us_vo.getUs_id();
-
-		if (actionType == null) {
-		    log.info("actionType은 null입니다.");
-		} else if (actionType.isEmpty()) {
-		    log.info("actionType은 빈 문자열입니다.");
-		}
+		
+		log.info("타입 선택: " + actionType);
 		
 		// 유효성 검사: actionType이 유효한지 확인
-		if (actionType == null || (!actionType.equals("like") && !actionType.equals("dislike"))) {
-			map.put("result", "error");
+		if (!actionType.equals("like") && !actionType.equals("dislike") && !actionType.equals("none")) {
+			
+			map.put("msg", "오류가 발생했습니다. 나중에 다시 시도해 주세요.");
 			return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST); // HTTP 상태 코드 400
 		}
 
@@ -71,13 +68,12 @@ public class VoteController {
 		VoteResultDTO vt_dto = voteService.insertVote(vt_vo); // 투표 처리(추가, 취소, 변경)
 		
 		// 결과와 투표 상태, 집계된 추천/비추천 수를 map에 넣음
-	    String result = vt_dto.isVoteResult() ? "success" : null;
+	    String result = vt_dto.isVoteResult() ? "success" : "cancel";
 	    
-	    map.put("result", result);
+	    map.put("result", result);	    
 		map.put("actionType", actionType);
 		map.put("likes", vt_dto.getLikesCount()); // 집계된 추천 수
 		map.put("dislikes", vt_dto.getDislikesCount()); // 집계된 비추천 수
-
 
 		return new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
 	}

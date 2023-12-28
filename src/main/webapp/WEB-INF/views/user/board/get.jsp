@@ -123,7 +123,14 @@
 														/ 비추천: <span id="dislikes">0</span>
 													</div>
 													<div>
-														<p class="choiceNotice">&#42; 1일 1회 선택 가능&#40;변경&#47;취소 시 해당 버튼 클릭&#41;</p>
+														<c:choose>
+															<c:when test="${bd_vo.bd_type == 'free'}">
+																<p class="choiceNotice">&#42; 1일 1회 선택 가능&#40;당일 변경&#47;취소 시 해당 옵션 클릭&#41;</p>
+															</c:when>
+															<c:otherwise>
+																<p class="choiceNotice">&#42; 계정당 1회 선택 가능&#40;당일 변경&#47;취소 시 해당 옵션 클릭&#41;</p>
+															</c:otherwise>
+														</c:choose>
 													</div>
 												</div>
 											</div>
@@ -339,11 +346,9 @@
 							// lodash 라이브러리의 debounce 함수 사용(함수 표현식 형태는 호이스팅 불가)
 							const debouncedAction = _.debounce(function (bd_number, actionType) {
 
+								console.log('actionType:', actionType);
 								// "falsy"(빈 문자열, null, undefined, 0, false, NaN) 중 하나일 때 체크
-								if (!actionType) {
-									// alert("투표 타입이 올바르지 않습니다.");
-									return; // 함수 실행을 종료하여 서버로의 AJAX 요청 방지
-								}
+								// if (!actionType) return; // 함수 실행을 종료하여 서버로의 AJAX 요청 방지
 
 								// '좋아요/싫어요' 버튼 비활성화
 								$('#btn_like').prop('disabled', true);
@@ -363,10 +368,14 @@
 										$('#btn_like').prop('disabled', false);
 										$('#btn_dislike').prop('disabled', false);
 										// 401 Unauthorized 상태 처리
-										if (xhr.status === 401) {
-											alert("로그인이 필요한 기능입니다.");
+										if (xhr.status == 401) {
+											console.log(xhr.statusText); // "Unauthorized" 대신 단순 error 표시
+											// alert(xhr.responseJSON.msg);
+											alert("로그인이 필요한 기능입니다. 비회원은 사용할 수 없습니다.");
 										} else {
-											alert("오류가 발생했습니다: " + error);
+											console.log(xhr.statusText); // "Bad Request" 대신 단순 error 표시
+											// Map 방식이 아닌 단순 문자열로 응답한 경우, xhr.responseText
+											alert(xhr.responseJSON.msg);
 										}
 									}
 								});
@@ -374,6 +383,7 @@
 
 							// 추천 및 비추천 액션 처리 함수
 							function handleLikeDislikeAction(response) {
+
 								// '좋아요/싫어요' 버튼 활성화
 								$('#btn_like').prop('disabled', false);
 								$('#btn_dislike').prop('disabled', false);
@@ -383,16 +393,19 @@
 									// 객체 접근법으로서 점 표기법(Dot Notation)을 사용하여 고정된 속성 이름에 접근
 									currentType = response.actionType; // 투표 상태 업데이트
 									updateButtonState(response.actionType);
-									updateVoteCounts(response.likes, response.dislikes)
-								} 
+								} else if (response.result == 'cancel') {
+									currentType = null;  // 현재 투표 상태 초기화
+									updateButtonState(null); // 버튼 스타일 초기화
+								}
+								updateVoteCounts(response.likes, response.dislikes)
 							}
 
 							// 버튼 활성화/비활성화 처리 함수
 							function updateButtonState(actionType) {
-								if (actionType === 'like') {
+								if (actionType == 'like') {
 									$('#btn_like').addClass('like-active');
 									$('#btn_dislike').removeClass('dislike-active');
-								} else if (actionType === 'dislike') {
+								} else if (actionType == 'dislike') {
 									$('#btn_dislike').addClass('dislike-active');
 									$('#btn_like').removeClass('like-active');
 								} else {
@@ -427,12 +440,10 @@
 								// '취소' 버튼 클릭 이벤트
 								$('#btn_cancel').off("click").on("click", function () {
 									console.log("취소 버튼 클릭");
-									
+
 									// 현재 투표 상태가 null이 아니면 취소 요청
 									if (currentType) {
-										handleVoteAction(bd_number, currentType);  // 취소하려는 투표 유형
-										currentType = null;  // 현재 투표 상태 초기화
-										updateButtonState(null); // 버튼 스타일 초기화
+										handleVoteAction(bd_number, 'none'); // 아무것도 없는 상태로 되돌림
 									}
 								});
 
@@ -474,12 +485,16 @@
 									// 처음 투표하는 경우 ─ 즉시 서버 요청
 									debouncedAction(bd_number, attemptType);
 								} else if (currentType == attemptType) {
-										// 이미 같은 타입으로 투표한 경우 ─ '취소' 모달 표시
+									// 이미 같은 타입으로 투표한 경우 ─ '취소' 모달 표시
+									if (confirm('이미 오늘 선택하셨습니다. 취소하려면 확인 버튼을 클릭해 주세요.')) {
 										showVoteModal('cancel', '기존 선택을 취소하시겠습니까?');
-									} else if (currentType != attemptType) {
-										// 다른 타입으로 변경하는 경우 ─ '변경' 모달 표시
+									}
+								} else if (currentType != attemptType) {
+									// 다른 타입으로 변경하는 경우 ─ '변경' 모달 표시
+									if (confirm('이미 오늘 선택하셨습니다. 변경하려면 확인 버튼을 클릭해 주세요.')) {
 										showVoteModal('change', '기존 선택을 변경하시겠습니까?');
 									}
+								}
 							});
 
 						}); // ready-end
