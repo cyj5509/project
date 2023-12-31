@@ -21,6 +21,7 @@
 }
 
 input[readonly],
+select[disabled],
 .readonly-div {
 	background-color: white !important;
 }

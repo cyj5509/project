@@ -50,6 +50,7 @@
 		bd_number DESC
 </select> 
 
+<!-- 실제 쿼리가 어떻게 되는지 확인할 것! -->
 <!-- 동적 쿼리 ─ 공통된 SQL 구문 작업을 하기 위한 용도: 검색 조건 -->
 <sql id="criteria">
 	<trim prefix="(" suffix=") AND" prefixOverrides="OR">
