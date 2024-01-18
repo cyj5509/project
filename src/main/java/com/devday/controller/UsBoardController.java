@@ -5,9 +5,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,17 +22,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.devday.domain.BoardVO;
-import com.devday.domain.BoardVoteVO;
+import com.devday.domain.CommentVO;
 import com.devday.domain.UserVO;
-import com.devday.domain.VoteVO;
 import com.devday.dto.Criteria;
 import com.devday.dto.PageDTO;
-import com.devday.dto.VoteResultDTO;
 import com.devday.service.UsBoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,7 +42,9 @@ import lombok.extern.log4j.Log4j;
 public class UsBoardController {
 	
 	private final UsBoardService usBoardService;
-	private final PasswordEncoder passwordEncoder; // 비회원 관련 암호화 처리를 위함(security 폴더 내 spring-security.xml) 
+	
+	// 비회원 관련 암호화 처리(security 폴더 내 spring-security.xml)
+	private final PasswordEncoder passwordEncoder;  
 	
 	// CKEditor에서 사용되는 업로드 폴더 경로
 	@Resource(name = "uploadBoardCKPath")
@@ -83,22 +78,22 @@ public class UsBoardController {
 		log.info("게시물 등록 데이터: " + bd_vo);
 		log.info("구분: " + bd_vo.getBd_type());		
 		
-	    // 로그인 체크 - 비회원 처리 로직
-	    if (session.getAttribute("userStatus") == null) {
-	    		bd_vo.setUs_id(""); // 비회원인 경우 us_id를 빈 문자열로 설정
-	    		
-	    		// 비회원 닉네임 처리: 닉네임이 제공되지 않은 경우 기본값 설정
-            if (bd_vo.getBd_guest_nickname() == null || bd_vo.getBd_guest_nickname().trim().isEmpty()) {
-                bd_vo.setBd_guest_nickname("guest"); // 기본값으로 'guest' 설정
-            }
-			// 비회원 비밀번호 처리: 비밀번호가 제공된 경우 암호화 
+		// 로그인 체크 - 비회원 처리 로직
+		if (session.getAttribute("userStatus") == null) {
+			bd_vo.setUs_id(""); // 비회원인 경우 us_id를 빈 문자열로 설정
+
+			// 비회원 닉네임 처리: 닉네임이 제공되지 않은 경우 기본값 설정
+			if (bd_vo.getBd_guest_nickname() == null || bd_vo.getBd_guest_nickname().trim().isEmpty()) {
+				bd_vo.setBd_guest_nickname("guest"); // 기본값으로 'guest' 설정
+			}
+			// 비회원 비밀번호 처리: 비밀번호가 제공된 경우 암호화
 			if (bd_vo.getBd_guest_pw() != null && !bd_vo.getBd_guest_pw().isEmpty()) {
-		    		String guest_pw = bd_vo.getBd_guest_pw(); 
-		    		bd_vo.setBd_guest_pw(passwordEncoder.encode(guest_pw)); // 암호화된 비밀번호로 설정
-		    }
-        }
+				String guest_pw = bd_vo.getBd_guest_pw();
+				bd_vo.setBd_guest_pw(passwordEncoder.encode(guest_pw)); // 암호화된 비밀번호로 설정
+			}
+		}
 		usBoardService.register(bd_vo); // 게시물 등록 관련 메서드 호출
-		
+
 		rttr.addFlashAttribute("msg", "게시물이 정상적으로 등록되었습니다.");
 		return "redirect:/user/board/list" + "/" + bd_vo.getBd_type();  
 	}
@@ -119,17 +114,15 @@ public class UsBoardController {
 		boardVO.setBd_type(bd_type);
 		
 		List<BoardVO> list = usBoardService.getListWithPaging(cri, bd_type);
+		int total = usBoardService.getTotalCount(cri, bd_type);
+		PageDTO pageDTO = new PageDTO(cri, total);
 		
 		log.info("게시판 구분: " + bd_type); 
 		log.info("타입별 목록: " + list); 
 		
-		model.addAttribute("list", list);
-		
-		int total = usBoardService.getTotalCount(cri, bd_type);
-		
+		model.addAttribute("list", list);		
 		model.addAttribute("bd_type", bd_type);
 		
-		PageDTO pageDTO = new PageDTO(cri, total);
 		model.addAttribute("pageMaker", pageDTO);
 		
 		// log.info("데이터 총 개수: " + total);
@@ -151,6 +144,9 @@ public class UsBoardController {
 
 		BoardVO bd_vo = usBoardService.get(bd_number, true); // 게시물 조회 관련 메서드 호출(조회 증가 처리 포함)
 		model.addAttribute("bd_vo", bd_vo);
+		
+	    CommentVO cm_vo = new CommentVO();
+	    model.addAttribute("cm_vo", cm_vo);
 
 		return "/user/board/get";
 	}
@@ -178,26 +174,35 @@ public class UsBoardController {
 		log.info("게시물 수정 데이터: " + bd_vo);
 		log.info("게시물 수정 권한 유무: " + session.getAttribute("isAuthorized"));
 		
-		// 수정 권한 확인
-		if (session.getAttribute("userStatus") != null) {
-		    // 회원 로그인 상태
-		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
-		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number(), false); // 수정하려는 게시물 정보
-		    // 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
-		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
-		        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 수정할 권한이 없습니다.");
-		        return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
-		    }
-		} else if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
-			// 비회원이거나 수정 권한이 없는 경우
+		BoardVO db_vo = usBoardService.get(bd_vo.getBd_number(), false); // 수정하려는 게시물 정보 불러오기
+		UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보 확인
+		
+		// 권한 부여 유무 확인: true 일 때만 true로 설정되고 false 또는 null인 경우는 false로 설정
+		Boolean isAuthorized = Boolean.TRUE.equals(session.getAttribute("isAuthorized"));
+		
+		// 로그인 상태에서의 권한 없음 처리
+		if (us_vo != null) {
+			if (!us_vo.getUs_id().equals(db_vo.getUs_id()) && !isAuthorized) {
+				// 회원이 다른 회원의 게시물 또는 비회원 게시물을 수정하려는 경우
+				rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 수정할 권한이 없습니다.");
+				return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number="
+						+ bd_vo.getBd_number();
+			}
+		} 
+		// 로그인하지 않은 상태에서의 권한 없음 처리
+		else if (!isAuthorized) {
+			// 비회원이 회원의 게시물 또는 비밀번호 검증을 통해 인증받지 못한 상태의 게시물을 수정하려는 경우 
+			log.info("isAuthorized 상태: " + session.getAttribute("isAuthorized")); // isAuthorized 상태: null
 			rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 수정할 권한이 없습니다.");
-	        return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
-	    }
-
+			return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number="
+					+ bd_vo.getBd_number();
+		}
+		
+		// 권한이 있는 경우 게시물 수정 처리
 		usBoardService.modify(bd_vo); // 게시물 수정 관련 메서드 호출
 		session.removeAttribute("isAuthorized"); // isAuthorized라는 특정 세션 속성 삭제
 		
-		// 페이징과 검색 정보를 쿼리 스트링으로 사용하기 위한 작업을 cri.getListLink()으로 대체함
+		// 페이징과 검색 정보를 쿼리 스트링으로 사용하기 위한 작업(cri.getListLink()으로 대체)
 		/*
 		rttr.addAttribute("pageNum", cri.getPageNum());
 		rttr.addAttribute("amount", cri.getAmount());
@@ -217,23 +222,30 @@ public class UsBoardController {
 		log.info("게시물 삭제 데이터: " + bd_vo);
 		log.info("게시물 삭제 권한 유무: " + session.getAttribute("isAuthorized"));
 		
-		// 삭제 권한 확인
-		if (session.getAttribute("userStatus") != null) {
-		    // 회원 로그인 상태
-		    UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보
-		    BoardVO db_vo = usBoardService.get(bd_vo.getBd_number(), false); // 수정하려는 게시물 정보
-
-		    if (!us_vo.getUs_id().equals(db_vo.getUs_id())) {
-			    	// 현재 로그인한 사용자가 게시물의 작성자가 아닌 경우
-		        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 삭제할 권한이 없습니다.");
-		        return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
-		    }
-		} else if (session.getAttribute("isAuthorized") == null || !(Boolean) session.getAttribute("isAuthorized")) {
-			// 비회원이거나 수정 권한이 없는 경우
-	        rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 삭제할 권한이 없습니다.");
-	        return "redirect:/user/board/get/" + bd_type + cri.getListLink() + "&bd_number=" + bd_vo.getBd_number();
-	    }
+		BoardVO db_vo = usBoardService.get(bd_vo.getBd_number(), false); // 삭제하려는 게시물 정보 불러오기
+		UserVO us_vo = (UserVO) session.getAttribute("userStatus"); // 현재 로그인한 사용자 정보 확인
 		
+		// 권한 부여 유무 확인: true 일 때만 true로 설정되고 false 또는 null인 경우는 false로 설정
+		Boolean isAuthorized = Boolean.TRUE.equals(session.getAttribute("isAuthorized")); 
+	
+		// 로그인한 상태에서의 권한 없음 처리
+		if (us_vo != null) {
+			if (!us_vo.getUs_id().equals(db_vo.getUs_id()) && !isAuthorized) {
+				// 다른 회원의 게시물 또는 비회원 게시물을 삭제하려는 경우
+				rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 삭제할 권한이 없습니다.");
+				return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number="
+						+ bd_vo.getBd_number();
+			}
+		} 
+		// 로그인하지 않은 상태에서의 권한 없음 처리
+		else if (!isAuthorized) {
+			// 비회원이 회원의 게시물 또는 비밀번호 검증을 통해 인증받지 못한 상태의 게시물을 삭제하려는 경우
+			rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물을 삭제할 권한이 없습니다.");
+			return "redirect:/user/board/get/" + bd_vo.getBd_type() + cri.getListLink() + "&bd_number="
+					+ bd_vo.getBd_number();
+		}
+		
+		// 권한이 있는 경우 게시물 삭제 처리
 	    usBoardService.delete(bd_vo.getBd_number()); // 게시물 삭제 관련 메서드 호출
 	    session.removeAttribute("isAuthorized"); // isAuthorized라는 특정 세션 속성 삭제
 		
@@ -250,12 +262,13 @@ public class UsBoardController {
 	
 	@PostMapping("/checkPw")
 	public String checkPw(Long bd_number, String bd_guest_pw, String action, Criteria cri, HttpSession session, RedirectAttributes rttr) {
-	    BoardVO boardVO = usBoardService.get(bd_number, false);
-	    if (boardVO != null && passwordEncoder.matches(bd_guest_pw, boardVO.getBd_guest_pw())) {
+		
+	    BoardVO db_vo = usBoardService.get(bd_number, false);
+	    if (db_vo != null && passwordEncoder.matches(bd_guest_pw, db_vo.getBd_guest_pw())) {
 	        // 비밀번호 확인 성공, 세션에 권한 설정
 	        session.setAttribute("isAuthorized", true);
 
-	        String bd_type = boardVO.getBd_type() != null ? boardVO.getBd_type() : "total";
+	        String bd_type = db_vo.getBd_type() != null ? db_vo.getBd_type() : "total";
 
 	        // 액션에 따라 다른 리다이렉션 처리
 	        if ("modify".equals(action)) {
@@ -264,10 +277,10 @@ public class UsBoardController {
 	            return "redirect:/user/board/delete/" + bd_type +  cri.getListLink() + "&bd_number=" + bd_number;
 	        }
 	    } else {
-	        rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-	        return "redirect:/user/board/get/" + (boardVO != null ? boardVO.getBd_type() : "total") + cri.getListLink() + "&bd_number=" + bd_number;
+	        rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다. 다시 시도해 주세요.");
+	        return "redirect:/user/board/get/" + (db_vo != null ? db_vo.getBd_type() : "total") + cri.getListLink() + "&bd_number=" + bd_number;
 	    }
-	    return "redirect:/user/board/list/" + (boardVO != null ? boardVO.getBd_type() : "total");
+	    return "redirect:/user/board/list/" + (db_vo != null ? db_vo.getBd_type() : "total");
 	}
 	
 	@PostMapping("/imageUpload")

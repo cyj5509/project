@@ -11,25 +11,25 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>Pricing example · Bootstrap v4.6</title>
+				<title>데브데이&#58; 상품조회</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
-				
-				<!-- CSS 파일 링크 -->
-				<link rel="stylesheet" href="/css/common/header.css">
+
+					<!-- CSS 파일 링크 -->
+					<link rel="stylesheet" href="/css/common/header.css">
 
 					<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 					<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
 					<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 					<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-					<!-- Handlebars(자바스크립트 템플릿 엔진): 서버에서 보내온 JSON 형태의 데이터를 사용하여 작업을 편하게 할 수 있는 특징 -->
+					<!-- Handlebars(핸들바 템플릿 엔진): 서버에서 보내온 JSON 형태의 데이터를 사용하여 작업을 편하게 할 수 있는 특징 -->
 					<script src="/js/handlebars.js"></script>
 					<script id="reviewTemplate" type="text/x-handlebars-template">
 						<table class="table table-sm">
 							<thead>
 								<tr>
 									<th scope="col">번호</th>
-									<th scope="col">리뷰내용</th>
+									<th scope="col">내용</th>
 									<th scope="col">평점</th>
 									<th scope="col">날짜</th>
 									<th scope="col">비고</th>
@@ -316,25 +316,37 @@
 										let pagingStr = '<nav id="navigation" aria-label="Page navigation example">';
 										pagingStr += '<ul class="pagination">';
 
+										// 맨 처음 표시 여부
+										if (pageMaker.foremost) {
+											pagingStr += '<li class="page-item"><a class="page-link" href="1">처음</a></li>';
+										}
+
 										// 이전 표시 여부 
 										if (pageMaker.prev) {
-											pagingStr += '<li class="page-item"><a class="page-link" href="' + (pageMaker.startPage - 1) + '">[prev]</a></li>'
+											pagingStr += '<li class="page-item"><a class="page-link" href="' + (pageMaker.startPage - 1) + '">이전</a></li>'
 										}
+
 										// 페이지 번호 출력
 										for (let i = pageMaker.startPage; i <= pageMaker.endPage; i++) {
 											let className = pageMaker.cri.pageNum == i ? 'active' : '';
 											pagingStr += '<li class="page-item ' + className + '"><a class="page-link" href="' + i + '">' + i + '</a></li>';
 										}
+
 										// 다음 표시 여부
 										if (pageMaker.next) {
-											pagingStr += '<li class="page-item"><a class="page-link" href="' + (pageMaker.startPage + 1) + '">[next]</a></li>'
+											pagingStr += '<li class="page-item"><a class="page-link" href="' + (pageMaker.endPage + 1) + '">다음</a></li>'
+										}
+
+										// 맨 끝 표시 여부
+										if (pageMaker.rearmost) {
+											pagingStr += '<li class="page-item"><a class="page-link" href="' + pageMaker.readEnd + '">끝</a></li>';
 										}
 
 										pagingStr += '</ul>';
 										pagingStr += '</nav>';
 
 										target.children().remove(); // $("#review_paging").children().remove();
-										target.append(pagingStr);
+										target.append(pagingStr); // target 내부의 HTML을 pagingStr로 설정
 									}
 
 									// 사용자 정의 Helper(핸들바의 함수 정의)
@@ -347,6 +359,12 @@
 										let date = dateObj.getDate();
 										let hour = dateObj.getHours();
 										let minute = dateObj.getMinutes();
+
+										// 한 자리 숫자인 경우 앞에 '0'을 붙임
+										month = month < 10 ? '0' + month : month;
+										date = date < 10 ? '0' + date : date;
+										hour = hour < 10 ? '0' + hour : hour;
+										minute = minute < 10 ? '0' + minute : minute;
 
 										return year + "/" + month + "/" + date + " " + hour + ":" + minute;
 									});
@@ -405,7 +423,7 @@
 										let rv_score = $(this).data("rv_score"); // $(this)는 수정 버튼
 										console.log("평점", rv_score);
 										$("#star_rv_score a.rv_score").each(function (index, item) {
-											if(index < rv_score) {
+											if (index < rv_score) {
 												$(item).addClass("on");
 											} else {
 												$(item).removeClass("on");
@@ -426,7 +444,7 @@
 									});
 
 									// 상품후기 수정하기
-									$("#btn_review_modify").on("click", function() {
+									$("#btn_review_modify").on("click", function () {
 										let rv_number = $("#rv_number").text();
 										let rv_content = $("#rv_content").val();
 										// 평점 
@@ -436,7 +454,7 @@
 												rv_score += 1;
 											}
 										});
-										let review_data = {rv_number: rv_number, rv_content: rv_content, rv_score: rv_score}
+										let review_data = { rv_number: rv_number, rv_content: rv_content, rv_score: rv_score }
 										$.ajax({
 											url: '/user/review/modify',
 											headers: {
@@ -531,7 +549,7 @@
 										$.ajax({
 											url: '/user/review/new',
 											headers: {
-												"Content-Type": "application/json", "X-HTTP-Method-Override": "POST"
+												"Content-Type": "application/json", "X-HTTP-Method-Override": "POST" // POST는 불필요?
 											},
 											type: 'post',
 											data: JSON.stringify(review_data), // 데이터 포맷을 Object에서 JSON으로 변환

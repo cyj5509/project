@@ -12,7 +12,7 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>데브데이: 커뮤니티</title>
+				<title>데브데이&#58; 커뮤니티</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -74,8 +74,7 @@
 														<label for="bd_type" class="col-2">카테고리</label>
 														<div class="col-4">
 															<select class="form-control" name="bd_type" id="bd_type">
-																<option value="total" ${bd_vo.bd_type=='total' ? 'selected' : '' }>--- 카테고리 선택 ---
-																</option>
+																<option value="" selected>&#45;&#45;&#45; 카테고리 선택 &#45;&#45;&#45;</option>
 																<c:if test="${sessionScope.userStatus.ad_check == 1}">
 																	<option value="notice" ${bd_vo.bd_type=='notice' ? 'selected' : '' }>공지사항</option>
 																</c:if>
@@ -167,7 +166,7 @@
 								}
 
 								let bd_type = $("#bd_type").val();
-								if (bd_type == "total") {
+								if (bd_type == '') {
 									alert("카테고리를 선택해 주세요.");
 									return;
 								}

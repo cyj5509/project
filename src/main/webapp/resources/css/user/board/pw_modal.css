@@ -65,3 +65,12 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.modal-button {
+    margin-right: 10px; /* 오른쪽 마진 설정 */
+}
+
+/* 마지막 버튼에는 마진을 적용하지 않음 */
+.modal-button:last-child {
+    margin-right: 0;
+}

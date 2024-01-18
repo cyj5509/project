@@ -1,6 +1,9 @@
 -- 실습예제 기반 테이블 재구성
 
 /*
+SELECT DBMS_XDB.GETHTTPPORT() FROM DUAL;
+EXEC DBMS_XDB.SETHTTPPORT(9090);
+
 -- 계정 생성 및 권한 부여
 CREATE USER devday IDENTIFIED BY dd;
 GRANT RESOURCE, CONNECT TO devday;
@@ -392,7 +395,7 @@ CREATE TABLE review_table (
     rv_number         NUMBER,                         -- 리뷰 번호
     us_id             VARCHAR2(15)          NOT NULL, -- 사용자 아이디
     pd_number         NUMBER                NOT NULL, -- 상품 번호
-    rv_content        VARCHAR2(200)         NOT NULL, -- 리뷰 내용
+    rv_content        VARCHAR2(1000)         NOT NULL, -- 리뷰 내용
     rv_score          NUMBER                NOT NULL, -- 리뷰 평점
     rv_register_date  DATE DEFAULT sysdate  NOT NULL, -- 등록 일자
     -- CONSTRAINT fk_rv_us_id FOREIGN KEY(us_id) REFERENCES user_table(us_id),
@@ -426,6 +429,8 @@ CREATE TABLE board_table (
     bd_register_date  DATE    DEFAULT sysdate,          -- 등록 일자
     bd_update_date    DATE    DEFAULT sysdate,          -- 수정 일자
     bd_view_count     NUMBER  DEFAULT 0,                -- 조회수
+    bd_guest_nickname VARCHAR2(40),                     -- 비회원 닉네임(NULL 허용)
+    bd_guest_pw       VARCHAR2(60),                     -- 비회원 비밀번호(NULL 허용)
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
 
@@ -463,3 +468,53 @@ CREATE SEQUENCE sequence_bd_number;
 -- 전체 데이터 조회 및 삭제(384개 행 삽입)
 SELECT * FROM board_table;
 DELETE FROM board_table;
+
+
+-- 11. 투표 테이블
+DROP TABLE vote_table;
+CREATE TABLE vote_table (
+    vt_number         NUMBER          NOT NULL,        -- 투표 번호(시퀀스 사용)
+    us_id             VARCHAR2(40)    NOT NULL,        -- 사용자 아이디
+    bd_number         NUMBER          NOT NULL,        -- 게시물 번호
+    vt_status         VARCHAR2(40)    NOT NULL,        -- 'Like' vs. 'Dislike'(NULL 허용)
+    vt_register_date  DATE DEFAULT SYSDATE,            -- 등록 일자
+    CONSTRAINT pk_vt_number PRIMARY KEY (vt_number),
+    CONSTRAINT fk_vote_bd_number FOREIGN KEY(bd_number)
+        REFERENCES board_table(bd_number) ON DELETE CASCADE -- 연쇄 삭제 옵션 적용
+);
+
+-- 시퀀스: 투표 테이블의 투표 번호 컬럼(vt_number)
+DROP SEQUENCE sequence_vt_number;
+CREATE SEQUENCE sequence_vt_number;
+
+-- 전체 데이터 조회 및 삭제(384개 행 삽입)
+SELECT * FROM vote_table;
+DELETE FROM vote_table;
+
+
+
+-- 12. 댓글 테이블
+DROP TABLE comment_table;
+CREATE TABLE comment_table (
+	    cm_code             NUMBER,                          -- 댓글 코드(2차 이후)
+	    cm_parent_code      NUMBER                NULL,      -- 상위 댓글 코드(1차: 대댓글 기능용)
+	    bd_number           NUMBER                NOT NULL,  -- 게시물 번호
+	    us_id               VARCHAR2(40),                    -- 사용자 아이디(NULL 허용)
+	    cm_content          VARCHAR2(1000)        NOT NULL,  -- 댓글 내용
+	    cm_register_date    DATE DEFAULT sysdate  NOT NULL,  -- 등록 일자
+	    cm_update_date      DATE DEFAULT sysdate  NOT NULL,  -- 수정 일자
+	    cm_guest_nickname   VARCHAR2(40),                    -- 비회원 닉네임(NULL 허용)
+	    cm_guest_pw         VARCHAR2(60),                    -- 비회원 비밀번호(NULL 허용)
+	    CONSTRAINT pk_cm_code PRIMARY KEY(cm_code),
+	    CONSTRAINT fk_cm_parent_code FOREIGN KEY(cm_parent_code) REFERENCES comment_table(cm_code),
+	    CONSTRAINT fk_cm_bd_number FOREIGN KEY(bd_number)
+	        REFERENCES board_table(bd_number) ON DELETE CASCADE -- 연쇄 삭제 옵션 적용
+);
+
+-- 시퀀스: 댓글 테이블의 댓글 코드 컬럼(cm_code)
+DROP SEQUENCE sequence_cm_code;
+CREATE SEQUENCE sequence_cm_code;
+
+-- 전체 데이터 조회 및 삭제(384개 행 삽입)
+SELECT * FROM comment_table;
+DELETE FROM comment_table;

@@ -29,18 +29,18 @@
 	FROM 
 	    (
 	    SELECT /*+ INDEX_DESC(review_table pk_rv_number) */
-    			ROWNUM rn, rv_number, us_id, pd_number, rv_content, rv_score, rv_register_date
+    		ROWNUM rn, rv_number, us_id, pd_number, rv_content, rv_score, rv_register_date
 	    FROM
-    			review_table
+    		review_table
 	    WHERE
-	    		pd_number = #{pd_number} AND ROWNUM <= #{cri.pageNum} * #{cri.amount} 
+	    	pd_number = #{pd_number} AND ROWNUM <= #{cri.pageNum} * #{cri.amount} 
 	    )
 	WHERE
 		rn > (#{cri.pageNum} -1) * #{cri.amount}
 	]]>
 </select>
 
-<select id="listCount" parameterType="Integer" resultType="int">
+<select id="listCount" resultType="int" parameterType="Integer">
 	SELECT
 		COUNT(*)
 	FROM

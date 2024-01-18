@@ -1,5 +1,6 @@
 package com.devday.service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +77,15 @@ public class VoteServiceImpl implements VoteService {
 		int count = voteMapper.checkAccountVote(map);
 		return count > 0;
 	}
+
+	// 서버 날짜와 투표 날짜를 비교하는 헬퍼 메서드
+	public boolean isSameDay(Calendar cal1, Calendar cal2) {
+		
+	    return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && 
+	    	   // cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+	    	   // cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH); // DAY_OF_MONTH는 DATE와 동일함
+	           cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR); // 해당 연도의 현재일까지의 일수
+	}
 	
 	@Override
 	@Transactional
@@ -84,57 +94,69 @@ public class VoteServiceImpl implements VoteService {
 		// 현재 사용자의 투표 상태를 가져옴(해당하는 데이터가 없는 경우 null 반환)
 	    String currentStatus  = getCurrentVoteStatus(vt_vo.getBd_number(), vt_vo.getUs_id());	   	    
 	    log.info("저장된 상태: " + currentStatus);
-
+	    
+	    boolean isVoteChange = false; // 추가, 취소, 변경 처리가 아닌 경우를 초기 값으로 설정
+	    
 	    // 1일 1회 및 계정당 1회 투표 여부 확인
 	    boolean checkDailyVote = checkDailyVote(vt_vo.getBd_number(), vt_vo.getUs_id(), bd_type); // 1일 1회 확인
-	    log.info("1일 1회 확인: " + checkDailyVote);
 	    boolean checkAccountVote = checkAccountVote(vt_vo.getBd_number(), vt_vo.getUs_id(), bd_type); // 계정당 1회 확인
+	    log.info("1일 1회 확인: " + checkDailyVote);
 	    log.info("계정당 1회 확인: " + checkAccountVote);
 	    
-	    boolean alreadyVoted = (bd_type.equals("free")) ? checkDailyVote : checkAccountVote;
-		
-		String actionType = vt_vo.getVt_status(); // actionType을 투표 상태로 설정
+	    // 날짜 비교를 위한 준비
+	    Calendar serverCal = Calendar.getInstance();
+	    Calendar voteCal = Calendar.getInstance();
+	    if (vt_vo != null && vt_vo.getVt_register_date() != null) {
+	        voteCal.setTime(vt_vo.getVt_register_date()); // 투표 날짜로 설정
+	    } 
+	    boolean isToday = isSameDay(serverCal, voteCal);
+	    
+	    // 투표 여부 결정
+	    boolean alreadyVoted = bd_type.equals("free") ? checkDailyVote && isToday : checkAccountVote;
+	    
+		String actionType = vt_vo.getVt_status() != null ? vt_vo.getVt_status() : "none"; // actionType을 투표 상태로 설정
 		log.info("선택한 상태: " + actionType);
 
-		boolean isVoteChange = false; // 추가, 취소, 변경 처리가 아닌 경우
-
-		if (!alreadyVoted && currentStatus == null) {
-			// 투표 추가: 이전에 투표한 기록이 없고 취소 등으로 현재 상태도 없는 경우
-			voteMapper.insertVote(vt_vo);
+		if (bd_type.equals("free") && !alreadyVoted) {
+			// 1일 1회 게시판: 날짜가 바뀌면 새로운 투표 가능
+			voteMapper.insertVote(vt_vo); // 투표 추가
 			isVoteChange = true;
-		} else if (alreadyVoted && currentStatus != null) {
-			// 투표 취소 및 변경: 이전에 투표한 기록이 있고 현재 상태도 존재하는 경우
+		} else if (!bd_type.equals("free") && !alreadyVoted && currentStatus == null) {
+			// 계정당 1회 게시판: 날짜가 바뀌면 추가 투표 불가
+			voteMapper.insertVote(vt_vo); // 투표 추가
+			isVoteChange = true;
+		} else if (isToday) {
+			// 1일 1회 또는 계정당 1회 게시판에서 이미 투표한 경우 당일에만 변경/취소 가능
 			if ("none".equals(actionType)) {
-				// 같은 상태로 다시 투표하는 경우(투표 취소)
+				// 같은 상태로 다시 투표하는 경우
 				Map<String, Object> params = new HashMap<>();
-			    params.put("vt_vo", vt_vo);
-			    params.put("bd_type", bd_type);
-			    voteMapper.cancelVote(params);
+				params.put("vt_vo", vt_vo);
+				params.put("bd_type", bd_type);
+				voteMapper.cancelVote(params); // 투표 취소
 				isVoteChange = false;
 			} else if (!actionType.equals(currentStatus)) {
-				// 다른 상태로 다시 투표하는 경우(투표 변경)
+				// 다른 상태로 다시 투표하는 경우
 				Map<String, Object> params = new HashMap<>();
-			    params.put("vt_vo", vt_vo);
-			    params.put("bd_type", bd_type);
-			    voteMapper.changeVote(params);
+				params.put("vt_vo", vt_vo);
+				params.put("bd_type", bd_type);
+				voteMapper.changeVote(params); // 투표 변경
 				isVoteChange = true;
 			}
 		}
 
-		// 취소/변경/추가 여부에 관계없이 집계 데이터 업데이트
+		// 집계 데이터 업데이트 및 최신 투표 데이터 조회
 		Map<String, Integer> counts = countVoteStatus(vt_vo.getBd_number()); // 집계 관련 메서드 호출
 		log.info("반환 컬럼: " + counts.keySet());
 
-		// 최신 투표 데이터 조회
+		// getOrDefault는 키에 해당하는 값, 값이 없는 경우 기본값 설정(get은 키에 해당하는 값만 해당)
+		int likesCount = counts.getOrDefault("like", 0);
+		int dislikesCount = counts.getOrDefault("dislike", 0);
+
 	    VoteVO db_vo = getLatestVote(vt_vo.getBd_number(), vt_vo.getUs_id());
 		Date latestVoteDate = (db_vo != null) ? db_vo.getVt_register_date() : null;
 		log.info("투표 정보: " + db_vo);
 	    
-		// getOrDefault는 키에 해당하는 값, 값이 없는 경우 기본값 설정(get은 키에 해당하는 값만 해당)
-		int likesCount = counts.getOrDefault("like", 0);
-		int dislikesCount = counts.getOrDefault("dislike", 0);
-		
-		// VoteResultDTO 생성시 최신 투표 데이터의 등록일도 포함
+		// VoteResultDTO 생성시 최신 투표 데이터의 등록일도 포함여 최종 결과 반환
 		return new VoteResultDTO(isVoteChange, likesCount, dislikesCount, latestVoteDate);
 	}
 	

@@ -1,10 +1,10 @@
 package com.devday.controller;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -27,29 +27,22 @@ import lombok.extern.log4j.Log4j;
 
 @RestController // AJAX로만 활용(JSP 파일 미사용)
 @RequiredArgsConstructor
-@RequestMapping("/user/board/*") 
+@RequestMapping("/vote/*") 
 @Log4j
 public class VoteController {
 
 	private final VoteService voteService;
-	private final UsBoardService usBoardService;
 	
 	@PostMapping("/likeAction")
 	public ResponseEntity<Map<String, Object>> likeAction(HttpSession session,
 														  @RequestParam("bd_number") Long bd_number, 
-														  @RequestParam("actionType") String actionType) {
+														  @RequestParam("actionType") String actionType,
+														  @RequestParam("bd_type") String bd_type) {
 
 		Map<String, Object> map = new HashMap<>();
 		
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
-		if (us_vo == null) { 
-			// 비회원인 경우 처리
-	        map.put("msg", "비회원은 해당 기능을 사용할 수 없습니다."); // 비회원 접근 오류 메시지
-	        return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED); // HTTP 상태 코드 401
-	    }
-		
-		// 사용자가 로그인한 상태
-		String us_id = us_vo.getUs_id();
+		String us_id = us_vo.getUs_id(); // 로그인한 상태의 사용자 아이디 가져오기
 		
 		log.info("타입 선택: " + actionType);
 		
@@ -66,11 +59,13 @@ public class VoteController {
 		vt_vo.setVt_status(actionType);
 		
 		log.info("게시물 투표 데이터: " + vt_vo);
-
-		BoardVO bd_vo = usBoardService.get(bd_number, true);
-		log.info("게시판 유형: " + bd_vo.getBd_type());
+		log.info("게시판 유형: " + bd_type);
 		
-		VoteResultDTO vt_dto = voteService.insertVote(vt_vo, bd_vo.getBd_type()); // 투표 처리(추가, 취소, 변경)
+		// 게시판 유형에 따른 투표 처리
+		VoteResultDTO vt_dto = voteService.insertVote(vt_vo, bd_type); // 투표 처리(추가, 취소, 변경)
+		Date voteDate = vt_dto.getVt_register_date();
+		Date serverDate = new Date();
+		log.info("투표 날짜: " + voteDate);
 		
 		// 결과와 투표 상태, 집계된 추천/비추천 수를 map에 넣음
 	    String result = vt_dto.isVoteResult() ? "success" : "cancel";
@@ -79,33 +74,49 @@ public class VoteController {
 		map.put("actionType", actionType);
 		map.put("likes", vt_dto.getLikesCount()); // 집계된 추천 수
 		map.put("dislikes", vt_dto.getDislikesCount()); // 집계된 비추천 수
-		map.put("voteDate", vt_dto.getVt_register_date()); // JSON 변환 시 밀리초 단위의 타임스탬프 형식으로 전달
-		map.put("serverDate", new Date()); // 현재 서버 날짜 및 시간
+		
+		// JSON 변환 시 밀리초 단위의 타임스탬프 형식으로 전달
+		map.put("voteDate", voteDate); // 투표 날짜 정보
+		map.put("serverDate", serverDate); // 서버 날짜 정보
 
 		return new ResponseEntity<>(map, HttpStatus.OK); // HTTP 상태 코드 200
 	}
 	
 	@GetMapping("/getCurrentVoteStatus")
 	public ResponseEntity<Map<String, Object>> getCurrentVoteStatus(@RequestParam("bd_number") Long bd_number, 
-									   HttpSession session, HttpServletRequest request) {
+									   								HttpSession session) {
 		
 	    // 세션에서 사용자 정보 가져오기
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
-		String us_id = us_vo != null ? us_vo.getUs_id() : null; // 세션에 사용자 정보가 없는 경우 비회원
+		String us_id = us_vo != null ? us_vo.getUs_id() : null; // 사용자 정보가 없는 경우 비회원
 	
-	    // 현재 투표 상태와 수를 가져오는 로직
+	    // 현재 투표 상태와 수를 가져오기
 	    String voteStatus = voteService.getCurrentVoteStatus(bd_number, us_id);
 	    VoteVO vt_vo = voteService.getLatestVote(bd_number, us_id);
 	    
-	    Map<String, Integer> voteCounts = voteService.countVoteStatus(bd_number); 	
+	    // 캘린더 객체로 서버 날짜와 투표 날짜 설정
+	    Calendar serverCal = Calendar.getInstance();
+	    Calendar voteCal = Calendar.getInstance();
+	    
+	    if (vt_vo != null && vt_vo.getVt_register_date() != null) {
+	        voteCal.setTime(vt_vo.getVt_register_date()); // 투표 날짜로 설정
+	    } else {
+	        voteCal = null; // 투표 날짜가 없는 경우
+	    }
+
+	    // 클라이언트에 전달할 날짜
+	    Date serverDate = serverCal.getTime();
+	    Date voteDate = voteCal != null ? voteCal.getTime() : null;
+	    
+	    Map<String, Integer> voteCounts = voteService.countVoteStatus(bd_number);
 	    Map<String, Object> result = new HashMap<>();
 	    
 	    result.put("voteStatus", voteStatus);
 	    result.putAll(voteCounts); 
 	    log.info("투표 집계: " + voteCounts); // {like=개수, dislike=개수}
-	    
-	    result.put("voteDate", vt_vo != null ? vt_vo.getVt_register_date() : null);
-	    result.put("serverDate", new Date()); // 현재 서버 날짜 및 시간
+	 
+	    result.put("voteDate", voteDate); // 투표 등록 날짜
+	    result.put("serverDate", serverDate); // 현재 서버 날짜
 
 	    log.info("반환 컬럼: " + result.keySet());
 	    

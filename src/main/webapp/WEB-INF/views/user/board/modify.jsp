@@ -11,7 +11,7 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>데브데이: 커뮤니티</title>
+				<title>데브데이&#58; 커뮤니티</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 

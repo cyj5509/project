@@ -10,6 +10,10 @@
 	padding: 20px;
 }
 
+.box-footer {
+    margin-bottom: 20px;
+}
+
 .likeCount:hover {
 	background-color: lightblue;
 	color: white;
@@ -24,4 +28,50 @@ input[readonly],
 select[disabled],
 .readonly-div {
 	background-color: white !important;
+}
+
+.comment-form-container {
+    border: 1px solid #ccc; /* 폼에 테두리 적용 */
+    padding: 15px; /* 내부 여백 설정 */
+    margin-bottom: 20px; /* 이 폼과 다른 요소들 사이의 간격 */
+}
+
+.user-inputs {
+    display: flex; /* Flexbox를 사용하여 필드를 가로로 배치 */
+    gap: 10px; /* 필드 사이의 간격 */
+    margin-bottom: 10px; /* 이 섹션과 댓글 입력란 사이의 간격 */
+}
+
+.nickname, .password {
+    flex: 1; /* 사용 가능한 공간에 따라 크기를 조정 */
+}
+
+.nickname {
+    flex-grow: 2; /* 닉네임 필드를 비밀번호 필드보다 더 길게 설정 */
+}
+
+.password {
+    flex-grow: 1;
+}
+
+.comment-input {
+    display: flex;
+    flex-direction: column; /* 세로 방향 배치 */
+}
+
+.content {
+    resize: none; /* 크기 조절 비활성화 */
+    min-height: 100px; /* 최소 높이 설정 */
+    margin-bottom: 10px; /* 버튼과의 간격 */
+}
+
+.comment-buttons {
+    display: flex;
+    justify-content: flex-start; /* 버튼을 왼쪽 정렬 */
+    gap: 10px; /* 버튼 사이의 간격 */
+    margin-bottom: 10px;
+}
+
+.btn-register, .btn-cancel {
+    padding: 5px 15px; /* 버튼 내부 패딩 */
 }

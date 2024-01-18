@@ -295,8 +295,8 @@ public class UserController {
 	public ResponseEntity<String> findPw(HttpSession session, 
 										@RequestParam("us_id") String us_id, // 필수 파라미터(Default: true)
 										@RequestParam(value = "us_name", required = false) String us_name, // 선택적 파라미터
-	                                     @RequestParam(value = "us_email", required = false) String us_email // 선택적 파라미터
-	                                     ) throws Exception {
+	                                    @RequestParam(value = "us_email", required = false) String us_email // 선택적 파라미터
+	                                    ) throws Exception {
 		
 		ResponseEntity<String> entity = null;
 		
