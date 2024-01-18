@@ -238,7 +238,7 @@
 											</div>
 											<!-- 댓글 입력 폼 -->
 											<div class="comment-register-form" style="display:none;">
-												<form id="commentForm" class="comment-form">
+												<form id="commentRegisterForm" class="comment-register-form">
 													<div class="user-inputs">
 														<!-- 회원 여부에 따른 필드 출력 -->
 														<c:choose>
@@ -261,8 +261,8 @@
 													</div>
 													<div class="comment-buttons">
 														<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
-														<button type="button" id="btn_newCommentRegister" class="btn-register">등록</button>
-														<button type="button" id="btn_newCommentCancel" class="btn-cancel">취소</button>
+														<button type="button" id="btn_newCommentRegister" class="btn_commentRegister">등록</button>
+														<button type="button" id="btn_newCommentCancel" class="btn_commentCancel">취소</button>
 													</div>
 												</form>
 											</div>
@@ -281,24 +281,45 @@
 													</thead>
 													<tbody></tbody>
 												</table>
-												<div id="commentPaging"></div>
+												<div id="commentPaging"><!-- 댓글 목록 동적 생성 --></div>
 											</div>
-											<!-- Handlebars 템플릿 정의 -->
-											<script id="comment-template" type="text/x-handlebars-template">
-												<tr class="{{#if isReply}}reply{{else}}comment{{/if}}">
-														<td class="comment-user">
-															{{#if us_id}}{{us_id}}{{else}}{{cm_guest_nickname}}{{/if}}															
+											<!-- 댓글 목록용 Handlebars 템플릿 정의 -->
+											<script id="comment-list-template" type="text/x-handlebars-template">
+												<tr class="{{#if isReply}}reply{{else}}comment{{/if}}" data-cm_code="{{cm_code}}"
+													data-us_id="{{us_id}}">
+													<td class="comment-user">
+														{{#if us_id}}{{us_id}}{{else}}{{cm_guest_nickname}}{{/if}}															
+													</td>
+													<td class="comment-content" style="text-align: justify;">
+														{{cm_content}}
+															<div class="menu-items" style="display: none;">
+																<button class="btn_commentModify">수정</button>
+																<button class="btn_commentDelete">삭제</button>
+																<button class="btn_commentReply">답글</button>
+															</div>
+													</td>
+													<td class="comment-date">{{formatDate cm_register_date}}</td>
+													<td class="comment-date">{{formatDate cm_update_date}}</td>	
+												</tr>
+											</script>
+											<!-- 댓글 수정용 Handlebars 템플릿 정의 -->
+											<script id="comment-edit-template" type="text/x-handlebars-template">
+												<tr class="comment-edit-form" data-cm_code="{{cm_code}}" data-us_id="{{us_id}}">
+														<td colspan="4">
+																<form class="edit-form">
+																		{{#if isMember}}
+																				<!-- 회원 댓글인 경우: 아이디 필드만 출력 -->
+																				<input type="text" class="form-control userId" name="us_id" value="{{us_id}}" readonly>
+																		{{else}}
+																				<!-- 비회원 댓글인 경우: 닉네임과 비밀번호 필드 출력 -->
+																				<input type="text" class="form-control nickname" name="cm_guest_nickname" value="{{cm_guest_nickname}}" readonly>
+																				<input type="password" class="form-control password" name="cm_guest_pw" placeholder="비밀번호">
+																		{{/if}}
+																		<textarea name="cm_content" class="form-control content">{{cm_content}}</textarea>
+																		<button type="button" class="btn-save-edit">저장</button>
+																		<button type="button" class="btn-cancel-edit">취소</button>
+																</form>
 														</td>
-														<td class="comment-content" style="text-align: justify;">
-															{{cm_content}}
-																<div class="menu-items" style="display: none;">
-																		<button class="btn_commentModify">수정</button>
-																		<button class="btn_commentDelete">삭제</button>
-																		<button class="btn_commentReply">답글</button>
-																</div>
-														</td>
-														<td class="comment-date">{{formatDate cm_register_date}}</td>
-														<td class="comment-date">{{formatDate cm_update_date}}</td>	
 												</tr>
 											</script>
 										</div>
@@ -505,14 +526,15 @@
 									type: 'POST', // ATTP 요청 방식(GET, POST 등)
 									contentType: 'application/json', // 서버로 보내는 데이터의 타입
 									data: JSON.stringify(commentData),
-									dataType: 'text', // 서버에서 응답으로 받기를 원하는 데이터 타입
+									dataType: 'json', // 서버에서 응답으로 받기를 원하는 데이터 타입
 									success: function (response) {
-										if (response == "ok") {
+										if (response.status == "ok") {
 											alert("댓글이 정상적으로 입력되었습니다.");
+											console.log("추가된 댓글 코드:", response.cm_code);
 											$(".comment-register-form").hide(); // 폼 숨김
-											loadComments(bd_number, currentPage);
-										} else if (response == "fail") {
-											alert("비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
+											loadComments(bd_number, currentPage); // 댓글 목록 새로고침
+										} else {
+											alert("오류가 발생했습니다. 나중에 다시 시도해 주세요.");
 										}
 									}
 								});
@@ -542,13 +564,14 @@
 										commentsArea.empty(); // 기존의 댓글 목록을 비움
 
 										// 핸들바 템플릿 가져오기
-										let source = $("#comment-template").html();
+										let source = $("#comment-list-template").html();
 										let template = Handlebars.compile(source);
 
 										// 각 댓글에 대해 HTML 생성 및 추가
 										response.comments.forEach(function (comment) {
 											// 댓글 데이터를 위한 컨텍스트 생성
 											let commentContext = {
+												cm_code: comment.cm_code,
 												us_id: comment.us_id,
 												cm_guest_nickname: comment.cm_guest_nickname,
 												cm_content: comment.cm_content,
@@ -560,6 +583,7 @@
 											commentsArea.append(commentHtml); // 생성된 HTML을 댓글 목록에 추가
 
 											// 대댓글 처리★★★★★(생략됨 추후 수정)
+											/*
 											if (comment.replies) {
 												// 각 대댓글에 대해 HTML 생성 및 추가
 												comment.replies.forEach(function (reply) {
@@ -568,6 +592,7 @@
 													commentsArea.append(replyHtml); // 생성된 HTML을 댓글 목록에 추가
 												});
 											}
+											*/
 										});
 										// 페이징 컨트롤을 화면에 표시하는 함수 호출
 										printPagination(response.pageInfo, $('#commentPaging'))
@@ -674,6 +699,112 @@
 								if (!$(e.target).closest('.comment-content').length) {
 									// 내부 또는 자신이 클릭되지 않았다면 열려 있는 모든 '.menu-items'를 숨깁
 									$('.menu-items').hide();
+								}
+							});
+
+							// 댓글 수정 버튼 클릭 이벤트
+							$(document).on('click', '.btn_commentModify', function () {
+
+								// 수정 메뉴 클릭 시 기존 수정 폼이 열려 있는 경우 제거
+								$('.comment-edit-form').remove();
+
+								let commentRow = $(this).closest('tr');
+								let cm_code = commentRow.data('cm_code');
+								console.log("댓글 코드 1:", cm_code);
+
+								let cm_content = commentRow.find('.comment-content').clone() // 내용 복제
+									.children().remove().end() // 자식 요소(메뉴 항목) 제거
+									.text().trim(); // 텍스트 추출
+								let isMember = commentRow.data('us_id') ? true : false;; // 회원 여부 데이터 속성 사용
+								console.log("회원 여부:", isMember);
+								let commentUser = commentRow.find('.comment-user').text().trim();
+
+								// 수정 폼 템플릿을 가져와서 데이터를 설정
+								let editFormHtml = Handlebars.compile($("#comment-edit-template").html())({
+									cm_code: cm_code,
+									cm_content: cm_content,
+									isMember: isMember, // 회원 여부 전달
+									// 비회원인 경우 undefined로 설정하여 템플릿에서 렌더링하지 않음
+									us_id: isMember ? commentUser : undefined,
+									// 회원인 경우 undefined로 설정하여 템플릿에서 렌더링하지 않음
+									cm_guest_nickname: !isMember ? commentUser : undefined
+								});
+
+								// 현재 댓글 바로 아래에 수정 폼 삽입
+								commentRow.after(editFormHtml);
+								// commentRow.hide(); // 필요한 경우 원본 댓글 숨김
+							});
+
+							// 수정 폼의 저장 버튼 클릭 이벤트
+							$(document).on('click', '.btn-save-edit', function () {
+								let formRow = $(this).closest('.comment-edit-form');
+								let cm_code = formRow.data('cm_code');
+								console.log("댓글 코드 2:", cm_code);
+
+								let us_id = formRow.data('us_id'); // 회원 아이디 데이터셋 속성 사용
+								let guest_pw_input = formRow.find('input[name="cm_guest_pw"]');
+								let cm_content = formRow.find('textarea[name="cm_content"]').val();
+
+								// 비회원 댓글인 경우에만 비밀번호 입력 확인
+								if (!us_id && guest_pw_input.length > 0 && (!guest_pw_input.val() || guest_pw_input.val().trim() == '')) {
+									alert("작성 시 입력했던 비밀번호를 입력해 주세요.");
+									guest_pw_input.focus();
+									return;
+								}
+
+								let guest_pw = guest_pw_input.val(); // 비회원 비밀번호 추출
+
+								// AJAX 요청을 통해 서버에 수정 요청을 보냄
+								$.ajax({
+									url: '/comment/manageComments?action=modify',
+									type: 'POST',
+									contentType: 'application/json',
+									data: JSON.stringify({
+										cm_code: cm_code,
+										cm_guest_pw: guest_pw,
+										cm_content: cm_content
+									}),
+									dataType: 'json',
+									success: function (response) {
+										if (response.status == 'ok') {
+											alert('댓글이 정상적으로 수정되었습니다.');
+											formRow.remove(); // 수정 폼 제거
+											loadComments(bd_number, currentPage); // 댓글 목록 새로고침
+										} else if (response == "fail") {
+											alert("오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+										}
+									},
+									error: function (xhr, status, error) {
+										if (xhr.status == 401) {
+											alert(xhr.responseJSON.message);
+										}
+									}
+								});
+							});
+
+							// 수정 폼의 취소 버튼 클릭 이벤트
+							$(document).on('click', '.btn-cancel-edit', function () {
+								// $(this).closest('tr').prev('tr').show(); // 원래의 댓글 내용 다시 표시
+								$(this).closest('tr').remove(); // 수정 폼 제거
+							});
+
+							// 댓글 삭제 버튼 클릭 이벤트
+							$(document).on('click', '.btn_commentDelete', function () {
+								let cm_code = $(this).closest('tr').data('cm_code');
+
+								if (confirm('댓글을 정말로 삭제하시겠습니까?')) {
+									$.ajax({
+										url: '/comment/manageComments?action=delete',
+										type: 'POST',
+										contentType: 'application/json',
+										data: JSON.stringify({ cm_code: cm_code }),
+										success: function (response) {
+											if (response.status == 'ok') {
+												alert('댓글이 정상적으로 삭제되었습니다.');
+												loadComments(bd_number, currentPage); // 댓글 목록 새로고침
+											}
+										}
+									});
 								}
 							});
 

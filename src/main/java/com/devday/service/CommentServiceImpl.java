@@ -1,15 +1,12 @@
 package com.devday.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devday.domain.CommentVO;
 import com.devday.dto.Criteria;
-import com.devday.dto.PageDTO;
 import com.devday.mapper.CommentMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -29,11 +26,12 @@ public class CommentServiceImpl implements CommentService {
         switch (action) {
             case "insert":
                 commentMapper.insert(cm_vo);
+                // log.info("댓글 코드: " + cm_vo.getCm_code());
                 break;
             case "modify":
                 commentMapper.modify(cm_vo);
                 break;
-            case "delete":
+            case "delete":            	
                 commentMapper.delete(cm_vo.getCm_code());
                 break;
         }
@@ -55,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 	        List<CommentVO> replies = commentMapper.getReply(comment.getCm_code());
 	        comment.setReplies(replies); // CommentVO에 대댓글 목록을 설정
 	    }
-
+	    
 	    return comments; // 수정된 댓글 목록 반환
 	}
 

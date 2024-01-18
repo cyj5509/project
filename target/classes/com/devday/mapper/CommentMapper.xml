@@ -7,6 +7,10 @@
 
 <!-- 댓글(대댓글) 추가 -->
 <insert id="insert" parameterType="CommentVO">
+	<!-- 댓글 추가 후, 생성된 cm_code(댓글 코드) 값을 조회하기 위한 selectKey -->
+	<selectKey keyProperty="cm_code" resultType="Long" order="AFTER">
+        SELECT sequence_cm_code.CURRVAL FROM DUAL
+    </selectKey>
 	INSERT INTO 
 		comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_register_date, cm_guest_nickname, cm_guest_pw)
 	VALUES 
