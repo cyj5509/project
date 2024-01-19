@@ -266,9 +266,9 @@
 													</div>
 												</form>
 											</div>
-
 											<!-- 댓글 목록 영역 -->
 											<div id="commentsArea">
+												<p style="font-size: 14px; text-align: right;">* 댓글 내용 클릭 시 수정&#47;삭제&#47;답글 가능</p>
 												<!-- 댓글 목록 테이블 -->
 												<table id="commentTable" class="table table-sm table-bordered comment-table">
 													<thead class="thead-dark">
@@ -279,32 +279,32 @@
 															<th style="width: 10%">수정일</th>
 														</tr>
 													</thead>
-													<tbody></tbody>
+													<tbody><!-- 댓글 목록 동적 생성 --></tbody>
 												</table>
-												<div id="commentPaging"><!-- 댓글 목록 동적 생성 --></div>
+												<div id="commentPaging"><!-- 댓글 페이징 동적 생성 --></div>
 											</div>
 											<!-- 댓글 목록용 Handlebars 템플릿 정의 -->
 											<script id="comment-list-template" type="text/x-handlebars-template">
-												<tr class="{{#if isReply}}reply{{else}}comment{{/if}}" data-cm_code="{{cm_code}}"
-													data-us_id="{{us_id}}">
-													<td class="comment-user">
-														{{#if us_id}}{{us_id}}{{else}}{{cm_guest_nickname}}{{/if}}															
-													</td>
-													<td class="comment-content" style="text-align: justify;">
-														{{cm_content}}
-															<div class="menu-items" style="display: none;">
-																<button class="btn_commentModify">수정</button>
-																<button class="btn_commentDelete">삭제</button>
-																<button class="btn_commentReply">답글</button>
-															</div>
-													</td>
-													<td class="comment-date">{{formatDate cm_register_date}}</td>
-													<td class="comment-date">{{formatDate cm_update_date}}</td>	
+												<tr class="{{#if isReply}}reply{{else}}comment{{/if}}" data-cm_code="{{cm_code}}" 
+													{{#if us_id}}data-us_id="{{us_id}}"{{/if}}>
+														<td class="comment-user">
+															{{#if us_id}}{{us_id}}{{else}}{{cm_guest_nickname}}{{/if}}															
+														</td>
+														<td class="comment-content" style="text-align: justify;">
+															{{cm_content}}
+																<div class="menu-items" style="display: none;">
+																	<button class="btn_commentModify">수정</button>
+																	<button class="btn_commentDelete">삭제</button>
+																	<button class="btn_commentReply">답글</button>
+																</div>
+														</td>
+														<td class="comment-date">{{formatDate cm_register_date}}</td>
+														<td class="comment-date">{{formatDate cm_update_date}}</td>	
 												</tr>
 											</script>
 											<!-- 댓글 수정용 Handlebars 템플릿 정의 -->
 											<script id="comment-edit-template" type="text/x-handlebars-template">
-												<tr class="comment-edit-form" data-cm_code="{{cm_code}}" data-us_id="{{us_id}}">
+												<tr class="comment-edit-form" data-cm_code="{{cm_code}}" {{#if us_id}}data-us_id="{{us_id}}"{{/if}}>
 														<td colspan="4">
 																<form class="edit-form">
 																		{{#if isMember}}
@@ -513,7 +513,7 @@
 									return;
 								}
 
-								let commentData = {
+								let insertData = {
 									bd_number: bd_number,
 									us_id: us_id,
 									cm_guest_nickname: guest_nickname,
@@ -525,7 +525,7 @@
 									url: '/comment/manageComments?action=insert', // 요청을 보낼 서버의 URL
 									type: 'POST', // ATTP 요청 방식(GET, POST 등)
 									contentType: 'application/json', // 서버로 보내는 데이터의 타입
-									data: JSON.stringify(commentData),
+									data: JSON.stringify(insertData),
 									dataType: 'json', // 서버에서 응답으로 받기를 원하는 데이터 타입
 									success: function (response) {
 										if (response.status == "ok") {
@@ -711,23 +711,37 @@
 								let commentRow = $(this).closest('tr');
 								let cm_code = commentRow.data('cm_code');
 								console.log("댓글 코드 1:", cm_code);
-
 								let cm_content = commentRow.find('.comment-content').clone() // 내용 복제
 									.children().remove().end() // 자식 요소(메뉴 항목) 제거
 									.text().trim(); // 텍스트 추출
-								let isMember = commentRow.data('us_id') ? true : false;; // 회원 여부 데이터 속성 사용
-								console.log("회원 여부:", isMember);
-								let commentUser = commentRow.find('.comment-user').text().trim();
+
+								// 회원 여부 확인	
+								let us_id = commentRow.data('us_id'); // 회원 아이디 데이터셋 속성 사용
+								console.log("회원 아이디:", us_id);
+								console.log("사용자명:", commentRow.find('.comment-user').text().trim());
+								let isMemberComment = (us_id != undefined && us_id.trim() !== ''); // 회원 댓글 여부
+								// let isMemberComment = us_id != undefined;
+								let isCurrentUserMember = $("#us_id").val() != null; // 현재 사용자가 회원인지 여부
+								console.log("회원 댓글 여부:", isMemberComment);
+								console.log("현재 사용자가 회원인지 여부:", isCurrentUserMember);
+
+								// 비회원이 회원 댓글 수정 시도 시 차단
+								if (isMemberComment && !isCurrentUserMember) {
+									alert("비회원은 회원의 댓글을 수정할 수 없습니다.");
+									return;
+								}
+
+								let commentUser = isMemberComment ? us_id : commentRow.find('.comment-user').text().trim();
 
 								// 수정 폼 템플릿을 가져와서 데이터를 설정
 								let editFormHtml = Handlebars.compile($("#comment-edit-template").html())({
 									cm_code: cm_code,
 									cm_content: cm_content,
-									isMember: isMember, // 회원 여부 전달
+									isMember: isMemberComment, // 회원 여부 전달
 									// 비회원인 경우 undefined로 설정하여 템플릿에서 렌더링하지 않음
-									us_id: isMember ? commentUser : undefined,
+									us_id: isMemberComment ? commentUser : undefined,
 									// 회원인 경우 undefined로 설정하여 템플릿에서 렌더링하지 않음
-									cm_guest_nickname: !isMember ? commentUser : undefined
+									cm_guest_nickname: !isMemberComment ? commentUser : undefined
 								});
 
 								// 현재 댓글 바로 아래에 수정 폼 삽입
@@ -739,31 +753,36 @@
 							$(document).on('click', '.btn-save-edit', function () {
 								let formRow = $(this).closest('.comment-edit-form');
 								let cm_code = formRow.data('cm_code');
-								console.log("댓글 코드 2:", cm_code);
+								console.log("댓글 코드 2:", cm_code); // 댓글 코드 데이터셋 속성 사용
 
 								let us_id = formRow.data('us_id'); // 회원 아이디 데이터셋 속성 사용
 								let guest_pw_input = formRow.find('input[name="cm_guest_pw"]');
 								let cm_content = formRow.find('textarea[name="cm_content"]').val();
 
 								// 비회원 댓글인 경우에만 비밀번호 입력 확인
-								if (!us_id && guest_pw_input.length > 0 && (!guest_pw_input.val() || guest_pw_input.val().trim() == '')) {
-									alert("작성 시 입력했던 비밀번호를 입력해 주세요.");
-									guest_pw_input.focus();
-									return;
+								let guest_pw = "";
+								if (!us_id && guest_pw_input.length > 0) {
+									guest_pw = guest_pw_input.val(); // 비회원 비밀번호 추출	
+									if (!guest_pw || guest_pw.trim() == '') {
+										alert("작성 시 입력했던 비밀번호를 입력해 주세요.");
+										guest_pw_input.focus();
+										return;
+									}
 								}
 
-								let guest_pw = guest_pw_input.val(); // 비회원 비밀번호 추출
+								let modifyData = {
+									cm_code: cm_code,
+									us_id: us_id,
+									cm_guest_pw: guest_pw,
+									cm_content: cm_content
+								}
 
 								// AJAX 요청을 통해 서버에 수정 요청을 보냄
 								$.ajax({
 									url: '/comment/manageComments?action=modify',
 									type: 'POST',
 									contentType: 'application/json',
-									data: JSON.stringify({
-										cm_code: cm_code,
-										cm_guest_pw: guest_pw,
-										cm_content: cm_content
-									}),
+									data: JSON.stringify(modifyData),
 									dataType: 'json',
 									success: function (response) {
 										if (response.status == 'ok') {
@@ -777,6 +796,8 @@
 									error: function (xhr, status, error) {
 										if (xhr.status == 401) {
 											alert(xhr.responseJSON.message);
+											guest_pw_input.val("");
+											guest_pw_input.focus();
 										}
 									}
 								});
@@ -792,12 +813,16 @@
 							$(document).on('click', '.btn_commentDelete', function () {
 								let cm_code = $(this).closest('tr').data('cm_code');
 
+								let deleteData = {
+									cm_code: cm_code,
+								}
+
 								if (confirm('댓글을 정말로 삭제하시겠습니까?')) {
 									$.ajax({
 										url: '/comment/manageComments?action=delete',
 										type: 'POST',
 										contentType: 'application/json',
-										data: JSON.stringify({ cm_code: cm_code }),
+										data: JSON.stringify(deleteData),
 										success: function (response) {
 											if (response.status == 'ok') {
 												alert('댓글이 정상적으로 삭제되었습니다.');

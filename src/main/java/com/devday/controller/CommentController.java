@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.devday.domain.CommentVO;
 import com.devday.domain.UserVO;
@@ -49,25 +48,33 @@ public class CommentController {
 
 		// 세션에서 사용자 상태 확인
 		UserVO us_vo = (UserVO) session.getAttribute("userStatus");
-		
+
 		// 세션 기반 권한 관리가 아닌 요청마다 권한을 검증하는 방식 채택(UsBoardController와 상이함)
 		if (us_vo != null) {
-			// 회원이 자신의 댓글을 수정/삭제하는 경우에만 허용
-	        if (!us_vo.getUs_id().equals(cm_vo.getUs_id())) {
-	        	Map<String, String> errorResponse = new HashMap<>();
-	            errorResponse.put("message", "해당 작업을 수행할 권한이 없습니다.");
-	            
-	            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-	        }
-		} else {
-			// 비회원 사용자인 경우의 처리 로직
-			cm_vo.setUs_id(""); // 회원 아이디를 빈 문자열로 설정
+			// 회원이 자신이나 다른 사용자의 댓글을 수정/삭제하는 경우
+			if (cm_vo.getUs_id() == null) {
+				// 이 조건을 먼저 확인하지 않으면, '권한 없음' 오류 메시지가 반환될 수 있음 
+				log.info("댓글 사용자: " + cm_vo.getUs_id());
+				// 비회원 댓글을 수정하는 경우, 비밀번호 검증 진행
+				Map<String, Object> guestResponse = handleGuestComment(cm_vo, action);
+				if (guestResponse != null && "fail".equals(guestResponse.get("status"))) {
+					// 인증 실패(비밀번호 불일치 등)의 경우, 오류 메시지와 함께 인증 실패 응답 반환
+					return new ResponseEntity<>(guestResponse, HttpStatus.UNAUTHORIZED); // 상태 코드 401
+				}
+			} else if (!us_vo.getUs_id().equals(cm_vo.getUs_id())) {
+				// 다른 회원의 댓글 수정 시도 시 '권한 없음' 메시지 반환
+				Map<String, String> errorResponse = new HashMap<>(); // 클라이언트에 전달될 오류 메시지를 담는 변수
+				errorResponse.put("message", "해당 작업을 수행할 권한이 없습니다.");
 
-			// 비회원 사용자의 댓글 수정/삭제에 대한 인증 절차 진행
+				return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED); // 상태 코드 401
+			}
+		} else {
+			// cm_vo.setUs_id(null); // 회원 아이디를 null로 설정
+			// 비회원의 댓글 수정/삭제에 대한 비밀번호 검증 절차 진행
 			Map<String, Object> guestResponse = handleGuestComment(cm_vo, action);
 			if (guestResponse != null && "fail".equals(guestResponse.get("status"))) {
 				// 인증 실패(비밀번호 불일치 등)의 경우, 오류 메시지와 함께 인증 실패 응답 반환
-				return new ResponseEntity<>(guestResponse, HttpStatus.UNAUTHORIZED); // 비밀번호 불일치 등의 오류 발생 시
+				return new ResponseEntity<>(guestResponse, HttpStatus.UNAUTHORIZED); // 상태 코드 401
 			}
 		}
 		// 댓글 추가, 수정, 삭제 처리
@@ -82,12 +89,10 @@ public class CommentController {
 		} else {
 			response.put("status", "fail");
 		}
-
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-
 	
-	// 비회원 댓글 처리를 위한 메서드: 닉네임과 비밀번호를 설정하고, 수정/삭제 시 비밀번호를 검증
+	// 댓글 관리 중 비회원 댓글 처리를 위한 별도의 메서드(manageComments에서 활용함)
 	private Map<String, Object> handleGuestComment(CommentVO cm_vo, String action) {
 
 		Map<String, Object> response = new HashMap<>();
@@ -107,10 +112,8 @@ public class CommentController {
 
 		// 수정 또는 삭제 시 비밀번호 확인
 		if ("modify".equals(action) || "delete".equals(action)) {
-
-			// 특정 댓글 조회
-			CommentVO db_vo = commentService.findComment(cm_vo.getCm_code());
-
+			
+			CommentVO db_vo = commentService.findComment(cm_vo.getCm_code()); // 특정 댓글 조회
 			if (db_vo == null || !passwordEncoder.matches(guest_pw, db_vo.getCm_guest_pw())) {
 				// 비밀번호가 일치하지 않는 경우
 				response.put("status", "fail");

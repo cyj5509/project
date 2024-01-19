@@ -515,6 +515,8 @@ CREATE TABLE comment_table (
 DROP SEQUENCE sequence_cm_code;
 CREATE SEQUENCE sequence_cm_code;
 
--- 전체 데이터 조회 및 삭제(384개 행 삽입)
+-- 전체 데이터 조회 및 삭제
 SELECT * FROM comment_table;
 DELETE FROM comment_table;
+
+
