@@ -872,7 +872,7 @@
 								// $('#confirmDelete').data('us_id', us_id); // 회원 아이디 데이터 바인딩
 
 								// 댓글 삭제 요청에 사용되는 데이터 객체로 JSON 형식으로 변환되어 서버에 전송
-								let deleteData = { cm_code: cm_code };
+								let deleteData = { cm_code: cm_code }; 
 								// 회원 댓글인 경우
 								if (us_id) {
 									deleteData.us_id = us_id; // 회원 아이디 추가
