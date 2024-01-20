@@ -74,6 +74,13 @@
 						.menu-items button:last-child {
 							margin-bottom: 0;
 						}
+
+						.commentInfo {
+							font-size: 14px;
+							color: red;
+							text-align: center;
+							margin-top: 15px;
+						}
 					</style>
 
 					<script>
@@ -214,7 +221,7 @@
 														<button type="button" class="btn btn-dark btn_allCommentToggle">닫기 ▲</button>
 													</div>
 													<!-- 게시물 수정/삭제 시의 비밀번호 입력 커스텀 모달(초기에는 숨겨져 있음) -->
-													<div id="passwordModal" class="pw-modal" style="display:none;">
+													<div id="boardPwModal" class="pw-modal" style="display:none;">
 														<div class="pw-modal-content">
 															<div class="pw-modal-header">
 																<span id="pwModalMessage1"></span>
@@ -223,7 +230,8 @@
 															<div class="pw-modal-body">
 																<form id="passwordForm" method="post" action="/user/board/checkPw">
 																	<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
-																	<input type="password" id="bd_guest_pw" name="bd_guest_pw" placeholder="비밀번호를 입력하세요.">
+																	<input type="password" id="bd_guest_pw" name="bd_guest_pw"
+																		placeholder="비밀번호를 입력해 주세요.">
 																	<input type="hidden" id="formAction" name="action" value="">
 																</form>
 																<p id="pwModalMessage2"></p>
@@ -283,7 +291,7 @@
 												</table>
 												<div id="commentPaging"><!-- 댓글 페이징 동적 생성 --></div>
 											</div>
-											<!-- 댓글 목록용 Handlebars 템플릿 정의 -->
+											<!-- 댓글 목록용 Handlebars 템플릿 -->
 											<script id="comment-list-template" type="text/x-handlebars-template">
 												<tr class="{{#if isReply}}reply{{else}}comment{{/if}}" data-cm_code="{{cm_code}}" 
 													{{#if us_id}}data-us_id="{{us_id}}"{{/if}}>
@@ -302,7 +310,7 @@
 														<td class="comment-date">{{formatDate cm_update_date}}</td>	
 												</tr>
 											</script>
-											<!-- 댓글 수정용 Handlebars 템플릿 정의 -->
+											<!-- 댓글 수정용 Handlebars 템플릿 -->
 											<script id="comment-edit-template" type="text/x-handlebars-template">
 												<tr class="comment-edit-form" data-cm_code="{{cm_code}}" {{#if us_id}}data-us_id="{{us_id}}"{{/if}}>
 														<td colspan="4">
@@ -322,6 +330,32 @@
 														</td>
 												</tr>
 											</script>
+											<!-- 댓글 삭제용 모달 -->
+											<div class="modal fade" id="deleteCommentModal" tabindex="-1"
+												aria-labelledby="deleteCommentModalLabel" aria-hidden="true" data-backdrop="static"
+												data-keyboard="false">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="deleteCommentModalLabel">[비회원/삭제] 댓글 삭제 확인</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<p>댓글을 정말로 삭제하시겠습니까?</p>
+															<input type="password" class="form-control" id="commentDeletePw"
+																placeholder="비밀번호를 입력해 주세요.">
+															<p class="commentInfo">* 댓글 작성 시의 비밀번호 입력</p>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-danger" id="confirmDelete">삭제</button>
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+														</div>
+													</div>
+												</div>
+											</div>
+
 										</div>
 									</div>
 								</div>
@@ -373,28 +407,28 @@
 
 							if (action == 'modify') {
 								// 수정 버튼 클릭 시 동작
-								pwModalMessage1.textContent = '[비회원/수정]';
+								pwModalMessage1.textContent = '[비회원/수정] 게시물 수정 확인';
 								pwModalMessage2.textContent = '* 게시물 수정 시 비밀번호 입력'
 							} else if (action == 'delete') {
 								// 삭제 버튼 클릭 시 동작
-								pwModalMessage1.textContent = '[비회원/삭제]';
+								pwModalMessage1.textContent = '[비회원/삭제] 게시물 삭제 확인';
 								pwModalMessage2.textContent = '* 게시물 삭제 시 비밀번호 입력'
 							}
 
 							document.getElementById('formAction').value = action;
-							document.getElementById('passwordModal').style.display = 'block';
+							document.getElementById('boardPwModal').style.display = 'block';
 						}
 
 						// 비밀번호 입력 모달을 닫는 함수
 						function closePasswordModal() {
-							let modalContent = document.getElementById('passwordModal').querySelector('.pw-modal-content');
+							let modalContent = document.getElementById('boardPwModal').querySelector('.pw-modal-content');
 							// 모달 컨텐츠 위치 초기화
 							modalContent.style.top = "50%";
 							modalContent.style.left = "50%";
 							modalContent.style.transform = "translate(-50%, -50%)";
 
 							document.getElementById('bd_guest_pw').value = ''; // 비밀번호 입력 필드 초기화
-							document.getElementById('passwordModal').style.display = 'none'; // 모달 숨기기
+							document.getElementById('boardPwModal').style.display = 'none'; // 모달 숨기기
 						}
 
 						// 수정 버튼 클릭 시 이벤트 핸들러
@@ -478,7 +512,7 @@
 							loadComments(bd_number, currentPage);
 
 							// 댓글 작성 버튼 클릭 이벤트
-							$(".btn_commentWrite").on("click", function () {
+							$(".btn_commentWrite").off("click").on("click", function () {
 								// 폼을 항상 표시하도록 설정
 								$(".comment-register-form").show(); // $(".comment-register-form").toggle();
 							});
@@ -513,6 +547,7 @@
 									return;
 								}
 
+								// 댓글 추가 요청에 사용되는 데이터 객체로 JSON 형식으로 변환되어 서버에 전송
 								let insertData = {
 									bd_number: bd_number,
 									us_id: us_id,
@@ -703,7 +738,7 @@
 							});
 
 							// 댓글 수정 버튼 클릭 이벤트
-							$(document).on('click', '.btn_commentModify', function () {
+							$(document).off('click').on('click', '.btn_commentModify', function () {
 
 								// 수정 메뉴 클릭 시 기존 수정 폼이 열려 있는 경우 제거
 								$('.comment-edit-form').remove();
@@ -719,11 +754,10 @@
 								let us_id = commentRow.data('us_id'); // 회원 아이디 데이터셋 속성 사용
 								console.log("회원 아이디:", us_id);
 								console.log("사용자명:", commentRow.find('.comment-user').text().trim());
-								let isMemberComment = (us_id != undefined && us_id.trim() !== ''); // 회원 댓글 여부
-								// let isMemberComment = us_id != undefined;
+								let isMemberComment = (us_id != undefined && us_id.trim() !== ''); // 회원 댓글 여부								
 								let isCurrentUserMember = $("#us_id").val() != null; // 현재 사용자가 회원인지 여부
 								console.log("회원 댓글 여부:", isMemberComment);
-								console.log("현재 사용자가 회원인지 여부:", isCurrentUserMember);
+								console.log("현재 사용자의 회원 여부:", isCurrentUserMember);
 
 								// 비회원이 회원 댓글 수정 시도 시 차단
 								if (isMemberComment && !isCurrentUserMember) {
@@ -759,23 +793,24 @@
 								let guest_pw_input = formRow.find('input[name="cm_guest_pw"]');
 								let cm_content = formRow.find('textarea[name="cm_content"]').val();
 
-								// 비회원 댓글인 경우에만 비밀번호 입력 확인
-								let guest_pw = "";
-								if (!us_id && guest_pw_input.length > 0) {
-									guest_pw = guest_pw_input.val(); // 비회원 비밀번호 추출	
-									if (!guest_pw || guest_pw.trim() == '') {
-										alert("작성 시 입력했던 비밀번호를 입력해 주세요.");
-										guest_pw_input.focus();
-										return;
-									}
-								}
-
+								// 댓글 수정 요청에 사용되는 데이터 객체로 JSON 형식으로 변환되어 서버에 전송
 								let modifyData = {
 									cm_code: cm_code,
 									us_id: us_id,
-									cm_guest_pw: guest_pw,
 									cm_content: cm_content
 								}
+
+								// 비회원 댓글인 경우에만 비밀번호 입력 확인 및 비밀번호 추가
+								if (!us_id && guest_pw_input.length > 0) {
+									let guest_pw = guest_pw_input.val(); // 비회원 비밀번호 추출	
+									if (!guest_pw || guest_pw.trim() == '') {
+										alert("댓글 작성 시 입력했던 비밀번호를 입력해 주세요.");
+										guest_pw_input.focus();
+										return;
+									}
+									modifyData.cm_guest_pw = guest_pw; // 비회원 비밀번호 추가
+								}
+
 
 								// AJAX 요청을 통해 서버에 수정 요청을 보냄
 								$.ajax({
@@ -795,7 +830,10 @@
 									},
 									error: function (xhr, status, error) {
 										if (xhr.status == 401) {
-											alert(xhr.responseJSON.message);
+											alert(xhr.responseJSON.message); // "권한 없음" 메시지 출력
+											$('.comment-edit-form').remove(); // 권한이 없는 경우 기존 수정 폼 제거
+										} else if (xhr.status == 403) {
+											alert(xhr.responseJSON.message); // "비밀번호 불일치" 메시지 출력
 											guest_pw_input.val("");
 											guest_pw_input.focus();
 										}
@@ -810,28 +848,102 @@
 							});
 
 							// 댓글 삭제 버튼 클릭 이벤트
-							$(document).on('click', '.btn_commentDelete', function () {
-								let cm_code = $(this).closest('tr').data('cm_code');
+							$(document).off('click').on('click', '.btn_commentDelete', function () {
+								let commentRow = $(this).closest('tr');
+								let cm_code = commentRow.data('cm_code'); // 댓글 코드 데이터셋 속성 사용
 
-								let deleteData = {
-									cm_code: cm_code,
+								// 회원 여부 확인	
+								let us_id = commentRow.data('us_id'); // 회원 아이디 데이터셋 속성 사용
+								console.log("회원 아이디:", us_id);
+								console.log("사용자명:", commentRow.find('.comment-user').text().trim());
+								let isMemberComment = (us_id != undefined && us_id.trim() !== ''); // 회원 댓글 여부
+								let isCurrentUserMember = $("#us_id").val() != null; // 현재 사용자가 회원인지 여부
+								console.log("회원 댓글 여부:", isMemberComment);
+								console.log("현재 사용자가 회원인지 여부:", isCurrentUserMember);
+
+								// 비회원이 회원 댓글 삭제 시도 시 차단
+								if (isMemberComment && !isCurrentUserMember) {
+									alert("비회원은 회원의 댓글을 삭제할 수 없습니다.");
+									return;
 								}
 
-								if (confirm('댓글을 정말로 삭제하시겠습니까?')) {
-									$.ajax({
-										url: '/comment/manageComments?action=delete',
-										type: 'POST',
-										contentType: 'application/json',
-										data: JSON.stringify(deleteData),
-										success: function (response) {
-											if (response.status == 'ok') {
-												alert('댓글이 정상적으로 삭제되었습니다.');
-												loadComments(bd_number, currentPage); // 댓글 목록 새로고침
-											}
-										}
-									});
+								// 삭제를 위한 데이터를 모달의 확인 버튼에 바인딩
+								$('#confirmDelete').data('cm_code', cm_code); // 댓글 코드 데이터 바인딩
+								// $('#confirmDelete').data('us_id', us_id); // 회원 아이디 데이터 바인딩
+
+								// 댓글 삭제 요청에 사용되는 데이터 객체로 JSON 형식으로 변환되어 서버에 전송
+								let deleteData = { cm_code: cm_code };
+								// 회원 댓글인 경우
+								if (us_id) {
+									deleteData.us_id = us_id; // 회원 아이디 추가
+
+									if (confirm('댓글을 정말로 삭제하시겠습니까?')) {
+										deleteComment(deleteData); // 회원 아이디를 포함하여 삭제 요청
+									}
+								} else {
+									// 비회원 댓글인 경우, 모달 팝업 표시
+									$('#deleteCommentModal').modal('show');
 								}
 							});
+
+							// 모달 내 삭제 확인 버튼 클릭 이벤트
+							$('#confirmDelete').off('click').on('click', function () {
+								let cm_code = $(this).data('cm_code'); // 댓글 코드 가져오기
+								let guest_pw = $('#commentDeletePw').val();
+
+								// 댓글 삭제 요청에 사용되는 데이터 객체로 JSON 형식으로 변환되어 서버에 전송
+								let deleteData = { cm_code: cm_code };
+
+								if ($("#us_id").val()) {
+									// 회원 댓글 삭제 시, 로그인한 회원 아이디 설정
+									deleteData.us_id = $("#us_id").val(); // 현재 로그인한 회원의 아이디
+								} else {
+									// 비회원 댓글 삭제 시, 비밀번호 확인 및 설정
+									if (!guest_pw || guest_pw.trim() == '') {
+										alert("댓글 작성 시 입력했던 비밀번호를 입력해 주세요.");
+										$("#commentDeletePw").focus();
+										return;
+									}
+									deleteData.cm_guest_pw = guest_pw; // 비회원인 경우 비밀번호도 전송
+								}
+
+								deleteComment(deleteData); // 비밀번호를 포함하여 삭제 요청 함수 호출								
+								$('#commentDeletePw').val(""); // 비밀번호 입력 필드 초기화
+							});
+
+							// 공통 삭제 로직: 매개변수에 기본값을 지정하면 호출 시 생략 가능(생략된 경우 기본값 적용)
+							// 회원은 아이디를, 비회원은 비밀번호를 이용하여 댓글 삭제 처리
+							function deleteComment(deleteData) {
+
+								console.log("삭제 요청 데이터:", deleteData);
+
+								$.ajax({
+									url: '/comment/manageComments?action=delete',
+									type: 'POST',
+									contentType: 'application/json',
+									data: JSON.stringify(deleteData),
+									success: function (response) {
+										if (response.status == 'ok') {
+											alert('댓글이 정상적으로 삭제되었습니다.');
+											$('#deleteCommentModal').modal('hide'); // 삭제 성공시 모달 닫기
+											$('#commentDeletePw').val(""); // 비밀번호 입력 필드 초기화
+											loadComments(bd_number, currentPage); // 댓글 목록 새로고침
+										} else {
+											alert("오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+										}
+									},
+									error: function (xhr, status, error) {
+										if (xhr.status == 401) {
+											alert(xhr.responseJSON.message); // "권한 없음" 메시지 출력
+										} else if (xhr.status == 403) {
+											// "비밀번호 불일치" 메시지 출력 및 모달 다시 열기
+											alert(xhr.responseJSON.message);
+											$('#deleteCommentModal').modal('show');
+											$("#commentDeletePw").focus();
+										}
+									}
+								});
+							}
 
 						}); // ready-end
 					</script>

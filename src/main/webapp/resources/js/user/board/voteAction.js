@@ -91,7 +91,7 @@ $(document).ready(function () {
 		
 		
 		// 모달 설정 코드
-		let modalTitle = action == 'change' ? '[선택 변경]' : '[선택 취소]';
+		let modalTitle = action == 'change' ? '[(비)추천/변경]' : '[(비)추천/취소]';
 		$('#voteChangeModal').find('.modal-title').text(modalTitle);
 		$('#voteChangeModal').find('.modal-body').text(message);
 		

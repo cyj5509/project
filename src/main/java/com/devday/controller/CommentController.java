@@ -53,19 +53,18 @@ public class CommentController {
 		if (us_vo != null) {
 			// 회원이 자신이나 다른 사용자의 댓글을 수정/삭제하는 경우
 			if (cm_vo.getUs_id() == null) {
-				// 이 조건을 먼저 확인하지 않으면, '권한 없음' 오류 메시지가 반환될 수 있음 
-				log.info("댓글 사용자: " + cm_vo.getUs_id());
-				// 비회원 댓글을 수정하는 경우, 비밀번호 검증 진행
+				// 회원이 비회원 댓글을 수정/삭제하는 경우, 비밀번호 검증 진행
 				Map<String, Object> guestResponse = handleGuestComment(cm_vo, action);
 				if (guestResponse != null && "fail".equals(guestResponse.get("status"))) {
+					log.info("비회원 댓글에 대한 비밀번호 인증 실패: " + guestResponse);
 					// 인증 실패(비밀번호 불일치 등)의 경우, 오류 메시지와 함께 인증 실패 응답 반환
-					return new ResponseEntity<>(guestResponse, HttpStatus.UNAUTHORIZED); // 상태 코드 401
+					return new ResponseEntity<>(guestResponse, HttpStatus.FORBIDDEN); // 상태 코드 403
 				}
 			} else if (!us_vo.getUs_id().equals(cm_vo.getUs_id())) {
-				// 다른 회원의 댓글 수정 시도 시 '권한 없음' 메시지 반환
-				Map<String, String> errorResponse = new HashMap<>(); // 클라이언트에 전달될 오류 메시지를 담는 변수
+				// 회원이 다른 회원의 댓글을 수정/삭제 시도 시 
+				cm_vo.setCm_guest_pw(null); // 비회원 비밀번호를 null로 설정
+				Map<String, String> errorResponse = new HashMap<>(); // 클라이언트에 전달(반환)할 오류 메시지를 담는 변수
 				errorResponse.put("message", "해당 작업을 수행할 권한이 없습니다.");
-
 				return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED); // 상태 코드 401
 			}
 		} else {
@@ -74,7 +73,7 @@ public class CommentController {
 			Map<String, Object> guestResponse = handleGuestComment(cm_vo, action);
 			if (guestResponse != null && "fail".equals(guestResponse.get("status"))) {
 				// 인증 실패(비밀번호 불일치 등)의 경우, 오류 메시지와 함께 인증 실패 응답 반환
-				return new ResponseEntity<>(guestResponse, HttpStatus.UNAUTHORIZED); // 상태 코드 401
+				return new ResponseEntity<>(guestResponse, HttpStatus.FORBIDDEN); // 상태 코드 403
 			}
 		}
 		// 댓글 추가, 수정, 삭제 처리
@@ -104,26 +103,26 @@ public class CommentController {
 		
 		String guest_nickname = cm_vo.getCm_guest_nickname();
 		String guest_pw = cm_vo.getCm_guest_pw();
+		log.info("암호화 처리 전 비밀번호: " + guest_pw);
 
 		// 비회원 닉네임 처리: 닉네임이 제공되지 않은 경우 기본값('guest') 설정
 		if (guest_nickname == null || guest_nickname.trim().isEmpty()) {
 			cm_vo.setCm_guest_nickname("guest");
 		}
 
-		// 수정 또는 삭제 시 비밀번호 확인
 		if ("modify".equals(action) || "delete".equals(action)) {
-			
+			// 댓글 수정 또는 삭제 시 비밀번호 확인
 			CommentVO db_vo = commentService.findComment(cm_vo.getCm_code()); // 특정 댓글 조회
 			if (db_vo == null || !passwordEncoder.matches(guest_pw, db_vo.getCm_guest_pw())) {
 				// 비밀번호가 일치하지 않는 경우
 				response.put("status", "fail");
 			    response.put("message", "비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
 			}
-		}
-
-		// 비회원 비밀번호 처리: 비밀번호가 제공된 경우 암호화
-		if (guest_pw != null && !guest_pw.isEmpty()) {
-			cm_vo.setCm_guest_pw(passwordEncoder.encode(guest_pw));
+		} else if (guest_pw != null && !guest_pw.isEmpty()) {
+			// 비회원 비밀번호 처리: 새 댓글 추가 시 암호화
+			String encodedPw = passwordEncoder.encode(guest_pw);
+			cm_vo.setCm_guest_pw(encodedPw);
+			log.info("암호화 처리 후 비밀번호: " + encodedPw);
 		}
 		
 		return response;
