@@ -107,7 +107,7 @@ $(document).ready(function () {
     }
 
 		// '변경' 버튼 클릭 이벤트
-		$('#btn_voteChange').off("click").on("click", function () {
+		$('#btn_voteChange').on("click", function () {
 			console.log("변경 버튼 클릭");
 			actionPerformed = true; // 액션이 수행되었음을 표시
 
@@ -116,7 +116,7 @@ $(document).ready(function () {
 		});
 
 		// '취소' 버튼 클릭 이벤트
-		$('#btn_voteCancel').off("click").on("click", function () {
+		$('#btn_voteCancel').on("click", function () {
 			console.log("취소 버튼 클릭");
 			actionPerformed = true; // 액션이 수행되었음을 표시
 			
@@ -133,8 +133,7 @@ $(document).ready(function () {
 	function handleVoteAction(bd_number, voteType) {
 
 		debouncedAction(bd_number, voteType); // 실제 투표 처리
-		$('#voteChangeModal').modal('hide'); // 모달 닫기
-
+		
 		// 모달이 완전히 닫히고 실행되는 이벤트(hide.bs.modal과는 다소 다름)
 		// 이벤트 핸들러 중복 등록 방지 및 새로운 핸들러 등록
 		$('#voteChangeModal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
@@ -149,6 +148,8 @@ $(document).ready(function () {
 				actionPerformed = false; // 액션 플래그 초기화
 			}
 		});
+
+		$('#voteChangeModal').modal('hide'); // 모달 닫기
 	}
 
 	// 현재 투표 상태와 서버 시간을 확인하고 초기 UI 상태를 설정하는 함수

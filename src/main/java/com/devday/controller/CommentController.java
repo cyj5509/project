@@ -97,9 +97,9 @@ public class CommentController {
 		Map<String, Object> response = new HashMap<>();
 		
 		// 회원 아이디가 설정되어 있는 경우, 비회원 처리 로직 생략
-	    if (cm_vo.getUs_id() != null && !cm_vo.getUs_id().isEmpty()) {
-	        return response;
-	    }
+//	    if (cm_vo.getUs_id() != null && !cm_vo.getUs_id().isEmpty()) {
+//	        return response;
+//	    }
 		
 		String guest_nickname = cm_vo.getCm_guest_nickname();
 		String guest_pw = cm_vo.getCm_guest_pw();

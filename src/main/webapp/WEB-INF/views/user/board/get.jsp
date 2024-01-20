@@ -512,7 +512,7 @@
 							loadComments(bd_number, currentPage);
 
 							// 댓글 작성 버튼 클릭 이벤트
-							$(".btn_commentWrite").off("click").on("click", function () {
+							$(".btn_commentWrite").on("click", function () {
 								// 폼을 항상 표시하도록 설정
 								$(".comment-register-form").show(); // $(".comment-register-form").toggle();
 							});
@@ -738,7 +738,7 @@
 							});
 
 							// 댓글 수정 버튼 클릭 이벤트
-							$(document).off('click').on('click', '.btn_commentModify', function () {
+							$(document).on('click', '.btn_commentModify', function () {
 
 								// 수정 메뉴 클릭 시 기존 수정 폼이 열려 있는 경우 제거
 								$('.comment-edit-form').remove();
@@ -848,7 +848,7 @@
 							});
 
 							// 댓글 삭제 버튼 클릭 이벤트
-							$(document).off('click').on('click', '.btn_commentDelete', function () {
+							$(document).on('click', '.btn_commentDelete', function () {
 								let commentRow = $(this).closest('tr');
 								let cm_code = commentRow.data('cm_code'); // 댓글 코드 데이터셋 속성 사용
 
@@ -869,10 +869,9 @@
 
 								// 삭제를 위한 데이터를 모달의 확인 버튼에 바인딩
 								$('#confirmDelete').data('cm_code', cm_code); // 댓글 코드 데이터 바인딩
-								// $('#confirmDelete').data('us_id', us_id); // 회원 아이디 데이터 바인딩
 
 								// 댓글 삭제 요청에 사용되는 데이터 객체로 JSON 형식으로 변환되어 서버에 전송
-								let deleteData = { cm_code: cm_code }; 
+								let deleteData = { cm_code: cm_code };
 								// 회원 댓글인 경우
 								if (us_id) {
 									deleteData.us_id = us_id; // 회원 아이디 추가
@@ -887,27 +886,36 @@
 							});
 
 							// 모달 내 삭제 확인 버튼 클릭 이벤트
-							$('#confirmDelete').off('click').on('click', function () {
+							$('#confirmDelete').on('click', function () {
 								let cm_code = $(this).data('cm_code'); // 댓글 코드 가져오기
 								let guest_pw = $('#commentDeletePw').val();
 
 								// 댓글 삭제 요청에 사용되는 데이터 객체로 JSON 형식으로 변환되어 서버에 전송
 								let deleteData = { cm_code: cm_code };
 
-								if ($("#us_id").val()) {
-									// 회원 댓글 삭제 시, 로그인한 회원 아이디 설정
-									deleteData.us_id = $("#us_id").val(); // 현재 로그인한 회원의 아이디
-								} else {
-									// 비회원 댓글 삭제 시, 비밀번호 확인 및 설정
+								let currentUserId = $("#us_id").val(); // 현재 로그인한 회원의 아이디
+								let commentRow = $('tr[data-cm_code="' + cm_code + '"]');
+								let commentUserId = commentRow.data('us_id');
+
+								console.log("현재 사용자: " + currentUserId);
+								console.log("댓글 사용자: " + commentUserId);
+
+								// 회원이든 비회원이든 비회원 댓글을 삭제할 때는 비밀번호 확인 필요
+								if (!commentUserId) {
+									// 비회원이 비회원 댓글 삭제 시 비밀번호 확인 및 설정 등
 									if (!guest_pw || guest_pw.trim() == '') {
 										alert("댓글 작성 시 입력했던 비밀번호를 입력해 주세요.");
 										$("#commentDeletePw").focus();
 										return;
 									}
-									deleteData.cm_guest_pw = guest_pw; // 비회원인 경우 비밀번호도 전송
+									deleteData.cm_guest_pw = guest_pw; // 비회원 비밀번호 전송
+									deleteData.us_id = currentUserId ? null : undefined; // 회원 아이디를 null로 설정
+								} else if (currentUserId) {
+									// 회원이 회원 댓글을 삭제하는 경우		
+									deleteData.us_id = currentUserId; // 회원 아이디를 로그인한 아이디로 설정
 								}
 
-								deleteComment(deleteData); // 비밀번호를 포함하여 삭제 요청 함수 호출								
+								deleteComment(deleteData); // 삭제 요청 함수 호출								
 								$('#commentDeletePw').val(""); // 비밀번호 입력 필드 초기화
 							});
 
@@ -924,10 +932,14 @@
 									data: JSON.stringify(deleteData),
 									success: function (response) {
 										if (response.status == 'ok') {
-											alert('댓글이 정상적으로 삭제되었습니다.');
+											// 모달 닫힘 이벤트에 함수 바인딩
+											$('#deleteCommentModal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+												alert('댓글이 정상적으로 삭제되었습니다.');
+												loadComments(bd_number, currentPage); // 댓글 목록 새로고침
+												$('#deleteCommentModal').off('hidden.bs.modal'); // 이벤트 핸들러 제거
+											});
 											$('#deleteCommentModal').modal('hide'); // 삭제 성공시 모달 닫기
 											$('#commentDeletePw').val(""); // 비밀번호 입력 필드 초기화
-											loadComments(bd_number, currentPage); // 댓글 목록 새로고침
 										} else {
 											alert("오류가 발생했습니다. 나중에 다시 시도해 주세요.");
 										}
@@ -936,8 +948,7 @@
 										if (xhr.status == 401) {
 											alert(xhr.responseJSON.message); // "권한 없음" 메시지 출력
 										} else if (xhr.status == 403) {
-											// "비밀번호 불일치" 메시지 출력 및 모달 다시 열기
-											alert(xhr.responseJSON.message);
+											alert(xhr.responseJSON.message); // "비밀번호 불일치" 메시지 출력
 											$('#deleteCommentModal').modal('show');
 											$("#commentDeletePw").focus();
 										}
