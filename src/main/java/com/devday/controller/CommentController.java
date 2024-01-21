@@ -96,11 +96,6 @@ public class CommentController {
 
 		Map<String, Object> response = new HashMap<>();
 		
-		// 회원 아이디가 설정되어 있는 경우, 비회원 처리 로직 생략
-//	    if (cm_vo.getUs_id() != null && !cm_vo.getUs_id().isEmpty()) {
-//	        return response;
-//	    }
-		
 		String guest_nickname = cm_vo.getCm_guest_nickname();
 		String guest_pw = cm_vo.getCm_guest_pw();
 		log.info("암호화 처리 전 비밀번호: " + guest_pw);
@@ -128,7 +123,7 @@ public class CommentController {
 		return response;
 	}
 
-	// 댓글 목록 조회(답글 포함)
+	// 특정 게시물에 대한 원본 댓글 목록 조회
 	@GetMapping("/retrieveComments/{bd_number}")
 	public ResponseEntity<Map<String, Object>> retrieveComments(@PathVariable Long bd_number,
 			@RequestParam("page") int page) {
@@ -144,8 +139,8 @@ public class CommentController {
 
 		log.info("댓글 데이터: " + commentsList);
 
-		int totalCount = commentService.getTotalCount(bd_number); // 전체 댓글 수 계산
-		PageDTO pageDTO = new PageDTO(cri, totalCount); // 페이징 정보를 담은 DTO 생성
+		int commentCount = commentService.countComments(bd_number); // 전체 댓글 수 계산
+		PageDTO pageDTO = new PageDTO(cri, commentCount); // 페이징 정보를 담은 DTO 생성
 
 		Map<String, Object> result = new HashMap<>();
 		result.put("comments", commentsList);
@@ -153,4 +148,22 @@ public class CommentController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK); // ResponseEntity.ok(comments)와 동일함
 	}
+	
+	// 특정 원본 댓글에 대한 답글 목록 조회
+	@GetMapping("/retrieveReplies/{cm_code}")
+	public ResponseEntity<List<CommentVO>> retrieveReplies(@PathVariable Long cm_code) {
+		
+	    List<CommentVO> replies = commentService.retrieveReplies(cm_code);
+	    
+	    return new ResponseEntity<>(replies, HttpStatus.OK);
+	}
+	
+	// 특정 원본 댓글에 대한 답글 수 조회
+	@GetMapping("/countReplies/{cm_code}")
+	public ResponseEntity<Integer> countReplies(@PathVariable Long cm_code) {
+		
+	    int replyCount = commentService.countReplies(cm_code);
+	    
+	    return new ResponseEntity<>(replyCount, HttpStatus.OK);
+	}	
 }

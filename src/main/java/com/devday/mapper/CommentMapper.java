@@ -20,6 +20,7 @@ public interface CommentMapper {
 	List<CommentVO> getComment(@Param("bd_number") Long bd_number, 
 							   @Param("cri") Criteria cri);
 	List<CommentVO> getReply(Long cm_code);
-	int getTotalCount(Long bd_number);
+	int countComments(Long bd_number);
+	int countReplies(Long cm_code);
 	List<CommentVO> getAllComments(Long bd_number);
 }

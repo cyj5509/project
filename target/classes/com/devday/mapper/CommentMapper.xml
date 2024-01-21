@@ -89,14 +89,24 @@
 		cm_register_date <!-- 등록순으로 정렬 -->
 </select>
 
-<!-- 대댓글을 포함한 댓글 전체 개수 조회 -->
-<select id="getTotalCount" resultType="int" parameterType="Long" >
+<!-- 특정 게시물에 대한 원본 댓글 수 계산 -->
+<select id="countComments" resultType="int" parameterType="Long" >
 	SELECT
 		COUNT(*)
 	FROM
 		comment_table
 	WHERE
-		bd_number = #{bd_number}
+		bd_number = #{bd_number} AND cm_parent_code IS NULL
+</select>
+
+<!-- 특정 원본 댓글에 대한 대댓글(답글) 수 계산 -->
+<select id="countReplies" resultType="int" parameterType="Long">
+    SELECT
+    	COUNT(*)
+    FROM
+    	comment_table
+    WHERE
+    	cm_parent_code = #{cm_code}
 </select>
 
 <!-- 특정 게시물의 모든 댓글과 대댓글을 계층적으로 조회 -->
@@ -114,5 +124,21 @@
     ORDER SIBLINGS BY 
         cm_register_date
 </select>
+
+<insert id="addReply" parameterType="CommentVO">
+    INSERT INTO 
+        comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_register_date, cm_guest_nickname, cm_guest_pw)
+    VALUES 
+        (
+            sequence_cm_code.NEXTVAL, 
+            #{cm_parent_code}, 
+            #{bd_number}, 
+            #{us_id}, 
+            #{cm_content},
+            SYSDATE, 
+            #{cm_guest_nickname}, 
+            #{cm_guest_pw}
+        )
+</insert>
 
 </mapper>

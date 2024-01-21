@@ -299,7 +299,7 @@
 															{{#if us_id}}{{us_id}}{{else}}{{cm_guest_nickname}}{{/if}}															
 														</td>
 														<td class="comment-content" style="text-align: justify;">
-															{{cm_content}}
+															{{cm_content}} 
 																<div class="menu-items" style="display: none;">
 																	<button class="btn_commentModify">수정</button>
 																	<button class="btn_commentDelete">삭제</button>
@@ -355,7 +355,6 @@
 													</div>
 												</div>
 											</div>
-
 										</div>
 									</div>
 								</div>
@@ -617,8 +616,7 @@
 											let commentHtml = template(commentContext);
 											commentsArea.append(commentHtml); // 생성된 HTML을 댓글 목록에 추가
 
-											// 대댓글 처리★★★★★(생략됨 추후 수정)
-											/*
+											// 대댓글 처리
 											if (comment.replies) {
 												// 각 대댓글에 대해 HTML 생성 및 추가
 												comment.replies.forEach(function (reply) {
@@ -627,7 +625,7 @@
 													commentsArea.append(replyHtml); // 생성된 HTML을 댓글 목록에 추가
 												});
 											}
-											*/
+
 										});
 										// 페이징 컨트롤을 화면에 표시하는 함수 호출
 										printPagination(response.pageInfo, $('#commentPaging'))

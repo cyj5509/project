@@ -14,5 +14,7 @@ public interface CommentService {
 	
 	// 댓글 및 대댓글 처리 관련 메서드
 	List<CommentVO> retrieveComments(Long bd_number, Criteria cri);
-	int getTotalCount(Long bd_number);
+	List<CommentVO> retrieveReplies(Long cm_code);
+	int countComments(Long bd_number);
+	int countReplies(Long cm_code);
 }
