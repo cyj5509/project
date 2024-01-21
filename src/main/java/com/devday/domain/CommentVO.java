@@ -38,5 +38,8 @@ public class CommentVO {
     private Date cm_register_date;
     private Date cm_update_date;
     private String cm_guest_nickname;
-    private String cm_guest_pw;    
+    private String cm_guest_pw;
+     
+    // 테이블에 직접 매핑되지 않고, 서버/클라이언트 간 데이터 전달을 위해 사용
+	private int repliesCount; // 답글 개수를 저장하기 위한 필드
 }

@@ -293,13 +293,14 @@
 											</div>
 											<!-- 댓글 목록용 Handlebars 템플릿 -->
 											<script id="comment-list-template" type="text/x-handlebars-template">
-												<tr class="{{#if isReply}}reply{{else}}comment{{/if}}" data-cm_code="{{cm_code}}" 
+												<tr class="comment" data-cm_code="{{cm_code}}" 
 													{{#if us_id}}data-us_id="{{us_id}}"{{/if}}>
 														<td class="comment-user">
 															{{#if us_id}}{{us_id}}{{else}}{{cm_guest_nickname}}{{/if}}															
 														</td>
 														<td class="comment-content" style="text-align: justify;">
 															{{cm_content}} 
+																<div class="replies-count" style="display: none;"><!-- '답글 n개' 동적 생성 --></div>
 																<div class="menu-items" style="display: none;">
 																	<button class="btn_commentModify">수정</button>
 																	<button class="btn_commentDelete">삭제</button>
@@ -587,6 +588,7 @@
 
 							// 댓글 목록을 불러와 화면에 표시하는 함수
 							function loadComments(bd_number, page) {
+
 								// AJAX 요청을 통해 서버로부터 댓글 데이터를 가져옴
 								$.ajax({
 									url: '/comment/retrieveComments/' + bd_number + '?page=' + page,
@@ -603,28 +605,29 @@
 
 										// 각 댓글에 대해 HTML 생성 및 추가
 										response.comments.forEach(function (comment) {
-											// 댓글 데이터를 위한 컨텍스트 생성
+
+											// 댓글 데이터를 위한 컨텍스트 생성(답글 개수 포함)
 											let commentContext = {
 												cm_code: comment.cm_code,
 												us_id: comment.us_id,
 												cm_guest_nickname: comment.cm_guest_nickname,
 												cm_content: comment.cm_content,
 												cm_register_date: comment.cm_register_date,
-												cm_update_date: comment.cm_update_date
+												cm_update_date: comment.cm_update_date,
+												repliesCount: comment.repliesCount // 답글 개수
 											};
+
 											// 핸들바 템플릿을 사용하여 댓글 HTML 생성
 											let commentHtml = template(commentContext);
 											commentsArea.append(commentHtml); // 생성된 HTML을 댓글 목록에 추가
 
-											// 대댓글 처리
-											if (comment.replies) {
-												// 각 대댓글에 대해 HTML 생성 및 추가
-												comment.replies.forEach(function (reply) {
-													let replyContext = { ...commentContext, isReply: true };
-													let replyHtml = template(replyContext);
-													commentsArea.append(replyHtml); // 생성된 HTML을 댓글 목록에 추가
-												});
+											// "답글 n개" 표시 영역이 있고 답글 개수가 0보다 큰 경우에만 표시
+											// 특정 댓글에만 영향을 주기 위해 속성 선택자와 클래스 선택자를 함께 사용
+											if (comment.repliesCount > 0) {
+												$('[data-cm_code=' + comment.cm_code + '] .replies-count')
+													.text('답글 ' + repliesCount + '개').show();
 											}
+
 
 										});
 										// 페이징 컨트롤을 화면에 표시하는 함수 호출
@@ -632,6 +635,21 @@
 									}
 								});
 							}
+
+							$(document).on('click', '.replies-count', function () {
+								let commentRow = $(this).closest('tr');
+								let cm_code = commentRow.data('cm_code');
+								// AJAX 요청을 통해 해당 댓글의 답글 목록을 토글
+								$.ajax({
+									url: '/comment/retrieveReplies/' + cm_code,
+									type: 'GET',
+									dataType: 'json',
+									success: function (replies) {
+										// 답글 목록을 표시하는 로직
+										// 예: replies.forEach(reply => { ... })
+									}
+								});
+							});
 
 							// 동적으로 페이지네이션 HTML(버튼)을 생성하여 화면에 표시하는 함수
 							// JSP 파일에선 템플릿 리터럴, 즉 백틱을 이용하게 되면 제대로 동작하지 않음
@@ -679,11 +697,11 @@
 								loadComments(bd_number, currentPage); // 해당 페이지의 댓글을 불러옴
 							});
 
-							// 댓글 클릭 시 대댓글 표시/숨김
-							$(document).on('click', '.comment', function () {
-								// 대댓글 요소를 선택하여 토글
-								$(this).next('.reply').toggle();
-							});
+							// "답글 n개" 클릭 시 답글 목록 표시
+							// $(document).on('click', '.comment', function () {
+							// 	// 대댓글 요소를 선택하여 토글
+							// 	$(this).next('.reply').toggle();
+							// });
 
 							// 댓글 날짜 형식 변환 처리
 							Handlebars.registerHelper('formatDate', function (commentTime) {

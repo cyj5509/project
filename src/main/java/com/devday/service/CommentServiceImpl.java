@@ -44,9 +44,17 @@ public class CommentServiceImpl implements CommentService {
 	}
 	
 	@Override
-    public List<CommentVO> retrieveComments(Long bd_number, Criteria cri) {
+	public List<CommentVO> retrieveComments(Long bd_number, Criteria cri) {
 
-	    return commentMapper.getComment(bd_number, cri); // 댓글 목록 반환
+		List<CommentVO> comments = commentMapper.getComment(bd_number, cri);
+
+		for (CommentVO comment : comments) {
+			// 특정 댓글에 대한 답글 개수 조회
+			int replyCount = commentMapper.countReplies(comment.getCm_code());
+			comment.setRepliesCount(replyCount);
+		}
+
+		return comments; // 답글 개수를 포함한 댓글 목록 반환
 	}
 
 	@Override
