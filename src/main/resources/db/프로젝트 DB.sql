@@ -423,7 +423,7 @@ DROP TABLE board_table;
 CREATE TABLE board_table (
     bd_number         NUMBER,                           -- 게시물 번호
     bd_type           VARCHAR2(40)            NOT NULL, -- 게시물 구분(타입)
-    us_id             VARCHAR2(15)            NOT NULL, -- 사용자 아이디
+    us_id             VARCHAR2(15),                     -- 사용자 아이디
     bd_title          VARCHAR2(100)           NOT NULL, -- 게시물 제목
     bd_content        VARCHAR2(4000)          NOT NULL, -- 게시물 내용
     bd_register_date  DATE    DEFAULT sysdate,          -- 등록 일자
@@ -434,26 +434,32 @@ CREATE TABLE board_table (
     CONSTRAINT pk_bd_number PRIMARY KEY(bd_number)
 );
 
-INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'notice', 'admin', '공지', '게시판 테스트');
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'notice', 'admin', '공지(관리자)', '게시판 테스트', null, null);
 
-INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'free', 'user01', '자유', '게시판 테스트');
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'free', 'user01', '자유(회원)', '게시판 테스트', null, null);
+
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'free', null, '자유(비회원)', '게시판 테스트', 'guest01', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');  
   
-INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'info', 'user02', '정보', '게시판 테스트');
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'info', 'user02', '정보(회원)', '게시판 테스트', null, null);
 
-INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'study', 'user03', '공부', '게시판 테스트');
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'study', 'user03', '공부(회원)', '게시판 테스트', null, null);
 
-INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'project', 'user04', '플젝', '게시판 테스트');
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'project', 'user04', '플젝(회원)', '게시판 테스트', null, null);
   
-INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-  VALUES(sequence_bd_number.NEXTVAL, 'inquery', 'user05', '문의', '게시판 테스트');
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'inquery', 'user05', '문의(회원)', '게시판 테스트', null, null);
 
-INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content)
-SELECT sequence_bd_number.NEXTVAL, bd_type, us_id, bd_title, bd_content FROM board_table;
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+  VALUES(sequence_bd_number.NEXTVAL, 'inquery', null, '자유(비회원)', '게시판 테스트', 'guest02', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');  
+
+INSERT INTO board_table(bd_number, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw)
+SELECT sequence_bd_number.NEXTVAL, bd_type, us_id, bd_title, bd_content, bd_guest_nickname, bd_guest_pw FROM board_table;
 
 COMMIT;
 
@@ -515,8 +521,31 @@ CREATE TABLE comment_table (
 DROP SEQUENCE sequence_cm_code;
 CREATE SEQUENCE sequence_cm_code;
 
+INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
+  VALUES(sequence_cm_code.NEXTVAL, null, 1532, 'user01', '회원 댓글 테스트 01', null, null);
+
+INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
+  VALUES(sequence_cm_code.NEXTVAL, null, 1532, 'user02', '회원 댓글 테스트 02', null, null);
+  
+INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
+  VALUES(sequence_cm_code.NEXTVAL, null, 1532, 'user03', '회원 댓글 테스트 03', null, null);
+
+INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
+  VALUES(sequence_cm_code.NEXTVAL, null, 1532, null, '비회원 댓글 테스트 01', 'guest01', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
+
+INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
+  VALUES(sequence_cm_code.NEXTVAL, null, 1532, null, '비회원 댓글 테스트 02', 'guest02', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
+
+INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
+  VALUES(sequence_cm_code.NEXTVAL, null, 1532, null, '비회원 댓글 테스트 03', 'guest03', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
+
+INSERT INTO comment_table(cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
+SELECT sequence_cm_code.NEXTVAL, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw FROM comment_table;
+
+COMMIT;
+
 -- 전체 데이터 조회 및 삭제
-SELECT * FROM comment_table;
+SELECT COUNT(*) FROM comment_table;
 DELETE FROM comment_table;
 
 

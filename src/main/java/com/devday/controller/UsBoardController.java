@@ -80,7 +80,7 @@ public class UsBoardController {
 		
 		// 로그인 체크 - 비회원 처리 로직
 		if (session.getAttribute("userStatus") == null) {
-			bd_vo.setUs_id(""); // 비회원인 경우 us_id를 빈 문자열로 설정
+			bd_vo.setUs_id(null); // 비회원인 경우 us_id를 빈 문자열로 설정
 
 			// 비회원 닉네임 처리: 닉네임이 제공되지 않은 경우 기본값 설정
 			if (bd_vo.getBd_guest_nickname() == null || bd_vo.getBd_guest_nickname().trim().isEmpty()) {

@@ -144,7 +144,7 @@
 																<td>${boardVO.bd_number}</td>
 																<th class="capitalize">${boardVO.bd_type}</th>
 																<!-- <td><a class="move" href="#" data-bd_number="${boardVO.bd_number}" data-bd_type="${boardVO.bd_type}">${boardVO.bd_title}</a> -->
-																<td><a class="move" href="#"
+																<td><a class="move" href="#" style="color: gray"
 																		data-bd_number="${boardVO.bd_number}">${boardVO.bd_title}</a>
 																</td> <!-- 클래스명 move는 제목과 관련 -->
 																<td>

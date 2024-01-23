@@ -115,8 +115,8 @@
 													<div class="form-group">
 														<div style="text-align: center;">
 															<!-- <input type="hidden" name="bd_type" id="bd_type" value="${bd_vo.bd_type}" /> -->
-															<button type="button" id="btn_register" class="btn btn-primary">등록</button>
-															<button type="button" id="btn_list" class="btn btn-primary">취소</button>
+															<button type="button" id="btn_register" class="btn btn-primary" style="margin-right: 5px">등록</button>
+															<button type="button" id="btn_list" class="btn btn-danger">취소</button>
 														</div>
 													</div>
 												</div>
@@ -158,6 +158,12 @@
 
 							$("#btn_register").on("click", function () {
 
+								let guest_nickname = $("#bd_guest_nickname").val();
+								if (!guest_nickname || guest_nickname.trim() === '') {
+									// 비회원 닉네임이 비어 있는 경우 'guest'(기본값)로 설정
+									$("#bd_guest_nickname").val('guest');
+								}
+
 								let bd_title = $("#bd_title").val();
 								if (bd_title == "") {
 									alert("제목을 입력해 주세요.")
@@ -179,16 +185,16 @@
 									return;
 								}
 
-								let guest_nickname = $("#bd_guest_nickname").val();
-								if (!guest_nickname || guest_nickname.trim() === '') {
-									// 비회원 닉네임이 비어 있는 경우 'guest'(기본값)로 설정
-									$("#bd_guest_nickname").val('guest');
-								}
-
 								let guest_pw1 = $("#guest_pw1").val();
 								let guest_pw2 = $("#guest_pw2").val();
-								if (guest_pw1 == "" || guest_pw2 == "") {
+								if (guest_pw1 == "") {
 									alert("비밀번호가 입력되지 않았습니다.");
+									$("#guest_pw1").focus();
+									return;
+								}
+								if (guest_pw2 == "") {
+									alert("비밀번호가 입력되지 않았습니다.");
+									$("#guest_pw1").focus();
 									return;
 								}
 								if (guest_pw1 != guest_pw2) {
@@ -196,6 +202,7 @@
 									$("#guest_pw2").focus();
 									return;
 								}
+
 								registerForm.submit();
 							});
 

@@ -30,12 +30,6 @@ select[disabled],
 	background-color: white !important;
 }
 
-.comment-form-container {
-    border: 1px solid #ccc; /* 폼에 테두리 적용 */
-    padding: 15px; /* 내부 여백 설정 */
-    margin-bottom: 20px; /* 이 폼과 다른 요소들 사이의 간격 */
-}
-
 .user-inputs {
     display: flex; /* Flexbox를 사용하여 필드를 가로로 배치 */
     gap: 10px; /* 필드 사이의 간격 */
