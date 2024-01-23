@@ -208,13 +208,13 @@ $(document).ready(function () {
 		let commentsArea = $('#commentsArea');
 		let commentTable = $('#commentTable tbody');
 
-    // 댓글 목록이 비어 있는지 확인
-    if (commentTable.children().length == 0) {
-        alert("현재까지 작성된 댓글이 없습니다.");
-				return;
-    } else {
-        commentsArea.toggle(); // 댓글 목록이 있다면, 토글
-    }
+		// 댓글 목록이 비어 있는지 확인
+		if (commentTable.children().length == 0) {
+			alert("현재까지 작성된 댓글이 없습니다.");
+			return;
+		} else {
+			commentsArea.toggle(); // 댓글 목록이 있다면, 토글
+		}
 
 		// 버튼 텍스트 토글
 		if ($(this).text() == '열기 ▼') {
@@ -436,14 +436,17 @@ $(document).ready(function () {
 			data: JSON.stringify(commentDeleteData),
 			success: function (response) {
 				if (response.status == 'ok') {
+					alert('댓글이 정상적으로 삭제되었습니다.');
+					loadComments(bd_number, currentPage); // 댓글 목록 새로고침
 					// 모달 닫힘 이벤트에 함수 바인딩
 					$('#deleteCommentModal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
-						alert('댓글이 정상적으로 삭제되었습니다.');
-						loadComments(bd_number, currentPage); // 댓글 목록 새로고침
 						$('#deleteCommentModal').off('hidden.bs.modal'); // 이벤트 핸들러 제거
 					});
-					$('#deleteCommentModal').modal('hide'); // 삭제 성공시 모달 닫기
-					$('#commentDeletePw').val(""); // 비밀번호 입력 필드 초기화
+					// 비회원 댓글 삭제에 대한 모달 관련 로직
+					if (commentDeleteData.cm_guest_pw) {
+						$('#deleteCommentModal').modal('hide'); // 삭제 성공시 모달 닫기
+						$('#commentDeletePw').val(""); // 비밀번호 입력 필드 초기화
+					}
 				} else {
 					alert("오류가 발생했습니다. 나중에 다시 시도해 주세요.");
 				}

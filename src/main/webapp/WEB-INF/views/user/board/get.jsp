@@ -50,7 +50,7 @@
 							align-items: center;
 						}
 
-						#commentsArea > p {
+						#commentsArea>p {
 							font-size: 14px;
 							align-self: flex-end;
 							text-align: right;
@@ -244,7 +244,7 @@
 																<form id="passwordForm" method="post" action="/user/board/checkPw">
 																	<input type="hidden" name="bd_number" value="${bd_vo.bd_number}">
 																	<input type="password" id="bd_guest_pw" name="bd_guest_pw"
-																		placeholder="비밀번호를 입력해 주세요.">
+																		placeholder="비밀번호를 입력해 주세요." style="border: 1px solid;">
 																	<input type="hidden" id="formAction" name="action" value="">
 																</form>
 																<p id="pwModalMessage2"></p>
@@ -420,11 +420,11 @@
 
 							if (action == 'modify') {
 								// 수정 버튼 클릭 시 동작
-								pwModalMessage1.textContent = '[비회원/수정] 게시물 수정 확인';
+								pwModalMessage1.textContent = '[비회원/수정] 비밀번호 확인';
 								pwModalMessage2.textContent = '* 게시물 수정 시 비밀번호 입력'
 							} else if (action == 'delete') {
 								// 삭제 버튼 클릭 시 동작
-								pwModalMessage1.textContent = '[비회원/삭제] 게시물 삭제 확인';
+								pwModalMessage1.textContent = '[비회원/삭제] 비밀번호 확인';
 								pwModalMessage2.textContent = '* 게시물 삭제 시 비밀번호 입력'
 							}
 
@@ -464,16 +464,27 @@
 
 						// 비밀번호 입력 폼에 대한 이벤트 핸들러 추가
 						document.getElementById('passwordForm').onsubmit = function () {
+
+							let guest_pw = document.getElementById('bd_guest_pw').value;
+
+							// 비밀번호 입력 필드가 비어있는지 확인
+							if (!guest_pw || guest_pw.trim() == '') {
+								alert("비밀번호를 입력해 주세요.");
+								document.getElementById('bd_guest_pw').focus();
+								return false; // 폼 제출 중단
+							}
+
 							// 비회원 게시물인 경우에만 삭제 확인을 진행
 							if (isGuestPost && document.getElementById('formAction').value == 'delete') {
 								let isConfirmed = confirm("게시물을 정말로 삭제하시겠습니까?");
 								if (!isConfirmed) {
-									// 사용자가 '취소'를 선택한 경우, 모달창 닫기
+									// 사용자가 '취소'를 선택한 경우, 모달창 닫기 
 									closePasswordModal();
 									return false; // 폼 제출 중단
 								}
 								return true; // '확인'을 선택한 경우, 폼 제출 진행
 							}
+
 							return true; // 회원 게시물이거나, 수정 작업인 경우 폼 제출 진행
 						};
 

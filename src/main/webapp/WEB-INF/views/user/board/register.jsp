@@ -187,14 +187,14 @@
 
 								let guest_pw1 = $("#guest_pw1").val();
 								let guest_pw2 = $("#guest_pw2").val();
-								if (guest_pw1 == "") {
+								if (!guest_pw1 || guest_pw1.trim() == "") {
 									alert("비밀번호가 입력되지 않았습니다.");
 									$("#guest_pw1").focus();
 									return;
 								}
-								if (guest_pw2 == "") {
+								if (!guest_pw2 || guest_pw2.trim() == "") {
 									alert("비밀번호가 입력되지 않았습니다.");
-									$("#guest_pw1").focus();
+									$("#guest_pw2").focus();
 									return;
 								}
 								if (guest_pw1 != guest_pw2) {

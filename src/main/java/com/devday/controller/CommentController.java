@@ -64,7 +64,7 @@ public class CommentController {
 				// 회원이 다른 회원의 댓글을 수정/삭제 시도 시 
 				cm_vo.setCm_guest_pw(null); // 비회원 비밀번호를 null로 설정
 				Map<String, String> errorResponse = new HashMap<>(); // 클라이언트에 전달(반환)할 오류 메시지를 담는 변수
-				errorResponse.put("message", "해당 작업을 수행할 권한이 없습니다.");
+				errorResponse.put("message", "아이디가 일치하지 않아 해당 작업을 수행할 수 없습니다.");
 				return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED); // 상태 코드 401
 			}
 		} else {

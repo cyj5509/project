@@ -277,7 +277,7 @@ public class UsBoardController {
 	            return "redirect:/user/board/delete/" + bd_type +  cri.getListLink() + "&bd_number=" + bd_number;
 	        }
 	    } else {
-	        rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다. 다시 시도해 주세요.");
+	        rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
 	        return "redirect:/user/board/get/" + (db_vo != null ? db_vo.getBd_type() : "total") + cri.getListLink() + "&bd_number=" + bd_number;
 	    }
 	    return "redirect:/user/board/list/" + (db_vo != null ? db_vo.getBd_type() : "total");
