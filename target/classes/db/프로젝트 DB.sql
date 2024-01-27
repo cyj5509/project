@@ -241,8 +241,8 @@ CREATE TABLE product_table (
     pd_discount          NUMBER                NOT NULL,              -- 상품 할인율
     pd_company           VARCHAR2(100)         NOT NULL,              -- 상품 제조사(또는 출판사)
     pd_content           VARCHAR2(4000)        NOT NULL,              -- 상품 상세 내용
-    pd_image_folder      VARCHAR2(100)         NOT NULL,              -- 상품 이미지 폴더명
-    pd_image             VARCHAR2(400)         NOT NULL,              -- 상품 이미지
+    pd_image_folder      VARCHAR2(400)         NOT NULL,              -- 상품 이미지 폴더명
+    pd_image             VARCHAR2(1000)        NOT NULL,              -- 상품 이미지
     pd_amount            NUMBER                NOT NULL,              -- 상품 수량(재고)
     pd_buy_status        CHAR(1)               NOT NULL,              -- 판매 여부
     pd_register_date     DATE DEFAULT sysdate  NOT NULL,              -- 등록 일자
@@ -522,22 +522,22 @@ DROP SEQUENCE sequence_cm_code;
 CREATE SEQUENCE sequence_cm_code;
 
 INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
-  VALUES(sequence_cm_code.NEXTVAL, null, 1532, 'user01', '회원 댓글 테스트 01', null, null);
+  VALUES(sequence_cm_code.NEXTVAL, null, 2043, 'user01', '회원 댓글 테스트 01', null, null);
 
 INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
-  VALUES(sequence_cm_code.NEXTVAL, null, 1532, 'user02', '회원 댓글 테스트 02', null, null);
+  VALUES(sequence_cm_code.NEXTVAL, null, 2043, 'user02', '회원 댓글 테스트 02', null, null);
   
 INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
-  VALUES(sequence_cm_code.NEXTVAL, null, 1532, 'user03', '회원 댓글 테스트 03', null, null);
+  VALUES(sequence_cm_code.NEXTVAL, null, 2043, 'user03', '회원 댓글 테스트 03', null, null);
 
 INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
-  VALUES(sequence_cm_code.NEXTVAL, null, 1532, null, '비회원 댓글 테스트 01', 'guest01', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
+  VALUES(sequence_cm_code.NEXTVAL, null, 2043, null, '비회원 댓글 테스트 01', 'guest01', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
 
 INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
-  VALUES(sequence_cm_code.NEXTVAL, null, 1532, null, '비회원 댓글 테스트 02', 'guest02', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
+  VALUES(sequence_cm_code.NEXTVAL, null, 2043, null, '비회원 댓글 테스트 02', 'guest02', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
 
 INSERT INTO comment_table (cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
-  VALUES(sequence_cm_code.NEXTVAL, null, 1532, null, '비회원 댓글 테스트 03', 'guest03', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
+  VALUES(sequence_cm_code.NEXTVAL, null, 2043, null, '비회원 댓글 테스트 03', 'guest03', '$2a$10$gMV7csO4ARfRzZ572BDkNeSTCvZIJqkrg4FRgwFi9yWHsPcPPvKXO');
 
 INSERT INTO comment_table(cm_code, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw)
 SELECT sequence_cm_code.NEXTVAL, cm_parent_code, bd_number, us_id, cm_content, cm_guest_nickname, cm_guest_pw FROM comment_table;
@@ -547,5 +547,3 @@ COMMIT;
 -- 전체 데이터 조회 및 삭제
 SELECT COUNT(*) FROM comment_table;
 DELETE FROM comment_table;
-
-

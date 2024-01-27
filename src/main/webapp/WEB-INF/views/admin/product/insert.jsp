@@ -74,14 +74,14 @@ desired effect
 
                       <!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
                       <!-- enctype="multipart/form-data": 파일 업로드용 -->
-                      <form role="form" method="post" action="/admin/product/pd_insert" enctype="multipart/form-data">
+                      <form role="form" method="post" action="/admin/product/insert" id="productInsertForm" enctype="multipart/form-data">
                         <!-- 절대 경로: /board/register와 동일 -->
-                        <div class="box-body">
+                        <div class="box-body" style="text-align: center;">
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">카테고리</label>
-                            <div class="col-sm-3">
+                            <label for="title" class="col-sm-2 col-form-label">1차 카테고리</label>
+                            <div class="col-sm-4">
                               <select class="form-control" id="firstCategory">
-                                <option>1차 카테고리 선택</option>
+                                <option value=''>--- 1차 카테고리 선택 ---</option>
                                 <!-- 1차 카테고리 표시. GlobalControllerAdvice -->
                                 <c:forEach items="${firstCategoryList}" var="categoryVO">
                                   <option value="${categoryVO.cg_code}">
@@ -90,60 +90,53 @@ desired effect
                                 </c:forEach>
                               </select>
                             </div>
-
-                            <div class="col-sm-3">
+                            <label for="title" class="col-sm-2 col-form-label">2차 카테고리</label>
+                            <div class="col-sm-4">
                               <select class="form-control" id="secondCategory" name="cg_code">
-                                <option>2차 카테고리 선택</option>
+                                <option value=''>--- 2차 카테고리 선택 ---</optionv>
                               </select>
                             </div>
                           </div>
-
                           <div class="form-group row">
                             <label for="pd_name" class="col-sm-2 col-form-label">상품명</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_name" id="pd_name"
-                                placeholder="상품명 입력..." />
+                                placeholder="상품명 입력" />
                             </div>
-                            <label for="pd_price" class="col-sm-2 col-form-label">상품가격</label>
+                            <label for="pd_price" class="col-sm-2 col-form-label">가격</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_price" id="pd_price"
-                                placeholder="상품가격 입력..." />
+                                placeholder="가격 입력" />
                             </div>
                           </div>
-
                           <div class="form-group row">
                             <label for="pd_discount" class="col-sm-2 col-form-label">할인율</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_discount" id="pd_discount"
-                                placeholder="할인율 입력..." />
+                                placeholder="할인율 입력" />
                             </div>
-                            <label for="pd_company" class="col-sm-2 col-form-label">저자&#47;출판사</label>
+                            <label for="pd_company" class="col-sm-2 col-form-label">저자 &#47; 출판사</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_company" id="pd_company"
-                                placeholder="저자/출판사 입력..." />
+                                placeholder="저자 / 출판사 입력" />
                             </div>
                           </div>
-
                           <div class="form-group row">
-                            <label for="uploadFile" class="col-sm-2 col-form-label">상품 이미지</label>
+                            <label for="uploadFile" class="col-sm-2 col-form-label">이미지명</label>
                             <div class="col-sm-4">
-                              <input type="file" class="form-control" name="uploadFile" id="uploadFile"
-                                placeholder="작성자 입력..." />
-                              <!-- name 속성은 실제로 사용하지 않는다, 즉, ProductVO의 pd_img와는 다른 용도이다. -->
+                              <input type="file" class="form-control" name="uploadFile" id="uploadFile" />
                             </div>
-                            <label for="image_preview" class="col-sm-2 col-form-label">미리보기 이미지</label>
-                            <div class="col-sm-4">
+                            <label for="image_preview" class="col-sm-2 col-form-label">미리보기</label>
+                            <div class="col-sm-2">
                               <img id="image_preview" style="width: 200px; height: 200px" />
                             </div>
                           </div>
-
                           <div class="form-group row">
-                            <label for="pd_content" class="col-sm-2 col-form-label">상품 설명</label>
+                            <label for="pd_content" class="col-sm-2 col-form-label">내용</label>
                             <div class="col-sm-10">
                               <textarea class="form-control" rows="3" name="pd_content" id="pd_content"></textarea>
                             </div>
                           </div>
-
                           <div class="form-group row">
                             <label for="pd_amount" class="col-sm-2 col-form-label">수량</label>
                             <div class="col-sm-4">
@@ -156,8 +149,9 @@ desired effect
                                 <!-- value 값이 없으면 option 사이 값이 들어감 -->
                                 <!-- 상품 테이블에서 PRO_BUY CHAR(1) NOT NULL, -- VARCHAR(2) -> CHAR(1) -->
                                 <!-- 기존: value값은 각각 가능, 불가능이었음 -->
-                                <option value="Y">판매 가능</option>
-                                <option value="N">판매 불가능</option>
+                                <option value="">--- 판매 여부 선택 ---</option>
+                                <option value="Y">가능</option>
+                                <option value="N">불가능</option>
                               </select>
                             </div>
                           </div>
@@ -168,10 +162,8 @@ desired effect
                             <ul class="uploadedList"></ul>
                           </div>
                           <div class="text-center">
-                            <button type="submit" class="btn btn-primary">
-                              상품 등록
-                            </button>
-                            <button type="reset" class="btn btn-primary">취소</button>
+                            <button type="button" class="btn btn-primary" id="btn_productInsert">등록</button>
+                            <button type="button" class="btn btn-danger" id="btn_productCancel">취소</button>
                           </div>
                         </div>
                       </form>
@@ -281,8 +273,9 @@ desired effect
 
         <script>
           $(document).ready(function () {
+
             // ckeditor 환경설정. 자바스크립트 Ojbect문법
-            var ckeditor_config = {
+            let ckeditor_config = {
               resize_enabled: false,
               enterMode: CKEDITOR.ENTER_BR,
               shiftEnterMode: CKEDITOR.ENTER_P,
@@ -290,11 +283,11 @@ desired effect
               removePlugins: "elementspath",
               // 업로드 탭 기능 추가 속성. CKEditor에서 파일업로드해서 서버로 전송을 클릭하면, 이 주소가 동작된다.
               filebrowserUploadUrl: "/admin/product/imageUpload",
+              height: 400
             };
 
             //해당 이름으로 된 textarea에 에디터를 적용
             CKEDITOR.replace("pd_content", ckeditor_config);
-
             console.log("ckeditor 버전: " + CKEDITOR.version);
 
             // 1차 카테고리 선택
@@ -354,7 +347,80 @@ desired effect
                 $("#image_preview").attr("src", e.target.result);
               };
             });
-          });
+
+            // 등록 버튼 클릭 이벤트
+            $("#btn_productInsert").on('click', function () {
+
+              let productInsertForm = $("#productInsertForm");
+
+              let firstCategory = $("#firstCategory").val();
+              let secondCategory = $("#secondCategory").val();
+              let pd_name = $("#pd_name").val();
+              let pd_price = $("#pd_price").val();
+              let pd_discount = $("#pd_discount").val();
+              let pd_company = $("#pd_company").val();
+              let pd_content = CKEDITOR.instances.pd_content.getData();
+              let pd_amount = $("#pd_amount").val();
+              let pd_buy_status = $("#pd_buy_status").val();
+              
+              if (firstCategory == '') {
+                alert("1차 카테고리를 선택해 주세요.");
+                $("#firstCategory").focus();
+                return;
+              }
+              if (secondCategory == '') {
+                alert("2차 카테고리를 선택해 주세요.");
+                $("#secondCategory").focus();
+                return;
+              }
+
+              if (!pd_name || pd_name.trim() == '') {
+                alert("상품명을 입력해 주세요.");
+                $("#pd_name").focus();
+                return;
+              }
+              if (!pd_price || pd_price.trim() == '') {
+                alert("가격을 입력해 주세요.");
+                $("#pd_price").focus();
+                return;
+              }
+              if (!pd_discount || pd_discount.trim() == '') {
+                alert("할인율을 입력해 주세요.");
+                $("#pd_discount").focus();
+                return;
+              }
+              if (!pd_company || pd_company.trim() == '') {
+                alert("저자 및 출판사를 입력해 주세요.");
+                $("#pd_company").focus();
+                return;
+              }
+              if (!pd_content || pd_content.trim() == '') {
+									// CKEditor 인스턴스에서 데이터 가져오기
+									alert("내용을 입력해 주세요.");
+									CKEDITOR.instances.pd_content.focus();
+									return;
+							}
+              if (!pd_amount || pd_amount.trim() == '') {
+                alert("수량을 입력해 주세요.");
+                $("#pd_amount").focus();
+                return;
+              }
+              if (pd_buy_status == '') {
+                alert("판매 여부를 선택해 주세요.");
+                $("#pd_buy_status").focus();
+                return;
+              }
+
+              productInsertForm.submit();
+            });
+
+            // 취소 버튼 클릭 이벤트
+            $("#btn_productCancel").on('click', function () {
+
+              location.href = "/admin/product/list";
+            })
+
+          }); // ready-end
         </script>
     </body>
 

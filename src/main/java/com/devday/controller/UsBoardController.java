@@ -298,6 +298,8 @@ public class UsBoardController {
 	        String uniqueFileName = FilenameUtils.getBaseName(fileName) + "_" +
 	                                System.currentTimeMillis() + "." +
 	                                FilenameUtils.getExtension(fileName);
+	        
+	        // 'File.separator'는 운영 체제에 따라 적절한 파일 경로 구분자를 제공함
 			String ckUploadPath = uploadBoardCKPath + File.separator + uniqueFileName;
 
 			log.info("CKEditor 파일 경로: " + ckUploadPath);

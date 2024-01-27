@@ -45,37 +45,37 @@ public class UsProductController {
 	
 	// 2. REST API 개발 형태의 매핑 주소: /user/product/pd_list/2차 카테고리 코드
 	// 2차 카테고리를 선택했을 때 그걸 조건으로 데이터를 가져옴
-	@GetMapping("/pd_list")
-	public String pd_list(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code, 
-						  String cg_name, Model model) throws Exception {
+	@GetMapping("/list")
+	public String list(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code, 
+					   String cg_name, Model model) throws Exception {
 		
 		// AdProductController에서 Copy & Paste
 		
 		// 페이지당 상품 수 설정: 10 -> 2 -> 8로 변경
 		cri.setAmount(8); // Criteria에서 this(1, 2);
 
-		List<ProductVO> pd_list = null;
+		List<ProductVO> productList = null;
 		int total_count = 0;
 				
 		if (cg_code != null) {
-			pd_list = usProductService.pd_list(cg_code, cri);
+			productList = usProductService.pd_list(cg_code, cri);
 			total_count = usProductService.getTotalCount(cg_code);
 		} else {
-			pd_list = usProductService.pd_list_all(cri);
+			productList = usProductService.pd_list_all(cri);
 			total_count = usProductService.getTotalCountAll();
 		}
 				
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
 		// 스프링에서 처리 안하면 자바스크립트에서 처리할 수도 있다.
-		pd_list.forEach(vo -> {
+		productList.forEach(vo -> {
 			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 		});
 		
 		model.addAttribute("cg_code", cg_code);
-		model.addAttribute("pd_list", pd_list); // 상품 목록	
+		model.addAttribute("productList", productList); // 상품 목록	
 		model.addAttribute("pageMaker", new PageDTO(cri, total_count)); // 페이징 정보
 		
-		return "/user/product/pd_list";
+		return "/user/product/list";
 	}
 	
 	// 상품 리스트에서 보여줄 이미지. <img src="매핑주소">
@@ -88,8 +88,8 @@ public class UsProductController {
 	
 	// 상품 상세(상품 후기 작업 포함)
 	// Integer cg_code, String cg_name: 액션폼에서 넘어오는 값으로 cg_name은 다시 활용
-	@GetMapping("/pd_detail")
-	public void pd_detail(Criteria cri, Integer cg_code, @ModelAttribute("cg_name") String cg_name, Integer pd_number, Model model) throws Exception {
+	@GetMapping("/productDetail")
+	public void productDetail(Criteria cri, Integer cg_code, @ModelAttribute("cg_name") String cg_name, Integer pd_number, Model model) throws Exception {
 	
 		log.info("페이징 정보: " + cri);
 		log.info("상품코드: " + pd_number);

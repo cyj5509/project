@@ -211,7 +211,7 @@
 								location.href = "/user/board/list";
 							});
 
-						})
+						}) // ready-end
 					</script>
 
 			</body>

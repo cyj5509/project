@@ -6,28 +6,24 @@
 $(document).ready(function () {
   // 1차 카테고리 오버
   // $("1차 카테고리 태그를 참조하는 선택자").on();
-  $("div#category_menu li a").on("mouseover", function (e) {
+  $("div#category_menu li a").on("click", function (e) {
     e.preventDefault(); // a 태그의 링크 기능을 취소
     // console.log("1차 카테고리 오버");
 
     let sel_first_category = $(this);
-
-    // let cg_code = "선택한 1차 카테고리 코드";
     let cg_code = $(this).data("cg_code"); // data-cg_code -> $(this).data("cg_code")
 
     // console.log("1차 카테고리 코드: ", cg_code);
-    // return; // 하단 코드를 동작시키지 않게 하기 위함
+
 
     // let url = '2차 카테고리 정보를 가져오는 주소';
     let url = '/category/secondCategory/' + cg_code;
     $.getJSON(url, function (category) {
-
       // console.log(category);
       let str = '<ul class="nav justify-content-center" id="second_category">';
       for (let i = 0; i < category.length; i++) {
         str += '<li class="nav-item">';
         // 바로 아래 부분이 2차 카테고리를 보여주는 부분
-        // 
         str += '<a class="nav-link active" href="#" data-cg_code="' + category[i].cg_code + '" + data-cg_name="' + category[i].cg_name + '">' + category[i].cg_name + '</a>'; // str += '2차 카테고리'
         str += '</li>';
       }
@@ -48,10 +44,18 @@ $(document).ready(function () {
     let cg_name = $(this).data("cg_name");
     // 한글이나 특수문자를 서버에 보낼 때 오류가 나는 경우 인코딩 과정에 의해 처리할 수 있다.: https://travelpark.tistory.com/30 
     // location.href = `/user/product/prd_list/${변수}`: 주소의 일부분이 파라미터 값으로 사용
-    location.href = `/user/product/pd_list?cg_code=${cg_code}&cg_name=${cg_name}`;
+    location.href = `/user/product/list?cg_code=${cg_code}&cg_name=${cg_name}`;
   });
 
+  $("#hamburger_icon").on("click", function() {
+    $("#category_menu").toggleClass("show");
+  });
+
+  
+
 });
+
+
 
   // // 햄버거 메뉴 클릭 이벤트
   // $('.hamburger-menu').on('click', function () {

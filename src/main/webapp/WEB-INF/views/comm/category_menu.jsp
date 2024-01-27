@@ -4,11 +4,7 @@
 		<!-- CSS 파일 링크 -->
 		<!-- <link rel="stylesheet" href="/css/category_menu.css"> -->
 
-		<!-- <button class="hamburger-menu">
-			<span></span>
-			<span></span>
-			<span></span>
-		</button> -->
+		<div id="hamburger_icon">☰</div>
 
 		<div id="category_menu">
 			<ul class="nav justify-content-center" id="first_category">
@@ -22,11 +18,11 @@
 						<a class="nav-link active" href="#" data-cg_code="${category.cg_code}">${category.cg_name}</a>
 						
 						<!-- 2차 카테고리 드롭다운 -->
-						<!-- <ul class="second-category" style="display: none;">
+						<ul class="second-category" style="display: none;">
 							<c:forEach items="${category.secondCategoryList}" var="subCategory">
 								<li>${subCategory.cg_name}</li>
 							</c:forEach>
-						</ul> -->
+						</ul>
 					</li>
 				</c:forEach>
 			</ul>

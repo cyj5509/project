@@ -53,7 +53,7 @@
 									<div class="carousel-caption">
 										<h2>개발자를 위한 다양한 상품</h2>
 										<p>IT와 관련된 서적을 포함한 여러 상품을 판매합니다!</p>
-										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/product/pd_list">더 알아보기</a></p>
+										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/product/list">더 알아보기</a></p>
 									</div>
 								</div>
 							</div>

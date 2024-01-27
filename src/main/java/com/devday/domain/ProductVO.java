@@ -45,7 +45,7 @@ public class ProductVO {
 	private String pd_buy_status;
 	
 	private Date pd_register_date;
-	private Date pd_update_date; //직접 입력 받지 않음
+	private Date pd_update_date; 
 	
 	// private MultipartFile uploadFile; 여기서 작성하거나 컨트롤러에서 매개변수로 활용
 }

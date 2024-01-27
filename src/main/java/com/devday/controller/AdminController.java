@@ -55,7 +55,6 @@ public class AdminController {
 				
 				// 최근 접속(로그인) 시간 업데이트
 				adminService.loginTime(vo.getAd_id());	
-				
 			} else {
 				url = "/admin/intro"; // 로그인 폼 주소
 				msg = "failPW"; // "비밀번호가 일치하지 않습니다."

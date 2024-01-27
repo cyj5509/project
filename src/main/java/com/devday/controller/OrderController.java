@@ -78,8 +78,8 @@ public class OrderController {
 	}
 	
 	// 상품 상세 페이지에서 주문하기
-	@GetMapping("/order_ready")
-	public String order_ready(CartVO ct_vo, HttpSession session) throws Exception {
+	@GetMapping("/orderReady")
+	public String orderReady(CartVO ct_vo, HttpSession session) throws Exception {
 
 		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		ct_vo.setUs_id(us_id);

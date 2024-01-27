@@ -52,7 +52,7 @@
 										<td>${cartDTO.pd_name}</td>
 										<td><span id="unitPrice">${cartDTO.pd_price}</span></td>
 										<td>
-											<input type="number" name="ct_amount" value="${cartDTO.ct_amount}" style="width: 45px;">
+											<input type="number" name="ct_amount" value="${cartDTO.ct_amount}" style="width: 55px;">
 											<button type="button" name="btn_cart_amount_change" class="btn btn-info">변경</button>
 										</td>
 										<td><span class="unitTotalPrice" id="unitTotalPrice">${cartDTO.pd_price * cartDTO.ct_amount}</span>

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+  <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
  <aside class="main-sidebar">
 
     <!-- sidebar: style can be found in sidebar.less -->
@@ -40,8 +40,8 @@
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/admin/product/pd_insert">상품등록</a></li>
-            <li><a href="/admin/product/pd_list">상품목록</a></li>
+            <li><a href="/admin/product/insert">상품등록</a></li>
+            <li><a href="/admin/product/list">상품목록</a></li>
           </ul>
         </li>
         

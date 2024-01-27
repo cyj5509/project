@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.devday.domain.AdminVO;
 import com.devday.domain.UserVO;
 import com.devday.dto.FindInfoDTO;
 import com.devday.dto.LoginDTO;
+import com.devday.service.AdminService;
 import com.devday.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +33,8 @@ import lombok.extern.log4j.Log4j;
 public class UserController {
 
 	private final UserService userService; 
-	private final PasswordEncoder passwordEncoder; // [참고] security 폴더의 spring-security.xml 
+	private final PasswordEncoder passwordEncoder; // [참고] security 폴더의 spring-security.xml
+	private final AdminService adminService;
 	
 	// 회원가입 페이지 이동 ─ 회원가입 폼
 	@GetMapping("/join")
@@ -100,13 +103,13 @@ public class UserController {
 
 	// 로그인 기능 구현
 	@PostMapping("/login")
-	public String login(LoginDTO lo_dto,  HttpSession session, 
+	public String login(LoginDTO lo_dto, HttpSession session, 
 						HttpServletResponse response, RedirectAttributes rttr, Model model) throws Exception {
 
 		log.info("컨트롤러 ─ 로그인 정보: " + lo_dto); // 로그인 페이지에서 로그인 버튼 클릭 시 동작
 		
 		UserVO us_vo = userService.enhancedLogin(lo_dto, response);
-		
+
 		String url = "";
 		String msg = "";
 
@@ -114,6 +117,18 @@ public class UserController {
 			// 세션에 us_vo를 "userStatus"라는 이름으로 저장
 			session.setAttribute("userStatus", us_vo);
 	        
+			// 관리자인 경우 ad_check = 1, 사용자인 경우 ad_check = 0
+			if (us_vo.getAd_check() == 1) {
+				// 로그인 시 관리자 페이지 표시 O
+				AdminVO ad_vo = adminService.admin_ok(us_vo.getUs_id());
+				session.setAttribute("adminStatus", ad_vo);
+				log.info("관리자로 접속했습니다."); 
+			} else {
+				// 로그인 시 관리자 페이지 표시 X
+				log.info("사용자로 접속했습니다."); 
+			}
+			
+			// 로그인 후 이동할 URL 설정
 			if (session.getAttribute("targetUrl") != null) {
 				// 로그인이 필요한 주소 요청 시 "targetUrl"라는 이름을 가져와 url에 할당
 				url = (String) session.getAttribute("targetUrl"); // [참고] UserInterceptor의 getTargetUrl
@@ -121,23 +136,13 @@ public class UserController {
 				// 로그인을 필요로 하는 것이 아닌 단순 로그인 시 메인 페이지 이동
 				url = "/"; 
 			}
-			// 관리자인 경우 ad_check = 1, 사용자인 경우 ad_check = 0
-			if (us_vo.getAd_check() == 1) {
-				// true를 "isAdmin"이라는 이름으로 저장(로그인 시 관리자 페이지 표시 O)
-				session.setAttribute("isAdmin", true);
-				log.info("관리자로 접속했습니다.");
-			} else {
-				// false를 "isAdmin"이라는 이름으로 저장(로그인 시 관리자 페이지 표시 X)
-				session.setAttribute("isAdmin", false);
-				log.info("사용자로 접속했습니다.");
-			}
 		} else {
 			// 로그인 실패: 아이디 부존재, 비밀번호 불일치, 입력란을 빈 칸으로 둔 경우
 			url = "/member/login"; // 로그인 실패로 다시 로그인 페이지 이동
 			msg = "아이디 또는 비밀번호가 일치하지 않습니다. 다시 입력해 주세요.";
 			rttr.addFlashAttribute("msg", msg);
 		}
-
+		
 		return "redirect:" + url; // 로그인 또는 메인 페이지 및 해당 페이지 이동
 	}
 
@@ -200,22 +205,22 @@ public class UserController {
 
 	// 회원수정 기능 구현
 	@PostMapping("/modify_info")
-	public String modifyInfo(UserVO vo, HttpSession session, RedirectAttributes rttr) throws Exception {
+	public String modifyInfo(UserVO us_vo, HttpSession session, RedirectAttributes rttr) throws Exception {
 
 		UserVO db_vo = (UserVO) session.getAttribute("userStatus");
 		String us_id = db_vo.getUs_id();
 		
 		// 로그인된 사용자의 ID를 'vo' 객체에 설정
-		vo.setUs_id(us_id); // String us_id = ((MemberVO) session.getAttribute("userStatus")).getUs_id();
+		us_vo.setUs_id(us_id); // String us_id = ((MemberVO) session.getAttribute("userStatus")).getUs_id();
 		
 		log.info("수정 전 회원정보: " + db_vo); // db_vo: 세션에 현재 로그인된 사용자의 정보
 		
-		userService.modify(vo); // 회원수정 관련 메서드 호출
-		log.info("수정 후 회원정보: " + vo); // vo: 클라이언트 단에서 사용자가 입력한 수정 데이터
+		userService.modify(us_vo); // 회원수정 관련 메서드 호출
+		log.info("수정 후 회원정보: " + us_vo); // vo: 클라이언트 단에서 사용자가 입력한 수정 데이터
 
 		// 세션 정보를 최신 상태로 업데이트(수정된 정보를 활용할 경우)
 		// db_vo.setUs_email(vo.getUs_email());
-		session.setAttribute("userStatus", vo);
+		session.setAttribute("userStatus", us_vo);
 
 		rttr.addFlashAttribute("msg", "modify"); // 리디렉션되는 메인 페이지(main.jsp)에서 사용
 

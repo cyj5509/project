@@ -69,7 +69,7 @@ desired effect
 
 											<div class="box-body">
 												<div style="text-align: right;">
-													<form action="/admin/product/pd_list" method="get">
+													<form action="/admin/product/list" method="get">
 														<select name="type">
 															<option selected>검색 종류 선택</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
@@ -83,18 +83,17 @@ desired effect
 														<button type="submit" class="btn btn-primary">검색</button>
 													</form>
 												</div>
-
+												
 												<table class="table table-bordered">
 													<tbody>
-														<tr>
+														<tr  style="text-align: center;">
 															<th style="width: 2%"><input type="checkbox" id="checkAll"></th>
 															<th style="width: 8%">상품코드</th>
-															<th style="width: 25%">상품명</th>
-															<th style="width: 10%">가격</th>
-															<th style="width: 20%">등록일</th>
-															<th style="width: 15%">판매여부</th>
-															<th style="width: 10%">수정</th>
-															<th style="width: 10%">삭제</th>
+															<th style="width: 50%">상품명</th>
+															<th style="width: 5%">가격</th>
+															<th style="width: 10%">등록일</th>
+															<th style="width: 10%">판매여부</th>
+															<th style="width: 15%">비고</th>
 														</tr>
 														<!-- BoardController에서 작성한부이름과 동일한 이름을 items로 작성 -->
 														<!-- 목록이 출력되는 부분 -->
@@ -113,13 +112,15 @@ desired effect
 																</td>
 																<td>
 																	<select name="pd_buy_status" id="pd_buy_status">
-																		<option value="Y" ${productVO.pd_buy_status=='Y' ? 'selected' : '' }>판매가능</option>
-																		<option value="N" ${productVO.pd_buy_status=='N' ? 'selected' : '' }>판매불가능</option>
+																		<option value="Y" ${productVO.pd_buy_status=='Y' ? 'selected' : '' }>가능</option>
+																		<option value="N" ${productVO.pd_buy_status=='N' ? 'selected' : '' }>불가능</option>
 																	</select>
 																</td>
 																<!-- name이나 class는 두 번 이상 사용 가능 -->
-																<td><button type="button" class="btn btn-primary" name="btn_pro_edit">수정</button></td>
-																<td><button type="button" class="btn btn-danger btn_pro_del">삭제</button></td>
+																<td>
+																	<button type="button" class="btn btn-success" name="btn_productEdit">수정</button>
+																	<button type="button" class="btn btn-danger btn_productDelete">삭제</button>
+																</td>
 															</tr>
 														</c:forEach>
 													</tbody>
@@ -128,11 +129,9 @@ desired effect
 
 											<div class="box-footer clearfix">
 												<div class="row">
-													<div class="col-md-4">
-														<button type="button" class="btn btn-primary" id="btn_check_modify1" role="button">체크상품수정
-															1</button>
-														<button type="button" class="btn btn-primary" id="btn_check_modify2" role="button">체크상품수정
-															2</button>
+													<div class="col-md-6">
+														<button type="button" class="btn btn-primary" id="btn_check_modify1" role="button">선택수정 1</button>
+														<button type="button" class="btn btn-primary" id="btn_check_modify2" role="button">선택수정 2</button>
 														<!-- <form id="actionForm">의 용도 -->
 														<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
 														<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
@@ -143,24 +142,24 @@ desired effect
 															<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
 														</form>
 													</div>
-													<div class="col-md-4 text-center">
+													<div class="col-md-6 text-right">
+														<button type="button" class="btn btn-primary" id="btn_pd_insert" role="button">상품등록</button>
+													</div>
+													<div style="text-align: center;">
 														<nav aria-label="...">
 															<ul class="pagination">
-
 																<!-- 맨 처음 표시 여부 -->
 																<c:if test="${pageMaker.foremost}">
 																	<li class="page-item">
 																		<a href="${pageMaker.startPage}" class="page-link movepage">처음으로</a>
 																	</li>
 																</c:if>
-
 																<!-- 이전 표시 여부 -->
 																<c:if test="${pageMaker.prev}">
 																	<li class="page-item">
 																		<a href="${pageMaker.startPage - 1}" class="page-link movepage">Previous</a>
 																	</li>
 																</c:if>
-
 																<!-- 페이지 번호 출력 작업 -->
 																<!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
 																<!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
@@ -172,14 +171,12 @@ desired effect
 																		<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
 																	</li>
 																</c:forEach>
-
 																<!-- 다음 표시 여부 -->
 																<c:if test="${pageMaker.next}">
 																	<li class="page-item">
 																		<a href="${pageMaker.endPage + 1}" class="page-link movepage">Next</a>
 																	</li>
 																</c:if>
-
 																<!-- 맨 끝 표시 여부 -->
 																<c:if test="${pageMaker.rearmost}">
 																	<li class="page-item">
@@ -189,10 +186,6 @@ desired effect
 																</ul>
 														</nav>
 													</div>
-
-													<div class="col-md-4 text-right"><button type="button" class="btn btn-primary"
-															id="btn_pd_insert" role="button">상품등록</button></div>
-
 												</div>
 											</div>
 										</div>
@@ -291,7 +284,7 @@ desired effect
 						$(".movepage").on("click", function (e) {
 							e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-							actionForm.attr("action", "/admin/product/pd_list");
+							actionForm.attr("action", "/admin/product/list");
 							// actionForm.find("input[name='pageNum']").val(현재 선택한 페이지 번호);
 							actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
@@ -300,9 +293,12 @@ desired effect
 
 						// 상품 이미지 또는 상품명 클릭 시
             $("a.move").on("click", function(e) {
+							let pd_number = $(this).parent().parent().find("input[name='check']").val();
+							
               e.preventDefault();
 
-              actionForm.attr("action", "/admin/product/pro_get");
+							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
+              actionForm.attr("action", "/admin/product/get");
               actionForm.submit(); // 페이지 이동 시 actionForm이 동작
             });
 
@@ -329,7 +325,7 @@ desired effect
 						$("#btn_check_modify1").on("click", function () {
 							// 체크박스 유무 확인
 							if ($("input[name='check']:checked").length == 0) {
-								alert("수정할 상품을 체크하세요.")
+								alert("수정할 상품을 선택하세요.")
 								return;
 							}
 
@@ -377,7 +373,7 @@ desired effect
 						$("#btn_check_modify2").on("click", function () {
 							// 체크박스 유무 확인
 							if ($("input[name='check']:checked").length == 0) {
-								alert("수정할 상품을 체크하세요.")
+								alert("수정할 상품을 선택하세요.")
 								return;
 							}
 
@@ -423,11 +419,11 @@ desired effect
 
 						// 상품등록
 						$("#btn_pd_insert").on("click", function () {
-							location.href = "/admin/product/pd_insert";
+							location.href = "/admin/product/insert";
 						})
 
 						// 상품수정
-						$("button[name='btn_pro_edit']").on("click", function () {
+						$("button[name='btn_productEdit']").on("click", function () {
 
 							// 수정 상품코드
 							// 체크박스에 숨겨둔 상품코드
@@ -442,14 +438,14 @@ desired effect
 
 							// <input type="hidden" name="pd_number" id="pd_number" value="값" />              
 							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
-
+							
 							actionForm.attr("method", "get");
-							actionForm.attr("action", "/admin/product/pd_edit");
+							actionForm.attr("action", "/admin/product/edit");
 							actionForm.submit();
 						});
 
 						// 상품 삭제, 화살표 함수 사용 시 상품코드 값을 읽을 수 없다.
-						$(".btn_pro_del").on("click", function() {
+						$(".btn_productDelete").on("click", function() {
 
 							// <a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 							// text(): 입력양식 태그가 아닌 일반 태그의 값을 변경하거나 읽을 때 사용
@@ -465,7 +461,7 @@ desired effect
 							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
 
 							actionForm.attr("method", "post");
-							actionForm.attr("action", "/admin/product/pd_delete");
+							actionForm.attr("action", "/admin/product/delete");
 							actionForm.submit();
 						});
 

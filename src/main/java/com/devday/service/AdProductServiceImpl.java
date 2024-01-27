@@ -19,15 +19,15 @@ public class AdProductServiceImpl implements AdProductService {
 	private final AdProductMapper adProductMapper;
 
 	@Override
-	public void pd_insert(ProductVO vo) {
+	public void insert(ProductVO vo) {
 		
-		adProductMapper.pd_insert(vo);
+		adProductMapper.insert(vo);
 	}
 
 	@Override
-	public List<ProductVO> pd_list(Criteria cri) {
+	public List<ProductVO> getListWithPaging(Criteria cri) {
 		
-		return adProductMapper.pd_list(cri);
+		return adProductMapper.getListWithPaging(cri);
 	}
 
 	@Override
@@ -63,20 +63,20 @@ public class AdProductServiceImpl implements AdProductService {
 	}
 
 	@Override
-	public ProductVO pd_edit(Integer pd_number) {
+	public ProductVO get(Integer pd_number) {
 		
-		return adProductMapper.pd_edit(pd_number);
+		return adProductMapper.get(pd_number);
 	}
 
 	@Override
-	public void pd_edit(ProductVO vo) {
+	public void edit(ProductVO vo) {
 
-		adProductMapper.pd_edit_ok(vo);
+		adProductMapper.edit(vo);
 	}
 
 	@Override
-	public void pd_delete(Integer pd_number) {
+	public void delete(Integer pd_number) {
 		
-		adProductMapper.pd_delete(pd_number);
+		adProductMapper.delete(pd_number);
 	}
 }

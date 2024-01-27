@@ -79,7 +79,7 @@ desired effect
                       </div>
 
                       <!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
-                      <form role="form" method="post" action="/admin/product/pd_edit" enctype="multipart/form-data">
+                      <form role="form" method="post" action="/admin/product/edit" enctype="multipart/form-data">
                         <!-- 절대 경로: /board/register와 동일 -->
                         <div class="box-body">
                           <div class="form-group row">
@@ -98,78 +98,70 @@ desired effect
                                 </c:forEach>
                               </select>
                             </div>
-
                             <div class="col-sm-3">
                               <select class="form-control" id="secondCategory" name="cg_code">
                                 <option>2차 카테고리 선택</option>
                                 <c:forEach items="${second_categoryList}" var="categoryVO">
-                                  <option value="${categoryVO.cg_code}" ${categoryVO.cg_code==productVO.cg_code
+                                  <option value="${categoryVO.cg_code}" ${categoryVO.cg_code==pd_vo.cg_code
                                     ? 'selected' : '' }>
                                     ${categoryVO.cg_name}</option>
                                 </c:forEach>
                               </select>
                             </div>
                           </div>
-
                           <div class="form-group row">
                             <label for="pd_name" class="col-sm-2 col-form-label">상품명</label>
-                            <div class="col-sm-4">
-                              
-                              <input type="hidden" name="pd_number" value="${productVO.pd_number }">
+                            <div class="col-sm-4">                              
+                              <input type="hidden" name="pd_number" value="${pd_vo.pd_number }">
                               <input type="text" class="form-control" name="pd_name" id="pd_name"
-                                value="${productVO.pd_name}" placeholder="상품명 입력..." />
+                                value="${pd_vo.pd_name}" placeholder="상품명 입력" />
                             </div>
-                            <label for="pd_price" class="col-sm-2 col-form-label">상품가격</label>
+                            <label for="pd_price" class="col-sm-2 col-form-label">가격</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_price" id="pd_price"
-                                value="${productVO.pd_price}" placeholder="상품가격 입력..." />
+                                value="${pd_vo.pd_price}" placeholder="가격 입력" />
                             </div>
                           </div>
-
                           <div class="form-group row">
                             <label for="pd_discount" class="col-sm-2 col-form-label">할인율</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_discount" id="pd_discount"
-                                value="${productVO.pd_discount}" placeholder="할인율 입력..." />
+                                value="${pd_vo.pd_discount}" placeholder="할인율 입력" />
                             </div>
                             <label for="title" class="col-sm-2 col-form-label">저자&#47;출판사</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_company" id="pd_company"
-                                value="${productVO.pd_company}" placeholder="저자/출판사 입력..." />
+                                value="${pd_vo.pd_company}" placeholder="저자/출판사 입력" />
                             </div>
                           </div>
-
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">상품 이미지</label>
+                            <label for="title" class="col-sm-2 col-form-label">이미지명</label>
                             <div class="col-sm-4">
-                              <input type="file" class="form-control" name="uploadFile" id="uploadFile"
-                                placeholder="작성자 입력..." />
+                              <input type="file" class="form-control" name="uploadFile" id="uploadFile" />
                               <!-- 상품 이미지 변경 시 기존 이미지 삭제를 위해 사용됨. 이미지 수정하지 않을 경우 그대로 DB 수정 -->
-                              <input type="hidden" name="pd_image_folder" value="${productVO.pd_image_folder }">
-                              <input type="hidden" name="pd_image" value="${productVO.pd_image }">
-                              <!-- name 속성은 실제로 사용하지 않는다, 즉, ProductVO의 pd_image와는 다른 용도이다. -->
+                              <input type="hidden" name="pd_image_folder" value="${pd_vo.pd_image_folder }">
+                              <input type="hidden" name="pd_image" value="${pd_vo.pd_image }">
+                              <!-- name 속성은 실제로 사용하지 않는다, 즉, pd_vo의 pd_image와는 다른 용도이다. -->
                             </div>
-                            <label for="title" class="col-sm-2 col-form-label">미리보기 이미지</label>
+                            <label for="title" class="col-sm-2 col-form-label">미리보기</label>
                             <div class="col-sm-4">
                               <img id="img_preview"
-                                src="/admin/product/imageDisplay?dateFolderName=${productVO.pd_image_folder }&fileName=${productVO.pd_image }"
+                                src="/admin/product/imageDisplay?dateFolderName=${pd_vo.pd_image_folder }&fileName=${pd_vo.pd_image }"
                                 style="width: 200px; height: 200px" />
                             </div>
                           </div>
-
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">상품 설명</label>
+                            <label for="title" class="col-sm-2 col-form-label">내용</label>
                             <div class="col-sm-10">
                               <textarea class="form-control" rows="3" name="pd_content"
-                                id="pd_content">${productVO.pd_content}</textarea>
+                                id="pd_content">${pd_vo.pd_content}</textarea>
                             </div>
                           </div>
-
                           <div class="form-group row">
                             <label for="title" class="col-sm-2 col-form-label">수량</label>
                             <div class="col-sm-4">
                               <input type="text" class="form-control" name="pd_amount" id="pd_amount"
-                                value="${productVO.pd_amount}" placeholder="수량 입력..." />
+                                value="${pd_vo.pd_amount}" placeholder="수량 입력" />
                             </div>
                             <label for="title" class="col-sm-2 col-form-label">판매 여부</label>
                             <div class="col-sm-4">
@@ -177,8 +169,8 @@ desired effect
                                 <!-- value 값이 없으면 option 사이 값이 들어감 -->
                                 <!-- 상품 테이블에서 pd_BUY CHAR(1) NOT NULL, -- VARCHAR(2) -> CHAR(1) -->
                                 <!-- 기존: value값은 각각 가능, 불가능이었음 -->
-                                <option value="Y" ${productVO.pd_buy_status}=='Y' ? 'selected' : ''>판매 가능</option>
-                                <option value="N" ${productVO.pd_buy_status}=='N' ? 'selected' : ''>판매 불가능</option>
+                                <option value="Y" ${pd_vo.pd_buy_status}=='Y' ? 'selected' : ''>가능</option>
+                                <option value="N" ${pd_vo.pd_buy_status}=='N' ? 'selected' : ''>불가능</option>
                               </select>
                             </div>
                           </div>
@@ -189,10 +181,10 @@ desired effect
                             <ul class="uploadedList"></ul>
                           </div>
                           <div class="text-center">
-                            <button type="submit" class="btn btn-primary">
-                              상품 등록
+                            <button type="submit" class="btn btn-success" id="btn_productEdit" style="margin-right: 10px;">
+                              저장
                             </button>
-                            <button type="reset" class="btn btn-primary">취소</button>
+                            <button type="button" class="btn btn-danger" id="btn_productCancel">취소</button>
                           </div>
                         </div>
                       </form>
@@ -303,7 +295,7 @@ desired effect
         <script>
           $(document).ready(function () {
             // ckeditor 환경설정. 자바스크립트 Ojbect문법
-            var ckeditor_config = {
+            let ckeditor_config = {
               resize_enabled: false,
               enterMode: CKEDITOR.ENTER_BR,
               shiftEnterMode: CKEDITOR.ENTER_P,
@@ -311,6 +303,7 @@ desired effect
               removePlugins: "elementspath",
               // 업로드 탭 기능 추가 속성. CKEditor에서 파일업로드해서 서버로 전송을 클릭하면, 이 주소가 동작된다.
               filebrowserUploadUrl: "/admin/product/imageUpload",
+              height: 400
             };
 
             //해당 이름으로 된 textarea에 에디터를 적용
@@ -375,7 +368,20 @@ desired effect
                 $("#img_preview").attr("src", e.target.result);
               };
             });
-          });
+
+            // 저장 버튼 클릭 이벤트
+            $("#btn_productEdit").on('click', function() {
+
+              alert("상품이 정상적으로 수정되었습니다.")
+            });  
+
+            // 취소 버튼 클릭 이벤트
+            $("#btn_productCancel").on('click', function() {
+
+              location.href = "/admin/product/list";
+            });
+
+          }); // ready-end
         </script>
     </body>
 
