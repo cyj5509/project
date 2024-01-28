@@ -159,7 +159,7 @@
 							$("#btn_register").on("click", function () {
 
 								let guest_nickname = $("#bd_guest_nickname").val();
-								if (!guest_nickname || guest_nickname.trim() === '') {
+								if (!guest_nickname || guest_nickname.trim() == '') {
 									// 비회원 닉네임이 비어 있는 경우 'guest'(기본값)로 설정
 									$("#bd_guest_nickname").val('guest');
 								}

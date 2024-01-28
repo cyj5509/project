@@ -19,7 +19,7 @@
 .header-container {
     background-color: #343a40;
     border-bottom: 1px solid #222;
-    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .04);
     color: white;
     display: flex;
     flex-direction: column;

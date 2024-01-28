@@ -17,17 +17,18 @@
 
 				<!-- CSS 파일 링크 -->
 				<link rel="stylesheet" href="/css/common/header.css">
+				<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 
 			</head>
 
 			<body>
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
+				<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
 
-					<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-						<p>장바구니</p>
-					</div>
-
+					<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 40px;">
+						<b>장바구니</b>
+					</h1>
 					<div class="container">
 						<table class="table table-striped">
 							<thead style="text-align: center;">
@@ -90,7 +91,7 @@
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 						<!-- 카테고리 메뉴 자바스크립트 작업 소스-->
-						<script src="/js/category_menu.js"></script>
+						<script src="/js/user/product/categoryMenu.js"></script>
 
 						<script>
 							$(document).ready(function () {

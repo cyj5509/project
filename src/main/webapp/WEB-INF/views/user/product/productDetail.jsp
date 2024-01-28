@@ -17,6 +17,7 @@
 
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
+					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 
 					<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 					<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
@@ -93,8 +94,9 @@
 			</head>
 
 			<body>
-				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 
+				<%@include file="/WEB-INF/views/comm/header.jsp" %>
+				<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
 					<div class="container" style="margin-top: 80px;">
 						<h3 style="text-align: center; margin-bottom: 40px;">${productVO.pd_name}</h3>
 						<div class="card-deck mb-3 text-center row">
@@ -122,9 +124,9 @@
 								<div style="margin: 25px;">
 									<button type="button" class="btn btn-warning" name="btn_cartAdd" style="margin-right: 5px;"
 										data-pd_number="${productVO.pd_number}">장바구니</button>
-									<button type="button" class="btn btn-danger" name="btn_productOrder" style="margin-right: 5px;"
+									<button type="button" class="btn btn-danger" name="btn_purchase" style="margin-right: 5px;"
 										data-pd_number="${productVO.pd_number}">구매</button>
-									<button type="button" class="btn btn-success" name="btn_productList">목록</button>
+									<button type="button" class="btn btn-success" name="btn_list">목록</button>
 								</div>
 							</div>
 							<div class="col-md-4">
@@ -215,7 +217,7 @@
 							crossorigin="anonymous"></script>
 
 						<!-- 카테고리 메뉴 자바스크립트 작업 소스-->
-						<script src="/js/category_menu.js"></script>
+						<script src="/js/user/product/categoryMenu.js"></script>
 
 						<script>
 							$(document).ready(function () {
@@ -253,17 +255,17 @@
 								});
 
 								// 구매하기(주문)
-								$("button[name='btn_order']").on("click", function () {
+								$("button[name='btn_purchase']").on("click", function () {
 
-									// let pd_number = $(this).data("pd_number");
-									// let ct_amount = $("#btn_quantity").val();
-
-									let url = `/user/order/orderReady?pd_number=$(this).data("pd_number")&ct_amount=$("#btn_quantity").val()`;
+									// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
+									let pd_number = $(this).data("pd_number");
+									let ct_amount = $("#btn_quantity").val();
+									let url = "/user/order/orderReady?pd_number=" + pd_number + "&ct_amount=" + ct_amount;
 									location.href = url;
 								});
 
 								// 목록 버튼 클릭 이벤트
-								$("button[name='btn_productList']").on("click", function () {
+								$("button[name='btn_list']").on("click", function () {
 
 									location.href = "/user/product/list";
 								});

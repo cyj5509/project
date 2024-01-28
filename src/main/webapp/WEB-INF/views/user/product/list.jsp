@@ -17,187 +17,214 @@
 
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
-
-				<style>
-					#category_menu {
-    /* 기본 스타일: 숨김 처리 */
-    display: none;
-}
-
-#category_menu.show {
-    /* 햄버거 메뉴 클릭 시 표시 */
-    display: block;
-}
-
-.second-category {
-    display: none;
-}
-
-.second-category.active {
-    display: block;
-}
-				</style>
+					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 
 			</head>
 
 			<body>
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
-
-					<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-						<!-- 1차 카테고리 표시. GlobalControllerAdvice -->
-						<%@include file="/WEB-INF/views/comm/category_menu.jsp" %>
-							<!-- <p>2차 카테고리: ${cg_name}</p> -->
-					</div>
-
-					<div class="container">
-						<div class="card-deck mb-3 text-center row">
-							<c:forEach items="${productList}" var="productVO">
-								<div class="col-md-3">
-									<div class="card mb-4 shadow-sm">
-										<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="200"
-											src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
-											alt="" style="cursor: pointer;">
-										<div class="card-body">
-											<p class="card-text btn_pd_image" data-pd_number="${productVO.pd_number}"
-												style="cursor: pointer;">
-												${productVO.pd_name}</p>
-											<div class="d-flex justify-content-between align-items-center">
-												<div class="btn-group">
-													<!-- data-변수명="" -> HTML5 속성으로 JS 처리를 위해 상품코드를 숨겨둠 -->
-													<button type="button" name="btn_cart_add" data-pd_number="${productVO.pd_number}"
-														class="btn btn-sm btn-outline-secondary">Cart</button>
-													<button type="button" name="btn_buy" class="btn btn-sm btn-outline-secondary">Buy</button>
+					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
+						<!-- <p>2차 카테고리: ${cg_name}</p> -->
+						<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 40px;">
+							<b>상품 목록</b>
+						</h1>
+						<div style="text-align: center;">
+							<form action="/user/product/list" method="get" id="productSearchForm">
+								<select name="type" id="type">
+									<option value="" selected>--- 검색 종류 선택 ---</option>
+									<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
+									<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
+									<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
+									<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명+제조사</option>
+								</select>
+								<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
+									placeholder="검색 키워드 입력" />
+								<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+								<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+								<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
+							</form>
+						</div><br />
+						<div class="container">
+							<div class="card-deck mb-3 text-center row">
+								<c:forEach items="${productList}" var="productVO">
+									<div class="col-md-3">
+										<div class="card mb-4 shadow-sm">
+											<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="200"
+												src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
+												alt="" style="cursor: pointer;">
+											<div class="card-body">
+												<p class="card-text btn_pd_image" data-pd_number="${productVO.pd_number}"
+													style="cursor: pointer;">
+													${productVO.pd_name}</p>
+												<div class="d-flex justify-content-between align-items-center">
+													<div class="btn-group">
+														<!-- data-변수명="" -> HTML5 속성으로 JS 처리를 위해 상품코드를 숨겨둠 -->
+														<button type="button" name="btn_cartAdd" class="btn btn-sm btn-outline-secondary"
+															data-pd_number="${productVO.pd_number}">장바구니</button>
+														<button type="button" name="btn_purchase" class="btn btn-sm btn-outline-secondary"
+															data-pd_number="${productVO.pd_number}">구매</button>
+													</div>
+													<small class="text-muted">
+														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${productVO.pd_price}">
+														</fmt:formatNumber>
+													</small>
 												</div>
-												<small class="text-muted">
-													<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${productVO.pd_price}">
-													</fmt:formatNumber>
-												</small>
 											</div>
 										</div>
 									</div>
+								</c:forEach>
+							</div> <!-- card-deck mb-3 text-center row 닫는 태그 -->
+							<div class="row text-center">
+								<div class="col-md-12">
+									<!-- <form id="actionForm">의 용도 -->
+									<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
+									<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
+									<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
+										<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+										<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+										<input type="hidden" name="type" value="${pageMaker.cri.type}" />
+										<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
+										<input type="hidden" name="cg_code" value="${cg_code}" />
+										<input type="hidden" name="cg_name" value="${cg_name}" />
+									</form>
+
+									<nav aria-label="...">
+										<ul class="pagination" style="text-align: center;">
+											<!-- 맨 처음 표시 여부 -->
+											<c:if test="${pageMaker.foremost}">
+												<li class="page-item">
+													<a href="1" class="page-link movepage">처음</a>
+												</li>
+											</c:if>
+
+											<!-- 이전 표시 여부 -->
+											<c:if test="${pageMaker.prev}">
+												<li class="page-item">
+													<a href="${pageMaker.startPage - 1}" class="page-link movepage">이전</a>
+												</li>
+											</c:if>
+
+											<!-- 페이지 번호 출력 작업 -->
+											<!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
+											<!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
+											<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="number">
+												<li class='page-item ${pageMaker.cri.pageNum == number ? "active" : "" }' aria-current="page">
+													<a class="page-link movepage" href="${number}" data-page="${number}">${number}</a>
+													<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
+												</li>
+											</c:forEach>
+
+											<!-- 다음 표시 여부 -->
+											<c:if test="${pageMaker.next}">
+												<li class="page-item">
+													<a href="${pageMaker.endPage + 1}" class="page-link movepage">다음</a>
+												</li>
+											</c:if>
+
+											<!-- 맨 끝 표시 여부 -->
+											<c:if test="${pageMaker.rearmost}">
+												<li class="page-item">
+													<a href="${pageMaker.readEnd}" class="page-link movepage">끝</a>
+												</li>
+											</c:if>
+
+										</ul>
+									</nav>
 								</div>
-							</c:forEach>
-						</div> <!-- card-deck mb-3 text-center row 닫는 태그 -->
-						<div class="row text-center">
-							<div class="col-md-12">
-								<!-- <form id="actionForm">의 용도 -->
-								<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
-								<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
-								<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
-									<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
-									<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
-									<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
-									<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
-									<input type="hidden" name="cg_code" id="cg_code" value="${cg_code}" />
-									<input type="hidden" name="cg_name" id="cg_name" value="${cg_name}" />
-								</form>
-
-								<nav aria-label="...">
-									<ul class="pagination">
-
-										<!-- 맨 처음 표시 여부 -->
-										<c:if test="${pageMaker.foremost}">
-											<li class="page-item">
-												<a href="1" class="page-link movepage">처음</a>
-											</li>
-										</c:if>
-
-										<!-- 이전 표시 여부 -->
-										<c:if test="${pageMaker.prev}">
-											<li class="page-item">
-												<a href="${pageMaker.startPage - 1}" class="page-link movepage">이전</a>
-											</li>
-										</c:if>
-
-										<!-- 페이지 번호 출력 작업 -->
-										<!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
-										<!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
-										<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="number">
-											<li class='page-item ${pageMaker.cri.pageNum == number ? "active" : "" }' aria-current="page">
-												<a class="page-link movepage" href="${number}" data-page="${number}">${number}</a>
-												<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
-											</li>
-										</c:forEach>
-
-										<!-- 다음 표시 여부 -->
-										<c:if test="${pageMaker.next}">
-											<li class="page-item">
-												<a href="${pageMaker.endPage + 1}" class="page-link movepage">다음</a>
-											</li>
-										</c:if>
-
-										<!-- 맨 끝 표시 여부 -->
-										<c:if test="${pageMaker.rearmost}">
-											<li class="page-item">
-												<a href="${pageMaker.readEnd}" class="page-link movepage">끝</a>
-											</li>
-										</c:if>
-
-									</ul>
-								</nav>
 							</div>
-						</div>
-						<%@include file="/WEB-INF/views/comm/footer.jsp" %>
-					</div> <!-- container 닫는 태그 -->
+							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+						</div> <!-- container 닫는 태그 -->
 
-					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-						<!-- 카테고리 메뉴 자바스크립트 작업 소스. resource 폴더 참조 -->
-						<!-- JS 경로를 사용하려면, servlet-context.xml 파일에서 설정해야 한다. -->
-						<script src="/js/category_menu.js"></script>
+							<!-- 카테고리 메뉴 자바스크립트 작업 소스. resource 폴더 참조 -->
+							<!-- JS 경로를 사용하려면, servlet-context.xml 파일에서 설정해야 한다. -->
+							<script src="/js/user/product/categoryMenu.js"></script>
 
-						<script>
-							$(document).ready(function () {
+							<script>
+								$(document).ready(function () {
 
-								let actionForm = $("#actionForm");  // 액션폼 참조
+									// 전역 변수 초기화
+									let productSearchForm = $("#productSearchForm");
+									let actionForm = $("#actionForm");
 
-								// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
-								$(".movepage").on("click", function (e) {
-									e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
+									// 검색 버튼 클릭 이벤트
+									$("#btn_productSearch").on("click", function () {
 
-									actionForm.attr("action", "/user/product/list");
-									// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
-									actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+										let type = $('#type').val();
+										let keyword = $('#keyword').val();
 
-									actionForm.submit(); // 페이지 이동 시 actionForm이 동작
-								});
+										if (!type || type == '') {
+											alert("검색 종류를 선택해 주세요.");
+											$('#type').focus();
+											return;
+										}
 
-								// 장바구니 추가(CartVO)
-								$("button[name='btn_cart_add']").on("click", function () {
-									// console.log("장바구니");
-									$.ajax({
-										url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
-										type: 'post',
-										// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-										data: { pd_number: $(this).data("pd_number"), ct_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
-										dataType: 'text',
-										success: function (result) {
-											if (result == "success") {
-												if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
-													location.href = "/user/cart/cart_list"
+										if (!keyword || keyword.trim() == '') {
+											alert("키워드를 입력해 주세요.");
+											$('#keyword').focus();
+											return;
+										}
+
+										productSearchForm.submit();
+									});
+
+									// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
+									$(".movepage").on("click", function (e) {
+										e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
+
+										actionForm.attr("action", "/user/product/list");
+										// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
+										actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+
+										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
+									});
+
+									// 장바구니 추가(CartVO)
+									$("button[name='btn_cartAdd']").on("click", function () {
+										// console.log("장바구니");
+										$.ajax({
+											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
+											type: 'post',
+											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
+											data: { pd_number: $(this).data("pd_number"), ct_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+											dataType: 'text',
+											success: function (result) {
+												if (result == "success") {
+													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
+														location.href = "/user/cart/cart_list"
+													}
 												}
 											}
-										}
+										});
 									});
-								});
 
-								// 상품 이미지 또는 상품명 클릭 시 상세로 보내는 작업
-								$(".btn_pd_image").on("click", function () {
-									console.log("상품 상세 설명");
+									// 구매하기(주문)
+									$("button[name='btn_purchase']").on("click", function () {
 
-									// actionForm.attr("action", "상품 상세 주소");
-									actionForm.attr("action", "/user/product/productDetail");
-									let pd_number = $(this).data("pd_number");
+										// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
+										let pd_number = $(this).data("pd_number");
+										let url = "/user/order/orderReady?pd_number=" + pd_number;
+										location.href = url;
+									});
 
-									actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 URL 내용 지우기
-									// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
-									actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
-									actionForm.submit();
-								});
+									// 상품 이미지 또는 상품명 클릭 시 상세로 보내는 작업
+									$(".btn_pd_image").on("click", function () {
+										console.log("상품 상세 설명");
 
-							}); // ready event end
-						</script>
+										// actionForm.attr("action", "상품 상세 주소");
+										actionForm.attr("action", "/user/product/productDetail");
+										let pd_number = $(this).data("pd_number");
+
+										actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 URL 내용 지우기
+										// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
+										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
+										actionForm.submit();
+									});
+
+								}); // ready event end
+							</script>
 			</body>
 
 			</html>

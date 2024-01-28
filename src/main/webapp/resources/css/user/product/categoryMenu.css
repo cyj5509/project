@@ -1,0 +1,88 @@
+
+/* 햄버거 메뉴와 링크들을 담고 있는 컨테이너 스타일링 */
+#hamburger_menu {
+  height: 50px; /* 메뉴바 자체의 높이를 고정값으로 설정 */
+  display: flex; /* 가로로 나열 */
+  align-items: center;
+  background-color: whitesmoke; /* 메뉴바 배경색 지정 */
+  padding: 10px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* 햄버거 아이콘, 메뉴 링크 스타일링 */
+#hamburger_icon, #menu_links {
+  margin: 0 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#hamburger_icon {
+  font-size: 18px;
+}
+
+/* 링크들의 일반 스타일링 */
+#menu_links a, #category_menu a {
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+}
+
+/* 링크에 마우스를 올렸을 때의 스타일링 */
+#hamburger_menu a:hover {
+  background-color: gray; /* 마우스 오버 시 배경색 변경 */
+  color: #f7f7f7; /* 마우스 오버 시 글자 색 변경 */
+}
+
+/* 카테고리 메뉴 스타일링 */
+#category_menu {
+  display: none; /* 초기에는 숨김 처리 */
+  position: relative; /* 상대 위치 */
+  font-weight: bold;
+  height: auto;
+  width: 100%; /* 전체 너비를 차지하도록 조정 */
+  background: whitesmoke;
+  color: black;
+  overflow-y: auto; /* 내용이 많을 때 스크롤 가능 */
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
+  /* transition: top 0.5s ease; top 속성에 대한 부드러운 이동 효과 */
+  /* z-index: 1000;  다른 요소 위에 표시 */ 
+}
+
+/* 카테고리 메뉴가 표시될 때 */
+#category_menu.show {
+  display: block; /* 메뉴를 표시 */
+}
+
+.categoryNavbar {
+  list-style: none; /* 리스트 마커 제거 */
+  padding: 0; /* 패딩 제거 */
+  font-size: 0.95em;
+}
+
+/* 1차 카테고리 스타일링 */
+#first_category {
+  border-top: 1px solid black; /* 구분선 추가 */
+  padding-left: 15px;
+}
+
+/* 1차 카테고리 마우스 오버 시 스타일 */
+#first_category a:hover {
+  background-color: gray; /* 마우스 오버 시 배경색 변경 */
+  color: #f7f7f7; /* 마우스 오버 시 글자 색 변경 */
+}
+
+/* 2차 카테고리 스타일링 */
+#second_category {
+  display: none; /* 기본적으로 숨김 */
+  border-top: 2px solid lightgray; /* 구분선 추가 */
+}
+
+/* 2차 카테고리 항목 스타일링 */
+#second_category li {
+  padding: 5px 10px;
+}
+
+#second_category a:hover {
+  background-color: gray; /* 마우스 오버 시 배경색 변경 */
+  color: #f7f7f7; /* 마우스 오버 시 글자 색 변경 */
+}

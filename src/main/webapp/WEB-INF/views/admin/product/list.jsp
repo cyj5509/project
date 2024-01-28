@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<!DOCTYPE html>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-    <!-- pom.xml의 jstl 라이브러리 -->
+		<!-- pom.xml의 jstl 라이브러리 -->
 		<!--
 This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
@@ -69,24 +69,24 @@ desired effect
 
 											<div class="box-body">
 												<div style="text-align: right;">
-													<form action="/admin/product/list" method="get">
-														<select name="type">
-															<option selected>검색 종류 선택</option>
+													<form action="/admin/product/list" method="get" id="productSearchForm">
+														<select name="type" id="type">
+															<option value="" selected>--- 검색 종류 선택 ---</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
 															<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
-															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명 or 제조사</option>
+															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명+제조사</option>
 														</select>
-														<input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
+														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" placeholder="검색 키워드 입력" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-														<button type="submit" class="btn btn-primary">검색</button>
+														<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
 													</form>
 												</div>
-												
+
 												<table class="table table-bordered">
 													<tbody>
-														<tr  style="text-align: center;">
+														<tr style="text-align: center;">
 															<th style="width: 2%"><input type="checkbox" id="checkAll"></th>
 															<th style="width: 8%">상품코드</th>
 															<th style="width: 50%">상품명</th>
@@ -103,7 +103,8 @@ desired effect
 																<td>${productVO.pd_number}</td>
 																<td><a class="move" href="#" data-bno="${productVO.pd_number}"><img
 																			src="/admin/product/imageDisplay?dateFolderName=${productVO.pd_image_folder }&fileName=s_${productVO.pd_image}"></a>
-																	<a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
+																	<a class="move pd_name" href="#"
+																		data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 																</td>
 																<!-- 클래스명 move는 제목과 관련 -->
 																<td><input type="text" name="pd_price" value="${productVO.pd_price}"></td>
@@ -130,16 +131,18 @@ desired effect
 											<div class="box-footer clearfix">
 												<div class="row">
 													<div class="col-md-6">
-														<button type="button" class="btn btn-primary" id="btn_check_modify1" role="button">선택수정 1</button>
-														<button type="button" class="btn btn-primary" id="btn_check_modify2" role="button">선택수정 2</button>
+														<button type="button" class="btn btn-primary" id="btn_check_modify1" role="button">선택수정
+															1</button>
+														<button type="button" class="btn btn-primary" id="btn_check_modify2" role="button">선택수정
+															2</button>
 														<!-- <form id="actionForm">의 용도 -->
 														<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
 														<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
 														<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
-															<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
-															<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
-															<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
-															<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
+															<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+															<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+															<input type="hidden" name="type" value="${pageMaker.cri.type}" />
+															<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
 														</form>
 													</div>
 													<div class="col-md-6 text-right">
@@ -183,7 +186,7 @@ desired effect
 																		<a href="${pageMaker.readEnd}" class="page-link movepage">끝으로</a>
 																	</li>
 																</c:if>
-																</ul>
+															</ul>
 														</nav>
 													</div>
 												</div>
@@ -278,7 +281,30 @@ desired effect
 				<script>
 					$(document).ready(function () {
 
-						let actionForm = $("#actionForm");  // 전역변수. 액션폼 참조
+						// 전역 변수 초기화
+						let productSearchForm = $("#productSearchForm");
+						let actionForm = $("#actionForm");
+
+						// 검색 버튼 클릭 이벤트
+						$("#btn_productSearch").on("click", function () {
+
+							let type = $('#type').val();
+							let keyword = $('#keyword').val();
+
+							if (!type || type == '') {
+								alert("검색 종류를 선택해 주세요.");
+								$('#type').focus();
+								return;
+							}
+
+							if (!keyword || keyword.trim() == '') {
+								alert("키워드를 입력해 주세요.");
+								$('#keyword').focus();
+								return;
+							}
+
+							productSearchForm.submit();
+						});
 
 						// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정.  <a class="page-link movepage" href="${num}">${num}</a>
 						$(".movepage").on("click", function (e) {
@@ -292,15 +318,15 @@ desired effect
 						});
 
 						// 상품 이미지 또는 상품명 클릭 시
-            $("a.move").on("click", function(e) {
+						$("a.move").on("click", function (e) {
 							let pd_number = $(this).parent().parent().find("input[name='check']").val();
-							
-              e.preventDefault();
+
+							e.preventDefault();
 
 							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
-              actionForm.attr("action", "/admin/product/get");
-              actionForm.submit(); // 페이지 이동 시 actionForm이 동작
-            });
+							actionForm.attr("action", "/admin/product/get");
+							actionForm.submit(); // 페이지 이동 시 actionForm이 동작
+						});
 
 						// 목록에서 제목행 체크박스 선택
 						let isCheck = true;
@@ -434,28 +460,28 @@ desired effect
 							console.log(pd_number);
 
 							// 뒤로가기 클릭 후 다시 수정버튼 클릭시 코드 중복되는 부분 때문에 제거
-              actionForm.find("input[name='pd_number']").remove();          
+							actionForm.find("input[name='pd_number']").remove();
 
 							// <input type="hidden" name="pd_number" id="pd_number" value="값" />              
 							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
-							
+
 							actionForm.attr("method", "get");
 							actionForm.attr("action", "/admin/product/edit");
 							actionForm.submit();
 						});
 
 						// 상품 삭제, 화살표 함수 사용 시 상품코드 값을 읽을 수 없다.
-						$(".btn_productDelete").on("click", function() {
+						$(".btn_productDelete").on("click", function () {
 
 							// <a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 							// text(): 입력양식 태그가 아닌 일반 태그의 값을 변경하거나 읽을 때 사용
 							let pd_name = $(this).parent().parent().find(".pd_name").text();
-              if(!confirm(pd_name + " 상품을 삭제하겠습니까?")) return;
+							if (!confirm(pd_name + " 상품을 삭제하겠습니까?")) return;
 
 							// val()은 input, select, textarea 태그의 값을 변경하거나 읽을 때 사용
-              let pd_number = $(this).parent().parent().find("input[name='check']").val(); // val()은 input, select, textarea태그일 때
+							let pd_number = $(this).parent().parent().find("input[name='check']").val(); // val()은 input, select, textarea태그일 때
 
-              console.log("상품코드", pd_number)
+							console.log("상품코드", pd_number)
 
 							// <input type="hidden" name="pd_number" id="pd_number" value="값" />
 							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');

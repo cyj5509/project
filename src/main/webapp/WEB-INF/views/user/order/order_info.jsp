@@ -18,17 +18,23 @@
 
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
+					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 					
+					<style>
+						input[readonly] {
+							background-color: white !important;
+						}
+					</style>
 				</head>
 
 				<body>
 
 					<%@include file="/WEB-INF/views/comm/header.jsp" %>
+					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
 
-						<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-							<p>주문정보</p>
-						</div>
-
+						<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 40px;">
+							<b>주문 정보</b>
+						</h1>
 						<div class="container">
 							<table class="table table-striped">
 								<thead style="text-align: center;">
@@ -73,20 +79,18 @@
 									<form role="form" id="" method="post" action="">
 										<hr>
 										<fieldset class="form-group border p-3">
-											<legend class="w-auto px-2">주문하시는 분</legend>
-
+											<legend class="w-auto px-2">주문자</legend>
 											<div class="form-group row">
-												<label for="b_us_id" class="col-2">아이디</label>
+												<label for="b_us_name" class="col-2">성함</label>
 												<div class="col-10">
-													<!-- value 값에 'sessionScope.' 는 생략 가능 -->
-													<input type="text" class="form-control" id="b_us_id" value="${loginStatus.us_id}"
+													<input type="text" class="form-control" id="b_us_name" value="${userStatus.us_name}"
 														readonly>
 												</div>
 											</div>
 											<div class="form-group row">
-												<label for="b_us_name" class="col-2">이름</label>
+												<label for="b_us_phone" class="col-2">전화번호</label>
 												<div class="col-10">
-													<input type="text" class="form-control" id="b_us_name" value="${loginStatus.us_name}"
+													<input type="text" class="form-control" id="b_us_phone" value="${userStatus.us_phone}"
 														readonly>
 												</div>
 											</div>
@@ -94,27 +98,20 @@
 												<label for="b_us_postcode" class="col-2">우편번호</label>
 												<div class="col-10">
 													<input type="text" class="form-control" id="b_us_postcode"
-														value="${loginStatus.us_postcode}" readonly>
+														value="${userStatus.us_postcode}" readonly>
 												</div>
 											</div>
 											<div class="form-group row">
 												<label for="b_us_addr_basic" class="col-2">기본주소</label>
 												<div class="col-10">
-													<input type="text" class="form-control" id="b_us_addr_basic" value="${loginStatus.us_addr_basic}"
+													<input type="text" class="form-control" id="b_us_addr_basic" value="${userStatus.us_addr_basic}"
 														readonly>
 												</div>
 											</div>
 											<div class="form-group row">
 												<label for="b_us_addr_detail" class="col-2">상세주소</label>
 												<div class="col-10">
-													<input type="text" class="form-control" id="b_us_addr_detail" value="${loginStatus.us_addr_detail}"
-														readonly>
-												</div>
-											</div>
-											<div class="form-group row">
-												<label for="b_us_phone" class="col-2">전화번호</label>
-												<div class="col-10">
-													<input type="text" class="form-control" id="b_us_phone" value="${loginStatus.us_phone}"
+													<input type="text" class="form-control" id="b_us_addr_detail" value="${userStatus.us_addr_detail}"
 														readonly>
 												</div>
 											</div>
@@ -122,25 +119,30 @@
 
 										<hr>
 										<fieldset class="form-group border p-3">
-											<legend class="w-auto px-2">받으시는 분</legend>
+											<legend class="w-auto px-2">수령인</legend>
 
 											<div class="form-group row">
-												<label for="us_name" class="col-2">수령인(이름)</label>
+												<label for="us_name" class="col-2">성함</label>
 												<div class="col-8">
 													<input type="text" class="form-control" name="us_name" id="us_name"
-														placeholder="이름 입력...">
+														placeholder="이름 입력">
 												</div>
 												<div class="col-2">
-													<input type="checkbox" class="form-controel" id="same_orderer"> 주문자와 동일
+													<input type="checkbox" class="form-controel" id="same_orderer">&nbsp;주문자와 동일
 												</div>
 											</div>
-
-
+											<div class="form-group row">
+												<label for="us_phone" class="col-2">전화번호</label>
+												<div class="col-10">
+													<input type="text" class="form-control" name="us_phone" id="us_phone"
+														placeholder="전화번호 입력">
+												</div>
+											</div>
 											<div class="form-group row">
 												<label for="sample2_postcode" class="col-2">우편번호</label>
 												<div class="col-8">
 													<input type="text" class="form-control" name="us_postcode" id="sample2_postcode"
-														placeholder="우편번호 입력...">
+														placeholder="우편번호 입력">
 												</div>
 												<div class="col-2">
 													<button type="button" onclick="sample2_execDaumPostcode()" class="btn btn-outline-info">우편번호
@@ -151,26 +153,18 @@
 												<label for="sample2_address" class="col-2">기본주소</label>
 												<div class="col-10">
 													<input type="text" class="form-control" name="us_addr_basic" id="sample2_address"
-														placeholder="기본주소 입력...">
+														placeholder="기본주소 입력">
 												</div>
 											</div>
 											<div class="form-group row">
 												<label for="sample2_detailAddress" class="col-2">상세주소</label>
 												<div class="col-10">
 													<input type="text" class="form-control" name="us_addr_detail" id="sample2_detailAddress"
-														placeholder="상세주소 입력...">
+														placeholder="상세주소 입력">
 													<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
 												</div>
 											</div>
-											<div class="form-group row">
-												<label for="us_phone" class="col-2">전화번호</label>
-												<div class="col-10">
-													<input type="text" class="form-control" name="us_phone" id="us_phone"
-														placeholder="전화번호 입력...">
-												</div>
-											</div>
 										</fieldset>
-
 										<hr>
 										<fieldset class="form-group border p-3">
 											<legend class="w-auto px-2">결제방법 선택</legend>
@@ -178,8 +172,8 @@
 												<label for="us_phone" class="col-2">결제방법</label>
 												<div class="col-10">
 													<input type="radio" name="pay_method" id="pay_method1" value="no_bankbook">무통장 입금
-													<input type="radio" name="pay_method" id="pay_method2" value="kakao_pay"><img
-														src="/images/payment.png" class="img-fluid" />
+													<input type="radio" name="pay_method" id="pay_method2" value="kakao_pay">
+													<img src="/images/payment.png" class="img-fluid" style="width: 40px; height: 20px;"/>
 												</div>
 											</div>
 											<div class="form-group row" id="no_bankbook_info" style="display: none;">
@@ -187,10 +181,10 @@
 												<div class="col-10">
 													은행명
 													<select name="pm_no_bankbook_bank" id="pm_no_bankbook_bank">
-														<option value="123-123-1234">KEB하나은행</option>
+														<option value="123-123-1234">하나은행</option>
 														<option value="456-456-4567">국민은행</option>
 														<option value="100-100-1000">신한은행</option>
-														<option valie="200-200-2000">SC제일은행</option>
+														<option valie="200-200-2000">제일은행</option>
 													</select><br>
 													계좌번호<input type="text" name="pm_no_bankbook_account" id="pm_no_bankbook_account"><br>
 													예금주<input type="text" name="pm_no_bankbook_user" id="pm_no_bankbook_user"><br>
@@ -214,7 +208,7 @@
 						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 							<!-- 카테고리 메뉴 자바스크립트 작업 소스-->
-							<script src="/js/category_menu.js"></script>
+							<script src="/js/user/product/categoryMenu.js"></script>
 
 							<script>
 								$(document).ready(function () {

@@ -43,7 +43,8 @@
 						}
 
 						.capitalize {
-							text-transform: capitalize; /* 첫 번째 글자 대문자 변환 */
+							text-transform: capitalize;
+							/* 첫 번째 글자 대문자 변환 */
 						}
 					</style>
 
@@ -95,9 +96,9 @@
 											</div>
 											<div class="row" style="text-align: right;">
 												<div class="col-12">
-													<form action="/user/board/list/${bd_type}" method="get">
-														<select name="type">
-															<option selected>검색 종류 선택</option>
+													<form action="/user/board/list/${bd_type}" method="get" id="boardSearchForm">
+														<select name="type" id="type">
+															<option value="" selected>--- 검색 유형 선택 ---</option>
 															<option value="T" ${pageMaker.cri.type=='T' ? 'selected' : '' }>제목</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>내용</option>
 															<option value="I" ${pageMaker.cri.type=='I' ? 'selected' : '' }>작성자</option>
@@ -105,10 +106,10 @@
 															<option value="TI" ${pageMaker.cri.type=='TI' ? 'selected' : '' }>제목+작성자</option>
 															<option value="TCI" ${pageMaker.cri.type=='TCI' ? 'selected' : '' }>제목+내용+작성자</option>
 														</select>
-														<input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
+														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" placeholder="검색 키워드 입력" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-														<button type="submit" class="btn btn-primary">검색</button>
+														<button type="button" class="btn btn-primary" id="btn_boardSearch">검색</button>
 													</form>
 
 													<!-- <form id="actionForm">의 용도 -->
@@ -118,9 +119,9 @@
 														<!-- <input type="hidden" name="bd_type" id="bd_type" /> -->
 														<input type="hidden" name="bd_number" id="bd_number" />
 														<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
-														<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
-														<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
-														<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
+														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+														<input type="hidden" name="type" value="${pageMaker.cri.type}" />
+														<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
 													</form>
 												</div>
 											</div>
@@ -227,12 +228,12 @@
 																<c:if test="${sessionScope.isAdmin}">
 																	<a class="btn btn-primary" href="/user/board/register/notice" role="button">글쓰기</a>
 																</c:if>
-														</c:if>													
+														</c:if>
 														<c:if test="${bd_type != 'notice'}">
 															<%-- 나머지는 비회원 포함 모두에게 글쓰기 버튼 보임 --%>
 																<a class="btn btn-primary" href="/user/board/register/${bd_type}" role="button">글쓰기</a>
 														</c:if>
-													
+
 													</div>
 												</div>
 											</div>
@@ -251,6 +252,29 @@
 
 						// 폼 태그 참조
 						let actionForm = document.getElementById("actionForm");
+						let boardSearchForm = $("#boardSearchForm");
+
+						// 검색 버튼 클릭 이벤트
+						$("#btn_boardSearch").on("click", function () {
+
+							let type = $('#type').val();
+							let keyword = $('#keyword').val();
+
+							if (!type || type == '') {
+								alert("검색 종류를 선택해 주세요.");
+								$('#type').focus();
+								return;
+							}
+
+							if (!keyword || keyword.trim() == '') {
+								alert("키워드를 입력해 주세요.");
+								$('#keyword').focus();
+								return;
+							}
+
+							boardSearchForm.submit();
+						});
+
 
 						// <form id="actionForm"> 태그를 참조하여 필요한 정보를 변경 및 사용
 

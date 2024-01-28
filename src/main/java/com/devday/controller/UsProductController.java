@@ -55,14 +55,14 @@ public class UsProductController {
 		cri.setAmount(8); // Criteria에서 this(1, 2);
 
 		List<ProductVO> productList = null;
-		int total_count = 0;
+		int totalCount = 0;
 				
 		if (cg_code != null) {
 			productList = usProductService.pd_list(cg_code, cri);
-			total_count = usProductService.getTotalCount(cg_code);
+			totalCount = usProductService.getTotalCount(cg_code);
 		} else {
 			productList = usProductService.pd_list_all(cri);
-			total_count = usProductService.getTotalCountAll();
+			totalCount = usProductService.getTotalCountAll();
 		}
 				
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
@@ -72,8 +72,10 @@ public class UsProductController {
 		});
 		
 		model.addAttribute("cg_code", cg_code);
-		model.addAttribute("productList", productList); // 상품 목록	
-		model.addAttribute("pageMaker", new PageDTO(cri, total_count)); // 페이징 정보
+		model.addAttribute("productList", productList); // 상품 목록
+		
+		PageDTO pageDTO = new PageDTO(cri, totalCount);
+		model.addAttribute("pageMaker", pageDTO); // 페이징 정보
 		
 		return "/user/product/list";
 	}
