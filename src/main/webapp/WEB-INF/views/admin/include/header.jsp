@@ -20,22 +20,20 @@
           </a>
           <!-- Navbar Right Menu -->
           <div class="navbar-custom-menu">
-            
             <ul class="nav navbar-nav">
               <li class="dropdown messages-menu">
-                <a href="/">[DevDay]</a>
+                <a href="/">[사용자 페이지]</a>
               </li>
             </ul>
-
             <ul class="nav navbar-nav">
               <li class="dropdown messages-menu">
-                <a href="#">최근 접속 시간: [
-                  <fmt:formatDate value="${sessionScope.adminStatus.ad_last_login}" pattern="yyyy-MM-dd HH:mm:ss" />]
+                <a href="#">최근 접속 시간: 
+                  <fmt:formatDate value="${sessionScope.adminStatus.ad_last_login}" pattern="yyyy-MM-dd HH:mm:ss" />
                 </a>
               </li>
-            </ul>
+            </ul>            
             <c:if test="${sessionScope.adminStatus != null}">
-              <ul class="nav navbar-nav">
+              <ul class="nav navbar-nav" style="margin-right: 20px;">
                 <li class="dropdown messages-menu">
                   <a href="/admin/logout">로그아웃</a>
                 </li>

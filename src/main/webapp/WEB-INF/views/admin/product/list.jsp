@@ -11,10 +11,73 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<head>
 			<meta charset="utf-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-			<title>AdminLTE 2 | Starter</title>
+			<title>데브데이&#40;관리자&#41;&#58; 상품조회</title>
 			<!-- Tell the browser to be responsive to screen width -->
 			<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
 			<%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
+
+				<style>
+					#productSearchForm select,
+					#productSearchForm input[type="text"],
+					#productSearchForm button {
+						height: 35px;
+						/* 높이 설정 */
+						padding: 5px 10px;
+						/* 내부 여백 설정 */
+						font-size: 14px;
+						/* 글자 크기 설정 */
+						border: 1px solid #ccc;
+						/* 테두리 설정 */
+						vertical-align: middle;
+						/* 수직 정렬 */
+					}
+
+					.box-header h2.box-title {
+						font-size: 24px;
+						font-weight: bold;
+						margin-left: 5px;
+					}
+
+					.box-body .product-table th,
+					.box-body .product-table td {
+						vertical-align: middle;
+						/* 셀의 내용을 수직 중앙에 정렬 */
+						text-align: center;
+						/* 텍스트를 가운데 정렬 */
+					}
+
+					.box-body .product-table th {
+						background-color: lightslategray;
+					}
+
+					.box-body .product-table td {
+						height: 35px;
+						/* 높이 설정 */
+						padding: 5px 10px;
+						/* 내부 여백 설정 */
+						font-size: 14px;
+						/* 글자 크기 설정 */
+						border: 1px solid #ccc;
+						/* 테두리 설정 */
+						vertical-align: middle;
+					}
+
+					.box-footer .btn-dark {
+						background-color: #343a40;
+						/* 원하는 색상 코드로 변경 */
+						color: #ffffff;
+					}
+
+					.box-footer .btn-secondary {
+						background-color: #666666;
+						/* 원하는 색상 코드로 변경 */
+						color: #ffffff;
+					}
+
+					.wrapper .content-wrapper {
+						background-color: whitesmoke;
+					}
+				</style>
 		</head>
 		<!--
 BODY TAG OPTIONS:
@@ -37,7 +100,7 @@ desired effect
 |---------------------------------------------------------|
 -->
 
-		<body class="hold-transition skin-blue sidebar-mini">
+		<body class="hold-transition skin-blue isDark sidebar-mini">
 			<div class="wrapper">
 				<!-- Main Header -->
 				<%@ include file="/WEB-INF/views/admin/include/header.jsp" %>
@@ -49,7 +112,7 @@ desired effect
 						<div class="content-wrapper">
 							<!-- Content Header (Page header) -->
 							<section class="content-header">
-								<h1>Page Header <small>Optional description</small></h1>
+								<h1 style="font-weight: bold;">관리자 페이지 ─ 상품 목록</h1>
 								<ol class="breadcrumb">
 									<li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
 									<li class="active">Here</li>
@@ -64,7 +127,7 @@ desired effect
 									<div class="col-md-12">
 										<div class="box">
 											<div class="box-header with-border">
-												<h3 class="box-title">Product List</h3>
+												<h2 class="box-title">Product List</h2>
 											</div>
 
 											<div class="box-body">
@@ -77,16 +140,16 @@ desired effect
 															<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
 															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명+제조사</option>
 														</select>
-														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" placeholder="검색 키워드 입력" />
+														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
+															placeholder="검색 키워드 입력" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
 														<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
 													</form>
-												</div>
-
-												<table class="table table-bordered">
+												</div><br />
+												<table class="table table-bordered product-table">
 													<tbody>
-														<tr style="text-align: center;">
+														<tr>
 															<th style="width: 2%"><input type="checkbox" id="checkAll"></th>
 															<th style="width: 8%">상품코드</th>
 															<th style="width: 50%">상품명</th>
@@ -101,7 +164,9 @@ desired effect
 															<tr>
 																<td><input type="checkbox" name="check" value="${productVO.pd_number}"></td>
 																<td>${productVO.pd_number}</td>
-																<td><a class="move" href="#" data-bno="${productVO.pd_number}"><img
+																<td style="text-align: justify;">
+																	<a class="move" href="#" data-bno="${productVO.pd_number}">
+																		<img
 																			src="/admin/product/imageDisplay?dateFolderName=${productVO.pd_image_folder }&fileName=s_${productVO.pd_image}"></a>
 																	<a class="move pd_name" href="#"
 																		data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
@@ -127,13 +192,12 @@ desired effect
 													</tbody>
 												</table>
 											</div>
-
 											<div class="box-footer clearfix">
 												<div class="row">
 													<div class="col-md-6">
-														<button type="button" class="btn btn-primary" id="btn_check_modify1" role="button">선택수정
+														<button type="button" class="btn btn-dark" id="btn_checkModify1" role="button">선택수정
 															1</button>
-														<button type="button" class="btn btn-primary" id="btn_check_modify2" role="button">선택수정
+														<button type="button" class="btn btn-secondary" id="btn_checkModify2" role="button">선택수정
 															2</button>
 														<!-- <form id="actionForm">의 용도 -->
 														<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
@@ -146,7 +210,7 @@ desired effect
 														</form>
 													</div>
 													<div class="col-md-6 text-right">
-														<button type="button" class="btn btn-primary" id="btn_pd_insert" role="button">상품등록</button>
+														<button type="button" class="btn btn-info" id="btn_pd_insert" role="button">상품등록</button>
 													</div>
 													<div style="text-align: center;">
 														<nav aria-label="...">
@@ -154,13 +218,13 @@ desired effect
 																<!-- 맨 처음 표시 여부 -->
 																<c:if test="${pageMaker.foremost}">
 																	<li class="page-item">
-																		<a href="${pageMaker.startPage}" class="page-link movepage">처음으로</a>
+																		<a href="${pageMaker.startPage}" class="page-link movepage">처음</a>
 																	</li>
 																</c:if>
 																<!-- 이전 표시 여부 -->
 																<c:if test="${pageMaker.prev}">
 																	<li class="page-item">
-																		<a href="${pageMaker.startPage - 1}" class="page-link movepage">Previous</a>
+																		<a href="${pageMaker.startPage - 1}" class="page-link movepage">이전</a>
 																	</li>
 																</c:if>
 																<!-- 페이지 번호 출력 작업 -->
@@ -177,13 +241,13 @@ desired effect
 																<!-- 다음 표시 여부 -->
 																<c:if test="${pageMaker.next}">
 																	<li class="page-item">
-																		<a href="${pageMaker.endPage + 1}" class="page-link movepage">Next</a>
+																		<a href="${pageMaker.endPage + 1}" class="page-link movepage">다음</a>
 																	</li>
 																</c:if>
 																<!-- 맨 끝 표시 여부 -->
 																<c:if test="${pageMaker.rearmost}">
 																	<li class="page-item">
-																		<a href="${pageMaker.readEnd}" class="page-link movepage">끝으로</a>
+																		<a href="${pageMaker.readEnd}" class="page-link movepage">끝</a>
 																	</li>
 																</c:if>
 															</ul>
@@ -348,7 +412,7 @@ desired effect
 						});
 
 						// 체크박스수정 1 버튼 클릭
-						$("#btn_check_modify1").on("click", function () {
+						$("#btn_checkModify1").on("click", function () {
 							// 체크박스 유무 확인
 							if ($("input[name='check']:checked").length == 0) {
 								alert("수정할 상품을 선택하세요.")
@@ -396,7 +460,7 @@ desired effect
 						});
 
 						// 체크박스수정 2 버튼 클릭
-						$("#btn_check_modify2").on("click", function () {
+						$("#btn_checkModify2").on("click", function () {
 							// 체크박스 유무 확인
 							if ($("input[name='check']:checked").length == 0) {
 								alert("수정할 상품을 선택하세요.")

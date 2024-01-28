@@ -40,8 +40,8 @@
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/admin/product/insert">상품등록</a></li>
-            <li><a href="/admin/product/list">상품목록</a></li>
+            <li><a href="/admin/product/insert">✔&nbsp;&nbsp;&nbsp;상품등록</a></li>
+            <li><a href="/admin/product/list">✔&nbsp;&nbsp;&nbsp;상품목록</a></li>
           </ul>
         </li>
         
@@ -52,8 +52,8 @@
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/admin/order/order_list">주문목록</a></li>
-            <li><a href="#">배송목록</a></li>
+            <li><a href="/admin/order/order_list">✔&nbsp;&nbsp;&nbsp;주문목록</a></li>
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;배송목록</a></li>
           </ul>
         </li>
         
@@ -64,8 +64,8 @@
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#">회원목록</a></li>
-            <li><a href="#">회원통계</a></li>
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;회원목록</a></li>
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;회원통계</a></li>
           </ul>
         </li>
         

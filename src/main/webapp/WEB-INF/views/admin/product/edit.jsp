@@ -11,10 +11,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <title>AdminLTE 2 | Starter</title>
+      <title>데브데이&#40;관리자&#41;&#58; 상품조회</title>
       <!-- Tell the browser to be responsive to screen width -->
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
       <%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
+
+        <style>
+          .box-header h2.box-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 5px;
+          }
+        </style>
     </head>
     <!--
 BODY TAG OPTIONS:
@@ -49,10 +57,7 @@ desired effect
             <div class="content-wrapper">
               <!-- Content Header (Page header) -->
               <section class="content-header">
-                <h1>
-                  Page Header
-                  <small>Optional description</small>
-                </h1>
+                <h1 style="font-weight: bold;">관리자 페이지 ─ 상품 수정</h1>
                 <ol class="breadcrumb">
                   <li>
                     <a href="#"><i class="fa fa-dashboard"></i> Level</a>
@@ -69,7 +74,7 @@ desired effect
                   <div class="col-md-12">
                     <div class="box box-primary">
                       <div class="box-header with-border">
-                        <h3 class="box-title mt-5">Product Edit</h3>
+                        <h2 class="box-title">수정하기</h2>
                         <form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
                           <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
                           <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
@@ -81,10 +86,10 @@ desired effect
                       <!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
                       <form role="form" method="post" action="/admin/product/edit" enctype="multipart/form-data">
                         <!-- 절대 경로: /board/register와 동일 -->
-                        <div class="box-body">
+                        <div class="box-body" style="text-align: center;">
                           <div class="form-group row">
-                            <label for="title" class="col-sm-2 col-form-label">카테고리</label>
-                            <div class="col-sm-3">
+                            <label for="title" class="col-sm-2 col-form-label">1차 카테고리</label>
+                            <div class="col-sm-4">
                               <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
                               <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
                               <input type="hidden" name="type" id="type" value="${cri.type}" />
@@ -93,17 +98,19 @@ desired effect
                                 <option>1차 카테고리 선택</option>
                                 <!-- 1차 카테고리 표시. GlobalControllerAdvice -->
                                 <c:forEach items="${firstCategoryList}" var="categoryVO">
-                                  <option value="${categoryVO.cg_code}" ${categoryVO.cg_code==first_category.cg_parent_code
-                                    ? 'selected' : '' }>${categoryVO.cg_name}</option>
+                                  <option value="${categoryVO.cg_code}"
+                                    ${categoryVO.cg_code==first_category.cg_parent_code ? 'selected' : '' }>
+                                    ${categoryVO.cg_name}</option>
                                 </c:forEach>
                               </select>
                             </div>
-                            <div class="col-sm-3">
+                            <label for="title" class="col-sm-2 col-form-label">2차 카테고리</label>
+                            <div class="col-sm-4">
                               <select class="form-control" id="secondCategory" name="cg_code">
                                 <option>2차 카테고리 선택</option>
                                 <c:forEach items="${second_categoryList}" var="categoryVO">
-                                  <option value="${categoryVO.cg_code}" ${categoryVO.cg_code==pd_vo.cg_code
-                                    ? 'selected' : '' }>
+                                  <option value="${categoryVO.cg_code}" ${categoryVO.cg_code==pd_vo.cg_code ? 'selected'
+                                    : '' }>
                                     ${categoryVO.cg_name}</option>
                                 </c:forEach>
                               </select>
@@ -111,7 +118,7 @@ desired effect
                           </div>
                           <div class="form-group row">
                             <label for="pd_name" class="col-sm-2 col-form-label">상품명</label>
-                            <div class="col-sm-4">                              
+                            <div class="col-sm-4">
                               <input type="hidden" name="pd_number" value="${pd_vo.pd_number }">
                               <input type="text" class="form-control" name="pd_name" id="pd_name"
                                 value="${pd_vo.pd_name}" placeholder="상품명 입력" />
@@ -181,7 +188,8 @@ desired effect
                             <ul class="uploadedList"></ul>
                           </div>
                           <div class="text-center">
-                            <button type="submit" class="btn btn-success" id="btn_productEdit" style="margin-right: 10px;">
+                            <button type="submit" class="btn btn-success" id="btn_productEdit"
+                              style="margin-right: 10px;">
                               저장
                             </button>
                             <button type="button" class="btn btn-danger" id="btn_productCancel">취소</button>
@@ -370,13 +378,13 @@ desired effect
             });
 
             // 저장 버튼 클릭 이벤트
-            $("#btn_productEdit").on('click', function() {
+            $("#btn_productEdit").on('click', function () {
 
               alert("상품이 정상적으로 수정되었습니다.")
-            });  
+            });
 
             // 취소 버튼 클릭 이벤트
-            $("#btn_productCancel").on('click', function() {
+            $("#btn_productCancel").on('click', function () {
 
               location.href = "/admin/product/list";
             });

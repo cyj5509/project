@@ -11,10 +11,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <title>AdminLTE 2 | Starter</title>
+      <title>데브데이&#40;관리자&#41;&#58; 상품조회</title>
       <!-- Tell the browser to be responsive to screen width -->
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
       <%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
+
+        <style>
+          .box-header h2.box-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 5px;
+          }
+        </style>
     </head>
     <!--
 BODY TAG OPTIONS:
@@ -49,10 +57,7 @@ desired effect
             <div class="content-wrapper">
               <!-- Content Header (Page header) -->
               <section class="content-header">
-                <h1>
-                  Page Header
-                  <small>Optional description</small>
-                </h1>
+                <h1 style="font-weight: bold;">관리자 페이지 ─ 상품 등록</h1>
                 <ol class="breadcrumb">
                   <li>
                     <a href="#"><i class="fa fa-dashboard"></i> Level</a>
@@ -69,12 +74,13 @@ desired effect
                   <div class="col-md-12">
                     <div class="box box-primary">
                       <div class="box-header with-border">
-                        <h3 class="box-title mt-5">Product Insert</h3>
+                        <h2 class="box-title">등록하기</h2>
                       </div>
 
                       <!-- form 태그는 글쓰기나 수정 폼에서 사용 -->
                       <!-- enctype="multipart/form-data": 파일 업로드용 -->
-                      <form role="form" method="post" action="/admin/product/insert" id="productInsertForm" enctype="multipart/form-data">
+                      <form role="form" method="post" action="/admin/product/insert" id="productInsertForm"
+                        enctype="multipart/form-data">
                         <!-- 절대 경로: /board/register와 동일 -->
                         <div class="box-body" style="text-align: center;">
                           <div class="form-group row">
@@ -362,7 +368,7 @@ desired effect
               let pd_content = CKEDITOR.instances.pd_content.getData();
               let pd_amount = $("#pd_amount").val();
               let pd_buy_status = $("#pd_buy_status").val();
-              
+
               if (firstCategory == '') {
                 alert("1차 카테고리를 선택해 주세요.");
                 $("#firstCategory").focus();
@@ -395,11 +401,11 @@ desired effect
                 return;
               }
               if (!pd_content || pd_content.trim() == '') {
-									// CKEditor 인스턴스에서 데이터 가져오기
-									alert("내용을 입력해 주세요.");
-									CKEDITOR.instances.pd_content.focus();
-									return;
-							}
+                // CKEditor 인스턴스에서 데이터 가져오기
+                alert("내용을 입력해 주세요.");
+                CKEDITOR.instances.pd_content.focus();
+                return;
+              }
               if (!pd_amount || pd_amount.trim() == '') {
                 alert("수량을 입력해 주세요.");
                 $("#pd_amount").focus();

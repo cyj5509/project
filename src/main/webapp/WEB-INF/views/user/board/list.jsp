@@ -18,7 +18,7 @@
 
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
-					<link rel="stylesheet" href="/css/user/board/main_text.css">
+					<link rel="stylesheet" href="/css/user/board/mainText.css">
 
 					<style>
 						.horizontal-menu {
@@ -114,7 +114,7 @@
 
 													<!-- <form id="actionForm">의 용도 -->
 													<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용: action="/user/board/get" 
-												<!-- 2) 목록에서 제목을 클릭할 때 사용: action="/user/board/get" -->
+													<!-- 2) 목록에서 제목을 클릭할 때 사용: action="/user/board/get" -->
 													<form id="actionForm" action="/user/board/list/${bd_type}" method="get">
 														<!-- <input type="hidden" name="bd_type" id="bd_type" /> -->
 														<input type="hidden" name="bd_number" id="bd_number" />

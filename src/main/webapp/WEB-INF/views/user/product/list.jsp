@@ -11,7 +11,7 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>데브데이: 상품목록</title>
+				<title>데브데이: 상품조회</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -19,13 +19,29 @@
 					<link rel="stylesheet" href="/css/common/header.css">
 					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 
+					<style>
+						#productSearchForm select,
+						#productSearchForm input[type="text"],
+						#productSearchForm button {
+							height: 35px;
+							/* 높이 설정 */
+							padding: 5px 10px;
+							/* 내부 여백 설정 */
+							font-size: 14px;
+							/* 글자 크기 설정 */
+							border: 1px solid #ccc;
+							/* 테두리 설정 */
+							vertical-align: middle;
+							/* 수직 정렬 */
+						}
+					</style>
 			</head>
 
 			<body>
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
-						<!-- <p>2차 카테고리: ${cg_name}</p> -->
+						<p>2차 카테고리: ${cg_name}</p>
 						<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 40px;">
 							<b>상품 목록</b>
 						</h1>

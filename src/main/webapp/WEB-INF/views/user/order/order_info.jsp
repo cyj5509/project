@@ -173,7 +173,7 @@
 												<div class="col-10">
 													<input type="radio" name="pay_method" id="pay_method1" value="no_bankbook">무통장 입금
 													<input type="radio" name="pay_method" id="pay_method2" value="kakao_pay">
-													<img src="/images/payment.png" class="img-fluid" style="width: 40px; height: 20px;"/>
+													<img src="/images/payment.png" class="img-fluid" style="width: 50px; height: 20px;"/>
 												</div>
 											</div>
 											<div class="form-group row" id="no_bankbook_info" style="display: none;">

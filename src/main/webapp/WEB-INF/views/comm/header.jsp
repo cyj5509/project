@@ -31,13 +31,13 @@
                     <!-- 환영인사 및 최근 접속시간 -->
                     <div class="header-info-section">
                         <c:if test="${sessionScope.userStatus != null}">
-                            <c:if test="${not empty sessionScope.adminStatus}">
-                                <a href="/admin/ad_menu" class="admin-section">[Admin]</a>
-                            </c:if>
                             <b>최근 접속 일자:
                                 <fmt:formatDate value="${sessionScope.userStatus.us_last_login}"
                                     pattern="yyyy-MM-dd HH:mm:ss" />
                             </b>
+                            <c:if test="${not empty sessionScope.adminStatus}">
+                                <a href="/admin/ad_menu" class="admin-section">[관리자 페이지]</a>
+                            </c:if>
                         </c:if>
                     </div>
                 </div>

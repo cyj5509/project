@@ -11,7 +11,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <title>AdminLTE 2 | Starter</title>
+      <title>데브데이&#40;관리자&#41;&#58; 상품조회</title>
       <!-- Tell the browser to be responsive to screen width -->
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
       <%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
@@ -20,6 +20,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
           input[readonly],
           select[disabled] {
             background-color: white !important;
+          }
+
+          .box-header h2.box-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 5px;
           }
         </style>
     </head>
@@ -56,10 +62,7 @@ desired effect
             <div class="content-wrapper">
               <!-- Content Header (Page header) -->
               <section class="content-header">
-                <h1>
-                  Page Header
-                  <small>Optional description</small>
-                </h1>
+                <h1 style="font-weight: bold;">관리자 페이지 ─ 상품 조회</h1>
                 <ol class="breadcrumb">
                   <li>
                     <a href="#"><i class="fa fa-dashboard"></i> Level</a>
@@ -76,7 +79,7 @@ desired effect
                   <div class="col-md-12">
                     <div class="box box-primary">
                       <div class="box-header with-border">
-                        <h3 class="box-title mt-5">Product View</h3>
+                        <h2 class="box-title">조회하기</h2>
                         <form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
                           <input type="hidden" name="pageNum" id="pageNum" value="${cri.pageNum}" />
                           <input type="hidden" name="amount" id="amount" value="${cri.amount}" />
