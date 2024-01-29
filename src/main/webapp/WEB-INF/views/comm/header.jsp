@@ -16,7 +16,7 @@
                     <a href="/member/my_page" class="nav-item">마이페이지</a>
                     <a href="/user/cart/cart_list" class="nav-item">장바구니</a>
                     <a href="/user/order/order_info" class="nav-item">주문조회</a>
-                    <a href="/user/board/list" class="nav-item">커뮤니티</a>
+                    <a href="/user/board/usBoardList" class="nav-item">커뮤니티</a>
                 </div>
 
                 <!-- 상단 로고 및 정보 행 -->
@@ -31,13 +31,13 @@
                     <!-- 환영인사 및 최근 접속시간 -->
                     <div class="header-info-section">
                         <c:if test="${sessionScope.userStatus != null}">
+                            <c:if test="${not empty sessionScope.adminStatus}">
+                                <a href="/admin/ad_menu" class="admin-section">[관리자 페이지]</a>
+                            </c:if>
                             <b>최근 접속 일자:
                                 <fmt:formatDate value="${sessionScope.userStatus.us_last_login}"
                                     pattern="yyyy-MM-dd HH:mm:ss" />
                             </b>
-                            <c:if test="${not empty sessionScope.adminStatus}">
-                                <a href="/admin/ad_menu" class="admin-section">[관리자 페이지]</a>
-                            </c:if>
                         </c:if>
                     </div>
                 </div>

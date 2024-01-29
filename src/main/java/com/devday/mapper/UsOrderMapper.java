@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import com.devday.domain.OrderBasicVO;
 import com.devday.domain.PaymentVO;
 
-public interface OrderMapper {
+public interface UsOrderMapper {
 
 	int getOrderSeq(); // 주문번호에 사용할 시퀀스
 	

@@ -513,10 +513,10 @@
 						function fn_list() {
 							console.log("목록 버튼 클릭");
 
-							let url = "/user/board/list/${bd_vo.bd_type}"
+							let url = "/user/board/usBoardList/${bd_vo.bd_type}"
 
 							document.getElementById("bd_number").remove();
-							curListInfo.setAttribute("action", url); // /user/board/list -> /user/board/get 전송
+							curListInfo.setAttribute("action", url); // /user/board/usBoardList -> /user/board/get 전송
 							curListInfo.submit();
 						}
 					</script>

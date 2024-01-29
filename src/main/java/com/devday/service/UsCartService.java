@@ -1,14 +1,11 @@
-package com.devday.mapper;
+package com.devday.service;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
 
 import com.devday.domain.CartVO;
 import com.devday.dto.CartDTOList;
 
-// DAO 의미와 동일한 의미
-public interface CartMapper {
+public interface UsCartService {
 
 	void cart_add(CartVO ct_vo); // 장바구니 추가 관련 메서드
 
@@ -17,14 +14,11 @@ public interface CartMapper {
 	List<CartDTOList> cart_list(String us_id); // 장바구니 목록 관련 메서드
 	
 	// 장바구니 수량 변경 관련 메서드
-	void cart_amount_change(
-			@Param("ct_code") Long ct_code,
-			@Param("ct_amount") int ct_amount
-	);
-	
+	void cart_amount_change(Long ct_code, int ct_amount);
+
 	// 장바구니 목록에서 개별 삭제 관련 메서드
 	void cart_list_del(Long ct_code);
-	
-	//장바구니 선택삭제. 파라미터 List컬렉션 사용.
+
+	// 장바구니 목록에서 선택 삭제 관련 메서드
 	void cart_sel_delete(List<Long> ct_code_arr);
 }

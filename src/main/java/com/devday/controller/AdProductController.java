@@ -97,7 +97,7 @@ public class AdProductController {
 		// 2) 상품 정보 작업
 		adProductService.insert(vo);
 
-		return "redirect:/admin/product/list"; // 상품 리스트 주소로 이동
+		return "redirect:/admin/product/adProductList"; // 상품 리스트 주소로 이동
 	}
 
 	// CkEditor 업로드 탭에서 파일 업로드 시 동작하는 매핑주소
@@ -176,8 +176,8 @@ public class AdProductController {
 	// 메서드의 파라미터를 스프링에서 객체를 자동으로 생성해준다.
 	// 테이블의 전체 데이터를 가져옴
 	// Model 파라미터는 AJAX 호출 시 사용하지 않음(단순 JSP에서 데이터 값을 이용할 때)
-	@GetMapping("/list")
-	public void list(Criteria cri, Model model) throws Exception {
+	@GetMapping("/adProductList")
+	public void adProductList(Criteria cri, Model model) throws Exception {
 
 		cri.setAmount(4); // Criteria에서 this(1, 2);
 
@@ -316,7 +316,7 @@ public class AdProductController {
 		// DB 연동 작업
 		adProductService.edit(vo);
 		
-		return "redirect:/admin/product/list" + cri.getListLink();
+		return "redirect:/admin/product/adProductList" + cri.getListLink();
 	}
 	
 	@PostMapping("/delete")
@@ -325,6 +325,6 @@ public class AdProductController {
 		// DB 연동 작업
 		adProductService.delete(pd_number);
 		
-		return "redirect:/admin/product/list" + cri.getListLink();
+		return "redirect:/admin/product/adProductList" + cri.getListLink();
 	}
 }

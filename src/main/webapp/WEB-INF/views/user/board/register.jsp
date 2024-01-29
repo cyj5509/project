@@ -208,7 +208,7 @@
 
 							$("#btn_list").on("click", function () {
 								// console.log("취소 시 목록 페이지로 이동");
-								location.href = "/user/board/list";
+								location.href = "/user/board/usBoardList";
 							});
 
 						}) // ready-end

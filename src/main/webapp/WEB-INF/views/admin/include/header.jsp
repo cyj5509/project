@@ -27,7 +27,7 @@
             </ul>
             <ul class="nav navbar-nav">
               <li class="dropdown messages-menu">
-                <a href="#">최근 접속 시간: 
+                <a href="#">최근 접속 일자: 
                   <fmt:formatDate value="${sessionScope.adminStatus.ad_last_login}" pattern="yyyy-MM-dd HH:mm:ss" />
                 </a>
               </li>

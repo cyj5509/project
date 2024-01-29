@@ -95,11 +95,11 @@ public class UsBoardController {
 		usBoardService.register(bd_vo); // 게시물 등록 관련 메서드 호출
 
 		rttr.addFlashAttribute("msg", "게시물이 정상적으로 등록되었습니다.");
-		return "redirect:/user/board/list" + "/" + bd_vo.getBd_type();  
+		return "redirect:/user/board/usBoardList" + "/" + bd_vo.getBd_type();  
 	}
 	
 	// 게시물 목록 페이지 이동(게시물 목록 폼)
-	@GetMapping(value = {"/list", "/list/{bd_type}"})
+	@GetMapping(value = {"/usBoardList", "/usBoardList/{bd_type}"})
 	public String list(@PathVariable(value = "bd_type", required = false) String bd_type, Criteria cri, Model model) {
 		
 		log.info("게시물 목록 페이지 진입");
@@ -129,7 +129,7 @@ public class UsBoardController {
 		// log.info("페이징 정보: " + pageDTO);
 		// log.info("게시판 분류: " + usBoardService.getListType(bd_type));
 		
-		return "/user/board/list"; // JSP 페이지 경로
+		return "/user/board/usBoardList"; // JSP 페이지 경로
 	}
 	
 	// 게시물 조회 페이지 이동(게시물 조회 폼)
@@ -211,7 +211,7 @@ public class UsBoardController {
 		*/
 		rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물이 정상적으로 수정되었습니다.");
 		
-		return "redirect:/user/board/list/" + bd_vo.getBd_type() + cri.getListLink();
+		return "redirect:/user/board/usBoardList/" + bd_vo.getBd_type() + cri.getListLink();
 	}
 	
 	// 게시물 삭제 기능 구현(관련 페이지 불필요)
@@ -257,7 +257,7 @@ public class UsBoardController {
  		rttr.addAttribute("keyword", cri.getKeyword());	
  		*/
 	    rttr.addFlashAttribute("msg", bd_vo.getBd_number() + "번 게시물이 정상적으로 삭제되었습니다.");
-		return "redirect:/user/board/list/" + bd_type + cri.getListLink();
+		return "redirect:/user/board/usBoardList/" + bd_type + cri.getListLink();
 	}
 	
 	@PostMapping("/checkPw")
@@ -280,7 +280,7 @@ public class UsBoardController {
 	        rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
 	        return "redirect:/user/board/get/" + (db_vo != null ? db_vo.getBd_type() : "total") + cri.getListLink() + "&bd_number=" + bd_number;
 	    }
-	    return "redirect:/user/board/list/" + (db_vo != null ? db_vo.getBd_type() : "total");
+	    return "redirect:/user/board/usBoardList/" + (db_vo != null ? db_vo.getBd_type() : "total");
 	}
 	
 	@PostMapping("/imageUpload")

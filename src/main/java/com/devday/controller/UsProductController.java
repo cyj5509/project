@@ -45,8 +45,8 @@ public class UsProductController {
 	
 	// 2. REST API 개발 형태의 매핑 주소: /user/product/pd_list/2차 카테고리 코드
 	// 2차 카테고리를 선택했을 때 그걸 조건으로 데이터를 가져옴
-	@GetMapping("/list")
-	public String list(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code, 
+	@GetMapping("/usProductList")
+	public String usProductList(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code, 
 					   String cg_name, Model model) throws Exception {
 		
 		// AdProductController에서 Copy & Paste
@@ -77,7 +77,7 @@ public class UsProductController {
 		PageDTO pageDTO = new PageDTO(cri, totalCount);
 		model.addAttribute("pageMaker", pageDTO); // 페이징 정보
 		
-		return "/user/product/list";
+		return "/user/product/usProductList";
 	}
 	
 	// 상품 리스트에서 보여줄 이미지. <img src="매핑주소">

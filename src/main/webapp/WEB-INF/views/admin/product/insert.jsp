@@ -16,13 +16,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
       <%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
 
-        <style>
-          .box-header h2.box-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-left: 5px;
-          }
-        </style>
+      <!-- CSS 파일 링크 -->
+			<link rel="stylesheet" href="/css/admin/common/mainText.css">
     </head>
     <!--
 BODY TAG OPTIONS:
@@ -72,7 +67,7 @@ desired effect
                   <!-- 합이 12까지 사용 가능. 반드시 고정될 필요는 없음 -->
                   <!-- <div class="col-해상도-숫자"></div>  -->
                   <div class="col-md-12">
-                    <div class="box box-primary">
+                    <div class="box">
                       <div class="box-header with-border">
                         <h2 class="box-title">등록하기</h2>
                       </div>

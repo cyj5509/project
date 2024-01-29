@@ -18,11 +18,10 @@ import com.devday.domain.OrderBasicVO;
 import com.devday.domain.PaymentVO;
 import com.devday.domain.UserVO;
 import com.devday.dto.CartDTOList;
-import com.devday.kakaopay.ApproveResponse;
 import com.devday.kakaopay.ReadyResponse;
-import com.devday.service.CartService;
 import com.devday.service.KakaoPayServiceImpl;
-import com.devday.service.OrderService;
+import com.devday.service.UsCartService;
+import com.devday.service.UsOrderService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -31,10 +30,10 @@ import lombok.extern.log4j.Log4j;
 @RequiredArgsConstructor
 @RequestMapping("/user/order/*")
 @Log4j
-public class OrderController {
+public class UsOrderController {
 
-	private final CartService cartService;
-	private final OrderService orderService;
+	private final UsCartService usCartService;
+	private final UsOrderService usOrderService;
 	private final KakaoPayServiceImpl kakaoPayServiceImpl;
 	
 	// 주문 정보 페이지 이동
@@ -48,7 +47,7 @@ public class OrderController {
 
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")
-		List<CartDTOList> order_info = cartService.cart_list(us_id);
+		List<CartDTOList> order_info = usCartService.cart_list(us_id);
 		
 		int od_price = 0;
 
@@ -84,7 +83,7 @@ public class OrderController {
 		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
 		ct_vo.setUs_id(us_id);
 
-		cartService.cart_add(ct_vo);
+		usCartService.cart_add(ct_vo);
 
 		return "redirect:/user/order/order_info"; // 주문정보 페이지
 	}
@@ -114,7 +113,7 @@ public class OrderController {
 
 		// 시퀀스를 주문번호로 사용: 동일한 주문번호 값이 사용
 		// int com.docmall.service.OrderService.getOrderSeq()
-		Long od_number = (long) orderService.getOrderSeq();
+		Long od_number = (long) usOrderService.getOrderSeq();
 		ob_vo.setOd_number(od_number); // 주문번호 저장		
 	
 		// 1) 주문 테이블 저장 작업: ord_status, payment_status 데이터 준비할 것(우선은 누락시킴)
@@ -125,17 +124,17 @@ public class OrderController {
 		pm_vo.setPm_method("카카오페이");
 		pm_vo.setPm_total_price(total_price);
 		
-		ob_vo.setOd_status("주문완료");
-		ob_vo.setPm_status("결제완료");
+		ob_vo.setOd_status("완료");
+		ob_vo.setPm_status("완료");
 		
 		log.info("결제방법: " + pay_method);
 		log.info("주문정보: " + ob_vo);
 		log.info("결제정보: " + pm_vo);		
 		
-		List<CartDTOList> cart_list = cartService.cart_list(us_id);
+		List<CartDTOList> cart_list = usCartService.cart_list(us_id);
 		String item_name = cart_list.get(0).getPd_name() + "외 " + String.valueOf(cart_list.size() - 1) + "건";
 		
-		orderService.order_insert(ob_vo, pm_vo); // 주문, 주문상세 정보 저장, 장바구니 삭제, 결제 정보 저장
+		usOrderService.order_insert(ob_vo, pm_vo); // 주문, 주문상세 정보 저장, 장바구니 삭제, 결제 정보 저장
 		
 		// 3) Kakao Pay 호출 -> 1) 결제 준비 요청
 		ReadyResponse readyResponse = kakaoPayServiceImpl.payReady(ob_vo.getOd_number(), us_id, item_name, cart_list.size(), total_price);
@@ -192,14 +191,14 @@ public class OrderController {
 		
 		// 시퀀스를 주문번호로 사용: 동일한 주문번호 값이 사용
 		// int com.docmall.service.OrderService.getOrderSeq()
-		Long od_number = (long) orderService.getOrderSeq();
+		Long od_number = (long) usOrderService.getOrderSeq();
 		ob_vo.setOd_number(od_number); // 주문번호 저장		
 		
 		// 1) 주문 테이블 저장 작업: ord_status, payment_status 데이터 준비할 것(우선은 누락시킴)
 		// 2) 주문 상세 테이블 저장 작업
 		
-		ob_vo.setOd_status("주문완료");
-		ob_vo.setPm_status("결제완료");
+		ob_vo.setOd_status("완료");
+		ob_vo.setPm_status("완료");
 		
 		pm_vo.setPm_method("무통장입금");
 		pm_vo.setOd_number(od_number);
@@ -211,7 +210,7 @@ public class OrderController {
 		log.info("주문정보: " + ob_vo);
 		log.info("결제정보: " + pm_vo);
 		
-		orderService.order_insert(ob_vo, pm_vo); // 주문, 주문상세 정보 저장, 장바구니 삭제, 결제 정보 저장
+		usOrderService.order_insert(ob_vo, pm_vo); // 주문, 주문상세 정보 저장, 장바구니 삭제, 결제 정보 저장
 		
 		entity = new ResponseEntity<>("success", HttpStatus.OK);
 		

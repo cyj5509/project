@@ -16,6 +16,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
 			<%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
 
+			<!-- CSS 파일 링크 -->
+			<link rel="stylesheet" href="/css/admin/common/mainText.css">
+
 				<style>
 					#productSearchForm select,
 					#productSearchForm input[type="text"],
@@ -32,12 +35,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						/* 수직 정렬 */
 					}
 
-					.box-header h2.box-title {
-						font-size: 24px;
-						font-weight: bold;
-						margin-left: 5px;
-					}
-
 					.box-body .product-table th,
 					.box-body .product-table td {
 						vertical-align: middle;
@@ -48,6 +45,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 					.box-body .product-table th {
 						background-color: lightslategray;
+						color: whitesmoke;
+						font-size: 15px;
+						font-weight: bold;
 					}
 
 					.box-body .product-table td {
@@ -60,22 +60,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						border: 1px solid #ccc;
 						/* 테두리 설정 */
 						vertical-align: middle;
-					}
-
-					.box-footer .btn-dark {
-						background-color: #343a40;
-						/* 원하는 색상 코드로 변경 */
-						color: #ffffff;
-					}
-
-					.box-footer .btn-secondary {
-						background-color: #666666;
-						/* 원하는 색상 코드로 변경 */
-						color: #ffffff;
-					}
-
-					.wrapper .content-wrapper {
-						background-color: whitesmoke;
 					}
 				</style>
 		</head>
@@ -132,9 +116,9 @@ desired effect
 
 											<div class="box-body">
 												<div style="text-align: right;">
-													<form action="/admin/product/list" method="get" id="productSearchForm">
+													<form action="/admin/product/adProductList" method="get" id="productSearchForm">
 														<select name="type" id="type">
-															<option value="" selected>--- 검색 종류 선택 ---</option>
+															<option value="" selected>&#45;&#45;&#45; 검색 종류 선택 &#45;&#45;&#45;</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
 															<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
@@ -168,7 +152,7 @@ desired effect
 																	<a class="move" href="#" data-bno="${productVO.pd_number}">
 																		<img
 																			src="/admin/product/imageDisplay?dateFolderName=${productVO.pd_image_folder }&fileName=s_${productVO.pd_image}"></a>
-																	<a class="move pd_name" href="#"
+																	<a class="move pd_name" href="#" style="color: black"
 																		data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 																</td>
 																<!-- 클래스명 move는 제목과 관련 -->
@@ -210,7 +194,7 @@ desired effect
 														</form>
 													</div>
 													<div class="col-md-6 text-right">
-														<button type="button" class="btn btn-info" id="btn_pd_insert" role="button">상품등록</button>
+														<button type="button" class="btn btn-info" id="btn_pd_insert" role="button">상품 등록</button>
 													</div>
 													<div style="text-align: center;">
 														<nav aria-label="...">
@@ -374,7 +358,7 @@ desired effect
 						$(".movepage").on("click", function (e) {
 							e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-							actionForm.attr("action", "/admin/product/list");
+							actionForm.attr("action", "/admin/product/adProductList");
 							// actionForm.find("input[name='pageNum']").val(현재 선택한 페이지 번호);
 							actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
@@ -415,7 +399,7 @@ desired effect
 						$("#btn_checkModify1").on("click", function () {
 							// 체크박스 유무 확인
 							if ($("input[name='check']:checked").length == 0) {
-								alert("수정할 상품을 선택하세요.")
+								alert("수정할 상품을 선택해 주세요.")
 								return;
 							}
 
@@ -444,7 +428,7 @@ desired effect
 								dataType: 'text', // "success"(String) -> 'text'. dataType에는 이외에도 html, json, xml 등이 있음
 								success: function (result) {
 									if (result == "success") {
-										alert("체크상품이 수정되었습니다.");
+										alert("선택한 상품(들)이 정상적으로 수정되었습니다.");
 
 										// DB에서 다시 불러오는 작업 
 										/*
@@ -463,7 +447,7 @@ desired effect
 						$("#btn_checkModify2").on("click", function () {
 							// 체크박스 유무 확인
 							if ($("input[name='check']:checked").length == 0) {
-								alert("수정할 상품을 선택하세요.")
+								alert("수정할 상품을 선택해 주세요.")
 								return;
 							}
 
@@ -492,7 +476,7 @@ desired effect
 								dataType: 'text', // "success"(String) -> 'text'. dataType에는 이외에도 html, json, xml 등이 있음
 								success: function (result) {
 									if (result == "success") {
-										alert("체크상품이 수정되었습니다.");
+										alert("선택한 상품(들)이 정상적으로 수정되었습니다.");
 
 										// DB에서 다시 불러오는 작업 
 										/*
@@ -540,7 +524,7 @@ desired effect
 							// <a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 							// text(): 입력양식 태그가 아닌 일반 태그의 값을 변경하거나 읽을 때 사용
 							let pd_name = $(this).parent().parent().find(".pd_name").text();
-							if (!confirm(pd_name + " 상품을 삭제하겠습니까?")) return;
+							if (!confirm("'" + pd_name + "'" + " 상품을 정말로 삭제하겠습니까?")) return;
 
 							// val()은 input, select, textarea 태그의 값을 변경하거나 읽을 때 사용
 							let pd_number = $(this).parent().parent().find("input[name='check']").val(); // val()은 input, select, textarea태그일 때
@@ -553,6 +537,7 @@ desired effect
 							actionForm.attr("method", "post");
 							actionForm.attr("action", "/admin/product/delete");
 							actionForm.submit();
+							// alert(pd_name + "상품이 정상적으로 삭제되었습니다.");
 						});
 
 					}); // ready 이벤트

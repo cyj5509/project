@@ -34,38 +34,47 @@
       <ul class="sidebar-menu" data-widget="tree">
         
         <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>상품관리</span>
+          <a href="#"><i class="fa fa-link"></i> <span>상품 관리</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/admin/product/insert">✔&nbsp;&nbsp;&nbsp;상품등록</a></li>
-            <li><a href="/admin/product/list">✔&nbsp;&nbsp;&nbsp;상품목록</a></li>
+            <li><a href="/admin/product/adProductList">✔&nbsp;&nbsp;&nbsp;상품 목록</a></li>
+            <li><a href="/admin/product/insert">✔&nbsp;&nbsp;&nbsp;상품 등록</a></li>
           </ul>
         </li>
-        
         <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>주문관리</span>
+          <a href="#"><i class="fa fa-link"></i> <span>주문 관리</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/admin/order/order_list">✔&nbsp;&nbsp;&nbsp;주문목록</a></li>
-            <li><a href="#">✔&nbsp;&nbsp;&nbsp;배송목록</a></li>
+            <li><a href="/admin/order/orderList">✔&nbsp;&nbsp;&nbsp;주문 목록</a></li>
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;배송 목록</a></li>
           </ul>
         </li>
-        
         <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>회원관리</span>
+          <a href="#"><i class="fa fa-link"></i> <span>회원 관리</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#">✔&nbsp;&nbsp;&nbsp;회원목록</a></li>
-            <li><a href="#">✔&nbsp;&nbsp;&nbsp;회원통계</a></li>
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;회원 목록</a></li>
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;회원 통계</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#"><i class="fa fa-link"></i> <span>게시판 관리</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;게시판 목록</a></li>
+            <li><a href="#">✔&nbsp;&nbsp;&nbsp;게시판 통계</a></li>
           </ul>
         </li>
         

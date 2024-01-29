@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.devday.domain.CartVO;
 import com.devday.domain.UserVO;
 import com.devday.dto.CartDTOList;
-import com.devday.service.CartService;
+import com.devday.service.UsCartService;
 import com.devday.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -29,9 +29,9 @@ import lombok.extern.log4j.Log4j;
 @RequiredArgsConstructor
 @RequestMapping("/user/cart/*")
 @Log4j
-public class CartController {
+public class UsCartController {
 
-	private final CartService cartService;
+	private final UsCartService cartService;
 
 	// 메인 및 썸네일 이미지 업로드 폴더 경로 주입 작업
 	// servlet-context.xml의 beans 참조 -> <beans:bean id="uploadPath"

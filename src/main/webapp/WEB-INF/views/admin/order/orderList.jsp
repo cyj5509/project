@@ -11,14 +11,60 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <title>AdminLTE 2 | Starter</title>
+      <title>데브데이&#40;관리자&#41;&#58; 주문조회</title>
       <!-- Tell the browser to be responsive to screen width -->
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
 
+      <!-- CSS 파일 링크 -->
+			<link rel="stylesheet" href="/css/admin/common/mainText.css">
+
       <style>
+        #orderSearchForm select,
+        #orderSearchForm input[type="text"],
+        #orderSearchForm input[type="date"],
+        #orderSearchForm button {
+          height: 35px;
+          /* 높이 설정 */
+          padding: 5px 10px;
+          /* 내부 여백 설정 */
+          font-size: 14px;
+          /* 글자 크기 설정 */
+          border: 1px solid #ccc;
+          /* 테두리 설정 */
+          vertical-align: middle;
+          /* 수직 정렬 */
+        }
+
+        .box-body .order-table th,
+        .box-body .order-table td {
+          vertical-align: middle;
+          /* 셀의 내용을 수직 중앙에 정렬 */
+          text-align: center;
+          /* 텍스트를 가운데 정렬 */
+        }
+
+        .box-body .order-table th {
+          background-color: lightslategray;
+          color: whitesmoke;
+          font-size: 15px;
+          font-weight: bold;
+        }
+
+        .box-body .order-table td {
+          height: 35px;
+          /* 높이 설정 */
+          padding: 5px 10px;
+          /* 내부 여백 설정 */
+          font-size: 14px;
+          /* 글자 크기 설정 */
+          border: 1px solid #ccc;
+          /* 테두리 설정 */
+          vertical-align: middle;
+        }
+
         /* Important part */
         .modal-content {
-          overflow-y: initial !important
+          overflow-y: initial !important;
         }
 
         .modal-body {
@@ -54,7 +100,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <tr>
                     <th scope="row">{{od_number}}</th>
                     <td>{{pd_number}}</td>
-                    <td><img src='/admin/order/imageDisplay?dateFolderName={{pro_up_folder}}&fileName={{pro_img}}'></td>
+                    <td>
+                      <img src='/admin/order/imageDisplay?dateFolderName={{pd_image_folder}}&fileName={{pd_image}}'
+                        width="100px" height="200px">
+                    </td>
                     <td>{{pd_name}}</td> 
                     <td>{{od_amount}}</td>
                     <td>{{od_price}}</td>
@@ -102,7 +151,7 @@ desired effect
             <div class="content-wrapper">
               <!-- Content Header (Page header) -->
               <section class="content-header">
-                <h1>Page Header<small>Optional description</small></h1>
+                <h1 style="font-weight: bold;">관리자 페이지 ─ 주문 목록</h1>
                 <ol class="breadcrumb">
                   <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
                   <li class="active">Here</li>
@@ -117,112 +166,120 @@ desired effect
                   <div class="col-md-12">
                     <div class="box">
                       <div class="box-header with-border">
-                        <h3 class="box-title">Order List</h3>
+                        <h2 class="box-title">Order List</h2>
                       </div>
 
                       <div class="box-body">
-                        <div>
-                          <form action="/admin/order/order_list" method="get">
-                            <select name="type">
-                              <option selected>검색 종류 선택</option>
+                        <div style="text-align: right;">
+                          <form action="/admin/order/orderList" method="get" id="orderSearchForm">
+                            <select name="type" id="type">
+                              <option value="" selected>&#45;&#45;&#45; 검색 종류 선택 &#45;&#45;&#45;</option>
                               <option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>주문자</option>
                               <option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>주문코드</option>
                             </select>
-                            <input type="text" name="keyword" value="${pageMaker.cri.keyword}" />
+                            <input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
+                              placeholder="검색 키워드 입력" />
                             <input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
                             <input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-                            날짜 검색: <input type="date" name="start_date" value="${start_date}">
-                              ~
-                            <input type="date" name="end_date" value="${end_date}">
-                            <button type="submit" class="btn btn-primary">검색</button>
+                            <input type="date" name="start_date" value="${start_date}" style="text-align: center;">
+                              &nbsp;&#126;&nbsp;
+                            <input type="date" name="end_date" value="${end_date}" style="text-align: center;">
+                            <button type="submit" class="btn btn-primary" id="btn_orderSearch">검색</button>
                           </form>
-                        </div>
-
-                        <table class="table table-bordered" id="order_info_tbl">
+                        </div><br />
+                        <table class="table table-bordered order-table" id="order_info_tbl">
                           <tbody>
                             <tr>
-                              <th style="width: 8%">번호</th>
-                              <th style="width: 10%">주문일시</th>
                               <th style="width: 10%">주문번호</th>
-                              <th style="width: 15%">배송비</th>
-                              <th style="width: 15%">주문상태</th>
                               <th style="width: 10%">주문자</th>
-                              <th style="width: 10%">총 주문액</th>
+                              <th style="width: 10%">주문일시</th>
+                              <th style="width: 10%">주문상태</th>
                               <th style="width: 10%">결제상태</th>
-                              <th style="width: 10%">비고</th>
+                              <th style="width: 10%">배송비</th>
+                              <th style="width: 20%">주문금액</th>
+                              <th style="width: 20%">비고</th>
                             </tr>
-                            <!-- BoardController에서 작성한 부이름과 동일한 이름을 items로 작성 -->
+                            <!-- BoardController에서 작성한 이름과 동일한 이름을 items로 작성 -->
                             <!-- 목록이 출력되는 부분 -->
-                            <c:forEach items="${order_list}" var="orderBasicVO">
+                            <c:forEach items="${list}" var="ob_vo">
                               <tr>
-                                <td>번호</td>
+                                <td><span class="btn_order_detail">${ob_vo.od_number}</span></td>
+                                <td>${ob_vo.od_name}</td>
                                 <td>
-                                  <fmt:formatDate value="${orderBasicVO.od_pay_date}" pattern="yyyy-MM-dd hh:mm:ss" />
+                                  <fmt:formatDate value="${ob_vo.od_pay_date}" pattern="yyyy-MM-dd hh:mm:ss" />
                                 </td>
-                                <td><span class="btn_order_detail">${orderBasicVO.od_number}</span></td>
-                                <td>0</td>
-                                <td>주문상태</td>
-                                <td>${orderBasicVO.od_name}</td>
-                                <td>${orderBasicVO.od_price}</td>
-                                <td>${orderBasicVO.pm_status}</td>
-                                <td><button type="button" class="btn btn-info btn_order_detail1"
-                                    data-od_number="${orderBasicVO.od_number}">주문상세1</button></td>
-                                <td><button type="button" class="btn btn-info btn_order_detail2"
-                                    data-od_number="${orderBasicVO.od_number}">주문상세2</button></td>
+                                <td>${ob_vo.od_status}</td>
+                                <td>${ob_vo.pm_status}</td>
+                                <td>
+                                  <fmt:formatNumber value="2500" groupingUsed="true" />원
+                                </td>
+                                <td>
+                                  <fmt:formatNumber value="${ob_vo.od_total_price}" groupingUsed="true" />원
+                                </td>
+                                <td>
+                                  <button type="button" class="btn btn-info btn_order_detail1"
+                                    data-od_number="${ob_vo.od_number}">주문상세1</button>
+                                  <button type="button" class="btn btn-info btn_order_detail2"
+                                    data-od_number="${ob_vo.od_number}">주문상세2</button>
+                                </td>
                               </tr>
                             </c:forEach>
                           </tbody>
                         </table>
                       </div>
-
                       <div class="box-footer clearfix">
                         <div class="row">
-                          <div class="col-md-4">
+                          <div class="col-md-3">
                             <!-- <form id="actionForm">의 용도 -->
                             <!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
                             <!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
                             <form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
-                              <input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
-                              <input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
-                              <input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
-                              <input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
+                              <input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+                              <input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+                              <input type="hidden" name="type" value="${pageMaker.cri.type}" />
+                              <input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
                             </form>
                           </div>
                           <div class="col-md-6 text-center">
                             <nav aria-label="...">
                               <ul class="pagination">
+                                <!-- 맨 처음 표시 여부 -->
+                                <c:if test="${pageMaker.foremost}">
+                                  <li class="page-item">
+                                    <a href="${pageMaker.startPage}" class="page-link movepage">처음</a>
+                                  </li>
+                                </c:if>
                                 <!-- 이전 표시 여부 -->
                                 <c:if test="${pageMaker.prev}">
                                   <li class="page-item">
-                                    <a href="${pageMaker.startPage - 1}" class="page-link movepage">Previous</a>
+                                    <a href="${pageMaker.startPage - 1}" class="page-link movepage">이전</a>
                                   </li>
                                 </c:if>
-
                                 <!-- 페이지 번호 출력 작업 -->
                                 <!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
                                 <!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
-                                <c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="num">
-                                  <li class='page-item ${pageMaker.cri.pageNum == num ? "active" : "" }'
+                                <c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="number">
+                                  <li class='page-item ${pageMaker.cri.pageNum == number ? "active" : "" }'
                                     aria-current="page">
-                                    <a class="page-link movepage" href="${num}" data-page="${num}">${num}</a>
+                                    <a class="page-link movepage" href="${number}" data-page="${number}">${number}</a>
                                     <!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
                                   </li>
                                 </c:forEach>
-
                                 <!-- 다음 표시 여부 -->
                                 <c:if test="${pageMaker.next}">
                                   <li class="page-item">
-                                    <a href="${pageMaker.endPage + 1}" class="page-link movepage">Next</a>
+                                    <a href="${pageMaker.endPage + 1}" class="page-link movepage">다음</a>
+                                  </li>
+                                </c:if>
+                                <!-- 맨 끝 표시 여부 -->
+                                <c:if test="${pageMaker.rearmost}">
+                                  <li class="page-item">
+                                    <a href="${pageMaker.readEnd}" class="page-link movepage">끝</a>
                                   </li>
                                 </c:if>
                               </ul>
                             </nav>
                           </div>
-
-                          <div class="col-md-2 text-right">
-
-                          </div>
-
                         </div>
                       </div>
                     </div>
@@ -315,13 +372,40 @@ desired effect
         <script>
           $(document).ready(function () {
 
+
+            // 전역 변수 초기화
+            let orderSearchForm = $("#orderSearchForm");
             let actionForm = $("#actionForm");  // 액션폼 참조
+
+            btn_orderSearch
+            // 검색 버튼 클릭 이벤트
+            $("#btn_orderSearch").on("click", function (e) {
+
+              e.preventDefault();
+
+              let type = $('#type').val();
+              let keyword = $('#keyword').val();
+
+              if (!type || type == '') {
+                alert("검색 종류를 선택해 주세요.");
+                $('#type').focus();
+                return;
+              }
+
+              if (!keyword || keyword.trim() == '') {
+                alert("키워드를 입력해 주세요.");
+                $('#keyword').focus();
+                return;
+              }
+
+              orderSearchForm.submit();
+            });
 
             // [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
             $(".movepage").on("click", function (e) {
               e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-              actionForm.attr("action", "/admin/order/order_list");
+              actionForm.attr("action", "/admin/order/orderList");
               // actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
               actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
@@ -411,8 +495,8 @@ desired effect
                 }
               });
 
-              $("#order_detail_content").load(url, function(response, status, xhr) {
-                if(status == "error") {
+              $("#order_detail_content").load(url, function (response, status, xhr) {
+                if (status == "error") {
                   alert("관리자 로그인 페이지로 이동");
                   location.href = "/admin/intro";
                 }

@@ -19,9 +19,9 @@ public class AdOrderServiceImpl implements AdOrderService {
 	private final AdOrderMapper adOrderMapper;
 	
 	@Override
-	public List<OrderBasicVO> order_list(Criteria cri, String start_date, String end_date) {
+	public List<OrderBasicVO> getListWithPaging(Criteria cri, String start_date, String end_date) {
 
-		return adOrderMapper.order_list(cri, start_date, end_date);
+		return adOrderMapper.getListWithPaging(cri, start_date, end_date);
 	}
 
 	@Override

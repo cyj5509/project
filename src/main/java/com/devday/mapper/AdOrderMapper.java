@@ -12,10 +12,10 @@ import com.devday.dto.Criteria;
 public interface AdOrderMapper {
 
 	// 데이터의 개수에 따라 List 컬렉션 사용
-	List<OrderBasicVO> order_list(@Param("cri") Criteria cri, 
-								 @Param("start_date") String start_date, 
-								 @Param("end_date") String end_date);
-	
+	List<OrderBasicVO> getListWithPaging(@Param("cri") Criteria cri, 
+										 @Param("start_date") String start_date, 
+										 @Param("end_date") String end_date);
+		
 	// order_list와 getTotalCount는 하나의 작업으로 볼 수 있어 파라미터를 일치시켜야 함
 	int getTotalCount(@Param("cri") Criteria cri, 
 					 @Param("start_date") String start_date, 

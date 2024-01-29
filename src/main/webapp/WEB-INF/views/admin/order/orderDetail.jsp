@@ -23,8 +23,9 @@
                         <tr>
                             <th scope="row">${orderProductVO.orderDetailVO.od_number}</th>
                             <td>${orderProductVO.productVO.pd_number}</td>
-                            <td><img
-                                    src="/admin/order/imageDisplay?dateFolderName=${orderProductVO.productVO.pd_image_folder}&fileName=${orderProductVO.productVO.pd_image}">
+                            <td>
+                                <img src="/admin/order/imageDisplay?dateFolderName=${orderProductVO.productVO.pd_image_folder}&fileName=${orderProductVO.productVO.pd_image}"
+                                    width="50px" height="100px">
                             </td>
                             <td>${orderProductVO.productVO.pd_name}</td>
                             <td>${orderProductVO.orderDetailVO.od_amount}</td>

@@ -40,15 +40,15 @@ public class AdOrderController {
 
 	// 주문 리스트: 목록과 페이징. 테이블의 전체 데이터를 가져옴
 	// @ModelAttribute를 사용한 이유는 사용자가 썼던 날짜를 유지하기 위함
-	@GetMapping("/order_list")
-	public void order_list(Criteria cri, @ModelAttribute("start_date") String start_date, 
+	@GetMapping("/orderList")
+	public void orderList(Criteria cri, @ModelAttribute("start_date") String start_date, 
 						  @ModelAttribute("end_date") String end_date, Model model) throws Exception { // Model model: JSP에서 어떤 정보를 보여주고자 할 때
 		
 		// 10 -> 2로 변경
 		cri.setAmount(2); // Criteria에서 this(1, 2);
 
-		List<OrderBasicVO> order_list = adOrderService.order_list(cri, start_date, end_date);
-		model.addAttribute("order_list", order_list);
+		List<OrderBasicVO> orderList = adOrderService.getListWithPaging(cri, start_date, end_date);
+		model.addAttribute("list", orderList);
 
 		int totalCount = adOrderService.getTotalCount(cri, start_date, end_date);
 		model.addAttribute("pageMaker", new PageDTO(cri, totalCount));
@@ -108,7 +108,7 @@ public class AdOrderController {
 		
 		model.addAttribute("orderProductList", orderProductList);
 		
-		return "/admin/order/order_detail_product";
+		return "/admin/order/orderDetail";
 	}
 	
 	// 상품 리스트에서 보여줄 이미지. <img src="매핑주소">

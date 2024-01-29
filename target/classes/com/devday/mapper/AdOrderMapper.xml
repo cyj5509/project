@@ -36,7 +36,7 @@
 	</if>
 </sql>
 
-<select id="order_list" resultType="com.devday.domain.OrderBasicVO" parameterType="com.devday.dto.Criteria">
+<select id="getListWithPaging" resultType="com.devday.domain.OrderBasicVO" parameterType="com.devday.dto.Criteria">
 	<![CDATA[
 	SELECT
 		od_number, us_id, od_name, od_phone, od_postcode, od_addr_basic, od_addr_detail, od_total_price, od_pay_date, od_status, pm_status

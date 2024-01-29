@@ -46,9 +46,9 @@
 							<b>상품 목록</b>
 						</h1>
 						<div style="text-align: center;">
-							<form action="/user/product/list" method="get" id="productSearchForm">
+							<form action="/user/product/usProductList" method="get" id="productSearchForm">
 								<select name="type" id="type">
-									<option value="" selected>--- 검색 종류 선택 ---</option>
+									<option value="" selected>&#45;&#45;&#45; 검색 종류 선택 &#45;&#45;&#45;</option>
 									<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
 									<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
 									<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
@@ -190,7 +190,7 @@
 									$(".movepage").on("click", function (e) {
 										e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-										actionForm.attr("action", "/user/product/list");
+										actionForm.attr("action", "/user/product/usProductList");
 										// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
 										actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 
