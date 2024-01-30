@@ -1,4 +1,5 @@
-# 프로젝트 미완성(현재 게시판만 중점적으로 구현함)
+# 프로젝트(미완성)
+* 현재 게시판만 정리함
 
 ![최종01](https://github.com/cyj5509/project/assets/139317478/04561e4b-8e05-4c05-9dd7-a0780849d173)
 ![최종02](https://github.com/cyj5509/project/assets/139317478/d08defbf-7957-4a13-adf4-727f84b9b045)
