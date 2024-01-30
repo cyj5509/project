@@ -71,7 +71,7 @@ $(document).ready(function () {
     let cg_name = $(this).data("cg_name");
     // 한글이나 특수문자를 서버에 보낼 때 오류가 나는 경우 인코딩 과정에 의해 처리할 수 있다.: https://travelpark.tistory.com/30 
     // location.href = `/user/product/prd_list/${변수}`: 주소의 일부분이 파라미터 값으로 사용
-    location.href = `/user/product/list?cg_code=${cg_code}&cg_name=${cg_name}`;
+    location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_name=${cg_name}`;
   });
 
 }); // ready-end
