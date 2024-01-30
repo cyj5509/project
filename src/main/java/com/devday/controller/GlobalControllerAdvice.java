@@ -29,14 +29,14 @@ public class GlobalControllerAdvice {
 	public void getFirstCategoryList(Model model) {
 
 		// log.info("1차 카테고리 리스트");
-		
+
 		List<CategoryVO> firstCategoryList = adCategoryService.getFirstCategoryList();
-		
-//		for (CategoryVO category : firstCategoryList) {
-//			List<CategoryVO> secondCategoryList = adCategoryService.getSecondCategoryList(category.getCg_code());
-//			category.setSecondCategoryList(secondCategoryList);
-//		}
-		
+
+		for (CategoryVO cg_vo : firstCategoryList) {
+			List<CategoryVO> secondCategoryList = adCategoryService.getSecondCategoryList(cg_vo.getCg_code());
+			cg_vo.setSecondCategoryList(secondCategoryList);
+		}
+
 		model.addAttribute("firstCategoryList", firstCategoryList);
 	}
 }

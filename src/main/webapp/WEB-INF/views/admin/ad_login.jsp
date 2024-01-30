@@ -56,7 +56,7 @@
 					<!-- end login -->
 
 					<div class="logo">
-						LOGO
+						DevDay
 						<div class="clearfix"></div>
 					</div>
 				</div>

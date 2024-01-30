@@ -34,14 +34,15 @@ public class UsCategoryController {
 	// 2차 카테고리 정보를 불러오는 작업(AdCategoryController에서 Copy & Paste)
 	@ResponseBody
 	@GetMapping("/secondCategory/{cg_parent_code}") // secondCategory(1차 카테고리 선택)
-	public ResponseEntity<List<CategoryVO>> secondCategory(@PathVariable("cg_parent_code") Integer cg_parent_code) throws Exception {  // DB 작업을 위해 ~ throws Exception
+	public ResponseEntity<List<CategoryVO>> secondCategory(@PathVariable("cg_parent_code") Integer cg_parent_code) 
+														   throws Exception {  // DB 작업을 위해 ~ throws Exception
 		
 		// log.info("1차 카테고리 코드: " + cg_parent_code);
 		
+		List<CategoryVO> secondCategoryList = usCategoryService.getSecondCategoryList(cg_parent_code); 
 		ResponseEntity<List<CategoryVO>> entity = null;
-		entity = new ResponseEntity<List<CategoryVO>>(usCategoryService.getSecondCategoryList(cg_parent_code), HttpStatus.OK);
+		entity = new ResponseEntity<List<CategoryVO>>(secondCategoryList, HttpStatus.OK);
 	
-		// List<CategoryVO> list = adCategoryService.getSecondCategoryList(cg_parent_code) 
 		// list 객체를 JSON으로 변환하는 라이브러리로 Jackson Databind 필요(pom.xml 참고) 
 		
 		return entity;

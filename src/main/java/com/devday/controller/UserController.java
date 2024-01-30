@@ -116,7 +116,6 @@ public class UserController {
 		if (us_vo != null) {
 			// 세션에 us_vo를 "userStatus"라는 이름으로 저장
 			session.setAttribute("userStatus", us_vo);
-	        
 			// 관리자인 경우 ad_check = 1, 사용자인 경우 ad_check = 0
 			if (us_vo.getAd_check() == 1) {
 				// 로그인 시 관리자 페이지 표시 O
@@ -127,7 +126,7 @@ public class UserController {
 				// 로그인 시 관리자 페이지 표시 X
 				log.info("사용자로 접속했습니다."); 
 			}
-			
+			rttr.addFlashAttribute("msg", "login");
 			// 로그인 후 이동할 URL 설정
 			if (session.getAttribute("targetUrl") != null) {
 				// 로그인이 필요한 주소 요청 시 "targetUrl"라는 이름을 가져와 url에 할당

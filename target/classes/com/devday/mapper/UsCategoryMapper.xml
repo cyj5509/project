@@ -7,13 +7,18 @@
 
 <!-- AdCategoryMapper -> CommCategoryMapper 형태로 작업해도 됨 -->
 <!-- <select id="getSecondCategoryList" parameterType="int">로도 사용 가능 -->
-<select id="getSecondCategoryList" parameterType="Integer" resultType="com.devday.domain.CategoryVO">
-	SELECT
-		cg_code, cg_parent_code, cg_name
-	FROM
-		category_table
-	WHERE
-		cg_parent_code = #{cg_parent_code}
+<select id="getSecondCategoryList" parameterType="Integer" resultType="CategoryVO">
+  SELECT
+        c.cg_code,         <!-- 하위 카테고리 코드 -->
+        c.cg_parent_code,  <!-- 상위 카테고리 코드 -->
+        c.cg_name,         <!-- 하위 카테고리 이름 -->
+        p.cg_name AS cg_parent_name  <!-- 상위 카테고리 이름 -->
+    FROM
+        category_table c JOIN category_table p 
+    ON
+    	c.cg_parent_code = p.cg_code
+    WHERE
+        c.cg_parent_code = #{cg_parent_code}
 </select>
 
 </mapper>

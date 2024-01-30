@@ -97,8 +97,8 @@
 	FROM
 		product_table
 	WHERE
-		pd_number > 0 AND 
 		<include refid="criteria1"></include>
+		pd_number > 0 AND 
 		cg_code = #{cg_code}
 </select>
 

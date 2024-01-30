@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<!-- pom.xml의 jstl 라이브러리 -->
-	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>     
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 		<!doctype html>
 		<html lang="en">
@@ -21,77 +21,80 @@
 				<link rel="stylesheet" href="/css/main.css">
 
 				<script>
-					let msg = '${msg}';
-					if (msg == 'modify') {
-						alert("회원정보가 정상적으로 수정되었습니다.");
-					} else if (msg == "delete") {
-						alert("회원탈퇴가 정상적으로 처리되었습니다.");
-					}
+					// jQuery의 $(document).ready(function () { ... });과 동일한 역할
+					document.addEventListener('DOMContentLoaded', (event) => {
+						let msg = '${msg}';
+						let userId = document.body.getAttribute('data-userId');
+						if (msg == 'login') {
+							alert("반갑습니다! " + userId + "님, 데브데이를 방문해주셔서 감사합니다.");
+						} else if (msg == 'modify') {
+							alert("회원정보가 정상적으로 수정되었습니다.");
+						} else if (msg == "delete") {
+							alert("회원탈퇴가 정상적으로 처리되었습니다.");
+						}
+					});
 				</script>
 		</head>
 
-		<body>
+		<body data-userID="${sessionScope.userStatus.us_id}">
 
 			<%@include file="/WEB-INF/views/comm/header.jsp" %>
-			<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
+				<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
 
-				<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-					<h1 class="display-4"><b>데브데이</b></h1>
-					<p class="lead"></p>
-				</div>
-
-				<div id="myCarousel" class="carousel slide pointer-event" data-ride="carousel">
-					<ol class="carousel-indicators">
-						<li data-target="#myCarousel" data-slide-to="0" class=""></li>
-						<li data-target="#myCarousel" data-slide-to="1" class=""></li>
-						<li data-target="#myCarousel" data-slide-to="2" class="active"></li>
-					</ol>
-					<div class="carousel" style="width: 100%; overflow: hidden;">
-						<div class="carousel-inner">
-							<div class="carousel-item active">
-								<img src="/images/goods.jpg" alt="Books"
-									style="width: 100%; height: auto; max-height: 475px;">
-								<div class="container">
-									<div class="carousel-caption">
-										<h2>개발자를 위한 다양한 상품</h2>
-										<p>IT와 관련된 서적을 포함한 여러 상품을 판매합니다!</p>
-										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/product/usProductList">더 알아보기</a></p>
+					<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+						<h1>데브데이</h1>
+						<p class="lead"></p>
+					</div>
+					<div id="myCarousel" class="carousel slide pointer-event" data-ride="carousel" style="margin: 0 180px 0;">
+						<ol class="carousel-indicators">
+							<li data-target="#myCarousel" data-slide-to="0" class=""></li>
+							<li data-target="#myCarousel" data-slide-to="1" class=""></li>
+							<li data-target="#myCarousel" data-slide-to="2" class="active"></li>
+						</ol>
+						<div class="carousel" style="width: 100%; overflow: hidden;">
+							<div class="carousel-inner">
+								<div class="carousel-item active">
+									<img src="/images/goods.jpg" alt="Books" style="width: 100%; height: auto; max-height: 380px;">
+									<div class="container">
+										<div class="carousel-caption">
+											<h2>개발자를 위한 다양한 상품</h2>
+											<p>IT와 관련된 서적을 포함한 여러 상품을 판매합니다!</p>
+											<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/product/usProductList">더 알아보기</a>
+											</p>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="carousel-item">
-								<img src="/images/event.jpg" alt="Conference"
-									style="width: 100%; height: auto; max-height: 475px;">
-								<div class="container">
-									<div class="carousel-caption">
-										<h2>개발자를 위한 다양한 행사</h2>
-										<p>각종 세미나, 컨퍼런스 등의 일정을 살펴볼 수 있습니다!</p>
-										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="#">더 알아보기</a></p>
+								<div class="carousel-item">
+									<img src="/images/event.jpg" alt="Conference" style="width: 100%; height: auto; max-height: 380px;">
+									<div class="container">
+										<div class="carousel-caption">
+											<h2>개발자를 위한 다양한 행사</h2>
+											<p>각종 세미나, 컨퍼런스 등의 일정을 살펴볼 수 있습니다!</p>
+											<p><a class="btn btn-lg btn-outline-dark custom-btn" href="#">더 알아보기</a></p>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="carousel-item">
-								<img src="/images/community.jpg" alt="Teamwalk"
-									style="width: 100%; height: auto; max-height: 475px;">
-								<div class="container">
-									<div class="carousel-caption">
-										<h2>개발자를 위한 다양한 정보와 각종 모임</h2>
-										<p>스터디 등의 팀원을 모집하거나 여러 정보를 살펴볼 수 있습니다!</p>
-										<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/board/usBoardList">더 알아보기</a></p>
+								<div class="carousel-item">
+									<img src="/images/community.jpg" alt="Teamwalk" style="width: 100%; height: auto; max-height: 380px;">
+									<div class="container">
+										<div class="carousel-caption">
+											<h2>개발자를 위한 다양한 정보와 각종 모임</h2>
+											<p>스터디 등의 팀원을 모집하거나 여러 정보를 살펴볼 수 있습니다!</p>
+											<p><a class="btn btn-lg btn-outline-dark custom-btn" href="/user/board/usBoardList">더 알아보기</a></p>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+						<a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							<span class="sr-only">Previous</span>
+						</a>
+						<a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<span class="sr-only">Next</span>
+						</a>
 					</div>
-					<a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-						<span class="sr-only">Previous</span>
-					</a>
-					<a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-						<span class="carousel-control-next-icon" aria-hidden="true"></span>
-						<span class="sr-only">Next</span>
-					</a>
-				</div>
 
 					<br />
 					<!-- 기존 코드 -->
@@ -100,7 +103,7 @@
 					</div>
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-					<script src="/js/user/product/categoryMenu.js"></script>
+						<script src="/js/user/product/categoryMenu.js"></script>
 		</body>
 
 		</html>

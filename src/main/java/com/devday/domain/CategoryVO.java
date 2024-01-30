@@ -20,8 +20,11 @@ CREATE TABLE category_table (
 @ToString
 public class CategoryVO {
 	
-	private Integer cg_code; // 1차든 2차든 모든 카테고리 코드
-	private Integer cg_parent_code; // 1차 카테고리 코드
-	private String cg_name; // 카테고리명
-    private List<CategoryVO> secondCategoryList; // 2차 카테고리 목록
+	private Integer cg_code; // 모든 카테고리 코드
+	private Integer cg_parent_code; // 상위 카테고리 코드
+	private String cg_name; // 하위 카테고리명
+	
+	// 테이블에 직접 매핑되지 않고, 서버/클라이언트 간 데이터 전달을 위해 사용
+	private String cg_parent_name; // 상위 카테고리명을 저장하기 위한 필드 
+    private List<CategoryVO> secondCategoryList; // 2차 카테고리 목록을 저장하기 위한 필드
 }

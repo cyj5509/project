@@ -21,17 +21,17 @@
           <!-- Navbar Right Menu -->
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-              <li class="dropdown messages-menu">
-                <a href="/">[사용자 페이지]</a>
+              <li class="dropdown messages-menu ">
+                <a id="lastLoginDate">&#42;&nbsp;최근 접속 일자:
+                  <fmt:formatDate value="${sessionScope.adminStatus.ad_last_login}" pattern="yyyy-MM-dd HH:mm:ss" />
+                </a>
               </li>
             </ul>
             <ul class="nav navbar-nav">
               <li class="dropdown messages-menu">
-                <a href="#">최근 접속 일자: 
-                  <fmt:formatDate value="${sessionScope.adminStatus.ad_last_login}" pattern="yyyy-MM-dd HH:mm:ss" />
-                </a>
+                <a href="/">✨사용자&nbsp;페이지✨</a>
               </li>
-            </ul>            
+            </ul>
             <c:if test="${sessionScope.adminStatus != null}">
               <ul class="nav navbar-nav" style="margin-right: 20px;">
                 <li class="dropdown messages-menu">

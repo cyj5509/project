@@ -610,7 +610,7 @@
 										});
 									});
 
-								}); // ready event end
+								}); // ready-end
 							</script>
 
 							<!-- 상품후기 modal -->

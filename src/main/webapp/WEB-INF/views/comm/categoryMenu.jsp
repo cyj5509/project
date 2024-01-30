@@ -5,7 +5,9 @@
 			<div id="hamburger_icon">☰</div>
 			<div id="menu_links">
 				<a href="/user/product/usProductList">전체상품</a>
+				&#124;
 				<a href="#">베스트</a>
+				&#124;
 				<a href="#">신상품</a>
 			</div>
 		</div>
@@ -22,5 +24,4 @@
 					</li>
 				</c:forEach>
 			</ul>
-
 		</div>

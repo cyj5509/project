@@ -1,5 +1,13 @@
 @charset "UTF-8";
 
+#lastLoginDate {
+  font-style: italic;
+}
+
+.navbar-custom-menu .navbar-nav {
+  font-weight: bold;
+}
+
 .box-header h2.box-title {
   font-size: 24px;
   font-weight: bold;

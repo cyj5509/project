@@ -44,7 +44,8 @@ $(document).ready(function () {
       for (let i = 0; i < category.length; i++) {
         str += '<li class="categoryNavbar">';
         // 바로 아래 부분이 2차 카테고리를 보여주는 부분. str += '2차 카테고리'
-        str += '<a class="nav-link active" href="#" data-cg_code="' + category[i].cg_code + '" data-cg_name="' + category[i].cg_name + '">' + category[i].cg_name + '</a>';
+        // str += '<a class="nav-link active" href="#" data-cg_code="' + category[i].cg_code + '" data-cg_name="' + category[i].cg_name + '">' + category[i].cg_name + '</a>';
+        str += '<a class="nav-link active" href="#" data-cg_code="' + category[i].cg_code + '" data-cg_name="' + category[i].cg_name + '" data-cg_parent_name="' + category[i].cg_parent_name + '">' + category[i].cg_name + '</a>';
         str += '</li>';
       }
       str += '</ul>';
@@ -65,14 +66,30 @@ $(document).ready(function () {
   // 2차 카테고리 선택
   // $("정적 태그 참조 선택자").on("이벤트명", "동적 태그 참조 선택자", function() {});
   $("div#category_menu").on("click", "ul#second_category li a", function (e) {
-    // console.log("2차 카테고리 작업");
+    console.log("2차 카테고리 작업");
 
     let cg_code = $(this).data("cg_code");
     let cg_name = $(this).data("cg_name");
+    let cg_parent_name = $(this).data("cg_parent_name"); // 1차 카테고리 이름
+
+    console.log("하위 카테고리명:", cg_name);
+    console.log("상위 카테고리명:", cg_parent_name);
+
     // 한글이나 특수문자를 서버에 보낼 때 오류가 나는 경우 인코딩 과정에 의해 처리할 수 있다.: https://travelpark.tistory.com/30 
     // location.href = `/user/product/prd_list/${변수}`: 주소의 일부분이 파라미터 값으로 사용
-    location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_name=${cg_name}`;
+    // location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_name=${cg_name}`;
+    location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_name=${encodeURIComponent(cg_name)}&cg_parent_name=${encodeURIComponent(cg_parent_name)}`;
   });
+
+  // URL에서 파라미터 값 추출
+  const urlParams = new URLSearchParams(window.location.search);
+  const cg_name = urlParams.get('cg_name');
+  const cg_parent_name = urlParams.get('cg_parent_name');
+
+  // 파라미터가 있으면 해당 내용으로 <p id="categoryName"> 업데이트
+  if (cg_parent_name && cg_name) {
+    $("#categoryName").text(decodeURIComponent(cg_parent_name) + " >>> " + decodeURIComponent(cg_name));
+  }
 
 }); // ready-end
 

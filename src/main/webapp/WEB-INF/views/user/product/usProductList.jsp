@@ -20,6 +20,13 @@
 					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 
 					<style>
+						#categoryName {
+							margin: 0 12px 0;
+							font-size: 20px;
+							font-weight: bold;
+							padding-bottom: 40px;
+						}
+
 						#productSearchForm select,
 						#productSearchForm input[type="text"],
 						#productSearchForm button {
@@ -47,12 +54,12 @@
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
-						<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 40px;">
+						<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 60px;">
 							<b>상품 목록</b>
 						</h1>
 						<div class="container">
-							<!-- 카테고리명 및 페이징/검색 처리 -->
-							<p id="categoryName">1차&nbsp;&gt;&gt;&gt;&nbsp;${cg_name}</p>
+							<!-- 페이징 및 조건 검색 처리 -->
+							<p id="categoryName"></p>
 							<div class="row">
 								<div class="col-md-6" style="padding-left: 25px;">
 									<!-- <form id="actionForm">의 용도 -->

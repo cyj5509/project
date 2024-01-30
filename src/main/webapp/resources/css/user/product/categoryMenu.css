@@ -91,6 +91,7 @@
 }
 
 #second_category a:hover {
+  padding: 5px 10px;
   background-color: gray; /* 마우스 오버 시 배경색 변경 */
   color: #f7f7f7; /* 마우스 오버 시 글자 색 변경 */
 }
