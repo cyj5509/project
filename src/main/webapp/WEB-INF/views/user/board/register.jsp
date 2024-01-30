@@ -18,7 +18,7 @@
 
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
-					<link rel="stylesheet" href="/css/user/board/main_text.css">
+					<link rel="stylesheet" href="/css/user/board/mainText.css">
 
 			</head>
 

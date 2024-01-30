@@ -11,7 +11,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<head>
 			<meta charset="utf-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-			<title>데브데이&#40;관리자&#41;&#58; 상품조회</title>
+			<title>데브데이&#40;관리자&#41;&#58;&nbsp;상품조회</title>
 			<!-- Tell the browser to be responsive to screen width -->
 			<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
 			<%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
@@ -96,7 +96,7 @@ desired effect
 						<div class="content-wrapper">
 							<!-- Content Header (Page header) -->
 							<section class="content-header">
-								<h1 style="font-weight: bold;">관리자 페이지 ─ 상품 목록</h1>
+								<h1 style="font-weight: bold;">관리자 페이지&#58;&nbsp;상품 목록</h1>
 								<ol class="breadcrumb">
 									<li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
 									<li class="active">Here</li>
@@ -118,14 +118,16 @@ desired effect
 												<div style="text-align: right;">
 													<form action="/admin/product/adProductList" method="get" id="productSearchForm">
 														<select name="type" id="type">
-															<option value="" selected>&#45;&#45;&#45; 검색 종류 선택 &#45;&#45;&#45;</option>
+															<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
-															<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
-															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명+제조사</option>
+															<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>저자&#47;출판사</option>
+															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명&#43;저자&#47;출판사</option>
+															<option value="CP" ${pageMaker.cri.type=='CP' ? 'selected' : '' }>상품번호&#43;저자&#47;출판사</option>
+															<option value="NCP" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명&#43;상품번호&#43;저자&#47;출판사</option>
 														</select>
 														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
-															placeholder="검색 키워드 입력" />
+															placeholder="검색어 입력" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
 														<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
@@ -340,13 +342,13 @@ desired effect
 							let keyword = $('#keyword').val();
 
 							if (!type || type == '') {
-								alert("검색 종류를 선택해 주세요.");
+								alert("검색 조건을 선택해 주세요.");
 								$('#type').focus();
 								return;
 							}
 
 							if (!keyword || keyword.trim() == '') {
-								alert("키워드를 입력해 주세요.");
+								alert("검색어를 입력해 주세요.");
 								$('#keyword').focus();
 								return;
 							}

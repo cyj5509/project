@@ -179,6 +179,8 @@ public class AdProductController {
 	@GetMapping("/adProductList")
 	public void adProductList(Criteria cri, Model model) throws Exception {
 
+		log.info("Criteria 내용: " + cri);
+		
 		cri.setAmount(4); // Criteria에서 this(1, 2);
 
 		List<ProductVO> pd_list = adProductService.getListWithPaging(cri);

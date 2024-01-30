@@ -36,7 +36,7 @@
 			<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
 
 				<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-					<h1 class="display-4">DevDay</h1>
+					<h1 class="display-4"><b>데브데이</b></h1>
 					<p class="lead"></p>
 				</div>
 

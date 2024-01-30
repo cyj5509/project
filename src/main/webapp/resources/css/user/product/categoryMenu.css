@@ -4,7 +4,8 @@
   height: 50px; /* 메뉴바 자체의 높이를 고정값으로 설정 */
   display: flex; /* 가로로 나열 */
   align-items: center;
-  background-color: whitesmoke; /* 메뉴바 배경색 지정 */
+  background-color: darkgray; /* 메뉴바 배경색 지정 */
+  color: whitesmoke;
   padding: 10px;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
@@ -20,8 +21,15 @@
   font-size: 18px;
 }
 
-/* 링크들의 일반 스타일링 */
-#menu_links a, #category_menu a {
+/* 메뉴 링크들의 일반 스타일링 */
+#menu_links a {
+  padding: 10px;
+  color: whitesmoke;
+  text-decoration: none;
+}
+
+/* 카테고리 메뉴 링크들의 일반 스타일링 */
+#category_menu a {
   padding: 10px;
   color: #333;
   text-decoration: none;
@@ -29,8 +37,8 @@
 
 /* 링크에 마우스를 올렸을 때의 스타일링 */
 #hamburger_menu a:hover {
-  background-color: gray; /* 마우스 오버 시 배경색 변경 */
-  color: #f7f7f7; /* 마우스 오버 시 글자 색 변경 */
+  background-color: whitesmoke; /* 마우스 오버 시 배경색 변경 */
+  color: black; /* 마우스 오버 시 글자 색 변경 */
 }
 
 /* 카테고리 메뉴 스타일링 */

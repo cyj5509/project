@@ -11,7 +11,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <title>데브데이&#40;관리자&#41;&#58; 주문조회</title>
+      <title>데브데이&#40;관리자&#41;&#58;&nbsp;주문조회</title>
       <!-- Tell the browser to be responsive to screen width -->
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
 
@@ -76,7 +76,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
 
         <!-- Handlebars(자바스크립트 템플릿 엔진): 서버에서 보내온 JSON 형태의 데이터를 사용하여 작업을 편하게 할 수 있는 특징 -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script> -->
         <script src="/js/handlebars.js"></script>
         <script id="orderDetailTemplate" type="text/x-handlebars-template">
 

@@ -40,14 +40,14 @@
 	FROM 
 	    (
 	    SELECT /*+ INDEX_DESC(product_table pk_pd_number) */
-	    		ROWNUM rn, pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
+	    	ROWNUM rn, pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	    FROM
-	    		product_table
+	    	product_table
 	    WHERE
-	    ]]>
-	    <include refid="criteria"></include> 
-	    <![CDATA[
-	     ROWNUM <= #{pageNum} * #{amount}
+		    ]]>
+		    <include refid="criteria"></include> 
+		    <![CDATA[
+	    	ROWNUM <= #{pageNum} * #{amount}
 	    )
 	WHERE
 		rn > (#{pageNum} -1) * #{amount}]]>

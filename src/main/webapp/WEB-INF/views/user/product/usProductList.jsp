@@ -11,7 +11,7 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>데브데이: 상품조회</title>
+				<title>데브데이&#58;&nbsp;상품조회</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -26,13 +26,19 @@
 							height: 35px;
 							/* 높이 설정 */
 							padding: 5px 10px;
-							/* 내부 여백 설정 */
+							/* 외부 여백 설정 */
 							font-size: 14px;
 							/* 글자 크기 설정 */
 							border: 1px solid #ccc;
 							/* 테두리 설정 */
 							vertical-align: middle;
 							/* 수직 정렬 */
+						}
+
+						.card-deck .card {
+							margin-right: 10px;
+							margin-left: 10px;
+							/* 내부 여백 설정 */
 						}
 					</style>
 			</head>
@@ -44,76 +50,77 @@
 						<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 40px;">
 							<b>상품 목록</b>
 						</h1>
-						<p>2차 카테고리: ${cg_name}</p>
-						<div class="row mb-2">
-							<div class="col-md-5">
-								<!-- <form id="actionForm">의 용도 -->
-								<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
-								<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
-								<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
-									<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
-									<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-									<input type="hidden" name="type" value="${pageMaker.cri.type}" />
-									<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
-									<input type="hidden" name="cg_code" value="${cg_code}" />
-									<input type="hidden" name="cg_name" value="${cg_name}" />
-								</form>
-								<nav aria-label="...">
-									<ul class="pagination" style="text-align: center;">
-										<!-- 맨 처음 표시 여부 -->
-										<c:if test="${pageMaker.foremost}">
-											<li class="page-item">
-												<a href="1" class="page-link movepage">처음</a>
-											</li>
-										</c:if>
-										<!-- 이전 표시 여부 -->
-										<c:if test="${pageMaker.prev}">
-											<li class="page-item">
-												<a href="${pageMaker.startPage - 1}" class="page-link movepage">이전</a>
-											</li>
-										</c:if>
-										<!-- 페이지 번호 출력 작업 -->
-										<!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
-										<!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
-										<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="number">
-											<li class='page-item ${pageMaker.cri.pageNum == number ? "active" : "" }' aria-current="page">
-												<a class="page-link movepage" href="${number}" data-page="${number}">${number}</a>
-												<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
-											</li>
-										</c:forEach>
-										<!-- 다음 표시 여부 -->
-										<c:if test="${pageMaker.next}">
-											<li class="page-item">
-												<a href="${pageMaker.endPage + 1}" class="page-link movepage">다음</a>
-											</li>
-										</c:if>
-										<!-- 맨 끝 표시 여부 -->
-										<c:if test="${pageMaker.rearmost}">
-											<li class="page-item">
-												<a href="${pageMaker.readEnd}" class="page-link movepage">끝</a>
-											</li>
-										</c:if>
-									</ul>
-								</nav>
+						<div class="container">
+							<!-- 카테고리명 및 페이징/검색 처리 -->
+							<p id="categoryName">1차&nbsp;&gt;&gt;&gt;&nbsp;${cg_name}</p>
+							<div class="row">
+								<div class="col-md-6" style="padding-left: 25px;">
+									<!-- <form id="actionForm">의 용도 -->
+									<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
+									<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
+									<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
+										<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+										<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+										<input type="hidden" name="type" value="${pageMaker.cri.type}" />
+										<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
+										<input type="hidden" name="cg_code" value="${cg_code}" />
+										<input type="hidden" name="cg_name" value="${cg_name}" />
+									</form>
+									<nav aria-label="...">
+										<ul class="pagination">
+											<!-- 맨 처음 표시 여부 -->
+											<c:if test="${pageMaker.foremost}">
+												<li class="page-item">
+													<a href="1" class="page-link movepage">처음</a>
+												</li>
+											</c:if>
+											<!-- 이전 표시 여부 -->
+											<c:if test="${pageMaker.prev}">
+												<li class="page-item">
+													<a href="${pageMaker.startPage - 1}" class="page-link movepage">이전</a>
+												</li>
+											</c:if>
+											<!-- 페이지 번호 출력 작업 -->
+											<!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
+											<!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
+											<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="number">
+												<li class='page-item ${pageMaker.cri.pageNum == number ? "active" : "" }' aria-current="page">
+													<a class="page-link movepage" href="${number}" data-page="${number}">${number}</a>
+													<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
+												</li>
+											</c:forEach>
+											<!-- 다음 표시 여부 -->
+											<c:if test="${pageMaker.next}">
+												<li class="page-item">
+													<a href="${pageMaker.endPage + 1}" class="page-link movepage">다음</a>
+												</li>
+											</c:if>
+											<!-- 맨 끝 표시 여부 -->
+											<c:if test="${pageMaker.rearmost}">
+												<li class="page-item">
+													<a href="${pageMaker.readEnd}" class="page-link movepage">끝</a>
+												</li>
+											</c:if>
+										</ul>
+									</nav>
+								</div> 
+								<div class="col-md-6 text-right" style="padding-right: 0;">
+									<form action="/user/product/usProductList" method="get" id="productSearchForm">
+										<select name="type" id="type">
+											<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
+											<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
+											<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>저자&#47;출판사</option>
+											<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명+저자&#47;출판사</option>
+										</select>
+										<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
+											placeholder="검색어 입력" />
+										<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+										<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+										<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
+									</form>
+								</div>
 							</div>
-							<div class="col-md-5" style="text-align: center;">
-								<form action="/user/product/usProductList" method="get" id="productSearchForm">
-									<select name="type" id="type">
-										<option value="" selected>&#45;&#45;&#45; 검색 종류 선택 &#45;&#45;&#45;</option>
-										<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
-										<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
-										<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>제조사</option>
-										<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명+제조사</option>
-									</select>
-									<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
-										placeholder="검색 키워드 입력" />
-									<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
-									<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-									<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
-								</form>
-							</div>
-						</div><br />
-						<div class="container">							
+							<!-- 상품 카드 목록 -->
 							<div class="card-deck mb-3 text-center row">
 								<c:forEach items="${productList}" var="productVO">
 									<div class="col-md-3">
@@ -141,7 +148,7 @@
 										</div>
 									</div>
 								</c:forEach>
-							</div> <!-- card-deck mb-3 text-center row 닫는 태그 -->							
+							</div> <!-- card-deck mb-3 text-center row 닫는 태그 -->
 							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div> <!-- container 닫는 태그 -->
 
@@ -165,13 +172,13 @@
 										let keyword = $('#keyword').val();
 
 										if (!type || type == '') {
-											alert("검색 종류를 선택해 주세요.");
+											alert("검색 조건을 선택해 주세요.");
 											$('#type').focus();
 											return;
 										}
 
 										if (!keyword || keyword.trim() == '') {
-											alert("키워드를 입력해 주세요.");
+											alert("검색어를 입력해 주세요.");
 											$('#keyword').focus();
 											return;
 										}
@@ -215,7 +222,7 @@
 										// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
 										let pd_number = $(this).data("pd_number");
 										let pd_name = $(this).data("pd_name");
-										
+
 										if (confirm("'" + pd_name + "'" + " 상품을 바로 구매하시겠습니까?")) {
 											let url = "/user/order/orderReady?pd_number=" + pd_number;
 											location.href = url;

@@ -15,34 +15,34 @@ import lombok.RequiredArgsConstructor;
 public class UsProductServiceImpl implements UsProductService {
 
 	private final UsProductMapper userProductMapper;
-
+	
 	@Override
-	public List<ProductVO> pd_list(Integer cg_code, Criteria cri) {
+	public List<ProductVO> getListWithPagingByCategory(Integer cg_code, Criteria cri) {
 		
-		return userProductMapper.pd_list(cg_code, cri);
-	}
-
-	@Override
-	public int getTotalCount(Integer cg_code) {
-		
-		return userProductMapper.getTotalCount(cg_code);
+		return userProductMapper.getListWithPagingByCategory(cg_code, cri);
 	}
 	
 	@Override
-	public List<ProductVO> pd_list_all(Criteria cri) {
+	public int getTotalCountByCategory(Integer cg_code, Criteria cri) {
 		
-		return userProductMapper.pd_list_all(cri);
+		return userProductMapper.getTotalCountByCategory(cg_code, cri);
 	}
 
 	@Override
-	public int getTotalCountAll() {
+	public List<ProductVO> getListWithPagingForAll(Criteria cri) {
 		
-		return userProductMapper.getTotalCountAll();
+		return userProductMapper.getListWithPagingForAll(cri);
+	}
+
+	@Override
+	public int getTotalCountForAll(Criteria cri) {
+		
+		return userProductMapper.getTotalCountForAll(cri);
 	}
 	
 	@Override
-	public ProductVO pd_detail(Integer pd_number) {
+	public ProductVO getProductDetails(Integer pd_number) {
 
-		return userProductMapper.pd_detail(pd_number);
+		return userProductMapper.getProductDetails(pd_number);
 	}
 }

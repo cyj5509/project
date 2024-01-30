@@ -547,3 +547,11 @@ COMMIT;
 -- 전체 데이터 조회 및 삭제
 SELECT COUNT(*) FROM comment_table;
 DELETE FROM comment_table;
+
+
+	SELECT
+		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
+	FROM 
+		product_table 
+	WHERE 
+		pd_number = 1;

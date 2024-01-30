@@ -11,7 +11,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <head>
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <title>데브데이&#40;관리자&#41;&#58; 상품조회</title>
+      <title>데브데이&#40;관리자&#41;&#58;&nbsp;상품조회</title>
       <!-- Tell the browser to be responsive to screen width -->
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
       <%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
@@ -52,7 +52,7 @@ desired effect
             <div class="content-wrapper">
               <!-- Content Header (Page header) -->
               <section class="content-header">
-                <h1 style="font-weight: bold;">관리자 페이지 ─ 상품 수정</h1>
+                <h1 style="font-weight: bold;">관리자 페이지&#58;&nbsp;상품 수정</h1>
                 <ol class="breadcrumb">
                   <li>
                     <a href="#"><i class="fa fa-dashboard"></i> Level</a>

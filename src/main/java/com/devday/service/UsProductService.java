@@ -7,12 +7,11 @@ import com.devday.dto.Criteria;
 
 public interface UsProductService {
 
-	// 2차 카테고리별 상품 리스트(페이징 정보 사용, 검색 제외)
-	List<ProductVO> pd_list(Integer cg_code, Criteria cri);
-	List<ProductVO> pd_list_all(Criteria cri);
+	List<ProductVO> getListWithPagingByCategory(Integer cg_code, Criteria cri);
+	int getTotalCountByCategory(Integer cg_code, Criteria cri);
 
-	int getTotalCount(Integer cg_code);
-	int getTotalCountAll();
+	List<ProductVO> getListWithPagingForAll(Criteria cri);
+	int getTotalCountForAll(Criteria cri);
 	
-	ProductVO pd_detail(Integer pd_number);
+	ProductVO getProductDetails(Integer pd_number);
 }

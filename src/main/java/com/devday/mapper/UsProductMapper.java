@@ -8,27 +8,17 @@ import com.devday.domain.ProductVO;
 import com.devday.dto.Criteria;
 
 public interface UsProductMapper {
-
-	// 2차 카테고리별 상품 리스트(페이징 정보 사용, 검색 제외)
-	// 파라미터가 하나인 경우 Mapper.xml에서 아래와 같이 작업함
-	/*
-  	ROWNUM <= #{pageNum} * #{amount} 
-	rn > (#{pageNum} -1) * #{amount}]]>
-	*/
-	// 파라미터가 여러 개면 Mapper.xml에서 아래와 같이 작업함
-	/*
-  	ROWNUM <= #{cri.pageNum} * #{cri.amount} 
-	rn > (#{cri.pageNum} -1) * #{cri.amount}]]>
-	*/
 	
-	// 특정 카테고리 상품 조회
-	List<ProductVO> pd_list(@Param("cg_code") Integer cg_code, 
-						   @Param("cri") Criteria cri);
-	int getTotalCount(Integer cg_code);
-
-	// 전체 상품 조회
-	List<ProductVO> pd_list_all(Criteria cri);
-	int getTotalCountAll();
+	// 특정 카테고리 내 상품 조회(조건 검색 활용)
+	List<ProductVO> getListWithPagingByCategory(@Param("cg_code") Integer cg_code, 
+						    @Param("cri") Criteria cri);
+	int getTotalCountByCategory(@Param("cg_code") Integer cg_code, 
+		    		  @Param("cri") Criteria cri);
 	
-	ProductVO pd_detail(Integer pd_number);
+	// 전체 상품 조회(조건 검색 활용)
+	List<ProductVO> getListWithPagingForAll(Criteria cri);
+	int getTotalCountForAll(Criteria cri);
+	
+	// 상품의 상세 정보 조회
+	ProductVO getProductDetails(Integer pd_number);
 }

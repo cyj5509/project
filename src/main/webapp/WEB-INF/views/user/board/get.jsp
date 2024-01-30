@@ -18,7 +18,7 @@
 
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
-					<link rel="stylesheet" href="/css/user/board/main_text.css">
+					<link rel="stylesheet" href="/css/user/board/mainText.css">
 					<link rel="stylesheet" href="/css/user/board/pw_modal.css">
 
 					<style>
@@ -229,10 +229,6 @@
 														</c:choose>
 														<button type="button" id="btn_list" class="btn btn-success">목록</button>
 													</div>
-													<div class="right-buttons">
-														<button type="button" class="btn btn-secondary btn_commentWrite">댓글 작성</button>
-														<button type="button" class="btn btn-dark btn_allCommentToggle">닫기 ▲</button>
-													</div>
 													<!-- 게시물 수정/삭제 시의 비밀번호 입력 커스텀 모달(초기에는 숨겨져 있음) -->
 													<div id="boardPwModal" class="pw-modal" style="display:none;">
 														<div class="pw-modal-content">
@@ -254,6 +250,10 @@
 																<button type="button" onclick="closePasswordModal()" class="modal-button">취소</button>
 															</div>
 														</div>
+													</div>
+													<div class="right-buttons">
+														<button type="button" class="btn btn-secondary btn_commentWrite">댓글 작성</button>
+														<button type="button" class="btn btn-dark btn_allCommentToggle">닫기 ▲</button>
 													</div>
 												</div>
 											</div>

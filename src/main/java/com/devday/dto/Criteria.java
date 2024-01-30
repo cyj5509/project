@@ -13,10 +13,10 @@ import lombok.ToString;
 @ToString
 public class Criteria {
 
-	private int pageNum; // 선택된 페이지 번호를 저장할 필드
-	private int amount; // 페이지마다 출력할 게시물 개수. pro_list 메서드의 cri.setAmount(2);에 의해 10 -> 2 
+	private int pageNum; // 페이지 번호
+	private int amount; // 페이지당 항목 수. pro_list 메서드의 cri.setAmount(2);에 의해 10 -> 2 
 
-	private String type; // 검색 종류 -> T, C, W, TC, TW, TWC
+	private String type; // 검색 유형 -> T, C, W, TC, TW, TWC
 	private String keyword; // 검색어
 
 	// 아래 기본 생성자를 생략해선 안 된다.

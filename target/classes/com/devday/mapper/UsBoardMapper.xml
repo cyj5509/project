@@ -112,7 +112,8 @@
             bd_type = #{bd_type}
             AND
         </if>
-		<include refid="criteria"></include> bd_number > 0
+		<include refid="criteria" /> 
+		bd_number > 0
 </select>
 
 

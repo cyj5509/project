@@ -5,16 +5,15 @@
 
 <mapper namespace="com.devday.mapper.UsProductMapper">
 
-<sql id="criteria">
+<!-- criteria1: 특정 카테고리 상품에 대한 조건 검색용 SQL 조각 -->
+<!-- 추가적인 파라미터가 있는 경우 객체 내부에 접근하기 위해 점 표기법 사용 -->
+<sql id="criteria1">
 	<trim prefix="(" suffix=") AND" prefixOverrides="OR">	 <!--  prefixOverrides="AND"는 오류 발생 -->
-    		<foreach collection="typeArr" item="type">
+    		<foreach collection="cri.typeArr" item="type">
 			<trim prefix="OR">
 			    <choose>
 			        <when test="type == 'N'.toString()">
 			            pd_name LIKE '%' || #{cri.keyword} || '%' 
-			        </when>
-			        <when test="type == 'C'.toString()">
-			            pd_number LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
 			        <when test="type == 'P'.toString()">
 			            pd_company LIKE '%' || #{cri.keyword} || '%' 
@@ -25,9 +24,28 @@
 	</trim>
 </sql>
 
-<!-- AdProductMapper.xml  -->
-<!-- 검색 조건이 추가된다면 첫 번째 where 절에 추가. 검색 기능 생략 -->
-<select id="pd_list" resultType="com.devday.domain.ProductVO" parameterType="map">
+<!-- criteria2: 전체 상품에 대한 조건 검색용 SQL 조각 -->
+<!-- 추가적인 파라미터가 없는 경우 객체 내부에 직접적으로 접근 가능 -->
+<sql id="criteria2">
+	<trim prefix="(" suffix=") AND" prefixOverrides="OR">	 <!--  prefixOverrides="AND"는 오류 발생 -->
+    		<foreach collection="typeArr" item="type">
+			<trim prefix="OR">
+			    <choose>
+			        <when test="type == 'N'.toString()">
+			            pd_name LIKE '%' || #{keyword} || '%' 
+			        </when>
+			        <when test="type == 'P'.toString()">
+			            pd_company LIKE '%' || #{keyword} || '%' 
+			        </when>
+			    </choose>
+			</trim>
+    		</foreach>
+	</trim>
+</sql>
+
+<!-- 특정 카테고리 내 상품을 페이징 처리하여 조회 -->
+<!-- 추가적인 파라미터가 있는 경우 객체 내부에 접근하기 위해 점 표기법 사용 -->
+<select id="getListWithPagingByCategory" resultType="ProductVO" parameterType="map">
 	<![CDATA[
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
@@ -39,7 +57,7 @@
     		product_table
 	    WHERE
 		    ]]>
-		    <include refid="criteria"></include> 
+		    <include refid="criteria1"></include>
 		    <![CDATA[
 	    	cg_code = #{cg_code} AND ROWNUM <= #{cri.pageNum} * #{cri.amount} 
 	    )
@@ -48,44 +66,56 @@
 	]]>
 </select>
 
-<!-- 검색 조건이 추가된다면 첫 번째 where 절에 추가 -->
-<select id="getTotalCount" resultType="int">
-	SELECT
-		COUNT(*)
-	FROM
-		product_table
-	WHERE
-		<include refid="criteria"></include> 
-		cg_code = #{cg_code}
-</select>
-
-<!-- 파라미터가 하나이기 때문에 cri 명시 불필요 -->
-<select id="pd_list_all" resultType="com.devday.domain.ProductVO" parameterType="com.devday.dto.Criteria">
+<!-- 모든 상품을 페이징 처리하여 조회 -->
+<!-- 추가적인 파라미터가 없는 경우 객체 내부에 직접적으로 접근 가능 -->
+<select id="getListWithPagingForAll" resultType="ProductVO" parameterType="com.devday.dto.Criteria">
 	<![CDATA[
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	FROM 
 	    (
 	    SELECT /*+ INDEX_DESC(product_table pk_pd_number) */
-    			ROWNUM rn, pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
+    		ROWNUM rn, pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	    FROM
-    			product_table
+    		product_table
 	    WHERE
-	    		ROWNUM <= #{pageNum} * #{amount} 
+	    	]]>
+		    <include refid="criteria2"></include> 
+		    <![CDATA[
+	    	ROWNUM <= #{pageNum} * #{amount} 
 	    )
 	WHERE
 		rn > (#{pageNum} -1) * #{amount}
 	]]>
 </select>
 
-<select id="getTotalCountAll" resultType="int">
+<!-- 특정 카테고리 내 상품의 총 개수를 계산 -->
+<!-- 추가적인 파라미터가 있는 경우 객체 내부에 접근하기 위해 점 표기법 사용 -->
+<select id="getTotalCountByCategory" resultType="int" parameterType="map">
 	SELECT
 		COUNT(*)
 	FROM
 		product_table
+	WHERE
+		pd_number > 0 AND 
+		<include refid="criteria1"></include>
+		cg_code = #{cg_code}
 </select>
 
-<select id="pd_detail" parameterType="Integer" resultType="com.devday.domain.ProductVO">
+<!-- 모든 상품의 총 개수를 계산 -->
+<!-- 추가적인 파라미터가 없는 경우 객체 내부에 직접적으로 접근 가능 -->
+<select id="getTotalCountForAll" resultType="int" parameterType="com.devday.dto.Criteria">
+	SELECT
+		COUNT(*)
+	FROM
+		product_table
+	WHERE
+		<include refid="criteria2"></include>
+		pd_number > 0		
+</select>
+
+<!-- 상품 번호를 기준으로 상품의 상세 정보를 조회 -->
+<select id="getProductDetails" resultType="ProductVO" parameterType="Integer">
 	SELECT
 		pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
 	FROM

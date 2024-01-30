@@ -98,15 +98,15 @@
 												<div class="col-12">
 													<form action="/user/board/usBoardList/${bd_type}" method="get" id="boardSearchForm">
 														<select name="type" id="type">
-															<option value="" selected>&#45;&#45;&#45; 검색 종류 선택 &#45;&#45;&#45;</option>
+															<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 															<option value="T" ${pageMaker.cri.type=='T' ? 'selected' : '' }>제목</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>내용</option>
 															<option value="I" ${pageMaker.cri.type=='I' ? 'selected' : '' }>작성자</option>
-															<option value="TC" ${pageMaker.cri.type=='TC' ? 'selected' : '' }>제목+내용</option>
-															<option value="TI" ${pageMaker.cri.type=='TI' ? 'selected' : '' }>제목+작성자</option>
-															<option value="TCI" ${pageMaker.cri.type=='TCI' ? 'selected' : '' }>제목+내용+작성자</option>
+															<option value="TC" ${pageMaker.cri.type=='TC' ? 'selected' : '' }>제목&#43;내용</option>
+															<option value="TI" ${pageMaker.cri.type=='TI' ? 'selected' : '' }>제목&#43;작성자</option>
+															<option value="TCI" ${pageMaker.cri.type=='TCI' ? 'selected' : '' }>제목&#43;내용&#43;작성자</option>
 														</select>
-														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" placeholder="검색 키워드 입력" />
+														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" placeholder="검색어 입력" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
 														<button type="button" class="btn btn-primary" id="btn_boardSearch">검색</button>
@@ -261,13 +261,13 @@
 							let keyword = $('#keyword').val();
 
 							if (!type || type == '') {
-								alert("검색 종류를 선택해 주세요.");
+								alert("검색 조건을 선택해 주세요.");
 								$('#type').focus();
 								return;
 							}
 
 							if (!keyword || keyword.trim() == '') {
-								alert("키워드를 입력해 주세요.");
+								alert("검색어를 입력해 주세요.");
 								$('#keyword').focus();
 								return;
 							}

@@ -47,7 +47,11 @@ public class UsProductController {
 	// 2차 카테고리를 선택했을 때 그걸 조건으로 데이터를 가져옴
 	@GetMapping("/usProductList")
 	public String usProductList(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code, 
-					   String cg_name, Model model) throws Exception {
+					   			String cg_name, Model model) throws Exception {
+	
+		log.info("Criteria 내용: " + cri);
+		log.info("카테고리 코드: " + cg_code);
+		log.info("카테고리명: " + cg_name);
 		
 		// AdProductController에서 Copy & Paste
 		
@@ -58,11 +62,11 @@ public class UsProductController {
 		int totalCount = 0;
 				
 		if (cg_code != null) {
-			productList = usProductService.pd_list(cg_code, cri);
-			totalCount = usProductService.getTotalCount(cg_code);
+			productList = usProductService.getListWithPagingByCategory(cg_code, cri);
+			totalCount = usProductService.getTotalCountByCategory(cg_code, cri);
 		} else {
-			productList = usProductService.pd_list_all(cri);
-			totalCount = usProductService.getTotalCountAll();
+			productList = usProductService.getListWithPagingForAll(cri);
+			totalCount = usProductService.getTotalCountForAll(cri);
 		}
 				
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
@@ -72,6 +76,7 @@ public class UsProductController {
 		});
 		
 		model.addAttribute("cg_code", cg_code);
+		model.addAttribute("cg_name", cg_name);
 		model.addAttribute("productList", productList); // 상품 목록
 		
 		PageDTO pageDTO = new PageDTO(cri, totalCount);
@@ -93,10 +98,9 @@ public class UsProductController {
 	@GetMapping("/productDetail")
 	public void productDetail(Criteria cri, Integer cg_code, @ModelAttribute("cg_name") String cg_name, Integer pd_number, Model model) throws Exception {
 	
-		log.info("페이징 정보: " + cri);
-		log.info("상품코드: " + pd_number);
+		log.info("페이징 및 조건 검색 정보: " + cri);
 		
-		ProductVO productVO = usProductService.pd_detail(pd_number);
+		ProductVO productVO = usProductService.getProductDetails(pd_number);
 		// 클라이언트에서 이미지 출력작업: \(역슬래시)가 서버로 보낼 때 문제가 되어 /(슬래시)를 사용하고자 함 
 		productVO.setPd_image_folder(productVO.getPd_image_folder().replace("\\", "/"));
 		
