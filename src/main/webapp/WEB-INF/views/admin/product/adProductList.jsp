@@ -84,7 +84,7 @@ desired effect
 |---------------------------------------------------------|
 -->
 
-		<body class="hold-transition skin-blue isDark sidebar-mini">
+		<body class="hold-transition skin-blue isDark sidebar-mini isDarkTheme">
 			<div class="wrapper">
 				<!-- Main Header -->
 				<%@ include file="/WEB-INF/views/admin/include/header.jsp" %>
