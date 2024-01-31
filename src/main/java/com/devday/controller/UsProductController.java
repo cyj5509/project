@@ -104,12 +104,12 @@ public class UsProductController {
 	
 		log.info("페이징 및 조건 검색 정보: " + cri);
 		
-		ProductVO productVO = usProductService.getProductDetails(pd_number);
+		ProductVO pd_vo = usProductService.getProductDetails(pd_number);
 		// 클라이언트에서 이미지 출력작업: \(역슬래시)가 서버로 보낼 때 문제가 되어 /(슬래시)를 사용하고자 함 
-		productVO.setPd_image_folder(productVO.getPd_image_folder().replace("\\", "/"));
+		pd_vo.setPd_image_folder(pd_vo.getPd_image_folder().replace("\\", "/"));
 		
 		model.addAttribute("cg_code", cg_code);
-		model.addAttribute("productVO", productVO); // 화면에 보여줘야 해서 모델 작업 필요
+		model.addAttribute("pd_vo", pd_vo); // 화면에 보여줘야 해서 모델 작업 필요
 
 		// DB 연동작업
 	}

@@ -66,6 +66,7 @@
     height: 50px; /* 높이를 60px에서 50px로 조정 */
     width: auto; /* 너비는 자동으로 조정 */
     margin-left: 5px;
+    /* text-decoration: none; */
 }
 
 .header-logo img.img-fluid {

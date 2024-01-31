@@ -31,7 +31,9 @@
                         <a href="/">
                             <img src="/images/devday_logo.png" class="img-fluid" />
                         </a>
-                        <h3 class="my-0" style="margin-left: 10px;">DevDay</h3>
+                        <a href="/" style="text-decoration: none; color: inherit;">
+                            <h3 class="my-0" style="margin-left: 14px;">DevDay</h3>
+                        </a>
                     </div>
                     <!-- 최근 접속 일자 -->
                     <div class="header-info-section">

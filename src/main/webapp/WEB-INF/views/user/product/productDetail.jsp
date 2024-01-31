@@ -84,7 +84,7 @@
 						}
 
 						.btn_pd_image {
-						border: 1px solid black
+							border: 1px solid black
 						}
 
 						#productName,
@@ -127,18 +127,18 @@
 					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
 						<p id="categoryName"></p>
 						<div class="container" style="margin-top: 80px;">
-							<h3 id="productName">${productVO.pd_name}</h3>
+							<h3 id="productName">${pd_vo.pd_name}</h3>
 							<div class="card-deck mb-3 text-center row">
 								<div class="col-md-4">
 									<div class="row text-center">
 										<div class="col">
-											<h5 id="productCompany">${productVO.pd_company}</h5>
+											<h5 id="productCompany">${pd_vo.pd_company}</h5>
 										</div>
 									</div>
 								</div>
 								<div class="col-md-4">
-									<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="300"
-										src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
+									<img class="btn_pd_image" data-pd_number="${pd_vo.pd_number}" width="100%" height="300"
+										src="/user/product/imageDisplay?dateFolderName=${pd_vo.pd_image_folder}&fileName=${pd_vo.pd_image}"
 										alt="">
 									<div style="margin: 25px;">
 										<div>
@@ -149,16 +149,16 @@
 											<span>총&nbsp;상품금액&#58;</span>
 											<span id="tot_price">
 												<fmt:formatNumber
-													value="${Math.round(productVO.pd_price - (productVO.pd_price * productVO.pd_discount / 100))}"
+													value="${Math.round(pd_vo.pd_price - (pd_vo.pd_price * pd_vo.pd_discount / 100))}"
 													groupingUsed="true" />원
 											</span>
 										</div>
 									</div>
 									<div style="margin: 25px;">
 										<button type="button" class="btn btn-warning" name="btn_cartAdd" style="margin-right: 5px;"
-											data-pd_number="${productVO.pd_number}">장바구니</button>
+											data-pd_number="${pd_vo.pd_number}">장바구니</button>
 										<button type="button" class="btn btn-danger" name="btn_purchase" style="margin-right: 5px;"
-											data-pd_number="${productVO.pd_number}">구매</button>
+											data-pd_number="${pd_vo.pd_number}">구매</button>
 										<button type="button" class="btn btn-success" name="btn_list">목록</button>
 									</div>
 								</div>
@@ -173,13 +173,13 @@
 												<div id="discountPrice" style="display: inline-block;">
 													<span>
 														<fmt:formatNumber
-															value="${Math.round(productVO.pd_price - (productVO.pd_price * productVO.pd_discount / 100))}"
+															value="${Math.round(pd_vo.pd_price - (pd_vo.pd_price * pd_vo.pd_discount / 100))}"
 															groupingUsed="true" />
 													</span>
 												</div>원
 												<span id="originalPrice">
 													&#40;
-													<fmt:formatNumber value="${productVO.pd_price}" groupingUsed="true" />원&#41;
+													<fmt:formatNumber value="${pd_vo.pd_price}" groupingUsed="true" />원&#41;
 												</span>
 											</h5>
 										</div>
@@ -199,7 +199,7 @@
 											<li><a href="#tabs-proreview">상품 후기</a></li>
 										</ul>
 										<div id="tabs-prodetail">
-											<p>${productVO.pd_content}</p>
+											<p>${pd_vo.pd_content}</p>
 										</div>
 										<div id="tabs-proreview">
 											<p>상품후기 목록</p>
@@ -301,37 +301,26 @@
 									// 목록 버튼 클릭 이벤트
 									$("button[name='btn_list']").on("click", function () {
 
-										/*
-										let pageNum = $("#pageNum").val();
-										let amount = $("#amount").val();
-										let type = $("#type").val();
-										let keyword = $("#keyword").val();
 										let cg_code = $("#cg_code").val();
 										let cg_parent_name = $("#cg_parent_name").val();
 										let cg_name = $("#cg_name").val();
 
-										// URL 구성을 위한 쿼리 파라미터 배열 생성
-										let queryParams = [];
-										let queryString = "";
+										console.log("상위 카테고리명:", cg_parent_name);
+										console.log("하위 카테고리명:", cg_name);
 
-										// 각 조건에 따라 쿼리 파라미터 배열에 추가
-										// 한글이나 공백 또는 특수문자 등이 쓰일 가능성이 있는 것은 encodeURIComponent()로 처리
-										if (pageNum == 'pageNum=&') queryParams.push("pageNum=" + pageNum);
-										if (amount == 'amount=%') queryParams.push("amount=" + amount);
-										if (type == 'type=&') queryParams.push("type=" + type);
-										if (keyword == 'keyword=&') queryParams.push("keyword=" + encodeURIComponent(keyword));
-										if (cg_code == 'cg_code=&') queryParams.push("cg_code=" + cg_code);
-										if (cg_parent_name == 'cg_parent_name=&') queryParams.push("cg_parent_name=" + encodeURIComponent(cg_parent_name));
-										if (cg_name == 'cg_name=' + '""') queryParams.push("cg_name=" + encodeURIComponent(cg_name));
-										
-										// 배열의 요소를 '&'로 연결하여 완전한 쿼리 스트링 생성
-										queryString += "?" + queryParams.join("&");
+										// 기본 URL 설정 (전체 목록)
+										let url = "/user/product/usProductList";
 
-										location.href = "/user/product/usProductList" + queryString;
-										actionForm.attr("action", "/user/product/usProductList");
-										actionForm.submit();
-										*/
-										location.href = "/user/product/usProductList";
+										// 카테고리별 상품 목록인 경우
+										if (cg_code) {
+											url += "?cg_code=" + cg_code;
+											// 한글이나 공백 또는 특수문자 등이 쓰일 가능성이 있는 것은 encodeURIComponent()로 처리
+											if (cg_parent_name) url += "&cg_parent_name=" + encodeURIComponent(cg_parent_name);
+											if (cg_name) url += "&cg_name=" + encodeURIComponent(cg_name);
+										}
+
+										// URL로 이동
+										location.href = url;;
 									});
 
 									// 숫자를 문자열로 변환하고, 천 단위마다 콤마를 삽입
@@ -373,7 +362,7 @@
 									// 상품평 목록 불러오는 작업(이벤트 사용하지 않고 직접 호출)
 									let reviewPage = 1; // 목록에서 첫 번째 페이지를 의미
 									// @GetMapping("/list/{pd_num}/{page}")
-									let url = "/user/review/list/" + "${productVO.pd_number}" + "/" + reviewPage;
+									let url = "/user/review/list/" + "${pd_vo.pd_number}" + "/" + reviewPage;
 
 									getReviewInfo(url);
 
@@ -590,7 +579,7 @@
 												if (result == 'success') {
 													alert("상품평이 삭제되었습니다.")
 
-													url = "/user/review/list/" + "${productVO.pd_number}" + "/" + reviewPage;
+													url = "/user/review/list/" + "${pd_vo.pd_number}" + "/" + reviewPage;
 													getReviewInfo(url);
 												}
 											}
@@ -603,7 +592,7 @@
 										console.log("페이지 번호");
 
 										reviewPage = $(this).attr("href"); // 상품후기 선택 페이지 번호
-										url = "/user/review/list/" + "${productVO.pd_number}" + "/" + reviewPage;
+										url = "/user/review/list/" + "${pd_vo.pd_number}" + "/" + reviewPage;
 
 										getReviewInfo(url); // 스프링에서 상품후기, 페이지 번호 데이터 가져오는 함수
 									});
@@ -691,7 +680,7 @@
 										<div class="modal-footer">
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 											<button type="button" id="btn_review_save" class="btn btn-primary"
-												data-pd_number="${productVO.pd_number}">상품후기 저장</button>
+												data-pd_number="${pd_vo.pd_number}">상품후기 저장</button>
 											<button type="button" id="btn_review_modify" class="btn btn-primary">상품후기 수정</button>
 										</div>
 									</div>

@@ -65,13 +65,13 @@
 									<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
 									<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
 									<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
-										<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
-										<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-										<input type="hidden" name="type" value="${pageMaker.cri.type}" />
-										<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
-										<input type="hidden" name="cg_code" value="${cg_code}" />
-										<input type="hidden" name="cg_parent_name" value="${cg_parent_name}" />
-										<input type="hidden" name="cg_name" value="${cg_name}" />
+										<input type="hidden" name="cg_code" id="cg_code" value="${cg_code}" />
+										<input type="hidden" name="cg_parent_name" id="cg_parent_name" value="${cg_parent_name}" />
+										<input type="hidden" name="cg_name" id="cg_name" value="${cg_name}" />
+										<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
+										<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
+										<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
+										<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
 									</form>
 									<nav aria-label="...">
 										<ul class="pagination">
@@ -110,19 +110,22 @@
 											</c:if>
 										</ul>
 									</nav>
-								</div> 
+								</div>
 								<div class="col-md-6 text-right" style="padding-right: 0;">
-									<form action="/user/product/usProductList" method="get" id="productSearchForm">
-										<select name="type" id="type">
+									<form id="productSearchForm" action="" method="get">
+										<input type="hidden" name="cg_code" value="${cg_code}" />
+										<input type="hidden" name="cg_parent_name" value="${cg_parent_name}" />
+										<input type="hidden" name="cg_name" value="${cg_name}" />
+										<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+										<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+										<select name="type" id="searchType">
 											<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 											<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
 											<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>저자&#47;출판사</option>
 											<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명+저자&#47;출판사</option>
 										</select>
-										<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
+										<input type="text" name="keyword" id="searchKeyword" value="${pageMaker.cri.keyword}"
 											placeholder="검색어 입력" />
-										<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
-										<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
 										<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
 									</form>
 								</div>
@@ -175,12 +178,17 @@
 									// 검색 버튼 클릭 이벤트
 									$("#btn_productSearch").on("click", function () {
 
-										let type = $('#type').val();
-										let keyword = $('#keyword').val();
+										let cg_code = $('input[name="cg_code"]').val();
+										let cg_parent_name = $('input[name="cg_parent_name"]').val();
+										let cg_name = $('input[name="cg_name"]').val();
+										let pageNum = $(".movepage").attr("href"); // href 속성에서 페이지 번호를 추출하여 사용
+										let amount = $('input[name="amount"]').val();
+										let type = $('#searchType').val();
+										let keyword = $('#searchKeyword').val();
 
 										if (!type || type == '') {
 											alert("검색 조건을 선택해 주세요.");
-											$('#type').focus();
+											$('#searchType').focus();
 											return;
 										}
 
@@ -190,17 +198,73 @@
 											return;
 										}
 
-										productSearchForm.submit();
+										// URL 구성을 위한 쿼리 파라미터 배열 생성
+										let queryParams = [];
+										
+										// 카테고리 조건 추가
+										if (cg_code) queryParams.push("cg_code=" + cg_code);
+										if (cg_parent_name) queryParams.push("cg_parent_name=" + encodeURIComponent(cg_parent_name));
+										if (cg_name) queryParams.push("cg_name=" + encodeURIComponent(cg_name));
+
+										queryParams.push("pageNum=" + pageNum);
+										queryParams.push("amount=" + amount);
+
+										// 검색 조건 추가
+										if (type) queryParams.push("type=" + type);
+										if (keyword) queryParams.push("keyword=" + encodeURIComponent(keyword));
+
+
+										// 완전한 URL 생성
+										let queryString = queryParams.join("&"); // 배열 요소를 '&' 구분자로 연결하여 하나로 결합
+										let actionUrl = "/user/product/usProductList?" + queryString;
+
+										productSearchForm.attr("action", actionUrl);
+										productSearchForm.submit(); // 페이지 이동 시 actionForm이 동작
 									});
 
-									// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
+									// 페이징 처리에 대한 클릭 이벤트 설정. <a> 태그
 									$(".movepage").on("click", function (e) {
-										e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-										actionForm.attr("action", "/user/product/usProductList");
-										// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
-										actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+										e.preventDefault(); // a 태그의 href 링크 기능 제거
+										// let hrefValue = $(this).attr("href"); // 선택한 페이지 번호(href 속성에 페이지 번호를 숨김)
+										// actionForm.find("input[name='pageNum']").val(hrefValue);
 
+										let cg_code = $("#cg_code").val();
+										let cg_parent_name = $("#cg_parent_name").val();
+										let cg_name = $("#cg_name").val();
+										let pageNum = $(this).attr("href"); // href 속성에서 페이지 번호를 추출하여 사용
+										let amount = $("#amount").val();
+										let type = $("#type").val();
+										let keyword = $("#keyword").val();
+
+										console.log("상위 카테고리명:", cg_parent_name);
+										console.log("카테고리 번호:", cg_code);
+										console.log("하위 카테고리명:", cg_name);
+										console.log("페이지 번호:", pageNum);
+										console.log("페이지당 상품 수:", amount);
+										console.log("검색조건:", type);
+										console.log("검색어:", keyword);
+
+										// URL 구성을 위한 쿼리 파라미터 배열 생성
+										let queryParams = [];
+										
+										// 카테고리 조건 추가
+										if (cg_code) queryParams.push("cg_code=" + cg_code);
+										if (cg_parent_name) queryParams.push("cg_parent_name=" + encodeURIComponent(cg_parent_name));
+										if (cg_name) queryParams.push("cg_name=" + encodeURIComponent(cg_name));
+
+										queryParams.push("pageNum=" + pageNum);
+										queryParams.push("amount=" + amount);
+
+										// 검색 조건 추가
+										if (type) queryParams.push("type=" + type);
+										if (keyword) queryParams.push("keyword=" + encodeURIComponent(keyword));
+
+										// 완전한 URL 생성
+										let queryString = queryParams.join("&"); // 배열 요소를 '&' 구분자로 연결하여 하나로 결합
+										let actionUrl = "/user/product/usProductList?" + queryString;
+
+										actionForm.attr("action", actionUrl);
 										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
 									});
 
@@ -240,42 +304,15 @@
 									$(".btn_pd_image").on("click", function () {
 										console.log("상품 상세 설명");
 
-										// let pageNum = $("input[name='pageNum']").val();
-										// let amount = $("input[name='amount']").val();
-										/*
-										let type = $("input[name='type']").val();
-										let keyword = $("input[name='keyword']").val();
-										let cg_code = $("input[name='cg_code']").val();
-										let cg_parent_name = $("input[name='cg_parent_name']").val();
-										let cg_name = $("input[name='cg_name']").val();
-										*/
-
-										let pd_number = $(this).data("pd_number");
-
-										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
-										//actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 URL 내용 지우기
-
-										// URL 구성을 위한 쿼리 파라미터 배열 생성
-										// let queryParams = [];
-
-										// 각 조건에 따라 쿼리 파라미터 배열에 추가
-										// 한글이나 공백 또는 특수문자 등이 쓰일 가능성이 있는 것은 encodeURIComponent()로 처리
-										// if (pageNum) queryParams.push("pageNum=" + pageNum);
-										// if (amount) queryParams.push("amount=" + amount);
-										/*
-										if (type == 'type=&') queryParams.push("type=" + type);
-										if (keyword == 'keyword=&') queryParams.push("keyword=" + encodeURIComponent(keyword));
-										if (cg_code == 'cg_code=&') queryParams.push("cg_code=" + cg_code);
-										if (cg_parent_name == 'cg_parent_name=&') queryParams.push("cg_parent_name=" + encodeURIComponent(cg_parent_name));
-										if (cg_name == 'cg_name=' + '""') queryParams.push("cg_name=" + encodeURIComponent(cg_name));
-										if (pd_number) queryParams.push("pd_number=" + pd_number);
-										*/
-
-										// 배열의 요소를 '&'로 연결하여 완전한 쿼리 스트링 생성
-										// let queryString = "?" + queryParams.join("&");										
-										
 										// actionForm.attr("action", "상품 상세 주소");
 										actionForm.attr("action", "/user/product/productDetail");
+										let pd_number = $(this).data("pd_number");
+
+										// 제대로 작동안되는 듯?
+										// actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 URL 내용 지우기
+
+										// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
+										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
 										actionForm.submit();
 									});
 

@@ -117,6 +117,8 @@ desired effect
 											<div class="box-body">
 												<div style="text-align: right;">
 													<form action="/admin/product/adProductList" method="get" id="productSearchForm">
+														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
 														<select name="type" id="type">
 															<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
@@ -128,8 +130,6 @@ desired effect
 														</select>
 														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
 															placeholder="검색어 입력" />
-														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
-														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
 														<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
 													</form>
 												</div><br />
