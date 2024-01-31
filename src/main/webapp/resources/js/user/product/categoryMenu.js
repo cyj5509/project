@@ -37,6 +37,7 @@ $(document).ready(function () {
     // console.log("1차 카테고리 코드: ", cg_code);
 
     // let url = '2차 카테고리 정보를 가져오는 주소';
+    // $.getJSON을 사용한 경우
     let url = '/category/secondCategory/' + cg_code;
     $.getJSON(url, function (category) {
       // 2차 카테고리 목록 생성
@@ -45,16 +46,29 @@ $(document).ready(function () {
         str += '<li class="categoryNavbar">';
         // 바로 아래 부분이 2차 카테고리를 보여주는 부분. str += '2차 카테고리'
         // str += '<a class="nav-link active" href="#" data-cg_code="' + category[i].cg_code + '" data-cg_name="' + category[i].cg_name + '">' + category[i].cg_name + '</a>';
-        str += '<a class="nav-link active" href="#" data-cg_code="' + category[i].cg_code + '" data-cg_name="' + category[i].cg_name + '" data-cg_parent_name="' + category[i].cg_parent_name + '">' + category[i].cg_name + '</a>';
+        str += '<a class="nav-link active" href="#" data-cg_code="' + category[i].cg_code + '" data-cg_parent_name="' + category[i].cg_parent_name + '" data-cg_name="' + category[i].cg_name + '">' + category[i].cg_name + '</a>';
         str += '</li>';
       }
       str += '</ul>';
-      // console.log(str);
 
       sel_first_category.parent().parent().next().remove();
       sel_first_category.parent().parent().after(str); // 2차 카테고리 목록 추가
       $("#second_category").css("display", "block"); // 2차 카테고리 목록 표시
     });
+
+    /*
+    // $.ajax를 사용한 경우
+    $.ajax({
+      url: '/category/secondCategory/' + cg_parent_code, // url 변수의 초기화 작업은 불필요
+      type: 'GET',
+      dataType: 'json', // 서버로부터 반환되는 응답 데이터
+      success: function (category) {
+        // 이때의 로직은 $.getJSON의 콜백 함수 내 로직과 동일
+      },
+      error: function (xhr, status, error) {
+      }
+    });
+    */
   });
 
   // 1차 카테고리와 2차 카테고리 전체에 대한 마우스 아웃 이벤트
@@ -69,27 +83,32 @@ $(document).ready(function () {
     console.log("2차 카테고리 작업");
 
     let cg_code = $(this).data("cg_code");
-    let cg_name = $(this).data("cg_name");
     let cg_parent_name = $(this).data("cg_parent_name"); // 1차 카테고리 이름
+    let cg_name = $(this).data("cg_name");
 
-    console.log("하위 카테고리명:", cg_name);
     console.log("상위 카테고리명:", cg_parent_name);
+    console.log("하위 카테고리명:", cg_name);
 
     // 한글이나 특수문자를 서버에 보낼 때 오류가 나는 경우 인코딩 과정에 의해 처리할 수 있다.: https://travelpark.tistory.com/30 
     // location.href = `/user/product/prd_list/${변수}`: 주소의 일부분이 파라미터 값으로 사용
     // location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_name=${cg_name}`;
-    location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_name=${encodeURIComponent(cg_name)}&cg_parent_name=${encodeURIComponent(cg_parent_name)}`;
+    location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_parent_name=${encodeURIComponent(cg_parent_name)}&cg_name=${encodeURIComponent(cg_name)}`;
   });
 
   // URL에서 파라미터 값 추출
   const urlParams = new URLSearchParams(window.location.search);
-  const cg_name = urlParams.get('cg_name');
   const cg_parent_name = urlParams.get('cg_parent_name');
+  const cg_name = urlParams.get('cg_name');
 
   // 파라미터가 있으면 해당 내용으로 <p id="categoryName"> 업데이트
   if (cg_parent_name && cg_name) {
-    $("#categoryName").text(decodeURIComponent(cg_parent_name) + " >>> " + decodeURIComponent(cg_name));
-  }
+    $("#categoryName").text("[대분류] " + decodeURIComponent(cg_parent_name) + " >>> [소분류] " + decodeURIComponent(cg_name));
+  } else {
+    $("#categoryName").text("전체 상품 목록(분류 없음)");
+  } 
+  // 단일 스타일 변경 시에는 속성명과 속성값 간에 콤마(,)로 구분 -> $("#second_category").css("display", "none");
+  // 2개 이상인 경우 중괄호로 감싼 뒤 콜론(:)으로 구분(단, 속성 간에는 콤마로 구분)
+  $("#categoryName").css({ "font-size": 22, "font-weight": "bold", "font-style": "italic" });
 
 }); // ready-end
 

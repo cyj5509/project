@@ -72,12 +72,39 @@
 							}
 						}
 
+						/* categoryMenu.js에서 설정한 공통 스타일 외에 나머지 스타일 */
 						#categoryName {
-							font-size: 20px;
-							font-weight: bold;
-							font-style: italic;
-							margin-top: 40px;
-							margin-left: 40px;
+							margin-top: 50px;
+							margin-left: 50px;
+						}
+
+						#productName {
+							text-align: center;
+							margin-bottom: 40px;
+						}
+
+						.btn_pd_image {
+						border: 1px solid black
+						}
+
+						#productName,
+						#productCompany,
+						#discountPercent {
+							font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+						}
+
+						/* 할인가에 대한 스타일 */
+						#discountPrice {
+							text-decoration: underline;
+							/* 밑줄 표시 */
+						}
+
+						/* 원가에 대한 스타일 */
+						#originalPrice {
+							font-size: 0.8em;
+							/* 기본 글자 크기보다 작게 설정 */
+							text-decoration: line-through;
+							/* 취소선 표시. <s>태그와 동일*/
 						}
 
 						/* 평점 기본선택자 */
@@ -91,13 +118,6 @@
 						p#star_rv_score a.rv_score.on {
 							color: red;
 						}
-
-						.original-price {
-							font-size: 0.8em;
-							/* 기본 글자 크기보다 작게 설정 */
-							text-decoration: line-through;
-							/* 취소선 표시. <s>태그와 동일*/
-						}
 					</style>
 			</head>
 
@@ -105,14 +125,14 @@
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
-					<p id="categoryName">&#42;&nbsp;현재 카테고리&#58; ${cg_name}</p>
+						<p id="categoryName"></p>
 						<div class="container" style="margin-top: 80px;">
-							<h3 style="text-align: center; margin-bottom: 40px;">${productVO.pd_name}</h3>
+							<h3 id="productName">${productVO.pd_name}</h3>
 							<div class="card-deck mb-3 text-center row">
 								<div class="col-md-4">
 									<div class="row text-center">
 										<div class="col">
-											<h5>${productVO.pd_company}</h5>
+											<h5 id="productCompany">${productVO.pd_company}</h5>
 										</div>
 									</div>
 								</div>
@@ -121,9 +141,13 @@
 										src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
 										alt="">
 									<div style="margin: 25px;">
-										<div>수량&#58; <input type="number" id="btn_quantity" value="1" style="width: 55px"></div>
 										<div>
-											총 상품금액&#58; <span id="tot_price">
+											<span>수량&#58;</span>
+											<input type="number" id="btn_quantity" value="1" style="width: 55px; text-align: center;">
+										</div>
+										<div>
+											<span>총&nbsp;상품금액&#58;</span>
+											<span id="tot_price">
 												<fmt:formatNumber
 													value="${Math.round(productVO.pd_price - (productVO.pd_price * productVO.pd_discount / 100))}"
 													groupingUsed="true" />원
@@ -142,18 +166,20 @@
 									<!-- <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
 										<p>2차 카테고리: ${cg_name}</p>
 									</div> -->
-
 									<div class="row text-center">
 										<div class="col">
 											<h5>
-												10&#37;
-												<span id="unit_price">
-													<fmt:formatNumber
-														value="${Math.round(productVO.pd_price - (productVO.pd_price * productVO.pd_discount / 100))}"
-														groupingUsed="true" />원
-												</span>
-												<span class="original-price">
-													<fmt:formatNumber value="${productVO.pd_price}" groupingUsed="true" />원
+												<span id="discountPercent">&#49;&#48;&#37;</span>
+												<div id="discountPrice" style="display: inline-block;">
+													<span>
+														<fmt:formatNumber
+															value="${Math.round(productVO.pd_price - (productVO.pd_price * productVO.pd_discount / 100))}"
+															groupingUsed="true" />
+													</span>
+												</div>원
+												<span id="originalPrice">
+													&#40;
+													<fmt:formatNumber value="${productVO.pd_price}" groupingUsed="true" />원&#41;
 												</span>
 											</h5>
 										</div>
@@ -206,6 +232,7 @@
 										<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
 										<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
 										<input type="hidden" name="cg_code" id="cg_code" value="${cg_code}" />
+										<input type="hidden" name="cg_parent_name" id="cg_parent_name" value="${cg_parent_name}" />
 										<input type="hidden" name="cg_name" id="cg_name" value="${cg_name}" />
 									</form>
 								</div>
@@ -274,31 +301,49 @@
 									// 목록 버튼 클릭 이벤트
 									$("button[name='btn_list']").on("click", function () {
 
-										location.href = "/user/product/list";
-									});
+										/*
+										let pageNum = $("#pageNum").val();
+										let amount = $("#amount").val();
+										let type = $("#type").val();
+										let keyword = $("#keyword").val();
+										let cg_code = $("#cg_code").val();
+										let cg_parent_name = $("#cg_parent_name").val();
+										let cg_name = $("#cg_name").val();
 
-									// 상품 이미지 또는 상품명 클릭 시 상세로 보내는 작업
-									$(".btn_pd_image").on("click", function () {
-										console.log("상품 상세 설명");
+										// URL 구성을 위한 쿼리 파라미터 배열 생성
+										let queryParams = [];
+										let queryString = "";
 
-										// actionForm.attr("action", "상품 상세 주소");
-										actionForm.attr("action", "/user/product/productDetail");
-										let pd_number = $(this).data("pd_number");
+										// 각 조건에 따라 쿼리 파라미터 배열에 추가
+										// 한글이나 공백 또는 특수문자 등이 쓰일 가능성이 있는 것은 encodeURIComponent()로 처리
+										if (pageNum == 'pageNum=&') queryParams.push("pageNum=" + pageNum);
+										if (amount == 'amount=%') queryParams.push("amount=" + amount);
+										if (type == 'type=&') queryParams.push("type=" + type);
+										if (keyword == 'keyword=&') queryParams.push("keyword=" + encodeURIComponent(keyword));
+										if (cg_code == 'cg_code=&') queryParams.push("cg_code=" + cg_code);
+										if (cg_parent_name == 'cg_parent_name=&') queryParams.push("cg_parent_name=" + encodeURIComponent(cg_parent_name));
+										if (cg_name == 'cg_name=' + '""') queryParams.push("cg_name=" + encodeURIComponent(cg_name));
+										
+										// 배열의 요소를 '&'로 연결하여 완전한 쿼리 스트링 생성
+										queryString += "?" + queryParams.join("&");
 
-										actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 
-										// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
-										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
+										location.href = "/user/product/usProductList" + queryString;
+										actionForm.attr("action", "/user/product/usProductList");
 										actionForm.submit();
+										*/
+										location.href = "/user/product/usProductList";
 									});
 
 									// 숫자를 문자열로 변환하고, 천 단위마다 콤마를 삽입
 									function numberWithCommas(x) {
+
 										return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 									}
 
 									// 수량 변경에 따른 총 가격 계산
 									$("#btn_quantity").on("change", function () {
-										let unitPrice = parseInt($("#unit_price").text().replace(/[^0-9]/g, ""));
+										// 가격 정보에서 숫자가 아닌 문자 제거
+										let unitPrice = parseInt($("#discountPrice").text().replace(/[^0-9]/g, ""));
 										let quantity = parseInt($("#btn_quantity").val());
 										let tot_price = unitPrice * quantity;
 

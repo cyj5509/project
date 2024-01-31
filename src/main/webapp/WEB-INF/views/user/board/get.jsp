@@ -123,7 +123,6 @@
 											<div class="box-header with-border">
 												<h2 class="box-title mt-5"><b>조회하기</b></h2>
 											</div><br />
-
 											<div class="box-body">
 												<div class="form-group row">
 													<label for="us_id" class="col-2">작성자</label>

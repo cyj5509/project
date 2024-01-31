@@ -20,10 +20,9 @@
 					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 
 					<style>
+						/* categoryMenu.js에서 설정한 공통 스타일 외에 나머지 스타일 */
 						#categoryName {
-							margin: 0 12px 0;
-							font-size: 20px;
-							font-weight: bold;
+							margin: 0 12px;
 							padding-bottom: 40px;
 						}
 
@@ -59,7 +58,7 @@
 						</h1>
 						<div class="container">
 							<!-- 페이징 및 조건 검색 처리 -->
-							<p id="categoryName"></p>
+							<p id="categoryName"><!-- 카테고리명 동적 생성 --></p>
 							<div class="row">
 								<div class="col-md-6" style="padding-left: 25px;">
 									<!-- <form id="actionForm">의 용도 -->
@@ -71,6 +70,7 @@
 										<input type="hidden" name="type" value="${pageMaker.cri.type}" />
 										<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
 										<input type="hidden" name="cg_code" value="${cg_code}" />
+										<input type="hidden" name="cg_parent_name" value="${cg_parent_name}" />
 										<input type="hidden" name="cg_name" value="${cg_name}" />
 									</form>
 									<nav aria-label="...">
@@ -240,13 +240,42 @@
 									$(".btn_pd_image").on("click", function () {
 										console.log("상품 상세 설명");
 
-										// actionForm.attr("action", "상품 상세 주소");
-										actionForm.attr("action", "/user/product/productDetail");
+										// let pageNum = $("input[name='pageNum']").val();
+										// let amount = $("input[name='amount']").val();
+										/*
+										let type = $("input[name='type']").val();
+										let keyword = $("input[name='keyword']").val();
+										let cg_code = $("input[name='cg_code']").val();
+										let cg_parent_name = $("input[name='cg_parent_name']").val();
+										let cg_name = $("input[name='cg_name']").val();
+										*/
+
 										let pd_number = $(this).data("pd_number");
 
-										actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 URL 내용 지우기
-										// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
 										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
+										//actionForm.find("input[name='pd_number']").remove(); // 뒤로가기 시 URL 내용 지우기
+
+										// URL 구성을 위한 쿼리 파라미터 배열 생성
+										// let queryParams = [];
+
+										// 각 조건에 따라 쿼리 파라미터 배열에 추가
+										// 한글이나 공백 또는 특수문자 등이 쓰일 가능성이 있는 것은 encodeURIComponent()로 처리
+										// if (pageNum) queryParams.push("pageNum=" + pageNum);
+										// if (amount) queryParams.push("amount=" + amount);
+										/*
+										if (type == 'type=&') queryParams.push("type=" + type);
+										if (keyword == 'keyword=&') queryParams.push("keyword=" + encodeURIComponent(keyword));
+										if (cg_code == 'cg_code=&') queryParams.push("cg_code=" + cg_code);
+										if (cg_parent_name == 'cg_parent_name=&') queryParams.push("cg_parent_name=" + encodeURIComponent(cg_parent_name));
+										if (cg_name == 'cg_name=' + '""') queryParams.push("cg_name=" + encodeURIComponent(cg_name));
+										if (pd_number) queryParams.push("pd_number=" + pd_number);
+										*/
+
+										// 배열의 요소를 '&'로 연결하여 완전한 쿼리 스트링 생성
+										// let queryString = "?" + queryParams.join("&");										
+										
+										// actionForm.attr("action", "상품 상세 주소");
+										actionForm.attr("action", "/user/product/productDetail");
 										actionForm.submit();
 									});
 

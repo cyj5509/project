@@ -47,11 +47,13 @@ public class UsProductController {
 	// 2차 카테고리를 선택했을 때 그걸 조건으로 데이터를 가져옴
 	@GetMapping("/usProductList")
 	public String usProductList(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code, 
-					   			String cg_name, Model model) throws Exception {
+								@ModelAttribute("cg_parent_name") String cg_parent_name, 
+								@ModelAttribute("cg_name") String cg_name, Model model) throws Exception {
 	
 		log.info("Criteria 내용: " + cri);
 		log.info("카테고리 코드: " + cg_code);
-		log.info("카테고리명: " + cg_name);
+		log.info("상위 카테고리명: " + cg_parent_name);
+		log.info("하위 카테고리명: " + cg_name);
 		
 		// AdProductController에서 Copy & Paste
 		
@@ -76,7 +78,6 @@ public class UsProductController {
 		});
 		
 		model.addAttribute("cg_code", cg_code);
-		model.addAttribute("cg_name", cg_name);
 		model.addAttribute("productList", productList); // 상품 목록
 		
 		PageDTO pageDTO = new PageDTO(cri, totalCount);
@@ -96,7 +97,10 @@ public class UsProductController {
 	// 상품 상세(상품 후기 작업 포함)
 	// Integer cg_code, String cg_name: 액션폼에서 넘어오는 값으로 cg_name은 다시 활용
 	@GetMapping("/productDetail")
-	public void productDetail(Criteria cri, Integer cg_code, @ModelAttribute("cg_name") String cg_name, Integer pd_number, Model model) throws Exception {
+	public void productDetail(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code,
+							  @ModelAttribute("cg_name") String cg_name, 
+							  @ModelAttribute("cg_parent_name") String cg_parent_name, 
+							  Integer pd_number, Model model) throws Exception {
 	
 		log.info("페이징 및 조건 검색 정보: " + cri);
 		
@@ -104,6 +108,7 @@ public class UsProductController {
 		// 클라이언트에서 이미지 출력작업: \(역슬래시)가 서버로 보낼 때 문제가 되어 /(슬래시)를 사용하고자 함 
 		productVO.setPd_image_folder(productVO.getPd_image_folder().replace("\\", "/"));
 		
+		model.addAttribute("cg_code", cg_code);
 		model.addAttribute("productVO", productVO); // 화면에 보여줘야 해서 모델 작업 필요
 
 		// DB 연동작업
