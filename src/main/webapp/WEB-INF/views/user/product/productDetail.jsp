@@ -308,7 +308,7 @@
 										console.log("상위 카테고리명:", cg_parent_name);
 										console.log("하위 카테고리명:", cg_name);
 
-										// 기본 URL 설정 (전체 목록)
+										// 기본 URL 설정(전체 목록)
 										let url = "/user/product/usProductList";
 
 										// 카테고리별 상품 목록인 경우
@@ -320,7 +320,7 @@
 										}
 
 										// URL로 이동
-										location.href = url;;
+										location.href = url;
 									});
 
 									// 숫자를 문자열로 변환하고, 천 단위마다 콤마를 삽입

@@ -54,7 +54,7 @@
 						<div class="carousel" style="width: 100%; overflow: hidden;">
 							<div class="carousel-inner">
 								<div class="carousel-item active">
-									<img src="/images/goods.jpg" alt="Books" style="width: 100%; height: auto; max-height: 380px;">
+									<img src="/images/goods.jpg" alt="Books" style="width: 100%; height: auto; max-height: 400px;">
 									<div class="container">
 										<div class="carousel-caption">
 											<h2>개발자를 위한 다양한 상품</h2>
@@ -65,7 +65,7 @@
 									</div>
 								</div>
 								<div class="carousel-item">
-									<img src="/images/event.jpg" alt="Conference" style="width: 100%; height: auto; max-height: 380px;">
+									<img src="/images/event.jpg" alt="Conference" style="width: 100%; height: auto; max-height: 400px;">
 									<div class="container">
 										<div class="carousel-caption">
 											<h2>개발자를 위한 다양한 행사</h2>
@@ -75,7 +75,7 @@
 									</div>
 								</div>
 								<div class="carousel-item">
-									<img src="/images/community.jpg" alt="Teamwalk" style="width: 100%; height: auto; max-height: 380px;">
+									<img src="/images/community.jpg" alt="Teamwalk" style="width: 100%; height: auto; max-height: 400px;">
 									<div class="container">
 										<div class="carousel-caption">
 											<h2>개발자를 위한 다양한 정보와 각종 모임</h2>

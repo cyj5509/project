@@ -116,7 +116,7 @@ desired effect
 
 											<div class="box-body">
 												<div style="text-align: right;">
-													<form action="/admin/product/adProductList" method="get" id="productSearchForm">
+													<form  id="productSearchForm" action="/admin/product/adProductList" method="get">
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
 														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
 														<select name="type" id="type">
@@ -341,7 +341,7 @@ desired effect
 							let type = $('#type').val();
 							let keyword = $('#keyword').val();
 
-							if (!type || type == '') {
+							if (!type || type.trim() == '') {
 								alert("검색 조건을 선택해 주세요.");
 								$('#type').focus();
 								return;

@@ -260,7 +260,7 @@
 							let type = $('#type').val();
 							let keyword = $('#keyword').val();
 
-							if (!type || type == '') {
+							if (!type || type.trim() == '') {
 								alert("검색 조건을 선택해 주세요.");
 								$('#type').focus();
 								return;

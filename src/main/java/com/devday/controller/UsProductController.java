@@ -46,19 +46,19 @@ public class UsProductController {
 	// 2. REST API 개발 형태의 매핑 주소: /user/product/pd_list/2차 카테고리 코드
 	// 2차 카테고리를 선택했을 때 그걸 조건으로 데이터를 가져옴
 	@GetMapping("/usProductList")
-	public String usProductList(Criteria cri, @RequestParam(value = "cg_code", required = false) Integer cg_code, 
-								@ModelAttribute("cg_parent_name") String cg_parent_name, 
-								@ModelAttribute("cg_name") String cg_name, Model model) throws Exception {
+	public String usProductList(@RequestParam(value = "cg_code", required = false) Integer cg_code, 
+								@RequestParam(value = "cg_parent_name", required = false) String cg_parent_name, 
+								@RequestParam(value = "cg_name", required = false) String cg_name, 
+								Criteria cri, Model model) throws Exception {
 	
-		log.info("Criteria 내용: " + cri);
 		log.info("카테고리 코드: " + cg_code);
 		log.info("상위 카테고리명: " + cg_parent_name);
 		log.info("하위 카테고리명: " + cg_name);
 		
 		// AdProductController에서 Copy & Paste
 		
-		// 페이지당 상품 수 설정: 10 -> 2 -> 8로 변경
-		cri.setAmount(8); // Criteria에서 this(1, 2);
+		// 페이지당 상품 수 설정
+		cri.setAmount(1); // Criteria에서 this(1, 2);
 
 		List<ProductVO> productList = null;
 		int totalCount = 0;
@@ -78,6 +78,8 @@ public class UsProductController {
 		});
 		
 		model.addAttribute("cg_code", cg_code);
+		model.addAttribute("cg_parent_name", cg_parent_name);
+		model.addAttribute("cg_name", cg_name);
 		model.addAttribute("productList", productList); // 상품 목록
 		
 		PageDTO pageDTO = new PageDTO(cri, totalCount);

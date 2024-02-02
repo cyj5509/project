@@ -96,7 +96,7 @@ $(document).ready(function () {
   });
 
   // URL에서 파라미터 값 추출
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(location.search);
   const cg_parent_name = urlParams.get('cg_parent_name');
   const cg_name = urlParams.get('cg_name');
 
