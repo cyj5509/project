@@ -58,7 +58,7 @@ public class UsProductController {
 		// AdProductController에서 Copy & Paste
 		
 		// 페이지당 상품 수 설정
-		cri.setAmount(1); // Criteria에서 this(1, 2);
+		cri.setAmount(8);
 
 		List<ProductVO> productList = null;
 		int totalCount = 0;

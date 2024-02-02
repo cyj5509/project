@@ -102,7 +102,7 @@ $(document).ready(function () {
     // 한글이나 공백 등으로 오류 발생 시 encodeURIComponent()와 함께 decodeURIComponent()로 처리
     $("#categoryName").text("[대분류] " + cg_parent_name + " >>> [소분류] " + cg_name);
   } else {
-    $("#categoryName").text("전체 상품 목록(분류 없음)");
+    $("#categoryName").text("전체 상품(카테고리 미분류)");
   } 
   // 단일 스타일 변경 시에는 속성명과 속성값 간에 콤마(,)로 구분 -> $("#second_category").css("display", "none");
   // 2개 이상인 경우 중괄호로 감싼 뒤 콜론(:)으로 구분(단, 속성 간에는 콤마로 구분)

@@ -117,9 +117,9 @@ desired effect
 											<div class="box-body">
 												<div style="text-align: right;">
 													<form id="productSearchForm" action="/admin/product/adProductList" method="get">
-														<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
-														<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
-														<select name="type" id="type">
+														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
+														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+														<select name="type">
 															<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
@@ -131,8 +131,7 @@ desired effect
 															<option value="NCP" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>
 																상품명&#43;상품번호&#43;저자&#47;출판사</option>
 														</select>
-														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
-															placeholder="검색어 입력" />
+														<input type="text" name="keyword" value="${pageMaker.cri.keyword}" placeholder="검색어 입력" />
 														<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
 													</form>
 												</div><br />
@@ -192,10 +191,10 @@ desired effect
 														<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
 														<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
 														<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
-															<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
-															<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
-															<input type="hidden" name="type" value="${pageMaker.cri.type}" />
-															<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}" />
+															<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
+															<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
+															<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
+															<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
 														</form>
 													</div>
 													<div class="col-md-6 text-right">
@@ -219,11 +218,11 @@ desired effect
 																<!-- 페이지 번호 출력 작업 -->
 																<!--  1 2 3 4 5 6 7 8 9 10 [다음] -->
 																<!--  [이전] 11 12 13 14 15 16 17 18 19 20 [다음] -->
-																<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="num">
-																	<li class='page-item ${pageMaker.cri.pageNum == num ? "active" : "" }'
+																<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="number">
+																	<li class='page-item ${pageMaker.cri.pageNum == number ? "active" : "" }'
 																		aria-current="page">
 																		<!--  href="${num}" data-page="${num}" 둘 중 하나 사용 -->
-																		<a class="page-link movepage" href="${num}">${num}</a>
+																		<a class="page-link movepage" href="${number}">${number}</a>
 																		<!-- 임의로 만든 클래스명 movepage는 페이지 번호와 관련 -->
 																	</li>
 																</c:forEach>
@@ -342,21 +341,21 @@ desired effect
 						$("#btn_productSearch").on("click", function () {
 
 							// 페이지 번호를 1로 설정
-							$("#pageNum").val(1);
+							productSearchForm.find("input[name='pageNum']").val(1);
 
 							// 검색 조건 추출
-							let type = $('#type').val();
-							let keyword = $('#keyword').val().trim();
+							let type = productSearchForm.find("select[name='type']").val();
+							let keyword = productSearchForm.find("input[name='keyword']").val().trim();
 
 							// 검색 조건 유효성 검사
 							if (!type) {
 								alert("검색 조건을 선택해 주세요.");
-								$('#type').focus();
+								productSearchForm.find("select[name='type']").focus();
 								return;
 							}
 							if (!keyword) {
 								alert("검색어를 입력해 주세요.");
-								$('#keyword').focus();
+								productSearchForm.find("input[name='keyword']").focus();
 								return;
 							}
 
@@ -364,7 +363,7 @@ desired effect
 						});
 
 						// 검색어 입력 필드에 엔터 키 이벤트 리스너 추가
-						$("#keyword").on("keypress", function (e) {
+						$(productSearchForm.find("input[name='keyword']")).on("keypress", function (e) {
 							if (e.which == 13) { // 엔터 키의 keyCode는 13
 								// 다른 이벤트 핸들러 내에서 호출된 이벤트는 각각 독립적으로 기본 동작을 가짐
 								// 이에 따라 아래와 같이 명시적으로 폼 제출을 방지할 필요가 있음
@@ -374,29 +373,40 @@ desired effect
 							}
 						});
 
-						// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정.  <a class="page-link movepage" href="${num}">${num}</a>
+						// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정
 						$(".movepage").on("click", function (e) {
 
 							e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
 							let pageNum = $(this).attr("href"); // href 속성에 선택한 페이지 번호를 숨겨 이를 추출하여 사용
-							actionForm.find("input[name='pageNum']").val(pageNum); // 선택한 페이지 번호 설정
+							$("#pageNum").val(pageNum); // 선택한 페이지 번호 설정
+							// actionForm.find("input[name='pageNum']").val(pageNum);
 
-							// 검색 조건이 있으면 해당 입력 필드 값 설정
-							let type = actionForm.find("input[name='type']").val();
-							let keyword = actionForm.find("input[name='keyword']").val();
-							actionForm.find("input[name='type']").val(type && type != "" ? type : actionForm.find("input[name='type']").remove());
-							actionForm.find("input[name='keyword']").val(keyword && keyword != "" ? keyword : actionForm.find("input[name='keyword']").remove());
+							// URLSearchParams를 사용해 현재 URL에서 파라미터 추출
+							let type = urlParams.get('type');
+							let keyword = urlParams.get('keyword');
+							// 검색 조건 설정 및 제거
+							if (type) {
+								$("#type").val(type);
+							} else {
+								$("#type").remove();
+							}
+							if (keyword) {
+								$("#keyword").val(keyword);
+							} else {
+								$("#keyword").remove();
+							}
 
 							actionForm.attr("action", "/admin/product/adProductList");
-							actionForm.submit(); // 페이지 이동 시 actionForm이 동작
+							actionForm.submit(); // 페이지 이동 시 actionForm 동작
 						});
 
 						// 상품 이미지 또는 상품명 클릭 시
 						$("a.move").on("click", function (e) {
-							let pd_number = $(this).parent().parent().find("input[name='check']").val();
 
-							e.preventDefault();
+							e.preventDefault(); // 기본 동작 방지
+
+							let pd_number = $(this).parent().parent().find("input[name='check']").val();
 
 							actionForm.append('<input type="hidden" name="pd_number" id="pd_number" value="' + pd_number + '" />');
 							actionForm.attr("action", "/admin/product/get");
@@ -551,7 +561,7 @@ desired effect
 							// <a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
 							// text(): 입력양식 태그가 아닌 일반 태그의 값을 변경하거나 읽을 때 사용
 							let pd_name = $(this).parent().parent().find(".pd_name").text();
-							if (!confirm("'" + pd_name + "'" + " 상품을 정말로 삭제하겠습니까?")) return;
+							if (!confirm("'" + pd_name + "'" + " 상품을 정말로 삭제하시겠습니까?")) return;
 
 							// val()은 input, select, textarea 태그의 값을 변경하거나 읽을 때 사용
 							let pd_number = $(this).parent().parent().find("input[name='check']").val(); // val()은 input, select, textarea태그일 때
