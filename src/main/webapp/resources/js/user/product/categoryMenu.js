@@ -89,10 +89,7 @@ $(document).ready(function () {
     console.log("상위 카테고리명:", cg_parent_name);
     console.log("하위 카테고리명:", cg_name);
 
-    // 한글이나 특수문자를 서버에 보낼 때 오류가 나는 경우 인코딩 과정에 의해 처리할 수 있다.: https://travelpark.tistory.com/30 
-    // location.href = `/user/product/prd_list/${변수}`: 주소의 일부분이 파라미터 값으로 사용
-    // location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_name=${cg_name}`;
-    location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_parent_name=${encodeURIComponent(cg_parent_name)}&cg_name=${encodeURIComponent(cg_name)}`;
+    location.href = `/user/product/usProductList?cg_code=${cg_code}&cg_parent_name=${cg_parent_name}&cg_name=${cg_name}`;
   });
 
   // URL에서 파라미터 값 추출
@@ -102,7 +99,8 @@ $(document).ready(function () {
 
   // 파라미터가 있으면 해당 내용으로 <p id="categoryName"> 업데이트
   if (cg_parent_name && cg_name) {
-    $("#categoryName").text("[대분류] " + decodeURIComponent(cg_parent_name) + " >>> [소분류] " + decodeURIComponent(cg_name));
+    // 한글이나 공백 등으로 오류 발생 시 encodeURIComponent()와 함께 decodeURIComponent()로 처리
+    $("#categoryName").text("[대분류] " + cg_parent_name + " >>> [소분류] " + cg_name);
   } else {
     $("#categoryName").text("전체 상품 목록(분류 없음)");
   } 

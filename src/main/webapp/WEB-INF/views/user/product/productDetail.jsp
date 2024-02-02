@@ -227,13 +227,13 @@
 									<!-- 1) 페이지 번호([이전] 1 2 3 4 5 ... [다음])를 클릭할 때 사용 -->
 									<!-- 2) 목록에서 상품 이미지 또는 상품명을 클릭할 때 사용 -->
 									<form id="actionForm" action="" method="get"> <!-- JS에서 자동 입력 -->
+										<input type="hidden" name="cg_code" id="cg_code" value="${cg_code}" />
+										<input type="hidden" name="cg_parent_name" id="cg_parent_name" value="${cg_parent_name}" />
+										<input type="hidden" name="cg_name" id="cg_name" value="${cg_name}" />
 										<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
 										<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
 										<input type="hidden" name="type" id="type" value="${pageMaker.cri.type}" />
 										<input type="hidden" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" />
-										<input type="hidden" name="cg_code" id="cg_code" value="${cg_code}" />
-										<input type="hidden" name="cg_parent_name" id="cg_parent_name" value="${cg_parent_name}" />
-										<input type="hidden" name="cg_name" id="cg_name" value="${cg_name}" />
 									</form>
 								</div>
 							</div>
@@ -301,26 +301,38 @@
 									// 목록 버튼 클릭 이벤트
 									$("button[name='btn_list']").on("click", function () {
 
-										let cg_code = $("#cg_code").val();
-										let cg_parent_name = $("#cg_parent_name").val();
-										let cg_name = $("#cg_name").val();
+										// 쿼리 파라미터가 필요한 경우만 폼에 추가
+										const urlParams = new URLSearchParams(location.search);
 
-										console.log("상위 카테고리명:", cg_parent_name);
-										console.log("하위 카테고리명:", cg_name);
+										// 카테고리 조건 추출 및 설정
+										let cg_code = urlParams.get('cg_code');
+										let cg_parent_name = urlParams.get('cg_parent_name');
+										let cg_name = urlParams.get('cg_name');
 
-										// 기본 URL 설정(전체 목록)
-										let url = "/user/product/usProductList";
+										// 카테고리 조건이 없는 경우 해당 입력 필드 제거
+										if (!cg_code) $("#cg_code").remove();
+										if (!cg_parent_name) $("#cg_parent_name").remove();
+										if (!cg_name) $("#cg_name").remove();
 
-										// 카테고리별 상품 목록인 경우
-										if (cg_code) {
-											url += "?cg_code=" + cg_code;
-											// 한글이나 공백 또는 특수문자 등이 쓰일 가능성이 있는 것은 encodeURIComponent()로 처리
-											if (cg_parent_name) url += "&cg_parent_name=" + cg_parent_name;
-											if (cg_name) url += "&cg_name=" + cg_name;
-										}
+										// 페이징 및 검색 조건 추출 및 설정
+										let pageNum = urlParams.get('pageNum');
+										let amount = urlParams.get('amount');
+										let type = urlParams.get('type');
+										let keyword = urlParams.get('keyword');
 
-										// URL로 이동
-										location.href = url;
+										// 페이징 및 검색 조건이 없는 경우 해당 입력 필드 제거
+										if (!pageNum) $("#pageNum").remove();
+											else $("#pageNum").val(pageNum);
+										if (!amount) $("#amount").remove();
+											else $("#amount").val(amount);
+										if (!type) $("#type").remove();
+											else $("#type").val(type);
+										if (!keyword) $("#keyword").remove();
+											else $("#keyword").val(keyword);
+
+										// 폼의 액션 설정 및 제출
+										actionForm.attr("action", "/user/product/usProductList");
+										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
 									});
 
 									// 숫자를 문자열로 변환하고, 천 단위마다 콤마를 삽입
@@ -607,7 +619,6 @@
 											if ($(this).attr("class") == "rv_score on") {
 												rv_score += 1;
 											}
-
 
 											// 평점 선택 안했을 경우 체크
 											if (rv_score == 0) {

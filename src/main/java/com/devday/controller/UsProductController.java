@@ -113,6 +113,5 @@ public class UsProductController {
 		model.addAttribute("cg_code", cg_code);
 		model.addAttribute("pd_vo", pd_vo); // 화면에 보여줘야 해서 모델 작업 필요
 
-		// DB 연동작업
 	}
 }
