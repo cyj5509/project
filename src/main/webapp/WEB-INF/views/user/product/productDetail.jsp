@@ -169,7 +169,11 @@
 									<div class="row text-center">
 										<div class="col">
 											<h5>
-												<span id="discountPercent">&#49;&#48;&#37;</span>
+												<c:if test="${pd_vo.pd_discount > 0}">
+													<span id="discountPercent">
+														<fmt:formatNumber value="${pd_vo.pd_discount / 100}" type="percent" />
+													</span>
+												</c:if>
 												<div id="discountPrice" style="display: inline-block;">
 													<span>
 														<fmt:formatNumber
@@ -177,10 +181,12 @@
 															groupingUsed="true" />
 													</span>
 												</div>원
-												<span id="originalPrice">
-													&#40;
-													<fmt:formatNumber value="${pd_vo.pd_price}" groupingUsed="true" />원&#41;
-												</span>
+												<c:if test="${pd_vo.pd_discount > 0}">
+													<span id="originalPrice">
+														&#40;
+														<fmt:formatNumber value="${pd_vo.pd_price}" groupingUsed="true" />원&#41;
+													</span>
+												</c:if>
 											</h5>
 										</div>
 									</div>
@@ -322,13 +328,13 @@
 
 										// 페이징 및 검색 조건이 없는 경우 해당 입력 필드 제거
 										if (!pageNum) $("#pageNum").remove();
-											else $("#pageNum").val(pageNum);
+										else $("#pageNum").val(pageNum);
 										if (!amount) $("#amount").remove();
-											else $("#amount").val(amount);
+										else $("#amount").val(amount);
 										if (!type) $("#type").remove();
-											else $("#type").val(type);
+										else $("#type").val(type);
 										if (!keyword) $("#keyword").remove();
-											else $("#keyword").val(keyword);
+										else $("#keyword").val(keyword);
 
 										// 폼의 액션 설정 및 제출
 										actionForm.attr("action", "/user/product/usProductList");

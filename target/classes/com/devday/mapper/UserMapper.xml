@@ -75,7 +75,7 @@
 	UPDATE
 		user_table
 	SET
-		us_last_login = sysdate
+		us_last_login = SYSDATE
 	WHERE
 		us_id = #{us_id}
 </update>

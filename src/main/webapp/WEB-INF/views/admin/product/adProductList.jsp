@@ -138,7 +138,9 @@ desired effect
 												<table class="table table-bordered product-table">
 													<tbody>
 														<tr>
-															<th style="width: 2%"><input type="checkbox" id="checkAll"></th>
+															<th style="width: 2%">
+																<input type="checkbox" id="checkAll" style="cursor: pointer">
+															</th>
 															<th style="width: 8%">상품코드</th>
 															<th style="width: 50%">상품명</th>
 															<th style="width: 5%">가격</th>
@@ -146,28 +148,30 @@ desired effect
 															<th style="width: 10%">판매여부</th>
 															<th style="width: 15%">비고</th>
 														</tr>
-														<!-- BoardController에서 작성한부이름과 동일한 이름을 items로 작성 -->
+														<!-- BoardController에서 작성한 이름과 동일한 이름을 items로 작성 -->
 														<!-- 목록이 출력되는 부분 -->
-														<c:forEach items="${pd_list}" var="productVO">
+														<c:forEach items="${productList}" var="pd_vo">
 															<tr>
-																<td><input type="checkbox" name="check" value="${productVO.pd_number}"></td>
-																<td>${productVO.pd_number}</td>
+																<td>
+																	<input type="checkbox" name="check" value="${pd_vo.pd_number}" style="cursor: pointer">
+																</td>
+																<td>${pd_vo.pd_number}</td>
 																<td style="text-align: justify;">
-																	<a class="move" href="#" data-bno="${productVO.pd_number}">
+																	<a class="move" href="#" data-bno="${pd_vo.pd_number}">
 																		<img
-																			src="/admin/product/imageDisplay?dateFolderName=${productVO.pd_image_folder }&fileName=s_${productVO.pd_image}"></a>
+																			src="/admin/product/imageDisplay?dateFolderName=${pd_vo.pd_image_folder }&fileName=s_${pd_vo.pd_image}"></a>
 																	<a class="move pd_name" href="#" style="color: black"
-																		data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
+																		data-bno="${pd_vo.pd_number}">${pd_vo.pd_name}</a>
 																</td>
 																<!-- 클래스명 move는 제목과 관련 -->
-																<td><input type="text" name="pd_price" value="${productVO.pd_price}"></td>
+																<td><input type="text" name="pd_price" value="${pd_vo.pd_price}"></td>
 																<td>
-																	<fmt:formatDate value="${productVO.pd_register_date}" pattern="yyyy-MM-dd" />
+																	<fmt:formatDate value="${pd_vo.pd_register_date}" pattern="yyyy-MM-dd" />
 																</td>
 																<td>
 																	<select name="pd_buy_status" id="pd_buy_status">
-																		<option value="Y" ${productVO.pd_buy_status=='Y' ? 'selected' : '' }>가능</option>
-																		<option value="N" ${productVO.pd_buy_status=='N' ? 'selected' : '' }>불가능</option>
+																		<option value="Y" ${pd_vo.pd_buy_status=='Y' ? 'selected' : '' }>가능</option>
+																		<option value="N" ${pd_vo.pd_buy_status=='N' ? 'selected' : '' }>불가능</option>
 																	</select>
 																</td>
 																<!-- name이나 class는 두 번 이상 사용 가능 -->
@@ -558,7 +562,7 @@ desired effect
 						// 상품 삭제, 화살표 함수 사용 시 상품코드 값을 읽을 수 없다.
 						$(".btn_productDelete").on("click", function () {
 
-							// <a class="move pd_name" href="#" data-bno="${productVO.pd_number}">${productVO.pd_name}</a>
+							// <a class="move pd_name" href="#" data-bno="${pd_vo.pd_number}">${pd_vo.pd_name}</a>
 							// text(): 입력양식 태그가 아닌 일반 태그의 값을 변경하거나 읽을 때 사용
 							let pd_name = $(this).parent().parent().find(".pd_name").text();
 							if (!confirm("'" + pd_name + "'" + " 상품을 정말로 삭제하시겠습니까?")) return;

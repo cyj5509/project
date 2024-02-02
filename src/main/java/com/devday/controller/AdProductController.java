@@ -181,14 +181,14 @@ public class AdProductController {
 
 		cri.setAmount(4); // Criteria에서 this(1, 2);
 
-		List<ProductVO> pd_list = adProductService.getListWithPaging(cri);
+		List<ProductVO> productList = adProductService.getListWithPaging(cri);
 
 		// 날짜 폴더의 '\'를 '/'로 바꾸는 작업(이유: '\'로 되어 있는 정보가 스프링으로 보내는 요청 데이터에 사용되면 에러 발생)
 		// 스프링에서 처리하지 않으면 자바스크립트에서 처리할 수도 있다.
-		pd_list.forEach(vo -> {
+		productList.forEach(vo -> {
 			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 		});
-		model.addAttribute("pd_list", pd_list);
+		model.addAttribute("productList", productList);
 
 		int totalCount = adProductService.getTotalCount(cri);
 		

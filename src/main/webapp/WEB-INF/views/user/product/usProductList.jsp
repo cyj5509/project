@@ -28,8 +28,9 @@
 
 						#productSearchForm select,
 						#productSearchForm input[type="text"],
-						#productSearchForm button {
-							height: 35px;
+						#productSearchForm button,
+						#productSearchForm input[type="checkbox"] {
+							height: 31.5px;
 							/* 높이 설정 */
 							padding: 5px 10px;
 							/* 외부 여백 설정 */
@@ -41,10 +42,43 @@
 							/* 수직 정렬 */
 						}
 
+						#checkAction,
+						#switchAction {
+							padding: 10px 0;
+						}
+
+						#switchAction span {
+							padding: 0 5px 2px;
+							/* 외부 여백 설정 */
+							font-size: 20.5px;
+							/* 글자 크기 설정 */
+							border: 1px solid #ccc;
+							/* 테두리 설정 */
+							vertical-align: middle;
+							/* 수직 정렬 */
+							background-color: lightpink;
+							font-weight: bold;
+							cursor: pointer;
+						}
+
+						#switchAction span.active {
+							/* 활성화된 버튼의 스타일 */
+							background-color: lightseagreen;
+							color: white;
+						}
+
 						.card-deck .card {
 							margin-right: 10px;
 							margin-left: 10px;
 							/* 내부 여백 설정 */
+						}
+
+						#productsByListView th,
+						#productsByListView td {
+							vertical-align: middle;
+							/* 셀의 내용을 수직 중앙에 정렬 */
+							text-align: center;
+							/* 텍스트를 가운데 정렬 */
 						}
 					</style>
 			</head>
@@ -123,30 +157,44 @@
 										</select>
 										<input type="text" name="keyword" value="${pageMaker.cri.keyword}" placeholder="검색어 입력" />
 										<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
+										<div id="checkAction" style="display: inline-block">
+											<input type="checkbox" id="checkAll" style="cursor: pointer;">
+											<label for="checkAll" style="cursor: pointer; font-size: 14px;">전체&nbsp;선택</label>
+											<button type="button" class="btn btn-warning" id="btn_pickCart">선택&nbsp;장바구니</button>
+											<button type="button" class="btn btn-success" id="btn_pickBuy">선택&nbsp;구매</button>
+										</div>
+										<!-- 뷰 전환 아이콘 -->
+										<div id="switchAction" style="display: inline-block;">
+											<span id="switchToCardView">𓃑</span>
+											<span id="switchToListView">≣</span>
+										</div>
 									</form>
 								</div>
 							</div>
-							<!-- 상품 카드 목록 -->
-							<div class="card-deck mb-3 text-center row">
-								<c:forEach items="${productList}" var="productVO">
+							<!-- 상품 카드뷰 -->
+							<div class="card-deck mb-3 text-center row" id="productsByCardView">
+								<c:forEach items="${productList}" var="pd_vo">
 									<div class="col-md-3">
 										<div class="card mb-4 shadow-sm">
-											<img class="btn_pd_image" data-pd_number="${productVO.pd_number}" width="100%" height="200"
-												src="/user/product/imageDisplay?dateFolderName=${productVO.pd_image_folder}&fileName=${productVO.pd_image}"
+											<input type="checkbox" name="check" value="${pd_vo.pd_number}"
+												style="margin: 5px 0; cursor: pointer">
+											<img class="btn_pd_image" data-pd_number="${pd_vo.pd_number}" width="100%" height="200"
+												src="/user/product/imageDisplay?dateFolderName=${pd_vo.pd_image_folder}&fileName=${pd_vo.pd_image}"
 												alt="" style="cursor: pointer;">
 											<div class="card-body">
-												<p class="card-text btn_pd_image" data-pd_number="${productVO.pd_number}"
-													style="cursor: pointer;">${productVO.pd_name}</p>
+												<p class="card-text btn_pd_image" data-pd_number="${pd_vo.pd_number}" style="cursor: pointer;">
+													${pd_vo.pd_name}</p>
 												<div class="d-flex justify-content-between align-items-center">
 													<div class="btn-group">
 														<!-- data-변수명="" -> HTML5 속성으로 JS 처리를 위해 상품코드를 숨겨둠 -->
-														<button type="button" name="btn_cartAdd" class="btn btn-sm btn-outline-secondary"
-															data-pd_number="${productVO.pd_number}">장바구니</button>
-														<button type="button" name="btn_purchase" class="btn btn-sm btn-outline-secondary"
-															data-pd_name="${productVO.pd_name}" data-pd_number="${productVO.pd_number}">구매</button>
+														<button type="button" name="btn_cartAddForCardView" class="btn btn-sm btn-outline-secondary"
+															data-pd_number="${pd_vo.pd_number}">장바구니</button>
+														<button type="button" name="btn_purchaseForCardView"
+															class="btn btn-sm btn-outline-secondary" data-pd_name="${pd_vo.pd_name}"
+															data-pd_number="${pd_vo.pd_number}">구매</button>
 													</div>
 													<small class="text-muted">
-														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${productVO.pd_price}">
+														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${pd_vo.pd_price}">
 														</fmt:formatNumber>
 													</small>
 												</div>
@@ -155,6 +203,46 @@
 									</div>
 								</c:forEach>
 							</div> <!-- card-deck mb-3 text-center row 닫는 태그 -->
+							<!-- 상품 목록뷰-->
+							<table class="table" id="productsByListView">
+								<thead>
+									<tr>
+										<th scope="col" style="width: 5%">
+											<input type="checkbox" id="checkAll" style="cursor: pointer">
+										</th>
+										<th scope="col" style="width: 65%; text-align: justify;">상품명</th>
+										<th scope="col" style="width: 10%">가격</th>
+										<th scope="col" style="width: 20%">비고</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach items="${productList}" var="pd_vo">
+										<tr>
+											<th scope="row">
+												<input type="checkbox" name="check" value="${pd_vo.pd_number}" style="cursor: pointer">
+											</th>
+											<td style="text-align: justify;">
+												<img class="btn_pd_image"
+													src="/user/product/imageDisplay?dateFolderName=${pd_vo.pd_image_folder}&fileName=${pd_vo.pd_image}"
+													alt="" width="10%" height="15%" data-pd_number="${pd_vo.pd_number}" style="cursor: pointer;">
+												<span class="card-text btn_pd_image" data-pd_number="${pd_vo.pd_number}"
+													style="cursor: pointer;">
+													${pd_vo.pd_name}의 간략한 소개
+												</span>
+											</td>
+											<td>
+												<fmt:formatNumber type="currency" pattern="₩#,###" value="${pd_vo.pd_price}" />
+											</td>
+											<td>
+												<button type="button" name="btn_cartAddForListView" class="btn btn-sm btn-outline-secondary"
+													data-pd_number="${pd_vo.pd_number}">장바구니</button>
+												<button type="button" name="btn_purchaseForListView" class="btn btn-sm btn-outline-secondary"
+													data-pd_name="${pd_vo.pd_name}" data-pd_number="${pd_vo.pd_number}">구매</button>
+											</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
 							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div> <!-- container 닫는 태그 -->
 
@@ -166,6 +254,40 @@
 
 							<script>
 								$(document).ready(function () {
+
+									// 저장된 뷰 모드를 기반으로 초기 뷰의 활성화된 버튼 설정
+									// 일반적으로 해당 기능의 경우 sessionStorage보다는 localStorage를 사용
+									let savedViewMode = localStorage.getItem('viewMode');
+									if (savedViewMode === 'listView') {
+										$("#productsByListView").show();
+										$("#productsByCardView").hide();
+										$("#switchToListView").addClass('active'); // 목록 뷰 버튼을 활성화
+										$("#switchToCardView").removeClass('active'); // 카드 뷰 버튼의 활성화 해제
+									} else {
+										// 기본값이거나 'cardView'일 때
+										$("#productsByListView").hide();
+										$("#productsByCardView").show();
+										$("#switchToCardView").addClass('active'); // 카드 뷰 버튼을 활성화
+										$("#switchToListView").removeClass('active'); // 목록 뷰 버튼의 활성화 해제
+									}
+
+									// 카드 뷰로 전환
+									$("#switchToCardView").click(function () {
+										$("#productsByListView").hide(); // 목록 뷰 숨기기
+										$("#productsByCardView").show(); // 카드 뷰 보이기
+										localStorage.setItem('viewMode', 'cardView'); // 뷰 모드 저장
+										$(this).addClass('active'); // 현재 버튼을 활성화
+										$("#switchToListView").removeClass('active'); // 다른 버튼의 활성화 해제
+									});
+
+									// 목록 뷰로 전환
+									$("#switchToListView").click(function () {
+										$("#productsByCardView").hide(); // 카드 뷰 숨기기
+										$("#productsByListView").show(); // 목록 뷰 보이기
+										localStorage.setItem('viewMode', 'listView'); // 뷰 모드 저장
+										$(this).addClass('active'); // 현재 버튼을 활성화
+										$("#switchToCardView").removeClass('active'); // 다른 버튼의 활성화 해제
+									});
 
 									// 전역 변수 초기화
 									let productSearchForm = $("#productSearchForm");
@@ -212,8 +334,7 @@
 											productSearchForm.find("input[name='cg_code']").remove();
 										}
 
-										// productSearchForm 제출
-										productSearchForm.submit();
+										productSearchForm.submit(); // productSearchForm 제출
 									});
 
 									// 검색어 입력 필드에 엔터 키 이벤트 리스너 추가
@@ -253,8 +374,8 @@
 										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
 									});
 
-									// 장바구니 추가(CartVO)
-									$("button[name='btn_cartAdd']").on("click", function () {
+									// 카드 뷰에서 장바구니 추가(CartVO)
+									$("button[name='btn_cartAddForCardView']").on("click", function () {
 										// console.log("장바구니");
 										$.ajax({
 											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
@@ -272,8 +393,40 @@
 										});
 									});
 
-									// 구매하기(주문)
-									$("button[name='btn_purchase']").on("click", function () {
+									// 목록 뷰에서 장바구니 추가(CartVO)
+									$("button[name='btn_cartAddForListView']").on("click", function () {
+										// console.log("장바구니");
+										$.ajax({
+											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
+											type: 'post',
+											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
+											data: { pd_number: $(this).data("pd_number"), ct_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+											dataType: 'text',
+											success: function (result) {
+												if (result == "success") {
+													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
+														location.href = "/user/cart/cart_list"
+													}
+												}
+											}
+										});
+									});
+
+									// 카드 뷰에서 구매하기(주문)
+									$("button[name='btn_purchaseForCardView']").on("click", function () {
+
+										// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
+										let pd_number = $(this).data("pd_number");
+										let pd_name = $(this).data("pd_name");
+
+										if (confirm("'" + pd_name + "'" + " 상품을 바로 구매하시겠습니까?")) {
+											let url = "/user/order/orderReady?pd_number=" + pd_number;
+											location.href = url;
+										}
+									});
+
+									// 목록 뷰에서 구매하기(주문)
+									$("button[name='btn_purchaseForListView']").on("click", function () {
 
 										// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
 										let pd_number = $(this).data("pd_number");
