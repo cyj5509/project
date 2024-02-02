@@ -96,7 +96,7 @@
 											</div>
 											<div class="row" style="text-align: right;">
 												<div class="col-12">
-													<form action="/user/board/usBoardList/${bd_type}" method="get" id="boardSearchForm">
+													<form id="boardSearchForm" action="/user/board/usBoardList/${bd_type}" method="get">
 														<select name="type" id="type">
 															<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 															<option value="T" ${pageMaker.cri.type=='T' ? 'selected' : '' }>제목</option>
@@ -258,15 +258,15 @@
 						$("#btn_boardSearch").on("click", function () {
 
 							let type = $('#type').val();
-							let keyword = $('#keyword').val();
+							let keyword = $('#keyword').val().trim();
 
-							if (!type || type.trim() == '') {
+							if (!type) {
 								alert("검색 조건을 선택해 주세요.");
 								$('#type').focus();
 								return;
 							}
 
-							if (!keyword || keyword.trim() == '') {
+							if (!keyword) {
 								alert("검색어를 입력해 주세요.");
 								$('#keyword').focus();
 								return;

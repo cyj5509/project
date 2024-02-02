@@ -112,7 +112,7 @@
 									</nav>
 								</div>
 								<div class="col-md-6 text-right" style="padding-right: 0;">
-									<form id="productSearchForm" action="" method="get">
+									<form id="productSearchForm" action="/user/product/usProductList" method="get">
 										<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
 										<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
 										<select name="type" id="type">
@@ -177,9 +177,8 @@
 
 										console.log("검색 버튼 클릭");
 
-										// 페이지 번호와 페이지당 항목 수
-										// let pageNum = $("#pageNum").val();
-										// let amount = $("#amount").val();
+										// 페이지 번호를 1로 설정
+										$("#pageNum").val(1);
 
 										// 검색 조건 추출
 										let type = $('#type').val();
@@ -214,9 +213,19 @@
 											productSearchForm.find("input[name='cg_code']").remove();
 										}
 
-										// productSearchForm의 액션 설정 및 제출
-										productSearchForm.attr("action", "/user/product/usProductList");
+										// productSearchForm 제출
 										productSearchForm.submit();
+									});
+
+									// 검색어 입력 필드에 엔터 키 이벤트 리스너 추가
+									$("#keyword").on("keypress", function (e) {
+										if (e.which == 13) { // 엔터 키의 keyCode는 13
+											// 다른 이벤트 핸들러 내에서 호출된 이벤트는 각각 독립적으로 기본 동작을 가짐
+											// 이에 따라 아래와 같이 명시적으로 폼 제출을 방지할 필요가 있음
+											e.preventDefault(); 
+											// 검색 버튼 클릭 이벤트와 동일한 로직 실행
+											$("#btn_productSearch").click();
+										}
 									});
 
 									// 페이징 처리에 대한 클릭 이벤트 설정
@@ -225,30 +234,24 @@
 
 										e.preventDefault(); // <a> 태그의 href 링크 기능 제거
 
+										// 쿼리 파라미터가 필요한 경우만 폼에 추가
 										let cg_code = actionForm.find("input[name='cg_code']").val();
 										let cg_parent_name = actionForm.find("input[name='cg_parent_name']").val();
 										let cg_name = actionForm.find("input[name='cg_name']").val();
+										// 카테고리 조건이 있으면 해당 입력 필드 값 설정
+										actionForm.find("input[name='cg_code']").val(cg_code && cg_code != "" ? cg_code : actionForm.find("input[name='cg_code']").remove());
+										actionForm.find("input[name='cg_parent_name']").val(cg_parent_name && cg_parent_name != "" ? cg_parent_name : actionForm.find("input[name='cg_parent_name']").remove());
+										actionForm.find("input[name='cg_name']").val(cg_name && cg_name != "" ? cg_name : actionForm.find("input[name='cg_name']").remove());
 
 										let pageNum = $(this).attr("href"); // href 속성에 선택한 페이지 번호를 숨겨 이를 추출하여 사용
 										actionForm.find("input[name='pageNum']").val(pageNum); // 선택한 페이지 번호 설정
-										let amount = actionForm.find("input[name='amount']").val();
-										let type = actionForm.find("input[name='type']").val();
-										let keyword = actionForm.find("input[name='keyword']").val();
 
 										// 쿼리 파라미터가 필요한 경우만 폼에 추가
-										// 카테고리 조건이 있으면 해당 입력 필드 값 설정
-										actionForm.find("input[name='cg_code']").val(cg_code && cg_code != ""
-											? cg_code : actionForm.find("input[name='cg_code']").remove());
-										actionForm.find("input[name='cg_parent_name']").val(cg_parent_name && cg_parent_name != ""
-											? cg_parent_name : actionForm.find("input[name='cg_parent_name']").remove());
-										actionForm.find("input[name='cg_name']").val(cg_name && cg_name != ""
-											? cg_name : actionForm.find("input[name='cg_name']").remove());
-
+										let type = actionForm.find("input[name='type']").val();
+										let keyword = actionForm.find("input[name='keyword']").val();
 										// 검색 조건이 있으면 해당 입력 필드 값 설정
-										actionForm.find("input[name='type']").val(type && type != ""
-											? type : actionForm.find("input[name='type']").remove());
-										actionForm.find("input[name='keyword']").val(keyword && keyword != ""
-											? keyword : actionForm.find("input[name='keyword']").remove());
+										actionForm.find("input[name='type']").val(type && type != "" ? type : actionForm.find("input[name='type']").remove());
+										actionForm.find("input[name='keyword']").val(keyword && keyword != "" ? keyword : actionForm.find("input[name='keyword']").remove());
 
 										// 폼의 액션 설정 및 제출
 										actionForm.attr("action", "/user/product/usProductList");
@@ -292,7 +295,6 @@
 										console.log("상품 상세 설명");
 
 										// actionForm.attr("action", "상품 상세 주소");
-										actionForm.attr("action", "/user/product/productDetail");
 										let pd_number = $(this).data("pd_number");
 
 										// 제대로 작동안되는 듯?
@@ -300,6 +302,7 @@
 
 										// <input type='hidden' name='pd_number' value='상품코드'> 미리 만들어서 작성
 										actionForm.append("<input type='hidden' name='pd_number' value='" + pd_number + "'>")
+										actionForm.attr("action", "/user/product/productDetail");
 										actionForm.submit();
 									});
 

@@ -315,8 +315,8 @@
 										if (cg_code) {
 											url += "?cg_code=" + cg_code;
 											// 한글이나 공백 또는 특수문자 등이 쓰일 가능성이 있는 것은 encodeURIComponent()로 처리
-											if (cg_parent_name) url += "&cg_parent_name=" + encodeURIComponent(cg_parent_name);
-											if (cg_name) url += "&cg_name=" + encodeURIComponent(cg_name);
+											if (cg_parent_name) url += "&cg_parent_name=" + cg_parent_name;
+											if (cg_name) url += "&cg_name=" + cg_name;
 										}
 
 										// URL로 이동

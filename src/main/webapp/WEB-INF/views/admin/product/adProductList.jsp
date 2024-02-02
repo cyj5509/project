@@ -16,8 +16,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
 			<%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
 
-			<!-- CSS 파일 링크 -->
-			<link rel="stylesheet" href="/css/admin/common/mainText.css">
+				<!-- CSS 파일 링크 -->
+				<link rel="stylesheet" href="/css/admin/common/mainText.css">
 
 				<style>
 					#productSearchForm select,
@@ -116,17 +116,20 @@ desired effect
 
 											<div class="box-body">
 												<div style="text-align: right;">
-													<form  id="productSearchForm" action="/admin/product/adProductList" method="get">
-														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />
-														<input type="hidden" name="amount" value="${pageMaker.cri.amount}" />
+													<form id="productSearchForm" action="/admin/product/adProductList" method="get">
+														<input type="hidden" name="pageNum" id="pageNum" value="${pageMaker.cri.pageNum}" />
+														<input type="hidden" name="amount" id="amount" value="${pageMaker.cri.amount}" />
 														<select name="type" id="type">
 															<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 															<option value="N" ${pageMaker.cri.type=='N' ? 'selected' : '' }>상품명</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>상품번호</option>
 															<option value="P" ${pageMaker.cri.type=='P' ? 'selected' : '' }>저자&#47;출판사</option>
-															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명&#43;저자&#47;출판사</option>
-															<option value="CP" ${pageMaker.cri.type=='CP' ? 'selected' : '' }>상품번호&#43;저자&#47;출판사</option>
-															<option value="NCP" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명&#43;상품번호&#43;저자&#47;출판사</option>
+															<option value="NC" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>상품명&#43;저자&#47;출판사
+															</option>
+															<option value="CP" ${pageMaker.cri.type=='CP' ? 'selected' : '' }>상품번호&#43;저자&#47;출판사
+															</option>
+															<option value="NCP" ${pageMaker.cri.type=='NP' ? 'selected' : '' }>
+																상품명&#43;상품번호&#43;저자&#47;출판사</option>
 														</select>
 														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}"
 															placeholder="검색어 입력" />
@@ -338,32 +341,54 @@ desired effect
 						// 검색 버튼 클릭 이벤트
 						$("#btn_productSearch").on("click", function () {
 
-							let type = $('#type').val();
-							let keyword = $('#keyword').val();
+							// 페이지 번호를 1로 설정
+							$("#pageNum").val(1);
 
-							if (!type || type.trim() == '') {
+							// 검색 조건 추출
+							let type = $('#type').val();
+							let keyword = $('#keyword').val().trim();
+
+							// 검색 조건 유효성 검사
+							if (!type) {
 								alert("검색 조건을 선택해 주세요.");
 								$('#type').focus();
 								return;
 							}
-
-							if (!keyword || keyword.trim() == '') {
+							if (!keyword) {
 								alert("검색어를 입력해 주세요.");
 								$('#keyword').focus();
 								return;
 							}
 
-							productSearchForm.submit();
+							productSearchForm.submit(); // productSearchForm 제출
+						});
+
+						// 검색어 입력 필드에 엔터 키 이벤트 리스너 추가
+						$("#keyword").on("keypress", function (e) {
+							if (e.which == 13) { // 엔터 키의 keyCode는 13
+								// 다른 이벤트 핸들러 내에서 호출된 이벤트는 각각 독립적으로 기본 동작을 가짐
+								// 이에 따라 아래와 같이 명시적으로 폼 제출을 방지할 필요가 있음
+								e.preventDefault();
+								// 검색 버튼 클릭 이벤트와 동일한 로직 실행
+								$("#btn_productSearch").click();
+							}
 						});
 
 						// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정.  <a class="page-link movepage" href="${num}">${num}</a>
 						$(".movepage").on("click", function (e) {
+
 							e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
 
-							actionForm.attr("action", "/admin/product/adProductList");
-							// actionForm.find("input[name='pageNum']").val(현재 선택한 페이지 번호);
-							actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+							let pageNum = $(this).attr("href"); // href 속성에 선택한 페이지 번호를 숨겨 이를 추출하여 사용
+							actionForm.find("input[name='pageNum']").val(pageNum); // 선택한 페이지 번호 설정
 
+							// 검색 조건이 있으면 해당 입력 필드 값 설정
+							let type = actionForm.find("input[name='type']").val();
+							let keyword = actionForm.find("input[name='keyword']").val();
+							actionForm.find("input[name='type']").val(type && type != "" ? type : actionForm.find("input[name='type']").remove());
+							actionForm.find("input[name='keyword']").val(keyword && keyword != "" ? keyword : actionForm.find("input[name='keyword']").remove());
+
+							actionForm.attr("action", "/admin/product/adProductList");
 							actionForm.submit(); // 페이지 이동 시 actionForm이 동작
 						});
 
