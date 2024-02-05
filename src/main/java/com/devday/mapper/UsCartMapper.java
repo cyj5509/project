@@ -27,4 +27,8 @@ public interface UsCartMapper {
 	
 	//장바구니 선택삭제. 파라미터 List컬렉션 사용.
 	void cart_sel_delete(List<Long> ct_code_arr);
+	
+	void cartEmpty(String us_id);
+	int countCartItems(String us_id);
+	
 }

@@ -158,8 +158,8 @@
 										<input type="text" name="keyword" value="${pageMaker.cri.keyword}" placeholder="검색어 입력" />
 										<button type="button" class="btn btn-primary" id="btn_productSearch">검색</button>
 										<div id="checkAction" style="display: inline-block">
-											<input type="checkbox" id="checkAll" style="cursor: pointer;">
-											<label for="checkAll" style="cursor: pointer; font-size: 14px;">전체&nbsp;선택</label>
+											<input type="checkbox" id="checkAllTop" class="checkAll" style="cursor: pointer;">
+											<label for="checkAllTop" style="cursor: pointer; font-size: 14px;">전체&nbsp;선택</label>
 											<button type="button" class="btn btn-warning" id="btn_pickCart">선택&nbsp;장바구니</button>
 											<button type="button" class="btn btn-success" id="btn_pickBuy">선택&nbsp;구매</button>
 										</div>
@@ -194,8 +194,7 @@
 															data-pd_number="${pd_vo.pd_number}">구매</button>
 													</div>
 													<small class="text-muted">
-														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${pd_vo.pd_price}">
-														</fmt:formatNumber>
+														<fmt:formatNumber type="currencyt" pattern="₩#,###" value="${Math.round(pd_vo.pd_price - (pd_vo.pd_price * pd_vo.pd_discount / 100))}" />
 													</small>
 												</div>
 											</div>
@@ -208,7 +207,7 @@
 								<thead>
 									<tr>
 										<th scope="col" style="width: 5%">
-											<input type="checkbox" id="checkAll" style="cursor: pointer">
+											<input type="checkbox" id="checkAllList" class="checkAll" style="cursor: pointer">
 										</th>
 										<th scope="col" style="width: 65%; text-align: justify;">상품명</th>
 										<th scope="col" style="width: 10%">가격</th>
@@ -231,7 +230,7 @@
 												</span>
 											</td>
 											<td>
-												<fmt:formatNumber type="currency" pattern="₩#,###" value="${pd_vo.pd_price}" />
+												<fmt:formatNumber type="currency" pattern="₩#,###" value="${Math.round(pd_vo.pd_price - (pd_vo.pd_price * pd_vo.pd_discount / 100))}" />
 											</td>
 											<td>
 												<button type="button" name="btn_cartAddForListView" class="btn btn-sm btn-outline-secondary"
@@ -255,10 +254,14 @@
 							<script>
 								$(document).ready(function () {
 
+									// 전역 변수 초기화
+									let productSearchForm = $("#productSearchForm");
+									let actionForm = $("#actionForm");
+
 									// 저장된 뷰 모드를 기반으로 초기 뷰의 활성화된 버튼 설정
 									// 일반적으로 해당 기능의 경우 sessionStorage보다는 localStorage를 사용
 									let savedViewMode = localStorage.getItem('viewMode');
-									if (savedViewMode === 'listView') {
+									if (savedViewMode == 'listView') {
 										$("#productsByListView").show();
 										$("#productsByCardView").hide();
 										$("#switchToListView").addClass('active'); // 목록 뷰 버튼을 활성화
@@ -288,10 +291,6 @@
 										$(this).addClass('active'); // 현재 버튼을 활성화
 										$("#switchToCardView").removeClass('active'); // 다른 버튼의 활성화 해제
 									});
-
-									// 전역 변수 초기화
-									let productSearchForm = $("#productSearchForm");
-									let actionForm = $("#actionForm");
 
 									// 검색 버튼 클릭 이벤트
 									$("#btn_productSearch").on("click", function () {
@@ -376,17 +375,18 @@
 
 									// 카드 뷰에서 장바구니 추가(CartVO)
 									$("button[name='btn_cartAddForCardView']").on("click", function () {
-										// console.log("장바구니");
+
+										let pd_number = $(this).data("pd_number");
+
 										$.ajax({
-											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
+											url: '/user/cart/cartAdd',
 											type: 'post',
-											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-											data: { pd_number: $(this).data("pd_number"), ct_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+											data: { pd_number: pd_number, ct_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
-													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
-														location.href = "/user/cart/cart_list"
+													if (confirm("상품이 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?")) {
+														location.href = "/user/cart/usCartList"
 													}
 												}
 											}
@@ -395,17 +395,18 @@
 
 									// 목록 뷰에서 장바구니 추가(CartVO)
 									$("button[name='btn_cartAddForListView']").on("click", function () {
-										// console.log("장바구니");
+
+										let pd_number = $(this).data("pd_number");
+
 										$.ajax({
-											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
+											url: '/user/cart/cartAdd',
 											type: 'post',
-											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
-											data: { pd_number: $(this).data("pd_number"), ct_amount: 1 }, // mbsp_id는 스프링에서 자체 처리
+											data: { pd_number: pd_number, ct_amount: 1 },
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
-													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
-														location.href = "/user/cart/cart_list"
+													if (confirm("상품이 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?")) {
+														location.href = "/user/cart/usCartList"
 													}
 												}
 											}
@@ -418,9 +419,10 @@
 										// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
 										let pd_number = $(this).data("pd_number");
 										let pd_name = $(this).data("pd_name");
+										let ct_amount = 1;
 
 										if (confirm("'" + pd_name + "'" + " 상품을 바로 구매하시겠습니까?")) {
-											let url = "/user/order/orderReady?pd_number=" + pd_number;
+											let url = "/user/order/orderReady?pd_number=" + pd_number + "&ct_amount=" + ct_amount;
 											location.href = url;
 										}
 									});
@@ -431,9 +433,10 @@
 										// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
 										let pd_number = $(this).data("pd_number");
 										let pd_name = $(this).data("pd_name");
+										let ct_amount = 1;
 
 										if (confirm("'" + pd_name + "'" + " 상품을 바로 구매하시겠습니까?")) {
-											let url = "/user/order/orderReady?pd_number=" + pd_number;
+											let url = "/user/order/orderReady?pd_number=" + pd_number + "&ct_amount=" + ct_amount;
 											location.href = url;
 										}
 									});
@@ -494,6 +497,124 @@
 											$("#keyword").remove();
 										}
 									}
+
+									// 전체 선택 체크박스 클릭 이벤트(상단)
+									$("#checkAllTop").on('click', function () {
+										let isChecked = $(this).prop('checked');
+										// 목록뷰의 전체 선택 체크박스와 개별 체크박스 상태 동기화
+										$("#checkAllList").prop('checked', isChecked);
+										$("input[name='check']").prop('checked', isChecked);
+									});
+
+									// 전체 선택 체크박스 클릭 이벤트(목록뷰)
+									$("#checkAllList").on('click', function () {
+										let isChecked = $(this).prop('checked');
+										// 상단의 전체 선택 체크박스와 목록 내의 개별 체크박스 상태 동기화
+										$("#checkAllTop").prop('checked', isChecked);
+										$("input[name='check']").prop('checked', isChecked);
+									});
+
+									// 개별 체크박스 클릭 시 전체 선택 체크박스 상태 업데이트
+									$("input[name='check']").click(function () {
+
+										let viewMode = localStorage.getItem('viewMode');
+										let selectorPrefix = viewMode == 'listView' ? "#productsByListView " : "#productsByCardView ";
+
+										// 전체 체크박스 개수와 체크된 체크박스 개수 비교
+										let total = $(selectorPrefix + "input[name='check']").length; // 페이지에 있는 모든 체크박스의 수
+										let checked = $(selectorPrefix + "input[name='check']:checked").length; // 현재 체크된 체크박스의 수
+
+										// 두 전체 선택 체크박스 상태 동기화
+										let isAllChecked = total == checked;
+										$(".checkAll").prop("checked", isAllChecked);
+									});
+
+									// "선택 장바구니" 버튼 클릭 이벤트
+									$("#btn_pickCart").click(function () {
+
+										// 현재 보이는 뷰 모드(카드뷰 또는 목록뷰) 확인
+										let viewMode = localStorage.getItem('viewMode');
+										// 뷰 모드에 따라 적절한 선택자(prefix) 설정
+										let selectorPrefix = viewMode == 'listView' ? "#productsByListView " : "#productsByCardView ";
+
+										// 현재 뷰에서 체크된 상품의 번호 수집
+										let selectedProducts = $(selectorPrefix + "input[name='check']:checked").map(function () {
+											return $(this).val(); // 체크된 상품의 value(상품 번호) 반환
+										}).get(); // jQuery 객체를 실제 JavaScript 배열로 변환, 이를 통해 배열 메서드 사용 가능
+
+										// 선택된 상품이 없는 경우의 알림
+										if (selectedProducts.length == 0) {
+											alert("장바구니에 담을 상품을 선택해 주세요.");
+											return;
+										}
+
+										console.log("선택된 상품 번호:", selectedProducts);
+
+										 // 선택된 상품 각각에 대해 장바구니 추가 AJAX 요청 생성
+										let requests = selectedProducts.map(pd_number => {
+											// $.ajax() 호출 결과는 프로미스 객체
+											return $.ajax({
+												url: '/user/cart/cartAdd',
+												type: 'POST',
+												data: { pd_number: pd_number, ct_amount: 1 }
+											});
+										});
+
+										// 모든 AJAX 요청이 완료된 후 처리($.when을 사용하여 여러 프로미스 처리)
+										$.when(...requests).then(function () {
+											// 모든 요청 성공 시, 장바구니 페이지 이동 여부 확인
+											if (confirm("선택한 상품이 모두 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?")) {
+												location.href = "/user/cart/usCartList"; // 장바구니 페이지로 이동
+											}
+										});
+									});
+
+									// "선택 구매" 버튼 클릭 이벤트
+									$("#btn_pickBuy").click(function () {
+
+										// 현재 보이는 뷰 모드(카드뷰 또는 목록뷰) 확인
+										let viewMode = localStorage.getItem('viewMode');
+										// 뷰 모드에 따라 적절한 선택자(prefix) 설정
+										let selectorPrefix = viewMode == 'listView' ? "#productsByListView " : "#productsByCardView ";
+
+										// 현재 뷰에서 체크된 상품의 번호 수집
+										let selectedProducts = $(selectorPrefix + "input[name='check']:checked").map(function () {
+											return $(this).val(); // 체크된 상품의 value(상품 번호) 반환
+										}).get(); // get()을 사용하여 jQuery 객체에서 실제 JavaScript 배열로 변환
+
+										// 선택된 상품이 없는 경우의 알림
+										if (selectedProducts.length == 0) {
+											alert("주문하거나 구매할 상품을 선택해주세요.");
+											return;
+										}
+
+										console.log("선택된 상품 번호:", selectedProducts);
+
+										// 구매 확인 후 폼 생성 및 제출을 통해 서버에 요청
+										if (confirm("선택된 상품을 바로 구매하시겠습니까?")) {
+											let form = $('<form>', {
+												'action': '/user/order/orderReadyMultiple',
+												'method': 'POST'
+											});
+
+											// 선택된 상품 번호를 폼에 숨겨진 입력 필드로 추가
+											$.each(selectedProducts, function (index, value) {
+												$(form).append($('<input>', {
+													'type': 'hidden',
+													'name': 'pd_numbers',
+													'value': value // 상품 번호
+												}));
+												console.log(value);
+											});
+
+											// 폼을 문서에 추가하고 제출
+											// $(form).appendTo('body').submit();
+											$('body').append(form);
+											// console.log(form.prop('outerHTML'));
+											$(form).submit();
+										
+										}
+									});
 
 								}); // ready-end
 							</script>

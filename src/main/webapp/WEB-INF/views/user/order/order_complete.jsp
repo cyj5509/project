@@ -12,7 +12,7 @@
 					<meta name="description" content="">
 					<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 					<meta name="generator" content="Hugo 0.101.0">
-					<title>Pricing example · Bootstrap v4.6</title>
+					<title>데브데이:&nbsp;주문조회</title>
 
 					<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -25,14 +25,13 @@
 
 					<%@include file="/WEB-INF/views/comm/header.jsp" %>
 
-						<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-							<p>주문정보</p>
-						</div>
-
+						<h1 class="box-title mt-5" style="text-align: center; margin-bottom: 40px;">
+							<b>주문 정보</b>
+						</h1>
 						<div class="container">
 							<div class="box box-primary">
 								<div class="box-body">
-									<h3>주문이 완료되었습니다.</h3>
+									<h3>주문 및 결제가 완료되었습니다.</h3>
 								</div>
 							</div>
 							<%@include file="/WEB-INF/views/comm/footer.jsp" %>

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -76,7 +77,7 @@ public class UsOrderController {
 		model.addAttribute("od_price", od_price);
 	}
 	
-	// 상품 상세 페이지에서 주문하기
+	// 상품 상세 페이지에서 단일 상품 주문하기
 	@GetMapping("/orderReady")
 	public String orderReady(CartVO ct_vo, HttpSession session) throws Exception {
 
@@ -86,6 +87,25 @@ public class UsOrderController {
 		usCartService.cart_add(ct_vo);
 
 		return "redirect:/user/order/order_info"; // 주문정보 페이지
+	}
+	
+	// 상품 상세 페이지에서 복수 상품 주문하기
+	@PostMapping("/orderReadyMultiple")
+	public String orderReadyMultiple(@RequestParam("pd_numbers") List<Integer> pd_numbers, HttpSession session) {
+		
+	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
+
+	    // 각 상품 번호에 대해 주문 처리 로직 수행
+	    for(Integer pd_number : pd_numbers) {
+	        CartVO ct_vo = new CartVO();
+	        ct_vo.setUs_id(us_id);
+	        ct_vo.setPd_number(pd_number);
+	        ct_vo.setCt_amount(1);
+	        usCartService.cart_add(ct_vo); // 주문 처리 로직 호출
+	    }
+
+	    // 주문 완료 후 주문 정보 페이지로 리다이렉트
+	    return "redirect:/user/order/order_info";
 	}
 	
 	// 주문 정보 페이지에서 카카오페이 결제 선택을 진행한 경우: 주문 정보, 주문 상세 정보, 결제 정보가 한꺼번에 들어옴

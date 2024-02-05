@@ -12,7 +12,7 @@
 					<meta name="description" content="">
 					<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 					<meta name="generator" content="Hugo 0.101.0">
-					<title>데브데이: 주문조회</title>
+					<title>데브데이:&nbsp;주문조회</title>
 
 					<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -21,6 +21,14 @@
 					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
 					
 					<style>
+						#orderInfo th,
+						#orderInfo td {
+							vertical-align: middle;
+							/* 셀의 내용을 수직 중앙에 정렬 */
+							text-align: center;
+							/* 텍스트를 가운데 정렬 */
+						}
+						
 						input[readonly] {
 							background-color: white !important;
 						}
@@ -32,16 +40,16 @@
 					<%@include file="/WEB-INF/views/comm/header.jsp" %>
 					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
 
-						<h1 class="box-title mt-5" id="productList" style="text-align: center; margin-bottom: 40px;">
+						<h1 class="box-title mt-5" style="text-align: center; margin-bottom: 40px;">
 							<b>주문 정보</b>
 						</h1>
 						<div class="container">
-							<table class="table table-striped">
+							<table class="table table-striped" id="orderInfo">
 								<thead style="text-align: center;">
 									<tr>
 										<th scope="col">상품</th>
 										<th scope="col">상품명</th>
-										<th scope="col">판매가</th>
+										<th scope="col">단가가</th>
 										<th scope="col">수량</th>
 										<th scope="col">합계</th>
 									</tr>
@@ -55,11 +63,20 @@
 													alt="">
 											</td>
 											<td>${cartDTO.pd_name}</td>
-											<td><span id="unitPrice">${cartDTO.pd_price}</span></td>
+											<td>
+												<span id="unitPrice">
+													<fmt:formatNumber
+														value="${Math.round(cartDTO.pd_price - (cartDTO.pd_price * cartDTO.pd_discount / 100))}"
+														groupingUsed="true" />원
+												</span>
+											</td>
 											<td>${cartDTO.ct_amount}</td>
 											<td>
 												<span class="unitTotalPrice" id="unitTotalPrice">
-													${(cartDTO.pd_price * cartDTO.ct_amount)}</span>
+													<fmt:formatNumber
+														value="${Math.round(cartDTO.pd_price - (cartDTO.pd_price * cartDTO.pd_discount / 100) * cartDTO.ct_amount)}"
+														groupingUsed="true" />원
+												</span>
 											</td>
 										</tr>
 									</c:forEach>
@@ -67,8 +84,8 @@
 								<tfoot>
 									<tr>
 										<td colspan="8" style="text-align: right;">
-											상품 외 <span id="cart_price_count">${fn:length(order_info) - 1}건</span>
-											주문금액: <span id="cart_total_price">${od_price}</span>
+											총&nbsp;<span id="cart_price_count">${fn:length(order_info)}건</span>
+											&#47;&nbsp;주문금액:&nbsp;<span id="cart_total_price">${od_price}</span>
 										</td>
 									</tr>
 								</tfoot>
@@ -167,12 +184,11 @@
 										</fieldset>
 										<hr>
 										<fieldset class="form-group border p-3">
-											<legend class="w-auto px-2">결제방법 선택</legend>
+											<legend class="w-auto px-2">결제방법</legend>
 											<div class="form-group row">
-												<label for="us_phone" class="col-2">결제방법</label>
-												<div class="col-10">
-													<input type="radio" name="pay_method" id="pay_method1" value="no_bankbook">무통장 입금
-													<input type="radio" name="pay_method" id="pay_method2" value="kakao_pay">
+												<div class="col-12">
+													<input type="radio" name="pay_method" id="pay_method1" value="no_bankbook">&nbsp;무통장&nbsp;입금
+													&nbsp;&nbsp;<input type="radio" name="pay_method" id="pay_method2" value="kakao_pay">
 													<img src="/images/payment.png" class="img-fluid" style="width: 50px; height: 20px;"/>
 												</div>
 											</div>

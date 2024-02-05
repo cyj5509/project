@@ -17,7 +17,7 @@
                     &#124;
                     <a href="/member/my_page" class="nav-item">마이페이지</a>
                     &#124;
-                    <a href="/user/cart/cart_list" class="nav-item">장바구니</a>
+                    <a href="/user/cart/usCartList" class="nav-item">장바구니</a>
                     &#124;
                     <a href="/user/order/order_info" class="nav-item">주문조회</a>
                     &#124;

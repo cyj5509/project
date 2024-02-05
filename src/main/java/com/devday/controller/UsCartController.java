@@ -41,20 +41,19 @@ public class UsCartController {
 
 	// [Oracle] 오라클 MERGE INTO 사용법 & 노하우 정리: https://gent.tistory.com/406 \
 
-	@PostMapping("/cart_add")
+	@PostMapping("/cartAdd")
 	// @ResponseBody // 기능상 중복되긴 하지만, 명시적 전달을 위함(작성한다고 해서 문제가 되지 않는 어노테이션)
-	public ResponseEntity<String> cart_add(CartVO vo, HttpSession session) throws Exception {
+	public ResponseEntity<String> cartAdd(CartVO ct_vo, HttpSession session) throws Exception {
 
 		ResponseEntity<String> entity = null;
 
 		// 서버 ─ 로그인한 사용자의 아이디 정보 추가 작업
 		// 클라이언트 ─ AJAX 방식으로 상품코드, 상품수량 2개 정보만 전송 -> data: {pro_num:
 		// $(this).data("pro_num"), cart_amount: 1}
-		// Object javax.servlet.http.HttpSession.getAttribute(String name)
 		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
-		vo.setUs_id(us_id);
+		ct_vo.setUs_id(us_id); // 세션에서 사용자 정보를 가져와서 ct_vo에 설정
 
-		cartService.cart_add(vo);
+		cartService.cart_add(ct_vo);
 
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 
@@ -62,11 +61,10 @@ public class UsCartController {
 	}
 
 	// 장바구니 목록
-	@GetMapping("/cart_list")
-	public void cart_list(HttpSession session, Model model) throws Exception {
+	@GetMapping("/usCartList")
+	public void usCartList(HttpSession session, Model model) throws Exception {
 
 		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
-
 		
 		// [참고] UserProductController의 @GetMapping("/pro_list")
 		List<CartDTOList> cart_list = cartService.cart_list(us_id);
@@ -91,12 +89,11 @@ public class UsCartController {
 			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 			// vo.setPro_discount(vo.getPro_discount() * 1/100);
 			
-			cart_total_price +=  (vo.getPd_price() * vo.getCt_amount());
+			cart_total_price += ((vo.getPd_price() * vo.getCt_amount()) - (vo.getPd_price() * vo.getCt_amount() * vo.getPd_discount() / 100));
 		}
 		
 		model.addAttribute("cart_list", cart_list);
 		model.addAttribute("cart_total_price", cart_total_price);
-
 	}
 
 	// 장바구니 이미지
@@ -109,13 +106,14 @@ public class UsCartController {
 	}
 	
 	// 장바구니 수량 변경
-	@PostMapping("/cart_amount_change")
-	public ResponseEntity<String> cart_amount_change(Long ct_code, int ct_amount) throws Exception {
+	@PostMapping("/cartAmountChange")
+	public ResponseEntity<String> cartAmountChange(Long ct_code, int ct_amount) throws Exception {
+		
 		ResponseEntity<String> entity = null;
 		
 		cartService.cart_amount_change(ct_code, ct_amount);
-
-		entity = new ResponseEntity<String>("success", HttpStatus.OK);
+	
+		entity = new ResponseEntity<>("success", HttpStatus.OK);
 		return entity;
 	}
 	
@@ -132,14 +130,14 @@ public class UsCartController {
 	
 	// 장바구니 목록에서 개별 삭제(Non-AJAX용)
 	@GetMapping("/cart_list_del")
-	public String cart_list_del2(Long ct_code) throws Exception {
+	public String cart_list_del2(@RequestParam("ct_code") Long ct_code) throws Exception {
 	
 		cartService.cart_list_del(ct_code);
 		
-		return "redirect:/user/cart/cart_list";
+		return "redirect:/user/cart/usCartList";
 	}
 	
-	//장바구니 선택삭제
+	// 장바구니 선택삭제
 	@PostMapping("/cart_sel_delete")
 	public ResponseEntity<String> cart_sel_delete(@RequestParam("cart_code_arr[]") List<Long> ct_code_arr) {
 		
@@ -160,5 +158,33 @@ public class UsCartController {
 		return entity;
 	}
 	
-	// 장바구니 비우기는 사용자 아이디 가지고 날림
+	// 장바구니 비우기
+	@PostMapping("/cartEmpty")
+	public ResponseEntity<String> cartEmpty(CartVO ct_vo, HttpSession session) {
+		
+		ResponseEntity<String> entity = null;
+		String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
+		
+		// 장바구니에 상품이 있는지 확인
+	    int cartCount = cartService.countCartItems(us_id);
+	    if(cartCount > 0){
+	        cartService.cartEmpty(us_id);
+	        entity = new ResponseEntity<>("success", HttpStatus.OK);
+	    } else {
+	        // 장바구니에 상품이 없는 경우
+	        entity = new ResponseEntity<>("empty", HttpStatus.OK);
+	    }
+	    return entity;
+	}
+	
+	@GetMapping("/hasItems")
+	@ResponseBody
+	public ResponseEntity<Boolean> hasCartItems(HttpSession session) {
+		
+	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
+	    boolean hasItems = cartService.countCartItems(us_id) > 0;
+	    
+	    return new ResponseEntity<>(hasItems, HttpStatus.OK);
+	}
+	 
 }

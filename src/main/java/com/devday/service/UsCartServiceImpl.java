@@ -49,4 +49,16 @@ public class UsCartServiceImpl implements UsCartService {
 
 		usCartMapper.cart_sel_delete(ct_code_arr);
 	}
+
+	@Override
+	public void cartEmpty(String us_id) {
+		
+		usCartMapper.cartEmpty(us_id);
+	}
+	
+	@Override
+	public int countCartItems(String us_id) {
+		
+		return usCartMapper.countCartItems(us_id);
+	}
 }

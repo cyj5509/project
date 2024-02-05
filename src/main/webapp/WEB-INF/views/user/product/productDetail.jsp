@@ -57,19 +57,9 @@
 					</script>
 
 					<style>
-						.bd-placeholder-img {
-							font-size: 1.125rem;
-							text-anchor: middle;
-							-webkit-user-select: none;
-							-moz-user-select: none;
-							-ms-user-select: none;
-							user-select: none;
-						}
-
-						@media (min-width : 768px) {
-							.bd-placeholder-img-lg {
-								font-size: 3.5rem;
-							}
+						#returnList {
+							text-decoration: none;
+							color: gray;
 						}
 
 						/* categoryMenu.js에서 설정한 공통 스타일 외에 나머지 스타일 */
@@ -91,12 +81,6 @@
 						#productCompany,
 						#discountPercent {
 							font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-						}
-
-						/* 할인가에 대한 스타일 */
-						#discountPrice {
-							text-decoration: underline;
-							/* 밑줄 표시 */
 						}
 
 						/* 원가에 대한 스타일 */
@@ -125,7 +109,9 @@
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
-						<p id="categoryName"></p>
+						<a href="#" id="returnList">
+							<p id="categoryName"><!-- 카테고리명 동적 생성 --></p>
+						</a>
 						<div class="container" style="margin-top: 80px;">
 							<h3 id="productName">${pd_vo.pd_name}</h3>
 							<div class="card-deck mb-3 text-center row">
@@ -137,13 +123,13 @@
 									</div>
 								</div>
 								<div class="col-md-4">
-									<img class="btn_pd_image" data-pd_number="${pd_vo.pd_number}" width="100%" height="300"
+									<img class="btn_pd_image" data-pd_number="${pd_vo.pd_number}" width="100%" height="330"
 										src="/user/product/imageDisplay?dateFolderName=${pd_vo.pd_image_folder}&fileName=${pd_vo.pd_image}"
 										alt="">
 									<div style="margin: 25px;">
 										<div>
 											<span>수량&#58;</span>
-											<input type="number" id="btn_quantity" value="1" style="width: 55px; text-align: center;">
+											<input type="number" id="btn_quantity" value="1" style="width: 50px; text-align: center;">
 										</div>
 										<div>
 											<span>총&nbsp;상품금액&#58;</span>
@@ -171,20 +157,18 @@
 											<h5>
 												<c:if test="${pd_vo.pd_discount > 0}">
 													<span id="discountPercent">
-														<fmt:formatNumber value="${pd_vo.pd_discount / 100}" type="percent" />
+														&#91;
+														<fmt:formatNumber value="${pd_vo.pd_discount / 100}" type="percent" />&#93;
 													</span>
 												</c:if>
-												<div id="discountPrice" style="display: inline-block;">
-													<span>
-														<fmt:formatNumber
-															value="${Math.round(pd_vo.pd_price - (pd_vo.pd_price * pd_vo.pd_discount / 100))}"
-															groupingUsed="true" />
-													</span>
-												</div>원
+												<span id="discountPrice">
+													<fmt:formatNumber
+														value="${Math.round(pd_vo.pd_price - (pd_vo.pd_price * pd_vo.pd_discount / 100))}"
+														groupingUsed="true" />원
+												</span>
 												<c:if test="${pd_vo.pd_discount > 0}">
 													<span id="originalPrice">
-														&#40;
-														<fmt:formatNumber value="${pd_vo.pd_price}" groupingUsed="true" />원&#41;
+														&#40;<fmt:formatNumber value="${pd_vo.pd_price}" groupingUsed="true" />원&#41;
 													</span>
 												</c:if>
 											</h5>
@@ -264,22 +248,11 @@
 
 									let actionForm = $("#actionForm");  // 액션폼 참조
 
-									// [이전] 1 2 3 4 5 ... [다음] 클릭 이벤트 설정. <a> 태그
-									$(".movepage").on("click", function (e) {
-										e.preventDefault(); // a 태그의 href 링크 기능을 제거. href 속성에 페이지 번호를 숨겨둠
-
-										actionForm.attr("action", "/user/product/pd_list");
-										// actionForm.find("input[name='pageNum']").val(선택한 페이지 번호);
-										actionForm.find("input[name='pageNum']").val($(this).attr("href"));
-
-										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
-									});
-
 									// 장바구니 추가(CartVO)
 									$("button[name='btn_cartAdd']").on("click", function () {
 										// console.log("장바구니");
 										$.ajax({
-											url: '/user/cart/cart_add', // url: '장바구니 추가 주소', 
+											url: '/user/cart/cartAdd', // url: '장바구니 추가 주소', 
 											type: 'post',
 											// $(this).data("pd_number"): 버튼을 눌렀을 때 동작하는 장바구니 상품코드
 											data: { pd_number: $(this).data("pd_number"), ct_amount: $("#btn_quantity").val() }, // mbsp_id는 스프링에서 자체 처리
@@ -287,7 +260,7 @@
 											success: function (result) {
 												if (result == "success") {
 													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
-														location.href = "/user/cart/cart_list"
+														location.href = "/user/cart/usCartList"
 													}
 												}
 											}
@@ -304,6 +277,31 @@
 										location.href = url;
 									});
 
+									// 카테고리명(또는 전체 상품) 링크 클릭 이벤트
+									$("#returnList").on("click", function () {
+
+										// 쿼리 파라미터가 필요한 경우만 폼에 추가
+										const urlParams = new URLSearchParams(location.search);
+
+										// 카테고리 조건 추출 및 설정
+										let cg_code = urlParams.get('cg_code');
+										let cg_parent_name = urlParams.get('cg_parent_name');
+										let cg_name = urlParams.get('cg_name');
+
+										// 페이징 및 검색 조건 추출 및 설정
+										let pageNum = urlParams.get('pageNum');
+										let amount = urlParams.get('amount');
+										let type = urlParams.get('type');
+										let keyword = urlParams.get('keyword');
+
+										// 공통 함수 호출(pageNum, amount 추가)
+										setActionFormParams(cg_code, cg_parent_name, cg_name, pageNum, amount, type, keyword);
+
+										// 폼의 액션 설정 및 제출
+										actionForm.attr("action", "/user/product/usProductList");
+										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
+									});
+
 									// 목록 버튼 클릭 이벤트
 									$("button[name='btn_list']").on("click", function () {
 
@@ -315,43 +313,78 @@
 										let cg_parent_name = urlParams.get('cg_parent_name');
 										let cg_name = urlParams.get('cg_name');
 
-										// 카테고리 조건이 없는 경우 해당 입력 필드 제거
-										if (!cg_code) $("#cg_code").remove();
-										if (!cg_parent_name) $("#cg_parent_name").remove();
-										if (!cg_name) $("#cg_name").remove();
-
 										// 페이징 및 검색 조건 추출 및 설정
 										let pageNum = urlParams.get('pageNum');
 										let amount = urlParams.get('amount');
 										let type = urlParams.get('type');
 										let keyword = urlParams.get('keyword');
 
-										// 페이징 및 검색 조건이 없는 경우 해당 입력 필드 제거
-										if (!pageNum) $("#pageNum").remove();
-										else $("#pageNum").val(pageNum);
-										if (!amount) $("#amount").remove();
-										else $("#amount").val(amount);
-										if (!type) $("#type").remove();
-										else $("#type").val(type);
-										if (!keyword) $("#keyword").remove();
-										else $("#keyword").val(keyword);
+										// 공통 함수 호출(pageNum, amount 추가)
+										setActionFormParams(cg_code, cg_parent_name, cg_name, pageNum, amount, type, keyword);
 
 										// 폼의 액션 설정 및 제출
 										actionForm.attr("action", "/user/product/usProductList");
 										actionForm.submit(); // 페이지 이동 시 actionForm이 동작
 									});
 
-									// 숫자를 문자열로 변환하고, 천 단위마다 콤마를 삽입
+									// 공통 함수: URL 쿼리 파라미터 설정 및 제거
+									function setActionFormParams(cg_code, cg_parent_name, cg_name, pageNum, amount, type, keyword) {
+
+										// 카테고리 조건 설정 및 제거 
+										if (cg_code) {
+											$("#cg_code").val(cg_code);
+										} else {
+											$("#cg_code").remove();
+										}
+										if (cg_parent_name) {
+											$("#cg_parent_name").val(cg_parent_name);
+										} else {
+											$("#cg_parent_name").remove();
+										}
+										if (cg_name) {
+											$("#cg_name").val(cg_name);
+										} else {
+											$("#cg_name").remove();
+										}
+
+										// 페이징 및 검색 조건 설정 및 제거
+										if (pageNum) {
+											$("#pageNum").val(pageNum);
+										} else {
+											$("#pageNum").remove();
+										} if (amount) {
+											$("#amount").val(amount);
+										} else {
+											$("#amount").remove();
+										}
+										if (type) {
+											$("#type").val(type);
+										} else {
+											$("#type").remove();
+										}
+										if (keyword) {
+											$("#keyword").val(keyword);
+										} else {
+											$("#keyword").remove();
+										}
+									}
+
+									// 숫자를 문자열로 변환하고, 천 단위마다 콤마를 삽입하는 함수
 									function numberWithCommas(x) {
 
 										return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 									}
 
-									// 수량 변경에 따른 총 가격 계산
-									$("#btn_quantity").on("change", function () {
-										// 가격 정보에서 숫자가 아닌 문자 제거
+									// 수량 변경에 따른 총 가격 계산 및 음수 방지 
+									$("#btn_quantity").on('change', function () {
+
+										// 가격 정보에서 숫자가 아닌 문자 제거 및 총 가격 계산
 										let unitPrice = parseInt($("#discountPrice").text().replace(/[^0-9]/g, ""));
-										let quantity = parseInt($("#btn_quantity").val());
+										let quantity = parseInt($("#btn_quantity").val()); // 입력된 수량을 정수로 변환
+										// 수량이 1 미만인 경우 1로 설정
+										if (quantity < 1) {
+											$(this).val(1);
+										}
 										let tot_price = unitPrice * quantity;
 
 										// 총 상품금액 표시

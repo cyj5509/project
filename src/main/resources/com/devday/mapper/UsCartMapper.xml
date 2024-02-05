@@ -65,5 +65,20 @@
 		</foreach>
 </delete>
 
+<!-- 장바구니 비우기 -->
+<delete id="cartEmpty">
+	DELETE FROM 
+		cart_table
+	WHERE
+		us_id = #{us_id}
+</delete>
+
+<!-- 사용자의 장바구니 내 상품 수 계산 -->
+<select id="countCartItems" resultType="int" parameterType="string">
+    SELECT COUNT(*)
+    FROM cart_table
+    WHERE us_id = #{us_id}
+</select>
+
 </mapper>
   
