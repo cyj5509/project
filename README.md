@@ -12,8 +12,8 @@
 
 
 
-4. 주문 관리(로직은 있음. md에 해당 내용 추가할 예정)
-5. 게시판 관리(로직은 있음. md에 해당 내용 수정할 예정)
+3. 주문 관리(로직은 있음. md에 해당 내용 추가할 예정)
+4. 게시판 관리(로직은 있음. md에 해당 내용 수정할 예정)
 ![최종01](https://github.com/cyj5509/project/assets/139317478/04561e4b-8e05-4c05-9dd7-a0780849d173)
 ![최종02](https://github.com/cyj5509/project/assets/139317478/d08defbf-7957-4a13-adf4-727f84b9b045)
 ![최종03](https://github.com/cyj5509/project/assets/139317478/bc58722d-8157-4e47-8cd1-8d82352d166c)
