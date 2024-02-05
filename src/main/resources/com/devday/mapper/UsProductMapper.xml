@@ -114,6 +114,16 @@
 		pd_number > 0		
 </select>
 
+<!-- 전체 상품 및 특정 카테고리 내 상품에 대한 조건 검색용 SQL -->
+<select id="searchByKeyword" resultType="ProductVO" parameterType="map">
+    SELECT
+        pd_number, cg_code, pd_name, pd_price, pd_discount, pd_company, pd_content, pd_image_folder, pd_image, pd_amount, pd_buy_status, pd_register_date, pd_update_date
+    FROM
+        product_table
+    WHERE
+       <include refid="criteria2"></include>
+</select>
+
 <!-- 상품 번호를 기준으로 상품의 상세 정보를 조회 -->
 <select id="getProductDetails" resultType="ProductVO" parameterType="Integer">
 	SELECT

@@ -73,11 +73,17 @@
   padding-left: 15px;
 }
 
-/* 1차 카테고리 마우스 오버 시 스타일 */
-#first_category a:hover {
+/* 1차 카테고리 마우스 오버 시(JS 제어) */
+#first_category a.selected {
   background-color: gray; /* 마우스 오버 시 배경색 변경 */
   color: #f7f7f7; /* 마우스 오버 시 글자 색 변경 */
 }
+/*
+#first_category a:hover {
+  background-color: gray;
+  color: #f7f7f7;
+}
+*/
 
 /* 2차 카테고리 스타일링 */
 #second_category {
@@ -90,6 +96,7 @@
   padding: 5px 10px;
 }
 
+/* 2차 카테고리 마우스 오버 시 스타일 */
 #second_category a:hover {
   padding: 5px 10px;
   background-color: gray; /* 마우스 오버 시 배경색 변경 */

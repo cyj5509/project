@@ -101,10 +101,10 @@
 															<option value="" selected>&#45;&#45;&#45;&nbsp;검색 조건 선택&nbsp;&#45;&#45;&#45;</option>
 															<option value="T" ${pageMaker.cri.type=='T' ? 'selected' : '' }>제목</option>
 															<option value="C" ${pageMaker.cri.type=='C' ? 'selected' : '' }>내용</option>
-															<option value="I" ${pageMaker.cri.type=='I' ? 'selected' : '' }>작성자</option>
+															<option value="W" ${pageMaker.cri.type=='W' ? 'selected' : '' }>작성자</option>
 															<option value="TC" ${pageMaker.cri.type=='TC' ? 'selected' : '' }>제목&#43;내용</option>
-															<option value="TI" ${pageMaker.cri.type=='TI' ? 'selected' : '' }>제목&#43;작성자</option>
-															<option value="TCI" ${pageMaker.cri.type=='TCI' ? 'selected' : '' }>제목&#43;내용&#43;작성자</option>
+															<option value="TW" ${pageMaker.cri.type=='TW' ? 'selected' : '' }>제목&#43;작성자</option>
+															<option value="TCW" ${pageMaker.cri.type=='TCW' ? 'selected' : '' }>제목&#43;내용&#43;작성자</option>
 														</select>
 														<input type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword}" placeholder="검색어 입력" />
 														<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}" />

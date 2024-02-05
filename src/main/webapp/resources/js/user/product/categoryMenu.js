@@ -29,10 +29,17 @@ $(document).ready(function () {
   // 1차 카테고리 마우스 오버 이벤트
   // $("1차 카테고리 태그를 참조하는 선택자").on();
   $("div#category_menu li a").on("mouseover", function (e) {
+
     e.preventDefault(); // a 태그의 링크 기능을 취소
 
+    // 기존에 선택된 카테고리의 selected 클래스 제거
+    $("div#category_menu li a").removeClass('selected');
+
+    // 현재 선택된 1차 카테고리에 selected 클래스 추가
+    $(this).addClass('selected');
+
     let sel_first_category = $(this);
-    let cg_code = $(this).data("cg_code"); // data-cg_code -> $(this).data("cg_code")
+    let cg_code = sel_first_category.data("cg_code"); // data-cg_code -> $(this).data("cg_code")
 
     // console.log("1차 카테고리 코드: ", cg_code);
 
@@ -73,8 +80,9 @@ $(document).ready(function () {
 
   // 1차 카테고리와 2차 카테고리 전체에 대한 마우스 아웃 이벤트
   $("div#category_menu").on("mouseleave", function () {
-    // 2차 카테고리 목록을 숨김
-    $("#second_category").css("display", "none");
+    
+    $("#second_category").css("display", "none"); // 2차 카테고리 숨김
+    $("div#category_menu li a.selected").addClass("selected"); // 선택된 1차 카테고리 스타일 유지
   });
 
   // 2차 카테고리 선택
@@ -103,7 +111,7 @@ $(document).ready(function () {
     $("#categoryName").text("[대분류] " + cg_parent_name + " >>> [소분류] " + cg_name);
   } else {
     $("#categoryName").text("전체 상품(카테고리 미분류)");
-  } 
+  }
   // 단일 스타일 변경 시에는 속성명과 속성값 간에 콤마(,)로 구분 -> $("#second_category").css("display", "none");
   // 2개 이상인 경우 중괄호로 감싼 뒤 콜론(:)으로 구분(단, 속성 간에는 콤마로 구분)
   $("#categoryName").css({ "font-size": 22, "font-weight": "bold", "font-style": "italic" });

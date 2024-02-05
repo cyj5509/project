@@ -53,7 +53,7 @@
 	DELETE FROM
 		review_table
 	WHERE
-		rv_num = #{rv_num}
+		rv_number = #{rv_number}
 </delete>
 
 </mapper>

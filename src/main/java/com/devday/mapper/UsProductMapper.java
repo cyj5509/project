@@ -1,6 +1,7 @@
 package com.devday.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -21,4 +22,6 @@ public interface UsProductMapper {
 	
 	// 상품의 상세 정보 조회
 	ProductVO getProductDetails(Integer pd_number);
+	
+	List<ProductVO> searchByKeyword(Map<String, Object> params);
 }

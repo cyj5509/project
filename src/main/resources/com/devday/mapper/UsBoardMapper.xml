@@ -62,11 +62,11 @@
 			        <when test="type == 'T'.toString()">
 			            bd_title LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
-			        <when test="type == 'I'.toString()">
-			            us_id LIKE '%' || #{cri.keyword} || '%' 
-			        </when>
 			        <when test="type == 'C'.toString()">
 			            bd_content LIKE '%' || #{cri.keyword} || '%' 
+			        </when>
+			        <when test="type == 'W'.toString()">
+			            us_id LIKE '%' || #{cri.keyword} || '%' 
 			        </when>
 			    </choose>
 			</trim>

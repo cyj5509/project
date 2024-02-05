@@ -112,13 +112,13 @@
 											<!-- 맨 처음 표시 여부 -->
 											<c:if test="${pageMaker.foremost}">
 												<li class="page-item">
-													<a href="1" class="page-link movepage">처음</a>
+													<a href="1" class="page-link movepage">≪</a>
 												</li>
 											</c:if>
 											<!-- 이전 표시 여부 -->
 											<c:if test="${pageMaker.prev}">
 												<li class="page-item">
-													<a href="${pageMaker.startPage - 1}" class="page-link movepage">이전</a>
+													<a href="${pageMaker.startPage - 1}" class="page-link movepage">&lt;</a>
 												</li>
 											</c:if>
 											<!-- 페이지 번호 출력 작업 -->
@@ -133,13 +133,13 @@
 											<!-- 다음 표시 여부 -->
 											<c:if test="${pageMaker.next}">
 												<li class="page-item">
-													<a href="${pageMaker.endPage + 1}" class="page-link movepage">다음</a>
+													<a href="${pageMaker.endPage + 1}" class="page-link movepage">&gt;</a>
 												</li>
 											</c:if>
 											<!-- 맨 끝 표시 여부 -->
 											<c:if test="${pageMaker.rearmost}">
 												<li class="page-item">
-													<a href="${pageMaker.readEnd}" class="page-link movepage">끝</a>
+													<a href="${pageMaker.readEnd}" class="page-link movepage">≫</a>
 												</li>
 											</c:if>
 										</ul>
@@ -242,6 +242,8 @@
 									</c:forEach>
 								</tbody>
 							</table>
+							<!-- 해당하는 상품이 없음을 표시하기 위해 단순 처리(미구현 상태) -->
+							<p style="font-size: 18px;">&lsquo;${pageMaker.cri.keyword}&rsquo;에 대한 검색 결과가 없습니다.</p>
 							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div> <!-- container 닫는 태그 -->
 

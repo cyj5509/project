@@ -14,4 +14,6 @@ public interface UsProductService {
 	int getTotalCountForAll(Criteria cri);
 	
 	ProductVO getProductDetails(Integer pd_number);
+	
+	List<ProductVO> searchByKeyword(String keyword, String[] typeArr);
 }

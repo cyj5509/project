@@ -18,29 +18,30 @@
 					<!-- CSS 파일 링크 -->
 					<link rel="stylesheet" href="/css/common/header.css">
 					<link rel="stylesheet" href="/css/user/product/categoryMenu.css">
-
 					<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 					<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+
 					<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 					<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
 					<!-- Handlebars(핸들바 템플릿 엔진): 서버에서 보내온 JSON 형태의 데이터를 사용하여 작업을 편하게 할 수 있는 특징 -->
 					<script src="/js/handlebars.js"></script>
 					<script id="reviewTemplate" type="text/x-handlebars-template">
-						<table class="table table-sm">
+						<table class="table table-sm" id="reviewList">
 							<thead>
 								<tr>
-									<th scope="col">번호</th>
-									<th scope="col">내용</th>
-									<th scope="col">평점</th>
-									<th scope="col">날짜</th>
-									<th scope="col">비고</th>
+									<th scope="col" style="width: 7.5%;">번호</th>
+									<th scope="col" style="width: 50%; text-align: justify;">내용</th>
+									<th scope="col" style="width: 12.5%;">평점</th>
+									<th scope="col" style="width: 10%;">날짜</th>
+									<th scope="col" style="width: 20%;">비고</th>
 								</tr>
 							</thead>
 							<tbody>
 								{{#each .}}
 								<tr>
 									<th scope="row" class="rv_number">{{rv_number}}</th>
-									<td class="rv_content">{{rv_content}}</td>
+									<td class="rv_content" style="text-align: justify;">{{rv_content}}</td>
 									<td class="rv_score">{{displayStar rv_score}}</td> <!-- displayStar 함수 -->
 									<td class="rv_register_date">{{convertDate rv_register_date}}</td>  <!-- convertDate 함수 -->
 									<td>{{authControlView us_id rv_number rv_score}}</td> <!-- authControlView 함수 -->
@@ -58,7 +59,7 @@
 
 					<style>
 						#returnList {
-							text-decoration: none;
+							/* text-decoration: none; */
 							color: gray;
 						}
 
@@ -91,6 +92,19 @@
 							/* 취소선 표시. <s>태그와 동일*/
 						}
 
+						#reviewList th,
+						#reviewList td {
+							vertical-align: middle;
+							/* 셀의 내용을 수직 중앙에 정렬 */
+							text-align: center;
+							/* 텍스트를 가운데 정렬 */
+						}
+
+						#reviewList button {
+							padding: 2px 4px;
+							margin: 5px;
+						}
+
 						/* 평점 기본선택자 */
 						p#star_rv_score a.rv_score {
 							font-size: 22px;
@@ -109,7 +123,7 @@
 
 				<%@include file="/WEB-INF/views/comm/header.jsp" %>
 					<%@include file="/WEB-INF/views/comm/categoryMenu.jsp" %>
-						<a href="#" id="returnList">
+						<a href="" id="returnList">
 							<p id="categoryName"><!-- 카테고리명 동적 생성 --></p>
 						</a>
 						<div class="container" style="margin-top: 80px;">
@@ -168,7 +182,8 @@
 												</span>
 												<c:if test="${pd_vo.pd_discount > 0}">
 													<span id="originalPrice">
-														&#40;<fmt:formatNumber value="${pd_vo.pd_price}" groupingUsed="true" />원&#41;
+														&#40;
+														<fmt:formatNumber value="${pd_vo.pd_price}" groupingUsed="true" />원&#41;
 													</span>
 												</c:if>
 											</h5>
@@ -192,18 +207,17 @@
 											<p>${pd_vo.pd_content}</p>
 										</div>
 										<div id="tabs-proreview">
-											<p>상품후기 목록</p>
 											<div class="row">
-												<div class="col-md-12" id="review_list"> <!-- 정적 태그(이하 동적 태그) -->
-
+												<div class="col-md-12" id="review_list">
+													<!-- 정적 태그(이하 동적 태그) -->
 												</div>
 											</div>
 											<div class="row">
 												<div class="col-md-8 text-center" id="review_paging">
-
+													<!-- 정적 태그(이하 동적 태그) -->
 												</div>
 												<div class="col-md-4 text-right">
-													<button type="button" id="btn_review_write" class="btn btn-info">상품후기 작성</button>
+													<button type="button" id="btn_review_write" class="btn btn-info">작성하기</button>
 												</div>
 											</div>
 										</div>
@@ -278,7 +292,9 @@
 									});
 
 									// 카테고리명(또는 전체 상품) 링크 클릭 이벤트
-									$("#returnList").on("click", function () {
+									$("#returnList").on("click", function (e) {
+
+										e.preventDefault(); // 기본 동작 방지
 
 										// 쿼리 파라미터가 필요한 경우만 폼에 추가
 										const urlParams = new URLSearchParams(location.search);
@@ -381,11 +397,14 @@
 										// 가격 정보에서 숫자가 아닌 문자 제거 및 총 가격 계산
 										let unitPrice = parseInt($("#discountPrice").text().replace(/[^0-9]/g, ""));
 										let quantity = parseInt($("#btn_quantity").val()); // 입력된 수량을 정수로 변환
-										// 수량이 1 미만인 경우 1로 설정
+
+										// 수량이 1 미만인 경우 1로 설정하고, 그 후에 총 가격을 다시 계산
 										if (quantity < 1) {
-											$(this).val(1);
+											$(this).val(1); // 입력 필드의 값을 1로 업데이트
+											quantity = 1; // 계산에 사용될 변수의 값을 1로 조정
 										}
-										let tot_price = unitPrice * quantity;
+
+										let tot_price = unitPrice * quantity; // 총 상품금액 재계산
 
 										// 총 상품금액 표시
 										$("#tot_price").text(numberWithCommas(tot_price) + '원');
@@ -531,8 +550,8 @@
 
 										// 로그인한 사용자와 상품후기 등록 사용자의 동일 여부 체크
 										if (login_id == us_id) {
-											str += '<button type="button" name="btn_review_edit" class="btn btn-info" data-rv_score="' + rv_score + '">edit</button>';
-											str += '<button type="button" name="btn_review_del" class="btn btn-danger" data-rv_number="' + rv_number + '">delete</button>';
+											str += '<button type="button" name="btn_review_edit" class="btn btn-warning" data-rv_score="' + rv_score + '">수정</button>';
+											str += '<button type="button" name="btn_review_del" class="btn btn-danger" data-rv_number="' + rv_number + '">삭제</button>';
 
 											console.log(str);
 											// 출력 내용이 태그일 때 사용
@@ -595,7 +614,7 @@
 											dataType: 'text',
 											success: function (result) {
 												if (result == 'success') {
-													alert("상품평이 수정되었습니다.")
+													alert("상품평이 정상적으로 수정되었습니다.")
 													$('#review_modal').modal('hide'); // 부트스트랩 4.6 버전의 자바스크립트 명령어
 													// 상품평 목록 불러오는 작업
 													getReviewInfo(url);
@@ -614,9 +633,10 @@
 									});
 									*/
 									$("div#review_list").on("click", "button[name='btn_review_del']", function () {
-										console.log("상품후기 삭제")
 
-										if (!confirm("상품후기를 삭제하겠습니까?")) return;
+										console.log("상품평 삭제 버튼 클릭")
+
+										if (!confirm("상품평을 정말로 삭제하겠습니까?")) return;
 										let rv_number = $(this).data("rv_number");
 
 										$.ajax({
@@ -628,7 +648,7 @@
 											dataType: 'text',
 											success: function (result) {
 												if (result == 'success') {
-													alert("상품평이 삭제되었습니다.")
+													alert("상품평이 정상적으로 삭제되었습니다.")
 
 													url = "/user/review/list/" + "${pd_vo.pd_number}" + "/" + reviewPage;
 													getReviewInfo(url);
@@ -685,7 +705,7 @@
 											dataType: 'text',
 											success: function (result) {
 												if (result == 'success') {
-													alert("상품평이 등록되었습니다.")
+													alert("상품평이 정상적으로 등록되었습니다.")
 													$('#review_modal').modal('hide'); // 부트스트랩 4.6 버전의 자바스크립트 명령어
 													// 상품평 목록 불러오는 작업
 													getReviewInfo(url);
@@ -704,7 +724,9 @@
 									<div class="modal-content">
 										<div class="modal-header">
 											<!-- <h5 class="modal-title" id="exampleModalLabel">상품후기</h5> -->
-											<b>상품후기</b><span id="rv_number">5</span><span id="rv_register_date"></span>
+											<b>상품후기</b>
+											<span id="rv_number"></span>
+											<span id="rv_register_date"></span>
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 												<span aria-hidden="true">&times;</span>
 											</button>
@@ -729,9 +751,9 @@
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-											<button type="button" id="btn_review_save" class="btn btn-primary"
-												data-pd_number="${pd_vo.pd_number}">상품후기 저장</button>
-											<button type="button" id="btn_review_modify" class="btn btn-primary">상품후기 수정</button>
+											<button type="button" id="btn_review_save" class="btn btn-success"
+												data-pd_number="${pd_vo.pd_number}">저장</button>
+											<button type="button" id="btn_review_modify" class="btn btn-warning">수정</button>
 										</div>
 									</div>
 								</div>

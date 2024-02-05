@@ -250,6 +250,10 @@ CREATE TABLE product_table (
     CONSTRAINT fk_pd_cg_code FOREIGN KEY(cg_code) REFERENCES category_table(cg_code)
 );
 
+-- 더미 데이터 -- 
+INSERT INTO product_table (pd_number, CG_CODE, PD_NAME, PD_PRICE, PD_DISCOUNT, PD_COMPANY, PD_CONTENT, PD_IMAGE_FOLDER, PD_IMAGE, PD_AMOUNT, PD_BUY_STATUS, PD_REGISTER_DATE, PD_UPDATE_DATE)
+SELECT sequence_pd_number.NEXTVAL, CG_CODE, PD_NAME, PD_PRICE, PD_DISCOUNT, PD_COMPANY, PD_CONTENT, PD_IMAGE_FOLDER, PD_IMAGE, PD_AMOUNT, PD_BUY_STATUS, PD_REGISTER_DATE, PD_UPDATE_DATE FROM product_table;
+
 -- 시퀀스: 상품 테이블의 상품 번호 컬럼(pd_number)
 DROP SEQUENCE sequence_pd_number;
 CREATE SEQUENCE sequence_pd_number;

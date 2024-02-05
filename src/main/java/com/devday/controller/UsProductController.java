@@ -88,6 +88,8 @@ public class UsProductController {
 		return "/user/product/usProductList";
 	}
 	
+	// searchByKeyword 처리 필요
+	
 	// 상품 리스트에서 보여줄 이미지. <img src="매핑주소">
 	@ResponseBody
 	@GetMapping("/imageDisplay") // /user/product/imageDisplay?dateFolderName=값1&fileName=값2
