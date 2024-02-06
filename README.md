@@ -7,10 +7,11 @@
 [1] 사용자 페이지
 
 0. 메인 페이지
+
 ![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/e81df5ba-181d-4d4a-8165-d9ccf64f0971)
 
-1. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정)
-2. 상품 관리
+2. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정)
+3. 상품 관리
    
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/b43eacd5-a271-4071-8e7f-7ced0e6c45f0)
 ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/005d1856-37f3-4a9c-b4dd-6588d5ee1055)
