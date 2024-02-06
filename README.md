@@ -17,9 +17,10 @@
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
 ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/9a49f381-caaa-4774-83b3-18a756979ac4)
-![1-2  상품관리03](https://github.com/cyj5509/project/assets/139317478/303170be-c77d-4136-ab3a-61c054d61e3b)
-![1-2  상품관리04](https://github.com/cyj5509/project/assets/139317478/7f2fa60f-5a4d-41f3-929c-634a75d1d70f)
-![1-2  상품관리05](https://github.com/cyj5509/project/assets/139317478/83dbe07e-7025-4b68-afb4-485ceb80cfbc)
+![1-2  상품관리03](https://github.com/cyj5509/project/assets/139317478/19e43a29-bbad-425b-aaed-d212593eb553)
+![1-2  상품관리04](https://github.com/cyj5509/project/assets/139317478/119ed63a-7160-4613-a3f8-6c7ded90e702)
+![1-2  상품관리05](https://github.com/cyj5509/project/assets/139317478/c495cd2b-8dcc-4ac0-9fef-1943f7c7d71d)
+
 
 3. 주문 관리(로직은 있음. md에 해당 내용 추가할 예정)
 4. 게시판 관리(로직은 있음. md에 해당 내용 수정할 예정)
