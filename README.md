@@ -13,7 +13,7 @@
 
 
 2. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정)
-3. 상품 관리
+3. 상품 관리(현재 작성 중인 부분!)
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
 ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/9a49f381-caaa-4774-83b3-18a756979ac4)
