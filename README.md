@@ -8,7 +8,7 @@
 2. 상품 관리
    
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/b43eacd5-a271-4071-8e7f-7ced0e6c45f0)
-   ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/005d1856-37f3-4a9c-b4dd-6588d5ee1055)
+![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/005d1856-37f3-4a9c-b4dd-6588d5ee1055)
 
 
 3. 주문 관리(로직은 있음. md에 해당 내용 추가할 예정)
