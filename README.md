@@ -1,6 +1,7 @@
  # 쇼핑몰 프로젝트(미완성)
 
-![0  프로젝트](https://github.com/cyj5509/project/assets/139317478/96d8222f-b986-48e4-9add-aa490a1ad793)
+![0-1  프로젝트](https://github.com/cyj5509/project/assets/139317478/bbf85996-0374-467e-9128-7b10847ccff4)
+
 
 계속 작성 중...
 
@@ -15,8 +16,8 @@
 3. 상품 관리
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
-![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/a3b876a8-11d0-4d56-9c90-362d2234e661)
-![1-2  상품관리03](https://github.com/cyj5509/project/assets/139317478/df927e1b-ab7f-401c-bf61-ef8e1c54cb6a)
+![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/9a49f381-caaa-4774-83b3-18a756979ac4)
+![1-2  상품관리03](https://github.com/cyj5509/project/assets/139317478/303170be-c77d-4136-ab3a-61c054d61e3b)
 ![1-2  상품관리04](https://github.com/cyj5509/project/assets/139317478/7f2fa60f-5a4d-41f3-929c-634a75d1d70f)
 ![1-2  상품관리05](https://github.com/cyj5509/project/assets/139317478/83dbe07e-7025-4b68-afb4-485ceb80cfbc)
 
