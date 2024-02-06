@@ -8,14 +8,17 @@
 
 0. 메인 페이지
 
-![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/e81df5ba-181d-4d4a-8165-d9ccf64f0971)
+![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/2c49a7b1-5d50-415a-8fad-9c84f3fc8e45)
+
 
 2. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정)
 3. 상품 관리
-   
-![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/b43eacd5-a271-4071-8e7f-7ced0e6c45f0)
-![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/005d1856-37f3-4a9c-b4dd-6588d5ee1055)
 
+![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
+![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/a3b876a8-11d0-4d56-9c90-362d2234e661)
+![1-2  상품관리03](https://github.com/cyj5509/project/assets/139317478/df927e1b-ab7f-401c-bf61-ef8e1c54cb6a)
+![1-2  상품관리04](https://github.com/cyj5509/project/assets/139317478/7f2fa60f-5a4d-41f3-929c-634a75d1d70f)
+![1-2  상품관리05](https://github.com/cyj5509/project/assets/139317478/83dbe07e-7025-4b68-afb4-485ceb80cfbc)
 
 3. 주문 관리(로직은 있음. md에 해당 내용 추가할 예정)
 4. 게시판 관리(로직은 있음. md에 해당 내용 수정할 예정)
