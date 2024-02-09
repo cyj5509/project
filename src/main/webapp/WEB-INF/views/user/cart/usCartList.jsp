@@ -85,7 +85,7 @@
 											<td>
 												<span class="unitTotalPrice" id="unitTotalPrice">
 													<fmt:formatNumber
-														value="${Math.round(cartDTO.pd_price - (cartDTO.pd_price * cartDTO.pd_discount / 100) * cartDTO.ct_amount)}"
+														value="${Math.round((cartDTO.pd_price - (cartDTO.pd_price * cartDTO.pd_discount / 100)) * cartDTO.ct_amount)}"
 														groupingUsed="true" />원
 												</span>
 											</td>
@@ -156,6 +156,7 @@
 												if (response == "success") {
 													alert("장바구니를 비웠습니다. 쇼핑을 계속하시려면 상품 목록으로 돌아가 주세요.");
 													$("#cartList tbody").empty();
+													location.reload(); // 페이지를 새로고침하여 변경된 내용을 반영
 												} else if (response == "empty") {
 													alert("장바구니에 담긴 상품이 없습니다. 관심 있는 상품을 찾아 추가해 주세요.");
 												}

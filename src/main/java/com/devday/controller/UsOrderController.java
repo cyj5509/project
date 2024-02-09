@@ -69,8 +69,7 @@ public class UsOrderController {
 			
 			vo.setPd_image_folder(vo.getPd_image_folder().replace("\\", "/"));
 			// vo.setPd_discount(vo.getPd_discount() * 1/100);
-			
-			od_price += (vo.getPd_price() * vo.getCt_amount());
+			od_price += (vo.getPd_price() - (vo.getPd_price() * vo.getPd_discount() / 100)) * vo.getCt_amount();
 		}
 		
 		model.addAttribute("order_info", order_info);

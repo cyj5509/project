@@ -49,7 +49,7 @@
 									<tr>
 										<th scope="col">상품</th>
 										<th scope="col">상품명</th>
-										<th scope="col">단가가</th>
+										<th scope="col">단가</th>
 										<th scope="col">수량</th>
 										<th scope="col">합계</th>
 									</tr>
@@ -74,7 +74,7 @@
 											<td>
 												<span class="unitTotalPrice" id="unitTotalPrice">
 													<fmt:formatNumber
-														value="${Math.round(cartDTO.pd_price - (cartDTO.pd_price * cartDTO.pd_discount / 100) * cartDTO.ct_amount)}"
+														value="${Math.round((cartDTO.pd_price - (cartDTO.pd_price * cartDTO.pd_discount / 100)) * cartDTO.ct_amount)}"
 														groupingUsed="true" />원
 												</span>
 											</td>
@@ -85,7 +85,9 @@
 									<tr>
 										<td colspan="8" style="text-align: right;">
 											총&nbsp;<span id="cart_price_count">${fn:length(order_info)}건</span>
-											&#47;&nbsp;주문금액:&nbsp;<span id="cart_total_price">${od_price}</span>
+											&#47;&nbsp;주문금액:&nbsp;<span id="cart_total_price">
+												<fmt:formatNumber value="${od_price}" groupingUsed="true" />원
+											</span>
 										</td>
 									</tr>
 								</tfoot>

@@ -158,7 +158,7 @@
 										<button type="button" class="btn btn-warning" name="btn_cartAdd" style="margin-right: 5px;"
 											data-pd_number="${pd_vo.pd_number}">장바구니</button>
 										<button type="button" class="btn btn-danger" name="btn_purchase" style="margin-right: 5px;"
-											data-pd_number="${pd_vo.pd_number}">구매</button>
+											data-pd_number="${pd_vo.pd_number}" data-pd_name="${pd_vo.pd_name}">구매</button>
 										<button type="button" class="btn btn-success" name="btn_list">목록</button>
 									</div>
 								</div>
@@ -273,7 +273,7 @@
 											dataType: 'text',
 											success: function (result) {
 												if (result == "success") {
-													if (confirm("장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?")) {
+													if (confirm("상품이 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?")) {
 														location.href = "/user/cart/usCartList"
 													}
 												}
@@ -286,9 +286,13 @@
 
 										// 외부 스크립트가 아닌 이상 JSP 파일에서 템플릿 리터럴 사용 불가
 										let pd_number = $(this).data("pd_number");
+										let pd_name = $(this).data("pd_name");
 										let ct_amount = $("#btn_quantity").val();
-										let url = "/user/order/orderReady?pd_number=" + pd_number + "&ct_amount=" + ct_amount;
-										location.href = url;
+										
+										if (confirm("'" + pd_name + "'" + " 상품을 바로 구매하시겠습니까?")) {
+											let url = "/user/order/orderReady?pd_number=" + pd_number + "&ct_amount=" + ct_amount;
+											location.href = url;
+										}
 									});
 
 									// 카테고리명(또는 전체 상품) 링크 클릭 이벤트
@@ -669,7 +673,7 @@
 									});
 
 									// 상품후기 저장
-									$("#btn_review_save").on("click", function () {
+									$("#btn_review_save").off("click").on("click", function () {
 										// 평점 값
 										let rv_score = 0;
 										let rv_content = $("#rv_content").val();

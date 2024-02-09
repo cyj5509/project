@@ -586,7 +586,7 @@
 
 										// 선택된 상품이 없는 경우의 알림
 										if (selectedProducts.length == 0) {
-											alert("주문하거나 구매할 상품을 선택해주세요.");
+											alert("주문하거나 구매할 상품을 선택해 주세요.");
 											return;
 										}
 
