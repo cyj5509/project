@@ -80,7 +80,7 @@
 										</div>
 									</div><br />
 									<div class="box-footer">
-										<button type="button" class="btn btn-primary" id="btnModify">수정하기</button>
+										<button type="button" class="btn btn-warning" id="btnModify">수정하기</button>
 										<button type="button" class="btn btn-danger" id="btnDelete">탈퇴하기</button>
 									</div>
 								</div>

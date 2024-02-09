@@ -46,21 +46,20 @@ public class UserController {
 	// 회원가입 기능 구현
 	@PostMapping("/join")
 	public String join(@RequestParam("us_phone_prefix") String us_phone_prefix,
-            		   @RequestParam("us_phone") String us_phone,
             		   UserVO us_vo, RedirectAttributes rttr) throws Exception { 
 		
 		log.info("암호화 처리 전 회원정보: " + us_vo);
 		
-		us_vo.setUs_pw(passwordEncoder.encode(us_vo.getUs_pw())); // 비밀번호 암호화 처리
 		// 전화번호 전체를 합침
-	    String fullPhoneNumber = us_phone_prefix + us_phone;
+	    String fullPhoneNumber = us_phone_prefix + us_vo.getUs_phone();
 	    us_vo.setUs_phone(fullPhoneNumber); // UserVO 객체에 전체 전화번호 설정
 	    
+	    // 비밀번호 암호화 및 회원가입 처리
+	    us_vo.setUs_pw(passwordEncoder.encode(us_vo.getUs_pw())); // 비밀번호 암호화 처리
+	    log.info("암호화 처리 후 회원정보: " + us_vo);
 		userService.join(us_vo); // 회원가입 관련 메서드 호출
-		
-		log.info("암호화 처리 후 회원정보: " + us_vo);
-		
-		// 회원가입 후 환영인사
+	
+		// 회원가입 후 환영 메시지 설정 및 리디렉션
 		String msg = "환영합니다! " + us_vo.getUs_id() + "님, 회원가입이 완료되었습니다.";
 		rttr.addFlashAttribute("msg", msg); // 리디렉션되는 페이지에서 일회성으로 사용
 		

@@ -93,14 +93,11 @@
 											</div>
 											<div class="form-group row">
 												<label for="sample2_address" class="col-2">기본 주소</label>
-												<div class="col-10">
+												<div class="col-5">
 													<input type="text" class="form-control" name="us_addr_basic" id="sample2_address"
 														value="${vo.us_addr_basic}" placeholder="기본 주소를 입력해 주세요.">
 												</div>
-											</div>
-											<div class="form-group row">
-												<label for="sample2_detailAddress" class="col-2">상세 주소</label>
-												<div class="col-10">
+												<div class="col-5">
 													<input type="text" class="form-control" name="us_addr_detail" id="sample2_detailAddress"
 														value="${vo.us_addr_detail}" placeholder="상세 주소를 입력해 주세요.">
 													<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
@@ -111,41 +108,40 @@
 											</div>
 										</div>
 									</div>
+								</form>
 							</div>
-
 						</div>
 					</div>
+					<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 				</div>
-				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
-					</div>
-					<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
-						<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
+					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-							<script>
-								// jquery.slim.min.js 파일에 jQuery 명령어가 정의되어 있음
-								// $(): JQuery() 함수 사용 별칭
-								// ready(): 브라우저가 html 태그를 모두 읽고난 후에 동작하는 이벤트 메서드
-								// JS 이벤트 등록: https://www.w3schools.com/js/js_htmldom_eventlistener.asp 
-								$(document).ready(function () {
+						<script>
+							// jquery.slim.min.js 파일에 jQuery 명령어가 정의되어 있음
+							// $(): JQuery() 함수 사용 별칭
+							// ready(): 브라우저가 html 태그를 모두 읽고난 후에 동작하는 이벤트 메서드
+							// JS 이벤트 등록: https://www.w3schools.com/js/js_htmldom_eventlistener.asp 
+							$(document).ready(function () {
 
-									// 회원수정 버튼 클릭 시 동작
-									$("#btnModify").click(function () {
+								// 회원수정 버튼 클릭 시 동작
+								$("#btnModify").click(function () {
 
-										// form 태그 참조: <form role="form" id="modifyInfoForm" method="post" action="/member/modifyInfo">
-										let modifyInfoForm = $("#modifyInfoForm");
-										let currentPw = $("input[name='currentPw']").val().trim();
-										
-										if (!currentPw) {
-											alert("회원정보를 수정하려면 비밀번호를 입력해 주세요.");
-											$("input[name='currentPw']").focus();
-											return;
-										}
-										// 폼 전송 작업(스프링 작업 이후)
-										modifyInfoForm.submit();
-									});
+									// form 태그 참조: <form role="form" id="modifyInfoForm" method="post" action="/member/modifyInfo">
+									let modifyInfoForm = $("#modifyInfoForm");
+									let currentPw = $("input[name='currentPw']").val().trim();
 
-								}); // ready-end
-							</script>
+									if (!currentPw) {
+										alert("회원정보를 수정하려면 비밀번호를 입력해 주세요.");
+										$("input[name='currentPw']").focus();
+										return;
+									}
+									// 폼 전송 작업(스프링 작업 이후)
+									modifyInfoForm.submit();
+								});
+
+							}); // ready-end
+						</script>
 
 		</body>
 

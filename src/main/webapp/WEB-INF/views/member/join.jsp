@@ -47,7 +47,7 @@
 												<input type="text" class="form-control" name="us_id" id="us_id" placeholder="아이디를 입력해 주세요.">
 											</div>
 											<div class="col-2">
-												<button type="button" class="btn btn-outline-info" id="idCheck">ID 중복검사</button>
+												<button type="button" class="btn btn-outline-info" id="idCheck">ID&nbsp;중복검사</button>
 											</div>
 											<div class="col-4">
 												<span class="yes_us_id">사용 가능한 아이디입니다.</span>
@@ -77,9 +77,9 @@
 										</div>
 										<div class="form-group row">
 											<label for="us_phone" class="col-2">전화번호</label>
-											<div class="col-3">
+											<div class="col-2">
 												<select class="form-control" name="us_phone_prefix" id="us_phone_prefix">
-													<option value="010">010</option>
+													<option value="010" selected>010</option>
 													<option value="011">011</option>
 													<option value="016">016</option>
 													<option value="017">017</option>
@@ -87,7 +87,7 @@
 													<option value="019">019</option>
 												</select>
 											</div>
-											<div class="col-7">
+											<div class="col-8">
 												<input type="text" class="form-control" name="us_phone" id="us_phone"
 													placeholder="나머지 번호를 '-' 없이 입력해 주세요.">
 											</div>
@@ -125,14 +125,11 @@
 										</div>
 										<div class="form-group row">
 											<label for="sample2_address" class="col-2">주소</label>
-											<div class="col-10">
+											<div class="col-5">
 												<input type="text" class="form-control" name="us_addr_basic" id="sample2_address"
 													placeholder="기본주소를 입력해 주세요.">
 											</div>
-										</div>
-										<div class="form-group row">
-											<label for="sample2_detailAddress" class="col-2">상세주소</label>
-											<div class="col-10">
+											<div class="col-5">
 												<input type="text" class="form-control" name="us_addr_detail" id="sample2_detailAddress"
 													placeholder="상세주소를 입력해 주세요.">
 												<input type="hidden" id="sample2_extraAddress" placeholder="참고항목">
