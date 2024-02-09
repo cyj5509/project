@@ -9,7 +9,7 @@
 		<meta name="description" content="">
 		<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 		<meta name="generator" content="Hugo 0.101.0">
-		<title>데브데이</title>
+		<title>데브데이&#58;&nbsp;회원탈퇴</title>
 
 		<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -32,35 +32,35 @@
 				<div class="text-center">
 					<div class="box box-primary">
 						<div class="box-header with-border">
-							<br>
-							<h3 class="box-title">회원탈퇴 인증 확인</h3>
-							<br>
-							<form role="form" id="deleteInfoForm" method="post" action="/member/delete_info">
+							<h1 class="box-title mt-5" id="getMemberInfo" style="text-align: center; margin-bottom: 60px;">
+								<b>탈퇴&nbsp;하기</b>
+							</h1>
+							<form role="form" id="deleteInfoForm" method="post" action="/member/info/delete">
 								<div class="box-body">
 									<div class="form-group row">
-										<label for="mem_id" class="col-2">아이디</label>
+										<label for="us_id" class="col-2">아이디</label>
 										<div class="col-10">
-											<input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="아이디 입력...">
+											<input type="text" class="form-control" name="us_id" id="us_id" placeholder="아이디를 입력해 주세요.">
 										</div>
 									</div>
 									<div class="form-group row">
-										<label for="mem_pw" class="col-2">비밀번호</label>
+										<label for="us_pw" class="col-2">비밀번호</label>
 										<div class="col-10">
-											<input type="password" class="form-control" name="mem_pw" id="mem_pw" placeholder="비밀번호 입력...">
+											<input type="password" class="form-control" name="us_pw" id="us_pw" placeholder="비밀번호를 입력해 주세요.">
 										</div>
 									</div>
 								</div>
-
 								<div class="box-footer">
-									<button type="button" class="btn btn-primary" id="btnDelete">탈퇴하기</button>
+									<button type="button" class="btn btn-primary" id="btnCancel">취소</button>
+									<button type="button" class="btn btn-danger" id="btnDelete">탈퇴</button>
 								</div>
 							</form>
 						</div>
 					</div>
 				</div>
+				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			</div>
 
-				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 				<script>
@@ -73,9 +73,30 @@
 
 						let deleteInfoForm = $("#deleteInfoForm");
 
+						// 취소 버튼 클릭 이벤트
+						$("#btnCancel").click(function () {
+							location.href = "/";
+						});
+
+						// 탈퇴 버튼 클릭 이벤트
 						$("#btnDelete").click(function () {
 							// e.preventDefault(); // button type="submit"인 경우 필요 
-							if (confirm("정말 탈퇴하시겠습니까?")) {
+
+							let us_id = $("#us_id").val().trim();
+							let us_pw = $("#us_pw").val().trim();
+
+							if (!us_id) {
+								alert("아이디를 입력해 주세요.")
+								$("#us_id").focus();
+								return;
+							}
+							if (!us_pw) {
+								alert("비밀번호를 입력해 주세요.")
+								$("#us_pw").focus();
+								return;
+							}
+
+							if (confirm("데브데이를 정말로 탈퇴하시겠습니까?")) {
 								deleteInfoForm.submit();
 							}
 						});

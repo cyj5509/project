@@ -33,12 +33,12 @@
 }
 
 /* 아이디 사용 가능 */
-.us_id_yes{
-	color : blue;
-	display : none;
+.yes_us_id{
+	display: none;
+	color: blue;
 }
 /* 아이디 사용 불가 */
-.us_id_no{
-	color : red;
-	display : none;
+.no_us_id{
+	display: none;
+	color: red;
 }

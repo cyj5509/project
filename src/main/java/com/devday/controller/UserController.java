@@ -170,7 +170,7 @@ public class UserController {
 	}
 
 	// 마이 페이지로의 이동 ─ 마이 페이지 폼(회원정보 조회 기능 담당)
-	@GetMapping("/my_page")
+	@GetMapping("/myPage")
 	public void myPage(HttpSession session, Model model) {
 		
 		log.info("마이 페이지 진입");
@@ -183,7 +183,7 @@ public class UserController {
 	        return "redirect:/member/login"; // 비로그인 상태의 경우 로그인 페이지로 이동(login.jsp)
 	    }
 	    (기존 코드...)
-	    return "member/my_page"; // 로그인 상태 -> 마이 페이지로 이동(my_page.jsp)
+	    return "member/myPage"; // 로그인 상태 -> 마이 페이지로 이동(myPage.jsp)
 	    */
 	   
 	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
@@ -203,24 +203,31 @@ public class UserController {
 	}
 
 	// 회원수정 기능 구현
-	@PostMapping("/modify_info")
-	public String modifyInfo(UserVO us_vo, HttpSession session, RedirectAttributes rttr) throws Exception {
+	@PostMapping("/info/modify")
+	public String modifyInfo(UserVO us_vo, HttpSession session, RedirectAttributes rttr,
+							 @RequestParam("currentPw") String currentPw) throws Exception {
 
 		UserVO db_vo = (UserVO) session.getAttribute("userStatus");
 		String us_id = db_vo.getUs_id();
 		
 		// 로그인된 사용자의 ID를 'vo' 객체에 설정
 		us_vo.setUs_id(us_id); // String us_id = ((MemberVO) session.getAttribute("userStatus")).getUs_id();
-		
 		log.info("수정 전 회원정보: " + db_vo); // db_vo: 세션에 현재 로그인된 사용자의 정보
+	
+		String storedPw = userService.isPwMatch(us_id); // DB에서 사용자 ID에 해당하는 비밀번호 조회
+	    if (!passwordEncoder.matches(currentPw, storedPw)) {
+	    	// 입력받은 비밀번호와 DB에 저장된 비밀번호 비교
+	        rttr.addFlashAttribute("msg", "pwError");
+	        return "redirect:/member/info/modify"; // 비밀번호 불일치 시, 회원 수정 페이지로 리디렉션
+	    }
 		
+		// 비밀번호 일치 시 회원 정보 수정 로직 수행
 		userService.modify(us_vo); // 회원수정 관련 메서드 호출
 		log.info("수정 후 회원정보: " + us_vo); // vo: 클라이언트 단에서 사용자가 입력한 수정 데이터
 
 		// 세션 정보를 최신 상태로 업데이트(수정된 정보를 활용할 경우)
 		// db_vo.setUs_email(vo.getUs_email());
 		session.setAttribute("userStatus", us_vo);
-
 		rttr.addFlashAttribute("msg", "modify"); // 리디렉션되는 메인 페이지(main.jsp)에서 사용
 
 		return "redirect:/";
@@ -234,7 +241,7 @@ public class UserController {
 	}
 
 	// 회원탈퇴 기능 구현
-	@PostMapping("/delete_info")
+	@PostMapping("/info/delete")
 	public String deleteInfo(LoginDTO dto, HttpSession session, RedirectAttributes rttr) throws Exception {
 
 		log.info("회원탈퇴 요청");
@@ -255,14 +262,14 @@ public class UserController {
 				session.invalidate(); //  전체 세션 무효화
 				rttr.addFlashAttribute("msg", "delete");
 			} else {
-				url = "/member/deleteInfo"; // 회원인증 페이지 이동
-				msg = "비밀번호가 일치하지 않습니다.";
+				url = "/member/info/delete"; // 회원인증 페이지 이동
+				msg = "비밀번호가 일치하지 않습니다. 다시 입력해 주세요.";
 				rttr.addFlashAttribute("msg", msg); 
 			}
 		} else {
 			// 아이디가 존재하지 않거나 빈 칸으로 둔 경우
-			url = "/member/deleteInfo"; // 회원인증 페이지 이동
-			msg = "아이디를 다시 입력해주세요.";
+			url = "/member/info/delete"; // 회원인증 페이지 이동
+			msg = "아이디가 일치하지 않습니다. 다시 입력해 주세요.";
 			rttr.addFlashAttribute("msg", msg); 
 		}
 
@@ -335,8 +342,7 @@ public class UserController {
 		}
 		return entity;
 	}
-
-
+	
 	// 비밀번호 재설정 기능 구현
 	@PostMapping("/reset_pw")
 	public ResponseEntity<String> resetPw(@RequestParam("us_id") String us_id,
@@ -373,5 +379,4 @@ public class UserController {
 
 	    return entity;
 	}
-	
 }

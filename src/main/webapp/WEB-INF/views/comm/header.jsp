@@ -15,7 +15,7 @@
                         <a href="/member/logout" class="nav-item">로그아웃(${sessionScope.userStatus.us_id}님)</a>
                     </c:if>
                     &#124;
-                    <a href="/member/my_page" class="nav-item">마이페이지</a>
+                    <a href="/member/myPage" class="nav-item">마이페이지</a>
                     &#124;
                     <a href="/user/cart/usCartList" class="nav-item">장바구니</a>
                     &#124;

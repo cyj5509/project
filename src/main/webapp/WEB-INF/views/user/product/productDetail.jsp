@@ -11,7 +11,7 @@
 				<meta name="description" content="">
 				<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 				<meta name="generator" content="Hugo 0.101.0">
-				<title>데브데이&#58; 상품조회</title>
+				<title>데브데이&#58;&nbsp;상품조회</title>
 
 				<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
@@ -241,7 +241,6 @@
 									</form>
 								</div>
 							</div>
-
 							<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 						</div> <!-- container 닫는 태그 -->
 
