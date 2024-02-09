@@ -9,7 +9,8 @@
 
 0. 메인 페이지
 
-![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/2c49a7b1-5d50-415a-8fad-9c84f3fc8e45)
+![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/0136fcf0-5791-44ee-9700-fe0673ccf5a0)
+
 
 
 2. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정)
