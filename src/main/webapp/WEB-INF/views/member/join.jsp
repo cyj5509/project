@@ -57,7 +57,8 @@
 										<div class="form-group row">
 											<label for="us_pw1" class="col-2">비밀번호</label>
 											<div class="col-4">
-												<input type="password" class="form-control" name="us_pw" id="us_pw1" placeholder="비밀번호를 입력해 주세요.">
+												<input type="password" class="form-control" name="us_pw" id="us_pw1"
+													placeholder="비밀번호를 입력해 주세요.">
 											</div>
 											<label for="us_pw2" class="col-2">비밀번호 확인</label>
 											<div class="col-4">
@@ -76,9 +77,19 @@
 										</div>
 										<div class="form-group row">
 											<label for="us_phone" class="col-2">전화번호</label>
-											<div class="col-10">
+											<div class="col-3">
+												<select class="form-control" name="us_phone_prefix" id="us_phone_prefix">
+													<option value="010">010</option>
+													<option value="011">011</option>
+													<option value="016">016</option>
+													<option value="017">017</option>
+													<option value="018">018</option>
+													<option value="019">019</option>
+												</select>
+											</div>
+											<div class="col-7">
 												<input type="text" class="form-control" name="us_phone" id="us_phone"
-													placeholder="전화번호를 '-' 없이 입력해 주세요.">
+													placeholder="나머지 번호를 '-' 없이 입력해 주세요.">
 											</div>
 										</div>
 										<div class="form-group row">
@@ -139,197 +150,235 @@
 				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 			</div>
 
-				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
-					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
+			<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
+				<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
-						<script>
+					<script>
 
-							$(document).ready(function () {
+						$(document).ready(function () {
 
-								let userIdCheck = false; // 아이디 중복 사용 유무 확인
+							let userIdCheck = false; // 아이디 중복 사용 유무 확인
 
-								// JS 문법: document.getElementById("idCheck");
-								$("#idCheck").click(function () {
-									// alert("아이디 중복 확인");
-									if ($("#us_id").val() == "") {
-										alert("아이디가 입력되지 않았습니다. 아이디를 입력해 주세요.");
-										$("#us_id").focus();
-										return;
-									}
+							// JS 문법: document.getElementById("idCheck");
+							$("#idCheck").click(function () {
 
-									// 아이디 중복 검사 기능 구현
-									$.ajax({
-										url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
-										type: 'get', // get or post
-										dataType: 'text', // <String>
-										data: { us_id: $("#us_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
-										success: function (result) { // success: function (매개변수명) { 
-											if (result == "yes") {
-												$('.yes_us_id').css("display", "inline-block");
-												$('.no_us_id').css("display", "none");
-												userIdCheck = true; // let userIdCheck = false;
-											} else {
-												$('.no_us_id').css("display", "inline-block");
-												$('.yes_us_id').css("display", "none");
-												userIdCheck = false;
-												// $("#us_id").val()는 GETTER, $("#us_id").val("")는 SETTER
-												$("#us_id").val(""); // 아이디 텍스트 박스의 값을 지움
-												$("#us_id").focus(); // 포커스 기능
-											}
+								// 정규 표현식(Regular Expression) 정의
+								// '^'는 문자열의 시작을, '$'는 문자열의 끝을 의미함
+								// test(): 문자열이 패턴과 일치하면 true, 그렇지 않으면 false를 반환
+								let regexId = /^[A-Za-z0-9]{6,12}$/; // 아이디 검사식
+
+								if ($("#us_id").val() == "") {
+									alert("아이디가 입력되지 않았습니다. 아이디를 입력해 주세요.");
+									$("#us_id").focus();
+									return;
+								}
+								// 아이디 유효성 검사
+								let us_id = $('#us_id').val();
+								if (!regexId.test(us_id)) {
+									alert("아이디는 6~12자의 영문 대소문자와 숫자로만 입력해야 합니다.");
+									$('#us_id').focus();
+									$('.yes_us_id').css("display", "none");
+									// $('.no_us_id').css("display", "none");
+									return;
+								}
+
+								// 아이디 중복 검사 기능 구현
+								$.ajax({
+									url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
+									type: 'get', // get or post
+									dataType: 'text', // <String>
+									data: { us_id: $("#us_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
+									success: function (result) { // success: function (매개변수명) { 
+										if (result == "yes") {
+											$('.yes_us_id').css("display", "inline-block");
+											$('.no_us_id').css("display", "none");
+											userIdCheck = true; // let userIdCheck = false;
+										} else {
+											$('.no_us_id').css("display", "inline-block");
+											$('.yes_us_id').css("display", "none");
+											userIdCheck = false;
+											// $("#us_id").val()는 GETTER, $("#us_id").val("")는 SETTER
+											$("#us_id").focus(); // 포커스 기능
 										}
-									});
+									}
 								});
-
-								let isMailAuth = false;
-								let isConfirmAuth = false; // 인증번호를 입력하지 않은 상태
-
-								// 메일 인증 요청
-								$("#mailAuth").click(function () {
-
-									if ($("#us_email").val() == "") {
-										alert("이메일이 입력되지 않았습니다. 이메일을 입력해 주세요.");
-										$("#us_email").focus();
-										return;
-									}
-
-									$.ajax({
-										url: '/email/authCode', // @GetMapping("/authCode")
-										type: 'get',
-										dataType: 'text',
-										data: { receiverMail: $("#us_email").val() }, // EmailDTO ─ private String receiverMail;
-										success: function (result) {
-											if (result == "success") {
-												alert("인증번호가 이메일로 발송되었습니다. 이메일을 확인해 주세요.")
-												isMailAuth = true;
-											}
-										}
-									});
-								});
-
-
-								// 인증 확인: <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증 확인</button>
-								$("#btnConfirmAuth").click(function () {
-
-									if ($("#authCode").val() == "") {
-										alert("발송된 인증번호를 입력해 주세요.");
-										$("#authCode").focus();
-										return;
-									}
-
-									// 인증확인 요청
-									$.ajax({
-										url: '/email/confirmAuthCode',
-										type: 'get',
-										dataType: 'text', // / 스프링에서 보내는 데이터의 타입 ─ <String>
-										data: { authCode: $("#authCode").val() },
-										success: function (result) {
-											if (result == "success") {
-												alert("회원 인증이 정상적으로 처리되었습니다.");
-												isConfirmAuth = true;
-											} else if (result == "fail") {
-												alert("인증에 실패하였습니다. 나중에 다시 시도해 주세요.");
-												$("#authCode").val("");
-												isConfirmAuth = false;
-											} else if (result == "request") { // 세션 종료 시(기본 30분)
-												alert("인증에 실패하였습니다. 요청을 다시 시도해 주세요.");
-												$("#authCode").val("");
-												isConfirmAuth = false;
-											}
-										}
-									});
-								});
-
-								let joinForm = $("#joinForm"); // form 태그 참조: <form role="form" id="joinForm" method="post" action="/member/join">
-								
-								// 회원가입 버튼 클릭 시 동작
-								$("#btnJoin").click(function () {
-
-									let us_id = $('#us_id').val().trim();
-									let us_pw1 = $('#us_pw1').val().trim();
-									let us_pw2 = $('#us_pw2').val().trim();
-									let us_name = $('#us_name').val().trim();
-									let us_phone = $('#us_phone').val().trim();
-									let us_email = $('#us_email').val().trim();
-									let authCode = $('#authCode').val().trim();
-									let sample2_postcode = $('#sample2_postcode').val().trim();
-									let sample2_address = $('#sample2_address').val().trim();
-									let sample2_detailAddress = $('#sample2_detailAddress').val().trim();
-
-									// 회원가입 유효성 검사(JS 이용)
-									if (!us_id) {
-										alert("아이디를 입력해 주세요.");
-										$('#us_id').focus();
-										return;
-									}
-									if (!userIdCheck) {
-										alert("입력한 아이디의 사용 가능 여부를 확인해 주세요.");
-										return;
-									}
-									if (!us_pw1) {
-										alert("비밀번호를 입력해 주세요.");
-										$('#us_pw1').focus();
-										return;
-									}
-									if (!us_pw2) {
-										alert("비밀번호를 입력해 주세요.");
-										$('#us_pw2').focus();
-										return;
-									}
-									if (us_pw1 != us_pw2) {
-										alert("비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
-										$('#us_pw2').focus();
-										return;
-									}
-									if (!us_name) {
-										alert("이름을 입력해 주세요.");
-										$('#us_name').focus();
-										return;
-									}
-									if (!us_phone) {
-										alert("전화번호를 입력해 주세요.");
-										$('#us_phone').focus();
-										return;
-									}
-									if (!us_email) {
-										alert("이메일을 입력해 주세요.");
-										$('#us_email').focus();
-										return;
-									}
-									if (!isMailAuth) {
-										alert("이메일로 인증번호를 발송해 주세요.");
-										return;
-									}
-									if (!authCode) {
-										alert("인증번호를 입력해 주세요.");
-										$('#authCode').focus();
-										return;
-									}
-									if (!isConfirmAuth) {
-										alert("입력한 인증번호를 확인해 주세요.");
-										return;
-									}
-									if (!sample2_postcode) {
-										alert("우편번호를 입력해 주세요.");
-										$('#sample2_postcode').focus();
-										return;
-									}
-									if (!sample2_address) {
-										alert("기본주소를 입력해 주세요.");
-										$('#sample2_address').focus();
-										return;
-									}
-									if (!sample2_detailAddress) {
-										alert("상세주소를 입력해 주세요.");
-										$('#sample2_detailAddress').focus();
-										return;
-									}
-
-									// 폼 전송 작업(스프링 작업 이후)
-									joinForm.submit(); // let joinForm = $("#joinForm");
-								})
-
 							});
-						</script>
+
+							let isMailAuth = false;
+							let isConfirmAuth = false; // 인증번호를 입력하지 않은 상태
+
+							// 메일 인증 요청
+							$("#mailAuth").click(function () {
+
+								if ($("#us_email").val() == "") {
+									alert("이메일이 입력되지 않았습니다. 이메일을 입력해 주세요.");
+									$("#us_email").focus();
+									return;
+								}
+
+								$.ajax({
+									url: '/email/authCode', // @GetMapping("/authCode")
+									type: 'get',
+									dataType: 'text',
+									data: { receiverMail: $("#us_email").val() }, // EmailDTO ─ private String receiverMail;
+									success: function (result) {
+										if (result == "success") {
+											alert("인증번호가 이메일로 발송되었습니다. 이메일을 확인해 주세요.")
+											isMailAuth = true;
+										}
+									}
+								});
+							});
+
+
+							// 인증 확인: <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증 확인</button>
+							$("#btnConfirmAuth").click(function () {
+
+								if ($("#authCode").val() == "") {
+									alert("발송된 인증번호를 입력해 주세요.");
+									$("#authCode").focus();
+									return;
+								}
+
+								// 인증확인 요청
+								$.ajax({
+									url: '/email/confirmAuthCode',
+									type: 'get',
+									dataType: 'text', // / 스프링에서 보내는 데이터의 타입 ─ <String>
+									data: { authCode: $("#authCode").val() },
+									success: function (result) {
+										if (result == "success") {
+											alert("회원 인증이 정상적으로 처리되었습니다.");
+											isConfirmAuth = true;
+										} else if (result == "fail") {
+											alert("인증에 실패하였습니다. 나중에 다시 시도해 주세요.");
+											$("#authCode").val("");
+											isConfirmAuth = false;
+										} else if (result == "request") { // 세션 종료 시(기본 30분)
+											alert("인증에 실패하였습니다. 요청을 다시 시도해 주세요.");
+											$("#authCode").val("");
+											isConfirmAuth = false;
+										}
+									}
+								});
+							});
+
+							let joinForm = $("#joinForm"); // form 태그 참조: <form role="form" id="joinForm" method="post" action="/member/join">
+
+							// 회원가입 버튼 클릭 시 동작
+							$("#btnJoin").click(function () {
+
+								let us_id = $('#us_id').val().trim();
+								let us_pw1 = $('#us_pw1').val().trim();
+								let us_pw2 = $('#us_pw2').val().trim();
+								let us_name = $('#us_name').val().trim();
+								let us_phone = $('#us_phone').val().trim();
+								let us_email = $('#us_email').val().trim();
+								let authCode = $('#authCode').val().trim();
+								let sample2_postcode = $('#sample2_postcode').val().trim();
+								let sample2_address = $('#sample2_address').val().trim();
+								let sample2_detailAddress = $('#sample2_detailAddress').val().trim();
+
+								let hasLetter = /[A-Za-z]/.test(us_pw1); // 영문자 포함 (대문자 또는 소문자)
+								let hasNumbers = /\d/.test(us_pw1); // 숫자 포함
+								let hasSpecialChars = /[!@#$%^&*]/.test(us_pw1); // 특수문자 포함
+								let isValidLength = us_pw1.length >= 8 && us_pw1.length <= 16; // 길이 확인
+
+								// 나머지 번호에 해당하는 부분을 숫자만 가능하게끔 처리
+								let regexPhone = /^\d{7,8}$/; // 전화번호 검사식
+
+								// 이하 회원가입 유효성 검사
+								if (!us_id) {
+									alert("아이디를 입력해 주세요.");
+									$('#us_id').focus();
+									return;
+								}
+								if (!userIdCheck) {
+									alert("입력한 아이디의 사용 가능 여부를 확인해 주세요.");
+									return;
+								}
+								if (!us_pw1) {
+									alert("비밀번호를 입력해 주세요.");
+									$('#us_pw1').focus();
+									return;
+								}
+								if (!us_pw2) {
+									alert("비밀번호를 입력해 주세요.");
+									$('#us_pw2').focus();
+									return;
+								}
+								if (us_pw1 != us_pw2) {
+									alert("비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
+									$('#us_pw1').val('');
+									$('#us_pw2').val('');
+									$('#us_pw2').focus();
+									return;
+								}
+								// 비밀번호 유효성 검사
+								if (!hasLetter || !hasNumbers || !hasSpecialChars || !isValidLength) {
+									alert("비밀번호는 8~16자의 영문자, 숫자 및 특수문자(!@#$%^&*)를 모두 포함해야 합니다.");
+									$('#us_pw1').val('');
+									$('#us_pw2').val('');
+									$('#us_pw1').focus();
+									return;
+								}
+								if (!us_name) {
+									alert("이름을 입력해 주세요.");
+									$('#us_name').focus();
+									return;
+								}
+								if (!us_phone) {
+									alert("전화번호를 입력해 주세요.");
+									$('#us_phone').focus();
+									return;
+								}
+								// 전화번호 유효성 검사
+								if (!regexPhone.test(us_phone)) {
+									alert("전화번호는 앞자리를 제외한 나머지 7~8자의 숫자만 입력해야 합니다.");
+									$('#us_phone').val('');
+									$('#us_phone').focus();
+									return;
+								}
+								if (!us_email) {
+									alert("이메일을 입력해 주세요.");
+									$('#us_email').focus();
+									return;
+								}
+								if (!isMailAuth) {
+									alert("인증번호를 발송해 주세요.");
+									return;
+								}
+								if (!authCode) {
+									alert("인증번호를 입력해 주세요.");
+									$('#authCode').focus();
+									return;
+								}
+								if (!isConfirmAuth) {
+									alert("입력한 인증번호를 확인해 주세요.");
+									return;
+								}
+								if (!sample2_postcode) {
+									alert("우편번호를 입력해 주세요.");
+									$('#sample2_postcode').focus();
+									return;
+								}
+								if (!sample2_address) {
+									alert("기본주소를 입력해 주세요.");
+									$('#sample2_address').focus();
+									return;
+								}
+								if (!sample2_detailAddress) {
+									alert("상세주소를 입력해 주세요.");
+									$('#sample2_detailAddress').focus();
+									return;
+								}
+
+								// 폼 전송 작업(스프링 작업 이후)
+								joinForm.submit(); // let joinForm = $("#joinForm");
+							})
+
+						});
+					</script>
 
 	</body>
 

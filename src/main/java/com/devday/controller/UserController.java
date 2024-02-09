@@ -45,16 +45,20 @@ public class UserController {
 
 	// 회원가입 기능 구현
 	@PostMapping("/join")
-	public String join(UserVO us_vo, RedirectAttributes rttr) throws Exception { 
+	public String join(@RequestParam("us_phone_prefix") String us_phone_prefix,
+            		   @RequestParam("us_phone") String us_phone,
+            		   UserVO us_vo, RedirectAttributes rttr) throws Exception { 
 		
 		log.info("암호화 처리 전 회원정보: " + us_vo);
-		log.info("암호화 처리 전 비밀번호: " + us_vo.getUs_pw());
 		
 		us_vo.setUs_pw(passwordEncoder.encode(us_vo.getUs_pw())); // 비밀번호 암호화 처리
+		// 전화번호 전체를 합침
+	    String fullPhoneNumber = us_phone_prefix + us_phone;
+	    us_vo.setUs_phone(fullPhoneNumber); // UserVO 객체에 전체 전화번호 설정
+	    
 		userService.join(us_vo); // 회원가입 관련 메서드 호출
 		
 		log.info("암호화 처리 후 회원정보: " + us_vo);
-		log.info("암호화 처리 후 비밀번호: " + us_vo.getUs_pw());
 		
 		// 회원가입 후 환영인사
 		String msg = "환영합니다! " + us_vo.getUs_id() + "님, 회원가입이 완료되었습니다.";
