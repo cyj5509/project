@@ -96,7 +96,7 @@
 											<label for="us_email" class="col-2">이메일</label>
 											<div class="col-7">
 												<input type="email" class="form-control" name="us_email" id="us_email"
-													placeholder="이메일을 입력해 주세요.">
+													placeholder="이메일을 입력해 주세요." required>
 											</div>
 											<div class="col-3">
 												<button type="button" class="btn btn-outline-info" id="mailAuth">인증번호 발송</button>
@@ -201,14 +201,22 @@
 								});
 							});
 
-							let isMailAuth = false;
+							let isMailAuth = false; // 인증번호를 발송하지 않은 상태
 							let isConfirmAuth = false; // 인증번호를 입력하지 않은 상태
 
 							// 메일 인증 요청
 							$("#mailAuth").click(function () {
 
-								if ($("#us_email").val() == "") {
+								let us_email = $("#us_email").val();
+								let regexEmail = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/;
+
+								if (us_email == "") {
 									alert("이메일이 입력되지 않았습니다. 이메일을 입력해 주세요.");
+									$("#us_email").focus();
+									return;
+								}
+								if (!regexEmail.test(us_email)) {
+									alert("유효하지 않은 이메일 형식입니다. 다시 입력해 주세요.");
 									$("#us_email").focus();
 									return;
 								}

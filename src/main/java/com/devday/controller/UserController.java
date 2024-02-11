@@ -188,8 +188,9 @@ public class UserController {
 	    (기존 코드...)
 	    return "member/myPage"; // 로그인 상태 -> 마이 페이지로 이동(myPage.jsp)
 	    */
-	   
-	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
+		UserVO db_vo = (UserVO) session.getAttribute("userStatus");
+		String us_id = db_vo.getUs_id();
+		
 		UserVO us_vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
 		model.addAttribute("us_vo", us_vo);
 	}
@@ -200,21 +201,27 @@ public class UserController {
 		
 		log.info("회원수정 페이지 진입");
 		
-	    String us_id = ((UserVO) session.getAttribute("userStatus")).getUs_id();
-		UserVO vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
-		model.addAttribute("vo", vo);
+		UserVO db_vo = (UserVO) session.getAttribute("userStatus");
+		String us_id = db_vo.getUs_id();
+		
+		UserVO us_vo = userService.login(us_id); // userService.login(us_id): 로그인 관련 메서드 호출
+		model.addAttribute("us_vo", us_vo);
 	}
 
 	// 회원수정 기능 구현
 	@PostMapping("/info/modify")
 	public String modifyInfo(UserVO us_vo, HttpSession session, RedirectAttributes rttr,
-							 @RequestParam("currentPw") String currentPw) throws Exception {
+							 @RequestParam("currentPw") String currentPw,
+							 @RequestParam("us_phone_prefix") String us_phone_prefix) throws Exception {
 
+		// 로그인된 사용자의 ID를 UserVO 객체에 설정
 		UserVO db_vo = (UserVO) session.getAttribute("userStatus");
 		String us_id = db_vo.getUs_id();
+		us_vo.setUs_id(us_id);
 		
-		// 로그인된 사용자의 ID를 'vo' 객체에 설정
-		us_vo.setUs_id(us_id); // String us_id = ((MemberVO) session.getAttribute("userStatus")).getUs_id();
+		// 전화번호 전체를 합침
+	    String fullPhoneNumber = us_phone_prefix + us_vo.getUs_phone(); // 앞자리와 나머지 번호를 합칩
+	    us_vo.setUs_phone(fullPhoneNumber); // 합친 전화번호를 UserVO 객체에 설정
 		log.info("수정 전 회원정보: " + db_vo); // db_vo: 세션에 현재 로그인된 사용자의 정보
 	
 		String storedPw = userService.isPwMatch(us_id); // DB에서 사용자 ID에 해당하는 비밀번호 조회

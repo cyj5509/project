@@ -33,7 +33,7 @@
 					<div class="box box-primary">
 						<div class="box-header with-border">
 							<h1 class="box-title mt-5" id="getMemberInfo" style="text-align: center; margin-bottom: 60px;">
-								<b>탈퇴&nbsp;하기</b>
+								<b>회원&nbsp;탈퇴</b>
 							</h1>
 							<form role="form" id="deleteInfoForm" method="post" action="/member/info/delete">
 								<div class="box-body">
@@ -51,7 +51,7 @@
 									</div>
 								</div>
 								<div class="box-footer">
-									<button type="button" class="btn btn-primary" id="btnCancel">취소</button>
+									<button type="button" class="btn btn-secondary" id="btnCancel">취소</button>
 									<button type="button" class="btn btn-danger" id="btnDelete">탈퇴</button>
 								</div>
 							</form>
@@ -75,7 +75,7 @@
 
 						// 취소 버튼 클릭 이벤트
 						$("#btnCancel").click(function () {
-							location.href = "/";
+							location.href = "/member/myPage";
 						});
 
 						// 탈퇴 버튼 클릭 이벤트

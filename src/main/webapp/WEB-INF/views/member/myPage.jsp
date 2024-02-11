@@ -40,16 +40,23 @@
 										<div class="login-info">
 											<div class="form-group row">
 												<label for="us_id" class="col-2">아이디</label>
-												<div class="col-7">
+												<div class="col-8">
 													<input type="text" class="form-control" name="us_id" id="us_id" value="${us_vo.us_id}"
 														readonly>
 												</div>
-												<div class="col-3">
+												<div class="col-2">
 													<button type="button" class="btn btn-outline-info" id="btnChangePw">비밀번호 변경</button>
 												</div>
 											</div>
 										</div>
 										<div class="member-info">
+											<div class="form-group row">
+												<label for="us_name" class="col-2">이름</label>
+												<div class="col-10">
+													<input type="text" class="form-control" name="us_name" id="us_name" value="${us_vo.us_name}"
+														readonly>
+												</div>
+											</div>
 											<div class="form-group row">
 												<label for="us_phone" class="col-2">전화번호</label>
 												<div class="col-10">
@@ -80,7 +87,7 @@
 										</div>
 									</div><br />
 									<div class="box-footer">
-										<button type="button" class="btn btn-warning" id="btnModify">수정하기</button>
+										<button type="button" class="btn btn-primary" id="btnModify">수정하기</button>
 										<button type="button" class="btn btn-danger" id="btnDelete">탈퇴하기</button>
 									</div>
 								</div>
@@ -130,19 +137,31 @@
 						// JS 이벤트 등록: https://www.w3schools.com/js/js_htmldom_eventlistener.asp 
 						$(document).ready(function () {
 
-							// 비밀번호 재설정 처리
+							let us_phone = $("#us_phone").val(); // 서버에서 전달받은 전화번호
+							if (us_phone.length >= 10) {
+								let formattedPhone = us_phone.substring(0, 3) + "-" + us_phone.substring(3, 7) + "-" + us_phone.substring(7);
+								$("#us_phone").val(formattedPhone); // '-'가 포함된 형태로 값 설정
+							}
+							// 비밀번호 재설정 처리 1
 							$("#btnChangePw").click(function () {
+
 								$("#getMemberInfo").hide();
 								$("#modifyInfoSection").hide();
 								$("#pwResetSection").show();
 							});
 
+							// 비밀번호 재설정 처리 2
 							$("#btnResetPw").click(function () {
 
 								let us_id = $("#us_id").val(); // 현재 로그인한 사용자의 아이디로 초기화
 								let currentPw = $("input[name='currentPw']").val().trim();
 								let resetPw = $("input[name='newPw1']").val().trim();
 								let confirmPw = $("input[name='newPw2']").val().trim();
+
+								let hasLetter = /[A-Za-z]/.test(resetPw); // 영문자 포함 (대문자 또는 소문자)
+								let hasNumbers = /\d/.test(resetPw); // 숫자 포함
+								let hasSpecialChars = /[!@#$%^&*]/.test(us_pw1); // 특수문자 포함
+								let isValidLength = resetPw.length >= 8 && resetPw.length <= 16; // 길이 확인
 
 								if (!currentPw) {
 									alert("기존 비밀번호를 입력해 주세요.")
@@ -161,18 +180,27 @@
 								}
 								if (resetPw == confirmPw && (currentPw == resetPw || currentPw == confirmPw)) {
 									alert("현재 비밀번호와 변경할 비밀번호가 동일합니다. 다른 비밀번호를 입력해 주세요.");
-									$("input[name='newPw1']").val("");
-									$("input[name='newPw2']").val("");
+									$("input[name='newPw1']").val('');
+									$("input[name='newPw2']").val('');
 									$("input[name='newPw1']").focus();
 									return;
 								}
 								if (resetPw != confirmPw) {
 									alert("변경할 비밀번호가 일치하지 않습니다.");
-									$("input[name='newPw1']").val("");
-									$("input[name='newPw2']").val("");
+									$("input[name='newPw1']").val('');
+									$("input[name='newPw2']").val('');
 									$("input[name='newPw1']").focus();
 									return;
 								}
+								// 비밀번호 유효성 검사
+								if (!hasLetter || !hasNumbers || !hasSpecialChars || !isValidLength) {
+									alert("비밀번호는 8~16자의 영문자, 숫자 및 특수문자(!@#$%^&*)를 모두 포함해야 합니다.");
+									$('#resetPw').val('');
+									$('#confirmPw').val('');
+									$('#resetPw').focus();
+									return;
+								}
+
 								$.ajax({
 									url: '/member/reset_pw',
 									type: 'post',
