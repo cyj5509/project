@@ -9,7 +9,8 @@
 ![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/0136fcf0-5791-44ee-9700-fe0673ccf5a0)
 
 
-2. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정)
+2. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정![image](https://github.com/cyj5509/project/assets/139317478/4fb9c1f8-4a18-4ebf-bd85-90f6509c8185))
+
 3. 상품 관리(현재 작성 중인 부분!)
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
