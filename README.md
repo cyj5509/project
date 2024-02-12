@@ -3,7 +3,7 @@
 ![0-1  프로젝트](https://github.com/cyj5509/project/assets/139317478/63821322-2932-4b2b-96a6-03244fe0b82f)
 
 [1] 사용자 페이지
-1. 메인 페이지
+⒈ 메인 페이지
 
 (1) 각 섹션의 ‘더 알아보기’를 통한 해당 페이지로의 링크 제공
 ![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/0d19e796-12a6-41b6-8364-b10ea981c787)
@@ -11,7 +11,7 @@
 (2) 로그인한 계정에 따른 관리자 페이지로의 링크 표시/숨김
 ![0-3  메인페이지(관리자페이지)](https://github.com/cyj5509/project/assets/139317478/48f75d1d-bcec-4280-b652-1f992b428456)
 
-2. 회원 관리
+⒉ 회원 관리
 
 (1) 회원가입 페이지
 
@@ -22,7 +22,7 @@
  ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/a2cb0df3-80a9-4669-b27b-6833d2bc6b7d)
 
  
-3. 상품 관리(현재 작성 중인 부분!)
+⒊ 상품 관리(현재 작성 중인 부분!)
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
 ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/9a49f381-caaa-4774-83b3-18a756979ac4)
@@ -31,8 +31,8 @@
 ![1-2  상품관리05](https://github.com/cyj5509/project/assets/139317478/c495cd2b-8dcc-4ac0-9fef-1943f7c7d71d)
 
 
-4. 주문 관리(로직은 있음. md에 해당 내용 추가할 예정)
-5. 게시판 관리(로직은 있음. md에 해당 내용 수정할 예정)
+⒋ 주문 관리(로직은 있음. md에 해당 내용 추가할 예정)
+⒌ 게시판 관리(로직은 있음. md에 해당 내용 수정할 예정)
 ![최종01](https://github.com/cyj5509/project/assets/139317478/04561e4b-8e05-4c05-9dd7-a0780849d173)
 ![최종02](https://github.com/cyj5509/project/assets/139317478/d08defbf-7957-4a13-adf4-727f84b9b045)
 ![최종03](https://github.com/cyj5509/project/assets/139317478/bc58722d-8157-4e47-8cd1-8d82352d166c)
