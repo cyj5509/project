@@ -1,16 +1,32 @@
  # [개인] 쇼핑몰 프로젝트
 
-![0-1  프로젝트](https://github.com/cyj5509/project/assets/139317478/bbf85996-0374-467e-9128-7b10847ccff4)
+![0-1  프로젝트](https://github.com/cyj5509/project/assets/139317478/63821322-2932-4b2b-96a6-03244fe0b82f)
 
 [1] 사용자 페이지
 
 1. 메인 페이지
+   
+(1) 각 섹션의 ‘더 알아보기’를 통한 해당 페이지로의 링크 제공
 
-![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/0136fcf0-5791-44ee-9700-fe0673ccf5a0)
+![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/0d19e796-12a6-41b6-8364-b10ea981c787)
 
+(2) 로그인한 계정에 따른 관리자 페이지로의 링크 표시/숨김
 
-2. 회원 관리(로직은 있음. md에 해당 내용 추가할 예정![image](https://github.com/cyj5509/project/assets/139317478/4fb9c1f8-4a18-4ebf-bd85-90f6509c8185))
+![0-3  메인페이지(관리자페이지)](https://github.com/cyj5509/project/assets/139317478/48f75d1d-bcec-4280-b652-1f992b428456)
 
+2. 회원 관리
+
+(1) 회원가입 페이지
+
+ ① 회원가입 양식: 1의 (2)에서의 회원가입 링크를 통해 이동
+
+ ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/9370cae9-f112-40c6-ae3d-e712458b71d5)
+
+ ② 양식이 미작성된 경우, 가입 버튼 클릭 시의 알림 처리
+
+ ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/a2cb0df3-80a9-4669-b27b-6833d2bc6b7d)
+
+ 
 3. 상품 관리(현재 작성 중인 부분!)
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
