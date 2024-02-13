@@ -17,7 +17,7 @@
  (1) 회원가입 페이지
 
   ① 회원가입 양식: 1의 (2)에서의 '회원가입' 링크를 통해 이동
-  ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/9370cae9-f112-40c6-ae3d-e712458b71d5)
+  ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/0dfcebdf-7773-41db-b904-617896eea3c7)
 
   ② 양식이 미작성된 경우, 가입 버튼 클릭 시의 알림 처리
   ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/a2cb0df3-80a9-4669-b27b-6833d2bc6b7d)
