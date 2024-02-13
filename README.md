@@ -20,9 +20,10 @@
   ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/0dfcebdf-7773-41db-b904-617896eea3c7)
 
   ② 양식이 미작성된 상태에서 가입 버튼 클릭 시의 알림 처리
-  ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/a2cb0df3-80a9-4669-b27b-6833d2bc6b7d)
+  ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/eb876ea8-62e8-4789-bc01-02ba1508aca6)
   
   ③ '로그인 정보'에서의 유효성 검사
+  
   ④ '회원 정보'에서의 유효성 검사
 
  (2) 로그인 정보
