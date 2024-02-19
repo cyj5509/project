@@ -31,7 +31,7 @@
 
  (2) 로그인 정보
 
-⒊ 상품 관리(현재 작성 중인 부분!)
+⒊ 상품 관리
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
 ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/9a49f381-caaa-4774-83b3-18a756979ac4)
