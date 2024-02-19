@@ -19,7 +19,7 @@
   ① 회원가입 양식: 1의 (2)에서의 '회원가입' 링크를 통해 이동(로그인 정보와 회원 정보로 구분)
   ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/fb28bcff-0618-49df-bb3f-6306945ee4d3)
 
-  ② 양식이 미작성된 상태에서 가입 버튼 클릭 시의 알림 처리
+  ② 양식이 미작성된 상태에서 가입 버튼 클릭 시의 알림들
   ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/9003f0cf-b27f-4a2a-9ded-6e0a1340545f)
   
   ③ '로그인 정보'에서의 유효성 검사
@@ -42,15 +42,23 @@
   ![1-1  회원관리07](https://github.com/cyj5509/project/assets/139317478/d8e00d95-0c0e-496d-8af3-422e105f6cf5)
 
   ⅳ) 주소의 유효성 검사는 따로 없고, 직접 입력하거나 우편번호 서비스 API 활용
-  ![1-1  회원관리08](https://github.com/cyj5509/project/assets/139317478/86e5d607-c3b8-4539-ac89-76c84e3f9134)
-
+  ![1-1  회원관리08](https://github.com/cyj5509/project/assets/139317478/2cd49120-6cd8-42cc-928d-478b2f365767)
+  
  (2) 로그인 정보: 아이디 및 비밀번호
+ 
+  ① 유효성 검사를 통과한 후 가입 버튼을 클릭한 경우
+  ![1-1  회원관리09](https://github.com/cyj5509/project/assets/139317478/185bfbcb-5893-469d-9657-566fb4a1a8a0)
+
+  ② 작성했던 로그인 정보를 바탕으로 로그인하는 경우
+  ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/eb87123e-a2f3-430c-911c-d8219759f7a0)
+
 
 ⒊ 상품 관리
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
 ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/9a49f381-caaa-4774-83b3-18a756979ac4)
-![1-2  상품관리03](https://github.com/cyj5509/project/assets/139317478/19e43a29-bbad-425b-aaed-d212593eb553)
+![1-2  상품관리03](https://github.com/cyj5509/project/assets/![1-1  회원관리08](https://github.com/cyj5509/project/assets/139317478/ecfa16ef-7dd5-4fc3-9840-fd69c75c893c)
+139317478/19e43a29-bbad-425b-aaed-d212593eb553)
 ![1-2  상품관리04](https://github.com/cyj5509/project/assets/139317478/119ed63a-7160-4613-a3f8-6c7ded90e702)
 ![1-2  상품관리05](https://github.com/cyj5509/project/assets/139317478/c495cd2b-8dcc-4ac0-9fef-1943f7c7d71d)
 
