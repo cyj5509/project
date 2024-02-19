@@ -33,8 +33,9 @@
   ④ '회원 정보'에서의 유효성 검사
   
   ⅰ) 이름/전화번호의 유효성 검사: 이름/전화번호 입력 후 '가입' 버튼 클릭 시
-  ![1-1  회원관리05](https://github.com/cyj5509/project/assets/139317478/8d0eb56a-d88d-4bd3-828d-f59c15df27ce)
+  ![1-1  회원관리05](https://github.com/cyj5509/project/assets/139317478/355dbfbd-89a5-486b-a93e-8f4316a290dd)
 
+  
   ⅱ)
   ⅲ)
   ⅳ)
