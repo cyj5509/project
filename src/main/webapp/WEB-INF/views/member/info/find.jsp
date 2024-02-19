@@ -9,13 +9,39 @@
 		<meta name="description" content="">
 		<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 		<meta name="generator" content="Hugo 0.101.0">
-		<title>데브데이</title>
+		<title>데브데이&#58;&nbsp;회원정보찾기</title>
 
 		<%@include file="/WEB-INF/views/comm/plugIn1.jsp" %>
 
 			<!-- CSS 파일 링크 -->
 			<link rel="stylesheet" href="/css/common/header.css">
 			<link rel="stylesheet" href="/css/member/login.css">
+
+			<style>
+				/* #findIdSections, #findPwSections {
+					width: auto;
+				} */
+
+				#btnConfirmId,
+				#btnDoLogin,
+				#btnFindPw,
+				#btnIdCheck,
+				#btnNameEmail,
+				#btnResetPw {
+					width: 80px;
+					height: 40px;
+					padding: 5px 10px;
+					/* 외부 여백 설정 */
+					font-size: 20px;
+					/* 글자 크기 설정 */
+					vertical-align: middle;
+					/* 수직 정렬 */
+				}
+
+				input[readonly] {
+					background-color: white !important;
+				}
+			</style>
 
 	</head>
 
@@ -91,7 +117,8 @@
 										<div class="box-footer">
 											<div class="form-group row">
 												<div class="col-6">
-													<button type="button" class="btn btn-primary login-btn" name="btnDoLogin">로그인하기</button>
+													<button type="button" class="btn btn-success login-btn" name="btnDoLogin" 
+														style="background-color: green !important;">로그인하기</button>
 												</div>
 												<div class="col-6">
 													<button type="button" class="btn btn-primary login-btn" name="btnFindPw">비밀번호 찾기</button>
@@ -165,8 +192,7 @@
 										<div class="form-group row">
 											<label for="us_pw1" class="col-4">새 비밀번호</label>
 											<div class="col-8">
-												<input type="password" class="form-control" name="us_pw" id="us_pw1"
-													placeholder="비밀번호를 입력해주세요">
+												<input type="password" class="form-control" name="us_pw" id="us_pw1" placeholder="비밀번호를 입력해주세요">
 											</div>
 											<label for="us_pw2" class="col-4">새 비밀번호 확인</label>
 											<div class="col-8">
@@ -181,7 +207,8 @@
 							</form>
 
 							<div class="login-footer">
-								<a href="/member/info/find" id="linkFindId">아이디 찾기</a> | <a href="/member/info/find" id="linkFindPw">비밀번호
+								<a href="/member/info/find" id="linkFindId">아이디 찾기</a> | <a href="/member/info/find"
+									id="linkFindPw">비밀번호
 									찾기</a> | <a href="/member/join">회원가입</a>
 							</div>
 
@@ -189,7 +216,7 @@
 					</div>
 				</div>
 			</div>
-				<%@include file="/WEB-INF/views/comm/footer.jsp" %>
+			<%@include file="/WEB-INF/views/comm/footer.jsp" %>
 				<%@include file="/WEB-INF/views/comm/postCode.jsp" %>
 					<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
@@ -201,20 +228,29 @@
 								$("#findPwSections").hide(); // 비밀번호 찾기 섹션
 
 								let activeSection = sessionStorage.getItem('activeSection');
-								if (activeSection === 'findId') {
+								if (activeSection == 'findId') {
 									$('#findIdSections').show();
-								} else if (activeSection === 'findPw') {
+								} else if (activeSection == 'findPw') {
 									$('#findPwSections').show();
 								}
 								// sessionStorage.removeItem('activeSection'); // 사용 후 정보 제거
+								
 
 								// 아이디 찾기 링크 클릭 이벤트
 								// <a href="/member/findId" id="linkFindId">
 								$("#linkFindId").on("click", function (e) {
+
 									e.preventDefault(); // 기본 이벤트 방지
+									
+									us_id = $('#idCheck').val('');
+
 									$("#findPwSections").hide(); // 비밀번호 찾기 섹션 숨기기
 									$("#findIdSections").show(); // 아이디 찾기 섹션 보이기
-									// 비밀번호 찾기 섹션의 상태 초기화
+
+									// 비밀번호 찾기 섹션의 입력 필드 초기화
+									$('#findPwSections input[type="text"], #findPwSections input[type="email"]').val('');
+
+									// 비밀번호 찾기 섹션의 상태 초기화 로직
 									$("#idCheckSection").show();
 									$("#nameEmailSection").hide();
 									$("#pwResetSection").hide();
@@ -223,10 +259,15 @@
 								// 비밀번호 찾기 링크 클릭 이벤트
 								// <a href="/member/findPw" id="linkFindPw">
 								$("#linkFindPw").on("click", function (e) {
+
 									e.preventDefault(); // 기본 이벤트 방지
 									$("#findIdSections").hide(); // 아이디 찾기 섹션 숨기기
 									$("#findPwSections").show(); // 비밀번호 찾기 섹션 보이기
-									// 아이디 찾기 섹션의 상태 초기화
+
+									// 아이디 찾기 섹션의 입력 필드 초기화
+									$('#findIdSections input[type="text"], #findIdSections input[type="email"]').val('');
+
+									// 아이디 찾기 섹션의 상태 초기화 로직
 									$("#confirmSection").show();
 									$("#showIdSection").hide();
 								});
@@ -235,7 +276,7 @@
 								let us_name = ""; // 아이디 및 비밀번호 찾기용
 								let us_email = ""; // 아이디 및 비밀번호 찾기용
 								let authCode = ""; // 아이디 및 비밀번호 찾기용
-								let us_id = ""; // 비밀번호 찾기용
+								let us_id = $('#idCheck').val(); // 비밀번호 찾기용
 
 								// 입력 필드의 값이 변경될 때마다 해당 필드 업데이트
 								$("input[name='us_name']").on('input', function () {
@@ -256,22 +297,22 @@
 								// 아이디 찾기 제1단계: 이름과 이메일을 통한 아이디 찾기
 								$("#btnConfirmId").click(function () {
 									if (us_name == "") {
-										alert("이름이 입력되지 않았습니다.");
+										alert("이름을 입력해 주세요.");
 										$("input[name='us_name']").focus();
 										return;
 									}
 									if (us_email == "") {
-										alert("이메일이 입력되지 않았습니다.");
+										alert("이메일을 입력해 주세요.");
 										$("input[name='us_email']").focus();
 										return;
 									}
 									if (authCode == "") {
-										alert("메일로 발송된 인증번호를 입력해 주세요.");
+										alert("인증번호를 입력해 주세요.");
 										$("input[name='authCode']").focus();
 										return;
 									}
 									if (!isConfirmAuth) {
-										alert("인증번호 확인이 필요합니다.");
+										alert("입력한 인증번호를 확인해 주세요.");
 										return;
 									}
 									$.ajax({
@@ -279,20 +320,16 @@
 										type: 'post',
 										dataType: 'json',
 										data: { us_name: us_name, us_email: us_email },
-										success: function (memberVO) {
-											if (memberVO) {
-												$("input[name='us_id']").val(memberVO.us_id)
-												$("#confirmSection").hide();
-												$("#showIdSection").show();
-												let joinDate = new Date(memberVO.us_join_date);
-												let formatDate = joinDate.getFullYear() + '년 ' +
-													(joinDate.getMonth() + 1) + '월 ' + // getMonth()는 0부터 시작
-													joinDate.getDate() + '일';
-												$("input[name='us_join_date']").val(formatDate);
-											} else {
-												// 사용자가 존재하지 않는 경우의 처리
-												alert("해당 정보로 등록된 사용자가 없습니다.");
-											}
+										success: function (response) {
+											// 사용자를 찾은 경우의 처리
+											$("input[name='us_id']").val(response.us_id)
+											$("#confirmSection").hide();
+											$("#showIdSection").show();
+											let joinDate = new Date(response.us_join_date);
+											let formatDate = joinDate.getFullYear() + '년 ' +
+												(joinDate.getMonth() + 1) + '월 ' + // getMonth()는 0부터 시작
+												joinDate.getDate() + '일';
+											$("input[name='us_join_date']").val(formatDate);
 										}
 									});
 								});
@@ -302,7 +339,16 @@
 									location.href = "/member/login"
 								});
 								$("button[name='btnFindPw']").click(function () {
-									location.href = "/member/info/find"
+									// location.href = "/member/info/find"
+									$("#findIdSections").hide(); // 아이디 찾기 섹션 숨기기
+									$("#findPwSections").show(); // 비밀번호 찾기 섹션 보이기
+
+									// 아이디 찾기 섹션의 입력 필드 초기화
+									$('#findIdSections input[type="text"], #findIdSections input[type="email"]').val('');
+
+									// 아이디 찾기 섹션의 상태 초기화 로직
+									$("#confirmSection").show();
+									$("#showIdSection").hide();
 								});
 
 								// 이하 비밀번호 찾기 관련
@@ -311,7 +357,7 @@
 								// 다음 버튼을 클릭 시 아이디가 빈 칸인 경우 동작
 								$("#btnIdCheck").click(function () {
 									if (us_id == "") {
-										alert("아이디가 입력되지 않았습니다.");
+										alert("아이디를 입력해 주세요.");
 										$("#idCheck").focus();
 										return; // 빈 칸일 때 함수 실행을 멈춤(존재하지 않는 경우)
 									}
@@ -329,7 +375,7 @@
 												// confirmInfoForm.submit(); // 세션에 아이디를 저장하고 비밀번호 찾기 페이지로 이동
 												// submit()은 서버에서 데이터 처리가 필요할 때. window.location.href는 단순 페이지 이동
 											} else if (response == "no") {
-												alert("존재하지 않는 아이디입니다.");
+												alert("존재하지 않는 아이디입니다. 확인 후 다시 시도해 주세요.");
 												$("#idCheck").var("");
 											}
 										}
@@ -342,30 +388,36 @@
 								$("button[name='btnMailAuth']").on("click", function () {
 									// 이름을 입력하지 않고 발송 버튼을 누를 시에도 작동하게끔 하기 위함
 									if (us_name == "") {
-										alert("이름이 입력되지 않았습니다.");
+										alert("이름을 입력해 주세요.");
 										$("input[name='us_name']").focus();
 										return;
 									}
 									if (us_email == "") {
-										alert("이메일이 입력되지 않았습니다.");
+										alert("이메일을 입력해 주세요.");
 										$("input[name='us_email']").focus();
 										return;
 									}
+
 									let data = { us_name: us_name, receiverMail: us_email };
 
-									if (activeSection === 'findPw') {
-										data.us_id = us_id;
+									if (activeSection == 'findPw') {
+										data.us_id = us_id; // 비밀번호 찾기의 경우
 									}
+
 									$.ajax({
 										url: '/email/authCode', // @GetMapping("/authCode")
 										type: 'get',
 										dataType: 'text', // 스프링에서 보내는 데이터의 타입 ─ <String> -> "success" -> text
 										data: data, // let data = { us_name: us_name, receiverMail: us_email };
 										success: function (result) {
-											if (result == "success") {
+											if (result == 'success') {
 												alert("인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.")
-											} else {
-												alert("이름이나 이메일이 잘못 입력되었습니다. 확인 후 다시 입력해 주세요."); // 에러 처리
+											} else if (result == 'noUserForId') {
+												// 아이디 찾기 요청에서 사용자를 찾지 못한 경우
+												alert("입력하신 정보로 등록된 사용자를 찾을 수 없습니다.");
+											} else if (result == 'noUserForPw') {
+												// 비밀번호 찾기 요청에서 사용자를 찾지 못한 경우
+												alert("이름이나 이메일이 잘못 입력되었습니다. 확인 후 다시 입력해 주세요.");
 											}
 										}
 									});
@@ -375,7 +427,7 @@
 								let isConfirmAuth = false;
 								$("button[name='btnConfirmAuth']").click(function () {
 									if (authCode == "") {
-										alert("메일로 발송된 인증번호를 입력해 주세요.");
+										alert("발송된 인증번호를 입력해 주세요.");
 										$("input[name='authCode']").focus();
 										return;
 									}
@@ -390,11 +442,11 @@
 												alert("회원 인증이 정상적으로 처리되었습니다.");
 												isConfirmAuth = true;
 											} else if (result == "fail") { // 인증 실패 시
-												alert("인증에 실패하였습니다. 다시 확인해 주세요.");
+												alert("인증에 실패하였습니다. 인증번호 확인 후 다시 시도해 주세요.");
 												$("input[name='authCode']").val("");
 												isConfirmAuth = false;
 											} else if (result == "request") { // 세션 종료 시(Default: 30분)
-												alert("메일 인증 요청을 다시 해주세요.");
+												alert("인증에 실패하였습니다. 인증번호 발송을 다시 요청해 주세요.");
 												$("input[name='authCode']").val("");
 												isConfirmAuth = false;
 											}
@@ -405,22 +457,22 @@
 								// 다음 버튼을 클릭 시 이름과 이메일이 빈 칸인 경우 동작
 								$("#btnNameEmail").click(function () {
 									if (us_name == "") {
-										alert("이름이 입력되지 않았습니다.");
+										alert("이름을 입력해 주세요.");
 										$("input[name='us_name']").focus();
 										return;
 									}
 									if (us_email == "") {
-										alert("이메일이 입력되지 않았습니다.");
+										alert("이메일을 입력해 주세요.");
 										$("input[name='us_email']").focus();
 										return;
 									}
 									if (authCode == "") {
-										alert("메일로 발송된 인증번호를 입력해 주세요.")
+										alert("발송된 인증번호를 입력해 주세요.")
 										$("input[name='authCode']").focus();
 										return;
 									}
 									if (!isConfirmAuth) {
-										alert("인증번호 확인이 필요합니다.");
+										alert("입력한 인증번호를 확인해 주세요.");
 										return;
 									}
 									// 임시 비밀번호 발송
@@ -434,7 +486,7 @@
 										},
 										success: function (response) {
 											if (response == "yes") {
-												if (!confirm("임시 비밀번호가 이메일로 전송되었습니다. 바로 로그인할 경우 확인을, 비밀번호 재설정 시 취소를 클릭해주세요.")) {
+												if (!confirm("임시 비밀번호가 이메일로 전송되었습니다. 임시 비밀번호로 로그인할 경우 확인을, 재설정을 원하시면 취소를 클릭해주세요.")) {
 													$("#idCheckSection").hide();
 													$("#nameEmailSection").hide();
 													$("#pwResetSection").show();

@@ -304,9 +304,11 @@ public class UserController {
 	    FindInfoDTO findInfoDTO = FindInfoDTO.ofFindId(us_name, us_email); // 아이디 찾기용 정적 팩토리 메서드 호출
 	    UserVO us_vo = userService.findId(findInfoDTO); 
 	    
-	    if (us_vo != null) {
-	      entity = new ResponseEntity<>(us_vo, HttpStatus.OK); // HTTP 상태 코드 200
-	    }
+		if (us_vo != null) {
+			entity = new ResponseEntity<>(us_vo, HttpStatus.OK); // 사용자를 찾은 경우
+		} else {
+			entity = new ResponseEntity<>(HttpStatus.NOT_FOUND); // 사용자를 찾지 못한 경우
+		}
 	    
 	    return entity;
 	}

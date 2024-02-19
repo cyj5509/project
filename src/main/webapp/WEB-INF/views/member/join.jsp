@@ -370,7 +370,7 @@
 									return;
 								}
 								if (!authCode) {
-									alert("인증번호를 입력해 주세요.");
+									alert("발송된 인증번호를 입력해 주세요.");
 									$('#authCode').focus();
 									return;
 								}

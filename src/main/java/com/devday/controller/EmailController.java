@@ -35,8 +35,9 @@ public class EmailController {
 		log.info("수신자 이름: " + us_name);
 		log.info("수신할 메일 주소: " + receiverMail);
 
-		ResponseEntity<String> res_entity = null;
-		boolean isExistingUser = false; // 사용자가 존재하지 않는다고 가정
+		// ResponseEntity<String> res_entity = null;
+		// 초기 상태는 사용자가 존재하지 않는 것으로 가정
+		boolean isExistingUser = false;
 
 		// 회원가입 요청: 이메일만 필요(아이디, 이름 불필요)
 		if (us_id == null && us_name == null) {
@@ -45,15 +46,18 @@ public class EmailController {
 		// 아이디 찾기 요청: 이름, 이메일 필요(아이디 불필요)
 		else if (us_id == null && us_name != null) {
 			isExistingUser = userService.isUserForId(us_name, receiverMail); // 존재하면 true, 존재하지 않으면 false 반환
+			if (!isExistingUser) {
+				// 아이디 찾기 요청에서 사용자가 존재하지 않을 경우
+				return new ResponseEntity<>("noUserForId", HttpStatus.OK);
+			}
 		}
 		// 비밀번호 찾기 요청: 아이디, 이름, 이메일 모두 필요
 		else if (us_id != null && us_name != null) {
 			isExistingUser = userService.isUserForPw(us_id, us_name, receiverMail); // 존재하면 true, 존재하지 않으면 false 반환
-		}
-
-		// 해당 이름과 일치하는 사용자가 존재하지 않는 경우(회원가입 제외)
-		if (!isExistingUser && us_name != null) {
-			res_entity = new ResponseEntity<>("request", HttpStatus.OK);
+			if (!isExistingUser) {
+				// 비밀번호 찾기 요청에서 사용자가 존재하지 않을 경우
+	            return new ResponseEntity<>("noUserForPw", HttpStatus.OK);
+			}
 		}
 
 		// 인증번호 생성 및 이메일 발송
@@ -73,12 +77,11 @@ public class EmailController {
 			log.info("발송할 이메일 정보: " + emailDTO); // ofAuthCode의 receiverMail 및 authCode 값 포함한 정보 출력
 			
 			emailService.sendMail(emailDTO); // 메일 발송 관련 메서드 호출
-			res_entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200)
+			return new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드(200)
 		} catch (Exception e) {
 			e.printStackTrace();
-			res_entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500)
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드(500)
 		}
-		return res_entity;
 	}
 
 	// 인증번호 확인 기능 구현: 세션 형태로 저장한 정보를 이용
