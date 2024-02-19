@@ -50,9 +50,11 @@
   ![1-1  회원관리09](https://github.com/cyj5509/project/assets/139317478/185bfbcb-5893-469d-9657-566fb4a1a8a0)
 
   ② 작성했던 로그인 정보를 바탕으로 로그인하는 경우
-  ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/eb87123e-a2f3-430c-911c-d8219759f7a0)
+  ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/79a65f9d-161b-44cf-a880-aa7c2ab1d0b6)
 
-
+  ③ 단계별 아이디 또는 비밀번호 찾기
+  
+  
 ⒊ 상품 관리
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
