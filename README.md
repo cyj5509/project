@@ -23,7 +23,9 @@
   ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/9003f0cf-b27f-4a2a-9ded-6e0a1340545f)
   
   ③ '로그인 정보'에서의 유효성 검사
-  
+  ⅰ) 아이디의 유효성 검사: ID 중복검사 버튼 클릭 시
+  ![1-1  회원관리03](https://github.com/cyj5509/project/assets/139317478/ff61f9fa-b750-4cd7-b421-53fa6a99ee28)
+
   ④ '회원 정보'에서의 유효성 검사
 
  (2) 로그인 정보
