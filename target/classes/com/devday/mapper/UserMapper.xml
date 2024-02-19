@@ -40,7 +40,7 @@
 	FROM
 		user_table
 	WHERE
-		us_id = #{us_id}
+		LOWER(us_id) = LOWER(#{us_id})
 </select>
 
 <!-- 일반적인 로그인 쿼리 -->

@@ -50,6 +50,7 @@
 												<button type="button" class="btn btn-outline-info" id="idCheck">ID&nbsp;중복검사</button>
 											</div>
 											<div class="col-4">
+												<span class="idInfoMsg">&#42;&nbsp;6~12자의 영문자 또는 영문자&#43;숫자&#40;영문자의 경우 대소문자 구분 없음&#41;</span>
 												<span class="yes_us_id">사용 가능한 아이디입니다.</span>
 												<span class="no_us_id">이미 존재하는 아이디입니다.</span>
 											</div>
@@ -138,7 +139,8 @@
 									</div>
 								</div>
 								<div class="box-footer">
-									<button type="button" class="btn btn-primary" id="btnJoin">가입하기</button>
+									<button type="button" class="btn btn-primary" id="btnJoin">가입</button>
+									<button type="button" class="btn btn-danger" id="btnCancel">취소</button>
 								</div>
 							</form>
 						</div>
@@ -151,8 +153,12 @@
 				<%@include file="/WEB-INF/views/comm/plugIn2.jsp" %>
 
 					<script>
-
 						$(document).ready(function () {
+
+							// 취소 버튼 클릭 이벤트
+							$('#btnCancel').click(function () {
+								location.href = "/";
+							})
 
 							let userIdCheck = false; // 아이디 중복 사용 유무 확인
 
@@ -162,37 +168,40 @@
 								// 정규 표현식(Regular Expression) 정의
 								// '^'는 문자열의 시작을, '$'는 문자열의 끝을 의미함
 								// test(): 문자열이 패턴과 일치하면 true, 그렇지 않으면 false를 반환
-								let regexId = /^[A-Za-z0-9]{6,12}$/; // 아이디 검사식
+								let regexId = /^(?=.*[A-Za-z])[A-Za-z0-9]{6,12}$/; // 아이디 검사식
+								let us_id = $('#us_id').val();
 
-								if ($("#us_id").val() == "") {
+								// 아이디 유효성 검사
+								if (us_id == "") {
 									alert("아이디가 입력되지 않았습니다. 아이디를 입력해 주세요.");
 									$("#us_id").focus();
 									return;
 								}
-								// 아이디 유효성 검사
-								let us_id = $('#us_id').val();
 								if (!regexId.test(us_id)) {
-									alert("아이디는 6~12자의 영문 대소문자와 숫자로만 입력해야 합니다.");
+									alert("아이디는 6~12자의 영문자(대소문자 구분 없음) 또는 영문자+숫자로 생성해야 합니다.");
 									$('#us_id').focus();
+									$('.idInfoMsg').css("display", "inline-block");
 									$('.yes_us_id').css("display", "none");
-									// $('.no_us_id').css("display", "none");
+									$('.no_us_id').css("display", "none");
 									return;
 								}
 
-								// 아이디 중복 검사 기능 구현
+								// 아이디 중복 검사 요청
 								$.ajax({
 									url: '/member/idCheck', // url : '아이디'를 체크하는 매핑주소
 									type: 'get', // get or post
 									dataType: 'text', // <String>
-									data: { us_id: $("#us_id").val() }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
+									data: { us_id: us_id }, // 객체 리터럴(key: value) ─ data: { 파라미터명: 데이터 값 }
 									success: function (result) { // success: function (매개변수명) { 
 										if (result == "yes") {
 											$('.yes_us_id').css("display", "inline-block");
 											$('.no_us_id').css("display", "none");
+											$('.idInfoMsg').css("display", "none");
 											userIdCheck = true; // let userIdCheck = false;
 										} else {
 											$('.no_us_id').css("display", "inline-block");
 											$('.yes_us_id').css("display", "none");
+											$('.idInfoMsg').css("display", "none");
 											userIdCheck = false;
 											// $("#us_id").val()는 GETTER, $("#us_id").val("")는 SETTER
 											$("#us_id").focus(); // 포커스 기능
@@ -256,11 +265,11 @@
 											alert("회원 인증이 정상적으로 처리되었습니다.");
 											isConfirmAuth = true;
 										} else if (result == "fail") {
-											alert("인증에 실패하였습니다. 나중에 다시 시도해 주세요.");
+											alert("인증에 실패하였습니다. 인증번호 확인 후 다시 시도해 주세요.");
 											$("#authCode").val("");
 											isConfirmAuth = false;
 										} else if (result == "request") { // 세션 종료 시(기본 30분)
-											alert("인증에 실패하였습니다. 요청을 다시 시도해 주세요.");
+											alert("인증에 실패하였습니다. 인증번호 발송을 다시 요청해 주세요.");
 											$("#authCode").val("");
 											isConfirmAuth = false;
 										}
@@ -290,7 +299,8 @@
 								let isValidLength = us_pw1.length >= 8 && us_pw1.length <= 16; // 길이 확인
 
 								// 나머지 번호에 해당하는 부분을 숫자만 가능하게끔 처리
-								let regexPhone = /^\d{7,8}$/; // 전화번호 검사식
+								let regexPhone = /^\d{7,8}$/.test(us_phone); // 전화번호 검사식
+								let regexName = /^[가-힣]{2,}$/.test(us_name); // 이름 검사식(최소 한글로 두 글자 이상)
 
 								// 이하 회원가입 유효성 검사
 								if (!us_id) {
@@ -332,13 +342,19 @@
 									$('#us_name').focus();
 									return;
 								}
+								if (!regexName) {
+									alert("이름은 최소 2자 이상의 한글로만 입력해야 합니다.");
+									$('#us_name').val('');
+									$('#us_name').focus();
+									return;
+								}
 								if (!us_phone) {
 									alert("전화번호를 입력해 주세요.");
 									$('#us_phone').focus();
 									return;
 								}
 								// 전화번호 유효성 검사
-								if (!regexPhone.test(us_phone)) {
+								if (!regexPhone) {
 									alert("전화번호는 앞자리를 제외한 나머지 7~8자의 숫자만 입력해야 합니다.");
 									$('#us_phone').val('');
 									$('#us_phone').focus();
@@ -368,12 +384,12 @@
 									return;
 								}
 								if (!sample2_address) {
-									alert("기본주소를 입력해 주세요.");
+									alert("기본 주소를 입력해 주세요.");
 									$('#sample2_address').focus();
 									return;
 								}
 								if (!sample2_detailAddress) {
-									alert("상세주소를 입력해 주세요.");
+									alert("상세 주소를 입력해 주세요.");
 									$('#sample2_detailAddress').focus();
 									return;
 								}
