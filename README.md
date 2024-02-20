@@ -50,8 +50,8 @@
   ![1-1  회원관리09](https://github.com/cyj5509/project/assets/139317478/185bfbcb-5893-469d-9657-566fb4a1a8a0)
 
   ② 로그인 정보를 바탕으로 로그인하는 경우
-  ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/1fbbaf38-9a18-40cc-ae27-acfd07410933)
-  
+  ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/a7f9f8b6-904f-46e8-8bfb-95ce7b92000d)
+
   ③ 단계별 아이디 찾기 및 비밀번호 찾기
 
   ④ 아이디 저장과 로그인 유지 옵션
