@@ -7,7 +7,7 @@
 ⒈ 메인 페이지
 
  (1) 섹션별 ‘더 알아보기’를 통한 해당 페이지로의 링크 제공
- ![Uploading 0-2. 메인페이지(사용자).PNG…]()
+ ![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/b86eba8d-19d8-4541-b9ca-d4ed2f9731be)
 
  (2) 로그인한 계정에 따른 관리자 페이지로의 링크 표시/숨김
  ![0-3  메인페이지(관리자페이지)](https://github.com/cyj5509/project/assets/139317478/48f75d1d-bcec-4280-b652-1f992b428456)
