@@ -17,7 +17,7 @@
  (1) 회원가입 양식 및 유효성 검사
 
   ① 회원가입 양식: 1의 (2)에서의 '회원가입' 링크를 통해 이동(로그인 정보와 회원 정보로 구분)
-  ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/fb28bcff-0618-49df-bb3f-6306945ee4d3)
+  ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/201583d2-0dd9-4604-b0fa-28759538d3ff)
 
   ② 양식이 미작성된 상태에서 가입 버튼 클릭 시의 알림들
   ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/9003f0cf-b27f-4a2a-9ded-6e0a1340545f)
@@ -33,26 +33,29 @@
   ④ '회원 정보'에서의 유효성 검사
   
   ⅰ) 이름/전화번호의 유효성 검사: 이름/전화번호 입력 후 '가입' 버튼 클릭 시
-  ![1-1  회원관리05](https://github.com/cyj5509/project/assets/139317478/355dbfbd-89a5-486b-a93e-8f4316a290dd)
+  ![1-1  회원관리05](https://github.com/cyj5509/project/assets/139317478/19681c5f-67ab-4a72-9891-571a513daf44)
 
   ⅱ) 이메일의 유효성 검사: 이메일 입력 후 ‘발송’ 버튼 클릭 시
   ![1-1  회원관리06](https://github.com/cyj5509/project/assets/139317478/e525408d-0863-4622-9459-f89b82cbccb0)
 
-  ⅲ) 인증번호의 유효성 검사: 인증번호 입력 후 ‘확인’ 버튼 클릭 시
-  ![1-1  회원관리07](https://github.com/cyj5509/project/assets/139317478/d8e00d95-0c0e-496d-8af3-422e105f6cf5)
+  ⅲ) 인증번호의 유효성 검사: 인증번호(6자리) 입력 후 ‘확인’ 버튼 클릭 시
+  ![1-1  회원관리07](https://github.com/cyj5509/project/assets/139317478/951cfe1e-1fb9-4c22-a8f4-cd198fe24956)
 
   ⅳ) 주소의 유효성 검사는 따로 없고, 직접 입력하거나 우편번호 서비스 API 활용
   ![1-1  회원관리08](https://github.com/cyj5509/project/assets/139317478/2cd49120-6cd8-42cc-928d-478b2f365767)
   
- (2) 로그인 정보: 아이디 및 비밀번호
+ (2) 로그인 및 아이디/비밀번호 찾기 등
  
-  ① 유효성 검사를 통과한 후 가입 버튼을 클릭한 경우
+  ① 가입 양식 작성 후 가입 버튼을 클릭한 경우
   ![1-1  회원관리09](https://github.com/cyj5509/project/assets/139317478/185bfbcb-5893-469d-9657-566fb4a1a8a0)
 
-  ② 작성했던 로그인 정보를 바탕으로 로그인하는 경우
-  ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/eb87123e-a2f3-430c-911c-d8219759f7a0)
+  ② 로그인 정보를 바탕으로 로그인하는 경우
+  ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/a7f9f8b6-904f-46e8-8bfb-95ce7b92000d)
 
+  ③ 단계별 아이디 찾기 및 비밀번호 찾기
 
+  ④ 아이디 저장과 로그인 유지 옵션
+  
 ⒊ 상품 관리
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
