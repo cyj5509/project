@@ -28,7 +28,7 @@
   ![1-1  회원관리03](https://github.com/cyj5509/project/assets/139317478/a14146d4-f687-48ab-b536-afeec361f4a7)
 
   ⅱ) 비밀번호의 유효성 검사: 비밀번호 입력 후 '가입' 버튼 클릭 시
-  ![1-1  회원관리04](https://github.com/cyj5509/project/assets/139317478/bcd5e32b-904c-4ff7-ac4f-9433ba978019)
+  ![1-1  회원관리04](https://github.com/cyj5509/project/assets/139317478/2215cc0f-f7be-4b74-9750-db63e22c1a01)
 
   ④ '회원 정보'에서의 유효성 검사
   
