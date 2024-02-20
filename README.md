@@ -17,7 +17,7 @@
  (1) 회원가입 양식 및 유효성 검사
 
   ① 회원가입 양식: 로그인 정보와 회원 정보로 구분
-  ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/d249ea9e-e0af-4434-a85a-9dc4db21e17f)
+  ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/9ed84f80-9bc7-43eb-9199-194e8e9788ae)
 
   ② 양식이 미작성된 상태에서 '가입' 버튼 클릭 시의 알림들
   ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/a8c9e52c-367a-40b9-89c7-242a8c08ca01)
