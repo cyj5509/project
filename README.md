@@ -1,14 +1,14 @@
  # [개인] 쇼핑몰 프로젝트
 
-![0-1  프로젝트](https://github.com/cyj5509/project/assets/139317478/63821322-2932-4b2b-96a6-03244fe0b82f)
+![0-0  프로젝트](https://github.com/cyj5509/project/assets/139317478/43005d5b-efd2-4f1f-9dda-1623396e785b)
 
 [1] 사용자 페이지
 
 ⒈ 메인 페이지
 
  (1) 섹션별 ‘더 알아보기’를 통한 해당 페이지로의 링크 제공
- ![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/0d19e796-12a6-41b6-8364-b10ea981c787)
-
+ ![0-2  메인페이지(사용자)](https://github.com/cyj5509/project/assets/139317478/9c335268-e0e7-4eb0-b84a-25a639904c49)
+ 
  (2) 로그인한 계정에 따른 관리자 페이지로의 링크 표시/숨김
  ![0-3  메인페이지(관리자페이지)](https://github.com/cyj5509/project/assets/139317478/48f75d1d-bcec-4280-b652-1f992b428456)
 
