@@ -31,11 +31,11 @@
 				<div class="text-center">
 					<div class="box box-primary">
 						<div class="box-header with-border">
-							<h1 class="box-title mt-5" id="getMemberInfo" style="text-align: center; margin-bottom: 60px;">
-								<b>정보&nbsp;조회</b>
-							</h1>
-							<form role="form" id="myPageForm" method="get" action="/member/myPage">
-								<div id="modifyInfoSection">
+							<div id="getMemberInfo">
+								<h1 class="box-title mt-5" style="text-align: center; margin-bottom: 60px;">
+									<b>정보&nbsp;조회</b>
+								</h1>
+								<form role="form" id="myPageForm" method="get" action="/member/myPage">
 									<div class="box-body">
 										<div class="login-info">
 											<div class="form-group row">
@@ -87,41 +87,40 @@
 										</div>
 									</div><br />
 									<div class="box-footer">
-										<button type="button" class="btn btn-primary" id="btnModify">수정하기</button>
+										<button type="button" class="btn btn-warning" id="btnModify">수정하기</button>
 										<button type="button" class="btn btn-danger" id="btnDelete">탈퇴하기</button>
 									</div>
-								</div>
-							</form>
-
-							<form role="form" id="ResetPwForm" method="post" action="/member/reset_Pw">
-								<div id="pwResetSection" style="display: none;">
-									<h1 class="box-title mt-5" id="getMemberInfo" style="text-align: center; margin-bottom: 60px;">
+								</form>
+							</div>
+							<div id="pwResetSection" style="display: none;">
+								<form role="form" id="ResetPwForm" method="post" action="/member/reset_Pw">
+									<h1 class="box-title mt-5" id="changePassword" style="text-align: center; margin-bottom: 60px;">
 										<b>비밀번호&nbsp;변경</b>
 									</h1>
 									<div class="form-group row">
 										<label for="currentPw" class="col-2">현재&nbsp;비밀번호&nbsp;</label>
 										<div class="col-10">
-											<input type="password" class="form-control" name="currentPw" placeholder="현재 비밀번호를 입력해 주세요.">
+											<input type="password" class="form-control" id="currentPw" name="currentPw" placeholder="현재 비밀번호를 입력해 주세요.">
 										</div>
 									</div>
 									<div class="form-group row">
 										<label for="newPw1" class="col-2">새&nbsp;비밀번호&nbsp;</label>
 										<div class="col-10">
-											<input type="password" class="form-control" name="newPw1" placeholder="새 비밀번호를 입력해 주세요.">
+											<input type="password" class="form-control" id="newPw1" name="newPw1" placeholder="새 비밀번호를 입력해 주세요.">
 										</div>
 									</div>
 									<div class="form-group row">
 										<label for="newPw2" class="col-2">새&nbsp;비밀번호&nbsp;확인&nbsp;</label>
 										<div class="col-10">
-											<input type="password" class="form-control" name="newPw2" placeholder="새 비밀번호를 한 번 더 입력해 주세요.">
+											<input type="password" class="form-control" id="newPw2" name="newPw2" placeholder="새 비밀번호를 한 번 더 입력해 주세요.">
 										</div>
 									</div>
 									<div class="box-footer">
-										<button type="button" class="btn btn-primary login-btn" id="btnResetPw">완료</button>
+										<button type="button" class="btn btn-success" id="btnResetPw">완료</button>
+										<button type="button" class="btn btn-secondary" id="btnCancel">취소</button>
 									</div>
-								</div>
-							</form>
-
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -142,11 +141,11 @@
 								let formattedPhone = us_phone.substring(0, 3) + "-" + us_phone.substring(3, 7) + "-" + us_phone.substring(7);
 								$("#us_phone").val(formattedPhone); // '-'가 포함된 형태로 값 설정
 							}
+
 							// 비밀번호 재설정 처리 1
 							$("#btnChangePw").click(function () {
 
 								$("#getMemberInfo").hide();
-								$("#modifyInfoSection").hide();
 								$("#pwResetSection").show();
 							});
 
@@ -160,7 +159,7 @@
 
 								let hasLetter = /[A-Za-z]/.test(resetPw); // 영문자 포함 (대문자 또는 소문자)
 								let hasNumbers = /\d/.test(resetPw); // 숫자 포함
-								let hasSpecialChars = /[!@#$%^&*]/.test(us_pw1); // 특수문자 포함
+								let hasSpecialChars = /[!@#$%^&*]/.test(resetPw); // 특수문자 포함
 								let isValidLength = resetPw.length >= 8 && resetPw.length <= 16; // 길이 확인
 
 								if (!currentPw) {
@@ -202,17 +201,17 @@
 								}
 
 								$.ajax({
-									url: '/member/reset_pw',
+									url: '/member/resetPw',
 									type: 'post',
 									data: { us_id: us_id, currentPw: currentPw, us_pw: resetPw },
 									success: function (response) {
 										if (response == "success") {
 											// 비밀번호 재설정에 성공했을 때의 처리
-											alert("비밀번호가 정상적으로 재설정되었습니다.");
+											alert("비밀번호를 새롭게 설정하였습니다. 새 비밀번호로 다시 접속해 주세요.");
 											location.href = "/member/login";
 										} else if (response == "request") {
-											alert("현재 비밀번호가 회원가입 시 작성했던 비밀번호와 일치하지 않습니다.");
-											$("input[name='currentPw']").val("");
+											alert("현재 비밀번호가 회원가입 시 작성했던 비밀번호와 일치하지 않습니다. 다시 입력해 주세요.");
+											$("input[name='currentPw']").val('');
 											$("input[name='currentPw']").focus();
 										}
 									}
@@ -229,6 +228,10 @@
 								location.href = "/member/info/delete"; // 회원탈퇴 전 회원정보 재확인
 							});
 
+							// 취소 버튼 클릭 이벤트(비밀번호 재설정 페이지)
+							$("#btnCancel").click(function () {
+									location.href = "/member/myPage";
+							});
 						});
 					</script>
 

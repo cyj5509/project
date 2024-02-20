@@ -356,10 +356,11 @@ public class UserController {
 	}
 	
 	// 비밀번호 재설정 기능 구현
-	@PostMapping("/reset_pw")
+	@PostMapping("/resetPw")
 	public ResponseEntity<String> resetPw(@RequestParam("us_id") String us_id,
-										 @RequestParam("us_pw") String us_pw,
-										 @RequestParam(value = "currentPw", required = false) String currentPw) throws Exception {
+										  @RequestParam("us_pw") String us_pw,
+										  @RequestParam(value = "currentPw", required = false) String currentPw,
+										  HttpSession session) throws Exception {
 
 		ResponseEntity<String> entity = null;
 		log.info("암호화 전 비밀번호: " + us_pw);
@@ -384,6 +385,7 @@ public class UserController {
 			boolean isResetPw = userService.resetPw(findInfoDTO); // DB에 암호화된 비밀번호 업데이트
 			if (isResetPw) {
 				entity = new ResponseEntity<>("success", HttpStatus.OK); // HTTP 상태 코드 200: 비밀번호 재발급 성공
+				session.invalidate(); // 세션 무효화
 			} else {
 				entity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // HTTP 상태 코드 500: 비밀번호 재발급 실패
 			}

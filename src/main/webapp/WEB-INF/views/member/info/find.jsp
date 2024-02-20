@@ -53,8 +53,6 @@
 				<div class="text-center">
 					<div class="box box-primary login-box">
 						<div class="box-header with-border">
-
-
 							<!-- 아이디 찾기 -->
 							<form role="form" id="findIdForm" method="post" action="/member/find_id">
 								<div id="findIdSections">
@@ -68,13 +66,13 @@
 											<div class="form-group row">
 												<label for="us_name" class="col-2">이름</label>
 												<div class="col-10">
-													<input type="text" class="form-control" name="us_name" placeholder="이름을 입력해주세요">
+													<input type="text" class="form-control" name="us_name" placeholder="이름을 입력해 주세요.">
 												</div>
 											</div>
 											<div class="form-group row">
 												<label for="us_email" class="col-2">이메일</label>
 												<div class="col-7">
-													<input type="email" class="form-control" name="us_email" placeholder="이메일을 입력해주세요">
+													<input type="email" class="form-control" name="us_email" placeholder="이메일을 입력해 주세요.">
 												</div>
 												<div class="col-3">
 													<button type="button" class="btn btn-outline-info" name="btnMailAuth">인증번호 발송</button>
@@ -83,7 +81,7 @@
 											<div class="form-group row">
 												<label for="authCode" class="col-2"></label>
 												<div class="col-7">
-													<input type="text" class="form-control" name="authCode" placeholder="인증번호 6자리 숫자 입력">
+													<input type="text" class="form-control" name="authCode" placeholder="인증번호(6자리)를 입력해 주세요.">
 												</div>
 												<div class="col-3">
 													<button type="button" class="btn btn-outline-info" name="btnConfirmAuth">인증번호 확인</button>
@@ -158,13 +156,13 @@
 										<div class="form-group row">
 											<label for="us_name" class="col-2">이름</label>
 											<div class="col-10">
-												<input type="text" class="form-control" name="us_name" placeholder="이름을 입력해주세요">
+												<input type="text" class="form-control" name="us_name" placeholder="이름을 입력해 주세요.">
 											</div>
 										</div>
 										<div class="form-group row">
 											<label for="us_email" class="col-2">이메일</label>
 											<div class="col-7">
-												<input type="email" class="form-control" name="us_email" placeholder="이메일을 입력해주세요">
+												<input type="email" class="form-control" name="us_email" placeholder="이메일을 입력해 주세요.">
 											</div>
 											<div class="col-3">
 												<button type="button" class="btn btn-outline-info" name="btnMailAuth">인증번호 발송</button>
@@ -173,7 +171,7 @@
 										<div class="form-group row">
 											<label for="authCode" class="col-2"></label>
 											<div class="col-7">
-												<input type="text" class="form-control" name="authCode" placeholder="인증번호 6자리 숫자 입력">
+												<input type="text" class="form-control" name="authCode" placeholder="인증번호(6자리)를 입력해 주세요.">
 											</div>
 											<div class="col-3">
 												<button type="button" class="btn btn-outline-info" name="btnConfirmAuth">인증번호 확인</button>
@@ -187,16 +185,16 @@
 									<!-- 제3단계: 모든 인증절차를 거친 뒤 비밀번호 재설정 -->
 									<div id="pwResetSection" style="display: none;">
 										<div>
-											<p><span><b>[제3단계]</b> </span>재설정을 위한 비밀번호를 입력해주세요</p>
+											<p><span><b>[제3단계]</b> </span>재설정을 위한 비밀번호를 입력해 주세요.</p>
 										</div>
 										<div class="form-group row">
 											<label for="us_pw1" class="col-4">새 비밀번호</label>
 											<div class="col-8">
-												<input type="password" class="form-control" name="us_pw" id="us_pw1" placeholder="비밀번호를 입력해주세요">
+												<input type="password" class="form-control" name="us_pw" id="us_pw1" placeholder="새 비밀번호를 입력해 주세요.">
 											</div>
 											<label for="us_pw2" class="col-4">새 비밀번호 확인</label>
 											<div class="col-8">
-												<input type="password" class="form-control" id="us_pw2" placeholder="동일한 비밀번호를 다시 입력해주세요">
+												<input type="password" class="form-control" id="us_pw2" placeholder="새 비밀번호를 다시 입력해 주세요.">
 											</div>
 										</div>
 										<div class="box-footer">
@@ -261,9 +259,10 @@
 								$("#linkFindPw").on("click", function (e) {
 
 									e.preventDefault(); // 기본 이벤트 방지
+
 									$("#findIdSections").hide(); // 아이디 찾기 섹션 숨기기
 									$("#findPwSections").show(); // 비밀번호 찾기 섹션 보이기
-
+									
 									// 아이디 찾기 섹션의 입력 필드 초기화
 									$('#findIdSections input[type="text"], #findIdSections input[type="email"]').val('');
 
@@ -272,11 +271,11 @@
 									$("#showIdSection").hide();
 								});
 
-								// 중복되는 부분이 있어 전역 변수로 해당 변수 설정
-								let us_name = ""; // 아이디 및 비밀번호 찾기용
-								let us_email = ""; // 아이디 및 비밀번호 찾기용
-								let authCode = ""; // 아이디 및 비밀번호 찾기용
-								let us_id = $('#idCheck').val(); // 비밀번호 찾기용
+								// 전역 변수(아이디 및 비밀번호 찾기용)
+								let us_name = ""; 
+								let us_email = ""; 
+								let authCode = ""; 
+								let us_id = $("#idCheck").val(); // 비밀번호 찾기용
 
 								// 입력 필드의 값이 변경될 때마다 해당 필드 업데이트
 								$("input[name='us_name']").on('input', function () {
@@ -296,6 +295,7 @@
 
 								// 아이디 찾기 제1단계: 이름과 이메일을 통한 아이디 찾기
 								$("#btnConfirmId").click(function () {
+
 									if (us_name == "") {
 										alert("이름을 입력해 주세요.");
 										$("input[name='us_name']").focus();
@@ -338,6 +338,7 @@
 								$("button[name='btnDoLogin']").click(function () {
 									location.href = "/member/login"
 								});
+
 								$("button[name='btnFindPw']").click(function () {
 									// location.href = "/member/info/find"
 									$("#findIdSections").hide(); // 아이디 찾기 섹션 숨기기
@@ -345,6 +346,8 @@
 
 									// 아이디 찾기 섹션의 입력 필드 초기화
 									$('#findIdSections input[type="text"], #findIdSections input[type="email"]').val('');
+									// 비밀번호 찾기 섹션의 입력 필드 초기화
+									$('#findPwSections input[type="text"], #findPwSections input[type="email"]').val('');
 
 									// 아이디 찾기 섹션의 상태 초기화 로직
 									$("#confirmSection").show();
@@ -411,7 +414,7 @@
 										data: data, // let data = { us_name: us_name, receiverMail: us_email };
 										success: function (result) {
 											if (result == 'success') {
-												alert("인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.")
+												alert("인증번호가 이메일로 발송되었습니다. 이메일을 확인해 주세요.")
 											} else if (result == 'noUserForId') {
 												// 아이디 찾기 요청에서 사용자를 찾지 못한 경우
 												alert("입력하신 정보로 등록된 사용자를 찾을 수 없습니다.");
@@ -439,7 +442,7 @@
 										data: { authCode: authCode },
 										success: function (result) {
 											if (result == "success") { // 인증 성공 시
-												alert("회원 인증이 정상적으로 처리되었습니다.");
+												alert("인증이 정상적으로 처리되었습니다. 다음 버튼을 클릭해 주세요.");
 												isConfirmAuth = true;
 											} else if (result == "fail") { // 인증 실패 시
 												alert("인증에 실패하였습니다. 인증번호 확인 후 다시 시도해 주세요.");
@@ -486,7 +489,7 @@
 										},
 										success: function (response) {
 											if (response == "yes") {
-												if (!confirm("임시 비밀번호가 이메일로 전송되었습니다. 임시 비밀번호로 로그인할 경우 확인을, 재설정을 원하시면 취소를 클릭해주세요.")) {
+												if (!confirm("임시 비밀번호가 이메일로 전송되었습니다. 임시 비밀번호로 로그인을 원하시면 확인을, 재설정을 원하시면 취소를 클릭해 주세요.")) {
 													$("#idCheckSection").hide();
 													$("#nameEmailSection").hide();
 													$("#pwResetSection").show();
@@ -500,28 +503,52 @@
 
 								// 비밀번호 찾기 제3단계: 비밀번호 재설정 처리
 								$("#btnResetPw").click(function () {
-									let resetPw = $("#us_pw1").val();
-									let confirmPw = $("#us_pw2").val();
-									if (resetPw == "" || confirmPw == "") {
-										alert("비밀번호를 입력해 주세요.")
-										return;
-									}
-									if (resetPw != confirmPw) {
-										alert("비밀번호가 일치하지 않습니다.");
-										$("#us_pw1").val("");
-										$("#us_pw2").val("");
+
+									let resetPw = $("#us_pw1").val().trim();
+									let confirmPw = $("#us_pw2").val().trim();
+									
+									let hasLetter = /[A-Za-z]/.test(resetPw); // 영문자 포함 (대문자 또는 소문자)
+									let hasNumbers = /\d/.test(resetPw); // 숫자 포함
+									let hasSpecialChars = /[!@#$%^&*]/.test(resetPw); // 특수문자 포함
+									let isValidLength = resetPw.length >= 8 && resetPw.length <= 16; // 길이 확인
+
+									if (!resetPw) {
+										alert("새 비밀번호를 입력해 주세요.");
+										$("#us_pw1").val('');
 										$("#us_pw1").focus();
 										return;
 									}
+									if (!confirmPw) {
+										alert("새 비밀번호를 다시 입력해 주세요.");
+										$("#us_pw2").val('');
+										$("#us_pw2").focus();
+										return;
+									}
+									if (resetPw != confirmPw) {
+										alert("비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
+										$("#us_pw1").val('');
+										$("#us_pw2").val('');
+										$("#us_pw1").focus();
+										return;
+									}
+									// 비밀번호 유효성 검사
+									if (!hasLetter || !hasNumbers || !hasSpecialChars || !isValidLength) {
+										alert("비밀번호는 8~16자의 영문자, 숫자 및 특수문자(!@#$%^&*)를 모두 포함해야 합니다.");
+										$('#us_pw1').val('');
+										$('#us_pw2').val('');
+										$('#us_pw1').focus();
+										return;
+									}
+									
 									$.ajax({
-										url: '/member/reset_pw',
+										url: '/member/resetPw',
 										type: 'post',
 										data: { us_id: us_id, us_pw: resetPw },
 										success: function (response) {
 											if (response == "success") {
-												// 비밀번호 재설정에 성공했을 때의 처리
-												alert("비밀번호가 정상적으로 재설정되었습니다.");
-												location.href = "/member/login";
+											// 비밀번호 재설정에 성공했을 때의 처리
+											alert("비밀번호가 정상적으로 재설정되었습니다.");
+											location.href = "/member/login";
 											}
 										}
 									}); // AJAX 요청

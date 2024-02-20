@@ -107,7 +107,7 @@
 											<label for="authCode" class="col-2"></label>
 											<div class="col-7">
 												<input type="text" class="form-control" name="authCode" id="authCode"
-													placeholder="발송된 인증번호를 입력해 주세요.">
+													placeholder="인증번호(6자리)를 입력해 주세요.">
 											</div>
 											<div class="col-3">
 												<button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증번호 확인</button>
@@ -244,7 +244,6 @@
 								});
 							});
 
-
 							// 인증 확인: <button type="button" class="btn btn-outline-info" id="btnConfirmAuth">인증 확인</button>
 							$("#btnConfirmAuth").click(function () {
 
@@ -262,7 +261,7 @@
 									data: { authCode: $("#authCode").val() },
 									success: function (result) {
 										if (result == "success") {
-											alert("회원 인증이 정상적으로 처리되었습니다.");
+											alert("인증이 정상적으로 처리되었습니다. 남은 양식을 작성해 주세요.");
 											isConfirmAuth = true;
 										} else if (result == "fail") {
 											alert("인증에 실패하였습니다. 인증번호 확인 후 다시 시도해 주세요.");
@@ -318,7 +317,7 @@
 									return;
 								}
 								if (!us_pw2) {
-									alert("비밀번호를 입력해 주세요.");
+									alert("비밀번호를 다시 입력해 주세요.");
 									$('#us_pw2').focus();
 									return;
 								}
