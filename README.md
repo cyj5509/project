@@ -20,7 +20,7 @@
   ![1-1  회원관리01](https://github.com/cyj5509/project/assets/139317478/201583d2-0dd9-4604-b0fa-28759538d3ff)
 
   ② 양식이 미작성된 상태에서 '가입' 버튼 클릭 시의 알림들
-  ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/9003f0cf-b27f-4a2a-9ded-6e0a1340545f)
+  ![1-1  회원관리02](https://github.com/cyj5509/project/assets/139317478/a8c9e52c-367a-40b9-89c7-242a8c08ca01)
   
   ③ 로그인 정보에서의 유효성 검사
   
@@ -39,8 +39,8 @@
   ![1-1  회원관리06](https://github.com/cyj5509/project/assets/139317478/68268fbe-0783-46bc-853e-31d7c8d6633f)
 
   ⅲ) 인증번호의 유효성 검사: 인증번호(6자리) 입력 후 ‘확인’ 버튼 클릭 시
-  ![1-1  회원관리07](https://github.com/cyj5509/project/assets/139317478/0a063947-aa84-4d12-98dd-0c48175920ab)
-
+  ![1-1  회원관리07](https://github.com/cyj5509/project/assets/139317478/799674af-942f-4cba-acb8-75ff47ff28f0)
+  
   ⅳ) 주소의 유효성 검사: 주소를 직접 입력하거나 우편번호 서비스 API 활용
   ![1-1  회원관리08](https://github.com/cyj5509/project/assets/139317478/2cd49120-6cd8-42cc-928d-478b2f365767)
   
