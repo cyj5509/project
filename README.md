@@ -39,7 +39,7 @@
   ![1-1  회원관리06](https://github.com/cyj5509/project/assets/139317478/e525408d-0863-4622-9459-f89b82cbccb0)
 
   ⅲ) 인증번호의 유효성 검사: 인증번호(6자리) 입력 후 ‘확인’ 버튼 클릭 시
-  ![1-1  회원관리07](https://github.com/cyj5509/project/assets/139317478/951cfe1e-1fb9-4c22-a8f4-cd198fe24956)
+  ![1-1  회원관리07](https://github.com/cyj5509/project/assets/139317478/0a063947-aa84-4d12-98dd-0c48175920ab)
 
   ⅳ) 주소의 유효성 검사: 주소를 직접 입력하거나 우편번호 서비스 API 활용
   ![1-1  회원관리08](https://github.com/cyj5509/project/assets/139317478/2cd49120-6cd8-42cc-928d-478b2f365767)
