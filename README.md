@@ -68,8 +68,7 @@
 
 ![1-2  상품관리01](https://github.com/cyj5509/project/assets/139317478/45a78c29-d909-48e1-9826-bfe220a8e3bc)
 ![1-2  상품관리02](https://github.com/cyj5509/project/assets/139317478/9a49f381-caaa-4774-83b3-18a756979ac4)
-![1-2  상품관리03](https://github.com/cyj5509/project/assets/![1-1  회원관리08](https://github.com/cyj5509/project/assets/139317478/ecfa16ef-7dd5-4fc3-9840-fd69c75c893c)
-139317478/19e43a29-bbad-425b-aaed-d212593eb553)
+![1-2  상품관리03](https://github.com/cyj5509/project/assets/139317478/8f7bc000-50b6-4824-841a-10b1369b9d1f)
 ![1-2  상품관리04](https://github.com/cyj5509/project/assets/139317478/119ed63a-7160-4613-a3f8-6c7ded90e702)
 ![1-2  상품관리05](https://github.com/cyj5509/project/assets/139317478/c495cd2b-8dcc-4ac0-9fef-1943f7c7d71d)
 
