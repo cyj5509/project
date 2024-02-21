@@ -1,6 +1,8 @@
  # [개인] 쇼핑몰 프로젝트
 
-![0-0  프로젝트](https://github.com/cyj5509/project/assets/139317478/43005d5b-efd2-4f1f-9dda-1623396e785b)
+![0-0  프로젝트개요01](https://github.com/cyj5509/project/assets/139317478/54ce9033-1cef-43fc-a872-c25755fc148f)
+(바로 아래 부분은 구현한 기능을 파악하기 쉽게 계속 정리 중인 부분입니다.)
+![0-1  프로젝트개요02](https://github.com/cyj5509/project/assets/139317478/017f34ef-a1b5-468e-b845-45e709cc1c86)
 
 [1] 사용자 페이지
 
@@ -56,8 +58,10 @@
   ![1-1  회원관리11](https://github.com/cyj5509/project/assets/139317478/c2ecbd46-f3ed-4ca5-b194-444573f8fd68)
   ![1-1  회원관리12](https://github.com/cyj5509/project/assets/139317478/bfc088a1-8f6a-45fb-8ffe-655a751aeb16)
 
+  ④ 비밀번호 찾기 ─ 임시 비밀번호 생성 vs. 비밀번호 재설정
+  ![1-1  회원관리13](https://github.com/cyj5509/project/assets/139317478/50e84024-e9d3-4776-9d26-ad9e5ffec819)
 
-  ④ 아이디 저장과 로그인 유지 옵션
+  ⑤ 아이디 저장과 로그인 유지 옵션
   
 ⒊ 상품 관리
 
