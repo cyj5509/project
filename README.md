@@ -1,6 +1,7 @@
  # [개인] 쇼핑몰 프로젝트
 
 ![0-0  프로젝트개요01](https://github.com/cyj5509/project/assets/139317478/54ce9033-1cef-43fc-a872-c25755fc148f)
+
 (바로 아래 부분은 구현한 기능을 파악하기 쉽게 계속 정리 중인 부분입니다.)
 ![0-1  프로젝트개요02](https://github.com/cyj5509/project/assets/139317478/017f34ef-a1b5-468e-b845-45e709cc1c86)
 
