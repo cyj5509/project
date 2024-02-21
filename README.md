@@ -53,7 +53,7 @@
   ![1-1  회원관리10](https://github.com/cyj5509/project/assets/139317478/a7f9f8b6-904f-46e8-8bfb-95ce7b92000d)
 
   ③ 단계별 아이디 찾기 및 비밀번호 찾기
-  ![1-1  회원관리11](https://github.com/cyj5509/project/assets/139317478/fd3f7235-57d7-48c0-9624-4ef2d3020221)
+  ![1-1  회원관리11](https://github.com/cyj5509/project/assets/139317478/c2ecbd46-f3ed-4ca5-b194-444573f8fd68)
   ![1-1  회원관리12](https://github.com/cyj5509/project/assets/139317478/bfc088a1-8f6a-45fb-8ffe-655a751aeb16)
 
 
