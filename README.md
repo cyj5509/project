@@ -59,7 +59,7 @@
   ![1-1  회원관리11](https://github.com/cyj5509/project/assets/139317478/c2ecbd46-f3ed-4ca5-b194-444573f8fd68)
   ![1-1  회원관리12](https://github.com/cyj5509/project/assets/139317478/bfc088a1-8f6a-45fb-8ffe-655a751aeb16)
 
-  ④ 비밀번호 찾기 ─ 임시 비밀번호 생성 vs. 비밀번호 재설정
+  ④ 비밀번호 찾기: 임시 비밀번호 생성 vs. 비밀번호 재설정
   ![1-1  회원관리13](https://github.com/cyj5509/project/assets/139317478/50e84024-e9d3-4776-9d26-ad9e5ffec819)
 
   ⑤ 아이디 저장과 로그인 유지 옵션
